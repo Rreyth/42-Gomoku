@@ -24,6 +24,7 @@ public:
 	~TextureManager();
 
 	void	loadTextures(void);
+	void	scaleSprite(sprite_name name, float x, float y);
 	void	drawTexture(sf::RenderWindow *window, sprite_name name, int x, int y, draw_pos pos);
 
 private:

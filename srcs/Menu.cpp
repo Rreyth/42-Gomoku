@@ -5,21 +5,24 @@
 // Constructors and destructor
 ////////////////////////////////////////////////////////////////////////////////
 
-Menu::Menu(void)
+Menu::Menu(TextureManager *textureManager)
 {
 	this->title = "GOMOCOOL";
 
 	this->play.setProperties("Play", 25, MID_CENTER, sf::Color::White,
 						WIN_W / 2 - 50, WIN_H / 2 - 80, 100, 40,
-						SPRITE_ROUND_BUTTON_ON, SPRITE_ROUND_BUTTON_OFF);
+						SPRITE_ROUND_BUTTON_ON, SPRITE_ROUND_BUTTON_OFF,
+						textureManager);
 
 	this->settings.setProperties("Settings", 25, MID_CENTER, sf::Color::White,
 						WIN_W / 2 - 50, WIN_H / 2 - 20, 100, 40,
-						SPRITE_ROUND_BUTTON_ON, SPRITE_ROUND_BUTTON_OFF);
+						SPRITE_ROUND_BUTTON_ON, SPRITE_ROUND_BUTTON_OFF,
+						textureManager);
 
 	this->quit.setProperties("QUIT", 25, MID_CENTER, sf::Color::White,
 						WIN_W / 2 - 50, WIN_H / 2 + 40, 100, 40,
-						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF);
+						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF,
+						textureManager);
 }
 
 Menu::~Menu()

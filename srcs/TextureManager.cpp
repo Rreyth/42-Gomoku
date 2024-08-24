@@ -30,6 +30,12 @@ void	TextureManager::loadTextures(void)
 }
 
 
+void TextureManager::scaleSprite(sprite_name name, float x, float y)
+{
+	this->sprites[name].setScale(x, y);
+} 
+
+
 void	TextureManager::drawTexture(sf::RenderWindow *window, sprite_name name, int x, int y, draw_pos pos)
 {
 	sf::Vector2u size;
