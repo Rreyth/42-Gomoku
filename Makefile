@@ -1,10 +1,10 @@
-MAKEFLAGS		:=	--no-print-directory
-.DEFAULT_GOAL	:=	all
+MAKEFLAGS			:= --no-print-directory
+.DEFAULT_GOAL		:= all
 
 .DELETE_ON_ERROR:
 .SECONDEXPANSION:
 
-UNAME	:=	$(shell uname)
+UNAME				:= $(shell uname)
 
 #=================================COMPILATION==================================#
 CC					:= g++
@@ -18,37 +18,37 @@ NAME				:= Gomoku
 BUILD				:= build
 
 #====================================TARGETS===================================#
-SRCS	:=	srcs/main.cpp
+SRCS				:= srcs/main.cpp
 
-OBJS 	:=	${SRCS:srcs/%.cpp=$(BUILD)/%.o}
-DEPS	:=	$(SRCS:srcs/%.cpp=$(BUILD)/%.d)
-DIRS	:=	$(BUILD)
+OBJS 				:= ${SRCS:srcs/%.cpp=$(BUILD)/%.o}
+DEPS				:= $(SRCS:srcs/%.cpp=$(BUILD)/%.d)
+DIRS				:= $(BUILD)
 
 #====================================COLORS====================================#
-NOC			= \033[0m
-BOLD		= \033[1m
-UNDERLINE	= \033[4m
-BLINK		= \e[5m
-BLACK		= \033[1;30m
-RED			= \e[1m;31m;
-GREEN		= \e[1m;32m;
-YELLOW		= \e[1m;33m;
-RED			= \e[1m\e[38;5;196m
-GREEN		= \e[1m\e[38;5;76m
-YELLOW		= \e[1m\e[38;5;220m
-BLUE		= \e[1m\e[38;5;33m
-VIOLET		= \033[1;35m
-CYAN		= \033[1;36m
-WHITE		= \033[1;37m
+NOC					:= \033[0m
+BOLD				:= \033[1m
+UNDERLINE			:= \033[4m
+BLINK				:= \e[5m
+BLACK				:= \033[1;30m
+RED					:= \e[1m;31m;
+GREEN				:= \e[1m;32m;
+YELLOW				:= \e[1m;33m;
+RED					:= \e[1m\e[38;5;196m
+GREEN				:= \e[1m\e[38;5;76m
+YELLOW				:= \e[1m\e[38;5;220m
+BLUE				:= \e[1m\e[38;5;33m
+VIOLET				:= \033[1;35m
+CYAN				:= \033[1;36m
+WHITE				:= \033[1;37m
 
 #=================================COUNTER UTILS================================#
-NB_COMPIL		:=	0
+NB_COMPIL			:= 0
 
 ifndef	RECURSIVE
-TOTAL_COMPIL		:=	$(shell expr $$(make -n RECURSIVE=1 | grep $(CC) | wc -l) - 1)
+TOTAL_COMPIL		:= $(shell expr $$(make -n RECURSIVE=1 | grep $(CC) | wc -l) - 1)
 endif
 ifndef TOTAL_COMPIL
-TOTAL_COMPIL		:=	$(words $(OBJS))
+TOTAL_COMPIL		:= $(words $(OBJS))
 endif
 
 #=====================================RULES====================================#
