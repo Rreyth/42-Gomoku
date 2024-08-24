@@ -1,9 +1,10 @@
-#include <SFML/Graphics.hpp>
-#include <iostream>
-
 #include <define.hpp>
 #include <Functions.hpp>
 #include <TextureManager.hpp>
+#include <Mouse.hpp>
+
+#include <SFML/Graphics.hpp>
+#include <iostream>
 
 int	main(void)
 {
@@ -15,6 +16,7 @@ int	main(void)
 	sf::Clock clock;
 
 	TextureManager	textureManager;
+	Mouse			mouse;
 
 	sf::Font font;
 	if (!font.loadFromFile("data/fonts/Roboto.ttf"))
@@ -28,21 +30,43 @@ int	main(void)
 	// run the program as long as the window is open
 	while (window.isOpen())
 	{
-		// check all the window's events that were triggered since the last iteration of the loop
+		// Event part
 		sf::Event event;
+		mouse.updatePosition();
 		while (window.pollEvent(event))
 		{
 			// "close requested" event: we close the window
 			if (event.type == sf::Event::Closed)
 				window.close();
+
+			else if (event.type == sf::Event::MouseButtonPressed)
+			{
+				if (event.key.code == 0)
+					mouse.updateMbutton(MBUT_LEFT, true);
+				else if (event.key.code == 2)
+					mouse.updateMbutton(MBUT_MIDDLE, true);
+				else if (event.key.code == 1)
+					mouse.updateMbutton(MBUT_RIGHT, true);
+			}
+
+			else if (event.type == sf::Event::MouseButtonReleased)
+			{
+				if (event.key.code == 0)
+					mouse.updateMbutton(MBUT_LEFT, false);
+				else if (event.key.code == 2)
+					mouse.updateMbutton(MBUT_MIDDLE, false);
+				else if (event.key.code == 1)
+					mouse.updateMbutton(MBUT_RIGHT, false);
+			}
 		}
 
+		// Tick part
 		float delta = clock.restart().asSeconds();
 		float fps = 1.0f / delta;
 		std::string title(std::to_string(fps));
 		window.setTitle(title);
 
-		// clear the window with black color
+		// Draw part
 		window.clear(sf::Color(150, 150, 150));
 
 		// draw everything here...
