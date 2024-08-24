@@ -39,10 +39,10 @@ Button::~Button()
 
 }
 
-
 //=============================================================================
 //Publics methods
 //=============================================================================
+
 void Button::draw(sf::RenderWindow *window, sf::Text *text)
 {
 	if (!this->mouseOver)
@@ -67,4 +67,29 @@ void Button::tick(Mouse *mouse)
 bool Button::getPressed( void )
 {
 	return (this->pressed);
+}
+
+
+void	Button::setProperties(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
+						int x, int y, int w, int h, sf::Color colorOff,
+						sf::Color colorOn, int borderSize, sf::Color borderColor)
+{
+	this->x = x;
+	this->y = y;
+	this->w = w;
+	this->h = h;
+
+	this->text = text;
+	this->fontSize = fontSize;
+	this->textPos = textPos;
+	this->textColor = textColor;
+
+	this->shape = sf::RectangleShape();
+	this->shape.setPosition(this->x, this->y);
+	this->shape.setSize(sf::Vector2f(this->w, this->h));
+	this->shape.setOutlineThickness(borderSize);
+	this->shape.setOutlineColor(borderColor);
+
+	this->colorOff = colorOff;
+	this->colorOn = colorOn;
 }

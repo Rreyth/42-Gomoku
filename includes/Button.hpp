@@ -16,9 +16,12 @@ public:
 			sf::Color colorOn, int borderSize, sf::Color borderColor);
 	~Button();
 
-	void draw(sf::RenderWindow *window, sf::Text *text);
-	void tick(Mouse *mouse);
-	bool getPressed(void);
+	void	draw(sf::RenderWindow *window, sf::Text *text);
+	void	tick(Mouse *mouse);
+	bool	getPressed(void);
+	void	setProperties(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
+							int x, int y, int w, int h, sf::Color colorOff,
+							sf::Color colorOn, int borderSize, sf::Color borderColor);
 
 private:
 	int					x, y, w, h, fontSize;

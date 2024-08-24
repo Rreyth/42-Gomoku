@@ -23,6 +23,7 @@ SRCS				:=	srcs/main.cpp \
 						srcs/TextureManager.cpp \
 						srcs/Mouse.cpp \
 						srcs/Button.cpp \
+						srcs/Menu.cpp \
 
 OBJS 				:= ${SRCS:srcs/%.cpp=$(BUILD)/%.o}
 DEPS				:= $(SRCS:srcs/%.cpp=$(BUILD)/%.d)

@@ -3,6 +3,7 @@
 #include <TextureManager.hpp>
 #include <Mouse.hpp>
 #include <Button.hpp>
+#include <Menu.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -18,6 +19,7 @@ int	main(void)
 	sf::Font			font;
 	sf::Text			text;
 	display_state		displayState = DISPLAY_MENU;
+	Menu				menu;
 
 	try
 	{
@@ -31,9 +33,6 @@ int	main(void)
 		return (1);
 	}
 
-	Button but("Test", 20, MID_CENTER, sf::Color(10, 10, 100),
-				500, 100, 100, 40, sf::Color(100, 100, 100), sf::Color(200, 200, 200),
-				2, sf::Color::Black);
 	window.setFramerateLimit(1000);
 	text.setFont(font);
 
@@ -74,19 +73,17 @@ int	main(void)
 		float fps = 1.0f / delta;
 		std::string title(std::to_string(fps));
 		window.setTitle(title);
-
-		but.tick(&mouse);
-		if (but.getPressed())
-			std::cout << "General Kenobi\n";
+		menu.tick(&displayState, delta, &mouse);
 
 		// Draw part
 		window.clear(sf::Color(150, 150, 150));
 
-		textureManager.drawTexture(&window, SPRITE_GRID, WIN_W / 2, WIN_H / 2, MID_CENTER);
-		drawText(&window, &text, "Hello there", 100, 100, 20, sf::Color(255, 0, 10), MID_CENTER);
-		but.draw(&window, &text);
+		menu.draw(&window, &text);
 
 		window.display();
+
+		if (displayState == DISPLAY_QUIT)
+			window.close();
 	}
 
 	return 0;
