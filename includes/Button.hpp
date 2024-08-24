@@ -3,6 +3,7 @@
 
 # include <define.hpp>
 # include <Mouse.hpp>
+# include <TextureManager.hpp>
 
 # include <SFML/Graphics.hpp>
 # include <iostream>
@@ -12,24 +13,22 @@ class Button
 public:
 	Button(void);
 	Button(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
-			int x, int y, int w, int h, sf::Color colorOff,
-			sf::Color colorOn, int borderSize, sf::Color borderColor);
+			int x, int y, int w, int h, sprite_name onSprite, sprite_name offSprite);
 	~Button();
 
-	void	draw(sf::RenderWindow *window, sf::Text *text);
+	void	draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	void	tick(Mouse *mouse);
 	bool	getPressed(void);
 	void	setProperties(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
-							int x, int y, int w, int h, sf::Color colorOff,
-							sf::Color colorOn, int borderSize, sf::Color borderColor);
+							int x, int y, int w, int h, sprite_name onSprite, sprite_name offSprite);
 
 private:
 	int					x, y, w, h, fontSize;
 	draw_pos			textPos;
+	sprite_name			onSprite, offSprite;
 	bool				mouseOver, pressed;
 	sf::Color			textColor, colorOff, colorOn;
 	std::string			text;
-	sf::RectangleShape	shape;
 };
 
 

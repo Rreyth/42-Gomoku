@@ -10,8 +10,7 @@ Button::Button()
 }
 
 Button::Button(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
-				int x, int y, int w, int h, sf::Color colorOff,
-				sf::Color colorOn, int borderSize, sf::Color borderColor)
+				int x, int y, int w, int h, sprite_name onSprite, sprite_name offSprite)
 {
 	this->x = x;
 	this->y = y;
@@ -23,14 +22,8 @@ Button::Button(std::string text, int fontSize, draw_pos textPos, sf::Color textC
 	this->textPos = textPos;
 	this->textColor = textColor;
 
-	this->shape = sf::RectangleShape();
-	this->shape.setPosition(this->x, this->y);
-	this->shape.setSize(sf::Vector2f(this->w, this->h));
-	this->shape.setOutlineThickness(borderSize);
-	this->shape.setOutlineColor(borderColor);
-
-	this->colorOff = colorOff;
-	this->colorOn = colorOn;
+	this->onSprite = onSprite;
+	this->offSprite = offSprite;
 }
 
 
@@ -43,13 +36,12 @@ Button::~Button()
 //Publics methods
 //=============================================================================
 
-void Button::draw(sf::RenderWindow *window, sf::Text *text)
+void Button::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
 {
 	if (!this->mouseOver)
-		this->shape.setFillColor(this->colorOff);
+		textureManager->drawTexture(window, this->offSprite, this->x, this->y, TOP_LEFT);
 	else
-		this->shape.setFillColor(this->colorOn);
-	window->draw(this->shape);
+		textureManager->drawTexture(window, this->onSprite, this->x, this->y, TOP_LEFT);
 
 	drawText(window, text, this->text,
 		this->x + (this->w / 2), this->y + (this->h / 2),
@@ -71,8 +63,7 @@ bool Button::getPressed( void )
 
 
 void	Button::setProperties(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
-						int x, int y, int w, int h, sf::Color colorOff,
-						sf::Color colorOn, int borderSize, sf::Color borderColor)
+						int x, int y, int w, int h, sprite_name onSprite, sprite_name offSprite)
 {
 	this->x = x;
 	this->y = y;
@@ -84,12 +75,6 @@ void	Button::setProperties(std::string text, int fontSize, draw_pos textPos, sf:
 	this->textPos = textPos;
 	this->textColor = textColor;
 
-	this->shape = sf::RectangleShape();
-	this->shape.setPosition(this->x, this->y);
-	this->shape.setSize(sf::Vector2f(this->w, this->h));
-	this->shape.setOutlineThickness(borderSize);
-	this->shape.setOutlineColor(borderColor);
-
-	this->colorOff = colorOff;
-	this->colorOn = colorOn;
+	this->onSprite = onSprite;
+	this->offSprite = offSprite;
 }

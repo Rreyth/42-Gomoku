@@ -23,6 +23,10 @@ TextureManager::~TextureManager(void)
 void	TextureManager::loadTextures(void)
 {
 	this->loadTexture(SPRITE_GRID, "grid.png");
+	this->loadTexture(SPRITE_ROUND_BUTTON_OFF, "round_button_off.png");
+	this->loadTexture(SPRITE_ROUND_BUTTON_ON, "round_button_on.png");
+	this->loadTexture(SPRITE_SQUARE_BUTTON_OFF, "square_button_off.png");
+	this->loadTexture(SPRITE_SQUARE_BUTTON_ON, "square_button_on.png");
 }
 
 
@@ -64,5 +68,5 @@ void	TextureManager::loadTexture(sprite_name name, std::string filename)
 {
 	if (!this->textures[name].loadFromFile("data/sprites/" + filename))
 		throw std::invalid_argument("");
-	this->sprites->setTexture(this->textures[name]);
+	this->sprites[name].setTexture(this->textures[name]);
 }

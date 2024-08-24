@@ -76,9 +76,9 @@ int	main(void)
 		menu.tick(&displayState, delta, &mouse);
 
 		// Draw part
-		window.clear(sf::Color(150, 150, 150));
+		window.clear();
 
-		menu.draw(&window, &text);
+		menu.draw(&window, &text, &textureManager);
 
 		window.display();
 
