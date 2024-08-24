@@ -18,7 +18,10 @@ NAME				:= Gomoku
 BUILD				:= build
 
 #====================================TARGETS===================================#
-SRCS				:= srcs/main.cpp
+SRCS				:=	srcs/main.cpp \
+						srcs/Functions.cpp \
+						srcs/LoadException.cpp \
+						srcs/TextureManager.cpp \
 
 OBJS 				:= ${SRCS:srcs/%.cpp=$(BUILD)/%.o}
 DEPS				:= $(SRCS:srcs/%.cpp=$(BUILD)/%.d)

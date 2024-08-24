@@ -1,13 +1,29 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
+
+#include <define.hpp>
+#include <Functions.hpp>
+#include <TextureManager.hpp>
 
 int	main(void)
 {
 	// create the window
-	sf::RenderWindow window(sf::VideoMode(800, 600), "My window");
+	sf::RenderWindow window(sf::VideoMode(WIN_W, WIN_H), "42 :)");
 
 	window.setFramerateLimit(1000);
 
 	sf::Clock clock;
+
+	TextureManager	textureManager;
+
+	sf::Font font;
+	if (!font.loadFromFile("data/fonts/Roboto.ttf"))
+	{
+		// erreur...
+	}
+
+	sf::Text text;
+	text.setFont(font);
 
 	// run the program as long as the window is open
 	while (window.isOpen())
@@ -27,10 +43,13 @@ int	main(void)
 		window.setTitle(title);
 
 		// clear the window with black color
-		window.clear(sf::Color::Black);
+		window.clear(sf::Color(150, 150, 150));
 
 		// draw everything here...
 		// window.draw(...);
+		textureManager.drawTexture(&window, SPRITE_GRID, WIN_W / 2, WIN_H / 2, MID_CENTER);
+
+		drawText(&window, text, "Hello there", 100, 100, 20, sf::Color(255, 0, 10), MID_CENTER);
 
 		// end the current frame
 		window.display();

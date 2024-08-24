@@ -1,0 +1,20 @@
+#ifndef DEFINE_HPP
+# define DEFINE_HPP
+
+// WINDOW DEFINE
+# define WIN_W 1600
+# define WIN_H 900
+
+typedef enum e_draw_pos {
+	TOP_LEFT,
+	TOP_CENTER,
+	TOP_RIGHT,
+	MID_LEFT,
+	MID_CENTER,
+	MID_RIGHT,
+	BOT_LEFT,
+	BOT_CENTER,
+	BOT_RIGHT,
+}	draw_pos;
+
+#endif
