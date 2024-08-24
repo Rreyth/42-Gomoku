@@ -21,7 +21,7 @@ public:
 	bool	isPressed(mouse_button mbut) const;
 	bool	isDown(mouse_button mbut) const;
 
-	void	updatePosition(void);
+	void	updatePosition(sf::RenderWindow *window);
 	void	updateMbutton(mouse_button mbut, bool state);
 
 	bool	inRectangle(int x, int y, int w, int h) const;

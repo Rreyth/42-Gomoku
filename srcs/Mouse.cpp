@@ -51,10 +51,11 @@ bool	Mouse::isDown(mouse_button mbut) const
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
-void	Mouse::updatePosition(void)
+void	Mouse::updatePosition(sf::RenderWindow *window)
 {
-	this->x = this->SFML_mouse.getPosition().x;
-	this->y = this->SFML_mouse.getPosition().y;
+	sf::Vector2i size = this->SFML_mouse.getPosition(*window);
+	this->x = size.x;
+	this->y = size.y;
 	for (int i = 0; i < 3; i++)
 		this->pressed[i] = false;
 }

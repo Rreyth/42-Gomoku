@@ -19,4 +19,10 @@ typedef enum e_draw_pos {
 	BOT_RIGHT,
 }	draw_pos;
 
+typedef enum e_display_state {
+	DISPLAY_MENU,
+	DISPLAY_SETTINGS,
+	DISPLAY_GAME,
+}	display_state;
+
 #endif
