@@ -19,6 +19,7 @@ public:
 	TextureManager(void);
 	~TextureManager();
 
+	void	loadTextures(void);
 	void	drawTexture(sf::RenderWindow *window, sprite_name name, int x, int y, draw_pos pos);
 
 private:

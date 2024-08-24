@@ -20,7 +20,6 @@ BUILD				:= build
 #====================================TARGETS===================================#
 SRCS				:=	srcs/main.cpp \
 						srcs/Functions.cpp \
-						srcs/LoadException.cpp \
 						srcs/TextureManager.cpp \
 						srcs/Mouse.cpp \
 
@@ -87,8 +86,7 @@ re :
 
 run: $(NAME)
 	@echo "$(BLUE)Launch game$(NOC)"
-	@export LD_LIBRARY_PATH=SFML_linux/lib/ && ./$(NAME)
-	@echo "$(GREEN)Have a nice day :)$(NOC)"
+	@export LD_LIBRARY_PATH=SFML_linux/lib/ && ./$(NAME) && echo "$(GREEN)Have a nice day :)$(NOC)" || echo "$(RED)Problem$(NOC)"
 
 runval: $(NAME)
 	@echo "$(BLUE)Debug$(NOC)"

@@ -5,29 +5,34 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <stdexcept>
 
 int	main(void)
 {
-	// create the window
-	sf::RenderWindow window(sf::VideoMode(WIN_W, WIN_H), "42 :)");
+	// Initialisation
+	sf::RenderWindow	window(sf::VideoMode(WIN_W, WIN_H), "42 :)");
+	sf::Clock			clock;
+	TextureManager		textureManager;
+	Mouse				mouse;
+	sf::Font			font;
+	sf::Text			text;
 
-	window.setFramerateLimit(1000);
-
-	sf::Clock clock;
-
-	TextureManager	textureManager;
-	Mouse			mouse;
-
-	sf::Font font;
-	if (!font.loadFromFile("data/fonts/Roboto.ttf"))
+	try
 	{
-		// erreur...
+		textureManager.loadTextures();
+		if (!font.loadFromFile(FONT_PATH))
+			throw std::invalid_argument("");
+	}
+	catch (const std::exception &e)
+	{
+		window.close();
+		return (1);
 	}
 
-	sf::Text text;
+	window.setFramerateLimit(1000);
 	text.setFont(font);
 
-	// run the program as long as the window is open
+	// Main loop
 	while (window.isOpen())
 	{
 		// Event part
@@ -35,7 +40,6 @@ int	main(void)
 		mouse.updatePosition();
 		while (window.pollEvent(event))
 		{
-			// "close requested" event: we close the window
 			if (event.type == sf::Event::Closed)
 				window.close();
 
@@ -69,13 +73,10 @@ int	main(void)
 		// Draw part
 		window.clear(sf::Color(150, 150, 150));
 
-		// draw everything here...
-		// window.draw(...);
 		textureManager.drawTexture(&window, SPRITE_GRID, WIN_W / 2, WIN_H / 2, MID_CENTER);
 
 		drawText(&window, text, "Hello there", 100, 100, 20, sf::Color(255, 0, 10), MID_CENTER);
 
-		// end the current frame
 		window.display();
 	}
 

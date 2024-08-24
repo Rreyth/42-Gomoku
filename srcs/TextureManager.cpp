@@ -1,7 +1,7 @@
 #include <TextureManager.hpp>
-#include <LoadException.hpp>
 
 #include <iostream>
+#include <stdexcept>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
@@ -9,7 +9,6 @@
 
 TextureManager::TextureManager(void)
 {
-	this->loadTexture(SPRITE_GRID, "grid.png");
 }
 
 
@@ -21,6 +20,11 @@ TextureManager::~TextureManager(void)
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
+void	TextureManager::loadTextures(void)
+{
+	this->loadTexture(SPRITE_GRID, "grid.png");
+}
+
 
 void	TextureManager::drawTexture(sf::RenderWindow *window, sprite_name name, int x, int y, draw_pos pos)
 {
@@ -59,8 +63,6 @@ void	TextureManager::drawTexture(sf::RenderWindow *window, sprite_name name, int
 void	TextureManager::loadTexture(sprite_name name, std::string filename)
 {
 	if (!this->textures[name].loadFromFile("data/sprites/" + filename))
-	{
-		throw LoadException(filename + " not found");
-	}
+		throw std::invalid_argument("");
 	this->sprites->setTexture(this->textures[name]);
 }
