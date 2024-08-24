@@ -14,7 +14,7 @@
 # example:
 #   find_package(SFML COMPONENTS ...)     # no specific version required
 #   find_package(SFML 2 COMPONENTS ...)   # any 2.x version
-#   find_package(SFML 2.4 COMPONENTS ...) # version 2.4 or greater
+#   find_package(SFML 2.6 COMPONENTS ...) # version 2.6 or greater
 #
 # By default, the dynamic libraries of SFML will be found. To find the static ones instead,
 # you must set the SFML_STATIC_LIBRARIES variable to TRUE before calling find_package(SFML ...).
@@ -77,7 +77,7 @@ set(FIND_SFML_PATHS
     /opt)
 
 find_path(SFML_DOC_DIR SFML.tag
-          PATH_SUFFIXES SFML/doc share/SFML/doc
+          PATH_SUFFIXES SFML/doc share/doc/SFML
           PATHS ${FIND_SFML_PATHS})
 
 
@@ -98,7 +98,7 @@ list(REMOVE_DUPLICATES SFML_FIND_COMPONENTS)
 
 # Choose which target definitions must be imported
 if (SFML_STATIC_LIBRARIES)
-	set(SFML_IS_FRAMEWORK_INSTALL "")
+	set(SFML_IS_FRAMEWORK_INSTALL "FALSE")
     if (SFML_IS_FRAMEWORK_INSTALL)
         message(WARNING "Static frameworks are not supported by SFML. Clear SFML_DIR cache entry, \
 and either change SFML_STATIC_LIBRARIES or CMAKE_FIND_FRAMEWORK before calling find_package(SFML)")
@@ -144,5 +144,5 @@ if (NOT SFML_FOUND)
 endif()
 
 if (SFML_FOUND AND NOT SFML_FIND_QUIETLY)
-    message(STATUS "Found SFML 2.5.1 in ${CMAKE_CURRENT_LIST_DIR}")
+    message(STATUS "Found SFML 2.6.1 in ${CMAKE_CURRENT_LIST_DIR}")
 endif()
