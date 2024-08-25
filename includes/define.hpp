@@ -24,6 +24,7 @@ typedef enum e_display_state {
 	DISPLAY_SETTINGS,
 	DISPLAY_MODEMENU,
 	DISPLAY_GAME,
+	DISPLAY_END,
 	DISPLAY_QUIT
 }	display_state;
 

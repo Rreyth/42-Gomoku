@@ -7,6 +7,7 @@
 #include <Settings.hpp>
 #include <ModeMenu.hpp>
 #include <Game.hpp>
+#include <End.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -26,6 +27,7 @@ int	main(void)
 	Settings			settings;
 	ModeMenu			modeMenu;
 	Game				game;
+	End					end;
 
 	try
 	{
@@ -100,6 +102,10 @@ int	main(void)
 		case DISPLAY_GAME:
 			game.tick(&displayState, delta, &mouse);
 			game.draw(&window, &text, &textureManager);
+			break;
+		case DISPLAY_END:
+			end.tick(&displayState, delta, &mouse);
+			end.draw(&window, &text, &textureManager);
 			break;
 		}
 
