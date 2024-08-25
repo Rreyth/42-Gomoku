@@ -48,9 +48,6 @@ void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 	//draw stones
 	grid.draw(window, text, textureManager);
 
-	//draw players infos
-	//draw ai infos
-
 	this->drawLeftSide(window, text, textureManager);
 	this->drawRightSide(window, text, textureManager);
 	this->drawBottom(window, text, textureManager);

@@ -30,6 +30,8 @@ void	TextureManager::loadTextures(void)
 	this->loadTexture(SPRITE_SQUARE_BUTTON_ON, "square_button_on.png");
 	this->loadTexture(SPRITE_GEAR_BUTTON_OFF, "gear_button_off.png");
 	this->loadTexture(SPRITE_GEAR_BUTTON_ON, "gear_button_on.png");
+	this->loadTexture(SPRITE_STONE_RED, "stone_red.png");
+	this->loadTexture(SPRITE_STONE_BLUE, "stone_blue.png");
 
 	// Scale sprites
 	this->scaleSprite(SPRITE_ROUND_BUTTON_OFF, 2.0f, 2.0f);
@@ -49,12 +51,13 @@ void TextureManager::scaleSprite(sprite_name name, float x, float y)
 
 void	TextureManager::drawTexture(sf::RenderWindow *window, sprite_name name, int x, int y, draw_pos pos)
 {
-	sf::Vector2u size;
 	int w, h;
 
-	size = this->textures[name].getSize();
-	w = size.x;
-	h = size.y;
+	sf::Vector2u txt_size = this->textures[name].getSize();
+	sf::Vector2f scale = this->sprites[name].getScale();
+
+	w = txt_size.x * scale.x;
+	h = txt_size.y * scale.y;
 
 	if (pos == TOP_LEFT)
 		this->sprites[name].setPosition(x, y);

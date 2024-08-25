@@ -45,17 +45,17 @@ void	Grid::tick(Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::stri
 
 void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
 {
-	//draw board
-	textureManager->drawTexture(window, SPRITE_GRID, WIN_W / 2, WIN_H / 2, MID_CENTER);
-	drawText(window, text, "A", this->x + 34, this->y - 20, 20, sf::Color::White, MID_CENTER);
-	drawText(window, text, "1", this->x - 20, this->y + 30, 20, sf::Color::White, MID_CENTER);
-	//letters top
-	//numbers left
+	textureManager->drawTexture(window, SPRITE_GRID, this->x, this->y, TOP_LEFT);
 
+	//letters top
+	drawText(window, text, "A", this->x + 34, this->y - 20, 20, sf::Color::White, MID_CENTER);
+	//numbers left
+	drawText(window, text, "1", this->x - 20, this->y + 30, 20, sf::Color::White, MID_CENTER);
 
 	//draw stones
-
-
+	// textureManager->drawTexture(window, SPRITE_STONE_RED, this->x + 34, this->y + 34, MID_CENTER);
+	// textureManager->drawTexture(window, SPRITE_STONE_BLUE, this->x + 68, this->y + 68, MID_CENTER);
+	// textureManager->drawTexture(window, SPRITE_STONE_BLUE, this->x + 68 + 34, this->y + 68, MID_CENTER);
 }
 
 int		Grid::getW(void)
