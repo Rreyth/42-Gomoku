@@ -25,6 +25,7 @@ SRCS				:=	srcs/main.cpp \
 						srcs/Button.cpp \
 						srcs/Menu.cpp \
 						srcs/Settings.cpp \
+						srcs/ModeMenu.cpp \
 
 OBJS 				:= ${SRCS:srcs/%.cpp=$(BUILD)/%.o}
 DEPS				:= $(SRCS:srcs/%.cpp=$(BUILD)/%.d)

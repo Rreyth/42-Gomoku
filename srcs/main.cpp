@@ -5,6 +5,7 @@
 #include <Button.hpp>
 #include <Menu.hpp>
 #include <Settings.hpp>
+#include <ModeMenu.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -22,6 +23,7 @@ int	main(void)
 	display_state		displayState = DISPLAY_MENU;
 	Menu				menu;
 	Settings			settings;
+	ModeMenu			modeMenu;
 
 	try
 	{
@@ -83,11 +85,15 @@ int	main(void)
 		{
 		case DISPLAY_MENU:
 			menu.tick(&displayState, delta, &mouse);
-			menu.draw(&window, &text, &textureManager);		
+			menu.draw(&window, &text, &textureManager);
 			break;
 		case DISPLAY_SETTINGS:
 			settings.tick(&displayState, delta, &mouse);
 			settings.draw(&window, &text, &textureManager);
+			break;
+		case DISPLAY_MODEMENU:
+			modeMenu.tick(&displayState, delta, &mouse);
+			modeMenu.draw(&window, &text, &textureManager);
 			break;
 		}
 

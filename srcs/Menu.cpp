@@ -39,8 +39,8 @@ void	Menu::tick(display_state *displayState, float delta, Mouse *mouse)
 		*displayState = DISPLAY_QUIT;
 	else if (this->settings.getPressed())
 		*displayState = DISPLAY_SETTINGS;
-	// else if (this->play.getPressed())
-		// *displayState = DISPLAY_GAME;
+	else if (this->play.getPressed())
+		*displayState = DISPLAY_MODEMENU;
 }
 
 
