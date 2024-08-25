@@ -1,21 +1,20 @@
-#ifndef MODMENU_HPP
-# define MODMENU_HPP
+#ifndef GAME_HPP
+# define GAME_HPP
 
 # include <define.hpp>
 # include <Button.hpp>
 
-class ModeMenu
+class Game
 {
 public:
-	ModeMenu(void);
-	~ModeMenu();
+	Game(void);
+	~Game();
 
 	void	tick(display_state *displayState, float delta, Mouse *mouse);
 	void	draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 
 private:
-	std::string	title;
-	Button		back, play;
+	Button		leave;
 };
 
 #endif
