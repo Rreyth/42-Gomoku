@@ -4,6 +4,7 @@
 #include <Mouse.hpp>
 #include <Button.hpp>
 #include <Menu.hpp>
+#include <Settings.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
@@ -20,6 +21,7 @@ int	main(void)
 	sf::Text			text;
 	display_state		displayState = DISPLAY_MENU;
 	Menu				menu;
+	Settings			settings;
 
 	try
 	{
@@ -73,12 +75,21 @@ int	main(void)
 		float fps = 1.0f / delta;
 		std::string title(std::to_string(fps));
 		window.setTitle(title);
-		menu.tick(&displayState, delta, &mouse);
 
 		// Draw part
 		window.clear();
 
-		menu.draw(&window, &text, &textureManager);
+		switch (displayState)
+		{
+		case DISPLAY_MENU:
+			menu.tick(&displayState, delta, &mouse);
+			menu.draw(&window, &text, &textureManager);		
+			break;
+		case DISPLAY_SETTINGS:
+			settings.tick(&displayState, delta, &mouse);
+			settings.draw(&window, &text, &textureManager);
+			break;
+		}
 
 		window.display();
 

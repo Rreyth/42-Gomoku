@@ -18,7 +18,7 @@ Menu::Menu(void)
 						SPRITE_GEAR_BUTTON_ON, SPRITE_GEAR_BUTTON_OFF);
 
 	this->quit.setProperties("QUIT", 25, MID_CENTER, sf::Color::White,
-						20, WIN_H - 60, 100, 40,
+						20, WIN_H - 60, 190, 48,
 						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF);
 }
 
@@ -37,6 +37,10 @@ void	Menu::tick(display_state *displayState, float delta, Mouse *mouse)
 
 	if (this->quit.getPressed())
 		*displayState = DISPLAY_QUIT;
+	else if (this->settings.getPressed())
+		*displayState = DISPLAY_SETTINGS;
+	// else if (this->play.getPressed())
+		// *displayState = DISPLAY_GAME;
 }
 
 

@@ -34,6 +34,8 @@ void	TextureManager::loadTextures(void)
 	// Scale sprites
 	this->scaleSprite(SPRITE_ROUND_BUTTON_OFF, 2.0f, 2.0f);
 	this->scaleSprite(SPRITE_ROUND_BUTTON_ON, 2.0f, 2.0f);
+	this->scaleSprite(SPRITE_SQUARE_BUTTON_OFF, 1.9f, 1.2f);
+	this->scaleSprite(SPRITE_SQUARE_BUTTON_ON, 1.9f, 1.2f);
 	this->scaleSprite(SPRITE_GEAR_BUTTON_OFF, 0.5f, 0.5f);
 	this->scaleSprite(SPRITE_GEAR_BUTTON_ON, 0.5f, 0.5f);
 }
