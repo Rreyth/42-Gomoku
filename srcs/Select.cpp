@@ -70,6 +70,8 @@ int	Select::getSelected(void)
 
 void	Select::setSelected(int selected)
 {
+	if (selected < 0 || selected >= this->texts.size())
+		return ;
 	this->selected = selected;
 }
 
