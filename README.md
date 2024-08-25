@@ -1,21 +1,15 @@
-# Projet
-Ceci est juste une base de projet C++ utilisant la SFML avec un moyen de le compiler sous Windows ou Linux
+# Project
+42 project Gomoku about making a game of Gomoku and an AI beating people to it.
+(Linux only)
 
 # Compilation
-## Linux :
 make
 
-## Windows :
-mingw32-make win
-
-## .exe a partir d'un linux :
-make linux-win 
-
-# Lancement
-## Linux :
+# Launch
 make run
 
-## Windows :
-mingw32-make winrun
-OU
-Double clique sur le .exe dans windows_executable
+# Contributors
+
+[![aderouba's 42 stats](https://badge.mediaplus.ma/honeytones/aderouba?1337Badge=off&UM6P=off)](https://github.com/agtdbx)
+
+[![tdhaussy's 42 stats](https://badge.mediaplus.ma/darkblue/tdhaussy?1337Badge=off&UM6P=off)](https://github.com/Rreyth)
