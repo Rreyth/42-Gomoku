@@ -48,7 +48,7 @@ ModeMenu::~ModeMenu()
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
-void	ModeMenu::tick(display_state *displayState, float delta, Mouse *mouse)
+void	ModeMenu::tick(display_state *displayState, float delta, Mouse *mouse, Game *game)
 {
 	this->play.tick(mouse);
 	this->back.tick(mouse);
@@ -59,7 +59,11 @@ void	ModeMenu::tick(display_state *displayState, float delta, Mouse *mouse)
 	if (this->back.getPressed())
 		*displayState = DISPLAY_MENU;
 	else if (this->play.getPressed())
+	{
+		game->setPlayers((player_type)this->playerLeft.getSelected(),
+						(player_type)this->playerRight.getSelected());
 		*displayState = DISPLAY_GAME;
+	}
 }
 
 

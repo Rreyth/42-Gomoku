@@ -27,4 +27,9 @@ typedef enum e_display_state {
 	DISPLAY_QUIT
 }	display_state;
 
+typedef enum e_player_type {
+	PLAYER,
+	AI
+}	player_type;
+
 #endif

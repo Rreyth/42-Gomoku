@@ -94,7 +94,7 @@ int	main(void)
 			settings.draw(&window, &text, &textureManager);
 			break;
 		case DISPLAY_MODEMENU:
-			modeMenu.tick(&displayState, delta, &mouse);
+			modeMenu.tick(&displayState, delta, &mouse, &game);
 			modeMenu.draw(&window, &text, &textureManager);
 			break;
 		case DISPLAY_GAME:

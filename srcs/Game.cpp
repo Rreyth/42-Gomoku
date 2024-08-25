@@ -56,6 +56,13 @@ void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 	this->leave.draw(window, text, textureManager);
 }
 
+void	Game::setPlayers(player_type playerLeft, player_type playerRight)
+{
+	//game has 2 players -> class Player
+	std::cout << "P1 = AI ? " << (playerLeft == AI ? "YES" : "NO") << std::endl;
+	std::cout << "P2 = AI ? " << (playerRight == AI ? "YES" : "NO") << std::endl;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////
