@@ -40,10 +40,35 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 {
 	//draw board
 	textureManager->drawTexture(window, SPRITE_GRID, WIN_W / 2, WIN_H / 2, MID_CENTER);
+	drawText(window, text, "A", this->x + 34, this->y - 20, 20, sf::Color::White, MID_CENTER);
+	drawText(window, text, "1", this->x - 20, this->y + 30, 20, sf::Color::White, MID_CENTER);
+	//letters top
+	//numbers left
+
 
 	//draw stones
 
 
+}
+
+int		Grid::getW(void)
+{
+	return this->w;
+}
+
+int		Grid::getH(void)
+{
+	return this->h;
+}
+
+int		Grid::getX(void)
+{
+	return this->x;
+}
+
+int		Grid::getY(void)
+{
+	return this->y;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

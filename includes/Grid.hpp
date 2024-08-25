@@ -12,6 +12,10 @@ public:
 
 	void			tick(Mouse *mouse); //add player
 	void			draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
+	int 			getW(void);
+	int 			getH(void);
+	int				getX(void);
+	int				getY(void);
 
 private:
 	int				w;
