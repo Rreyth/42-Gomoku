@@ -22,18 +22,27 @@ TextureManager::~TextureManager(void)
 ////////////////////////////////////////////////////////////////////////////////
 void	TextureManager::loadTextures(void)
 {
+	// Load sprites
 	this->loadTexture(SPRITE_GRID, "grid.png");
 	this->loadTexture(SPRITE_ROUND_BUTTON_OFF, "round_button_off.png");
 	this->loadTexture(SPRITE_ROUND_BUTTON_ON, "round_button_on.png");
 	this->loadTexture(SPRITE_SQUARE_BUTTON_OFF, "square_button_off.png");
 	this->loadTexture(SPRITE_SQUARE_BUTTON_ON, "square_button_on.png");
+	this->loadTexture(SPRITE_GEAR_BUTTON_OFF, "gear_button_off.png");
+	this->loadTexture(SPRITE_GEAR_BUTTON_ON, "gear_button_on.png");
+
+	// Scale sprites
+	this->scaleSprite(SPRITE_ROUND_BUTTON_OFF, 2.0f, 2.0f);
+	this->scaleSprite(SPRITE_ROUND_BUTTON_ON, 2.0f, 2.0f);
+	this->scaleSprite(SPRITE_GEAR_BUTTON_OFF, 0.5f, 0.5f);
+	this->scaleSprite(SPRITE_GEAR_BUTTON_ON, 0.5f, 0.5f);
 }
 
 
 void TextureManager::scaleSprite(sprite_name name, float x, float y)
 {
 	this->sprites[name].setScale(x, y);
-} 
+}
 
 
 void	TextureManager::drawTexture(sf::RenderWindow *window, sprite_name name, int x, int y, draw_pos pos)

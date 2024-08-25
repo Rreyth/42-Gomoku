@@ -6,7 +6,7 @@
 # include <SFML/Graphics.hpp>
 # include <string>
 
-# define NB_SPRITES 5
+# define NB_SPRITES 7
 
 typedef enum e_sprite_name
 {
@@ -14,7 +14,9 @@ typedef enum e_sprite_name
 	SPRITE_ROUND_BUTTON_OFF,
 	SPRITE_ROUND_BUTTON_ON,
 	SPRITE_SQUARE_BUTTON_OFF,
-	SPRITE_SQUARE_BUTTON_ON
+	SPRITE_SQUARE_BUTTON_ON,
+	SPRITE_GEAR_BUTTON_OFF,
+	SPRITE_GEAR_BUTTON_ON,
 }	sprite_name;
 
 class TextureManager
