@@ -33,6 +33,9 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 	this->leave.tick(mouse);
 	this->grid.tick(mouse);
 
+	this->playerLeft.tick(delta, this->mode);
+	this->playerRight.tick(delta, this->mode);
+
 	if (this->leave.getPressed())
 		*displayState = DISPLAY_MENU;
 }
@@ -56,11 +59,15 @@ void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 	this->leave.draw(window, text, textureManager);
 }
 
-void	Game::setPlayers(player_type playerLeft, player_type playerRight)
+void	Game::setGame(player_type playerLeft, player_type playerRight, game_mode mode)
 {
-	//game has 2 players -> class Player
-	std::cout << "P1 = AI ? " << (playerLeft == AI ? "YES" : "NO") << std::endl;
-	std::cout << "P2 = AI ? " << (playerRight == AI ? "YES" : "NO") << std::endl;
+	this->mode = mode;
+
+	this->playerLeft.setType(playerLeft);
+	this->playerLeft.setTimer(this->mode);
+
+	this->playerRight.setType(playerRight);
+	this->playerRight.setTimer(this->mode);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

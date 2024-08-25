@@ -60,8 +60,9 @@ void	ModeMenu::tick(display_state *displayState, float delta, Mouse *mouse, Game
 		*displayState = DISPLAY_MENU;
 	else if (this->play.getPressed())
 	{
-		game->setPlayers((player_type)this->playerLeft.getSelected(),
-						(player_type)this->playerRight.getSelected());
+		game->setGame((player_type)this->playerLeft.getSelected(),
+						(player_type)this->playerRight.getSelected(),
+						(game_mode)this->gamemode.getSelected());
 		*displayState = DISPLAY_GAME;
 	}
 }

@@ -32,4 +32,9 @@ typedef enum e_player_type {
 	AI
 }	player_type;
 
+typedef enum e_game_mode {
+	NORMAL,
+	BLITZ
+}	game_mode;
+
 #endif

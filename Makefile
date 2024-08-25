@@ -30,6 +30,7 @@ SRCS				:=	srcs/main.cpp \
 						srcs/Grid.cpp \
 						srcs/ToggleButton.cpp \
 						srcs/Select.cpp \
+						srcs/Player.cpp \
 
 OBJS 				:= ${SRCS:srcs/%.cpp=$(BUILD)/%.o}
 DEPS				:= $(SRCS:srcs/%.cpp=$(BUILD)/%.d)
