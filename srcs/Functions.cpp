@@ -1,7 +1,8 @@
 #include <Functions.hpp>
 
-#include<cstdlib>
+#include <cstdlib>
 #include <cmath>
+#include <random>
 
 void	drawText(sf::RenderWindow *window, sf::Text *text, std::string str,
 					int x, int y, int fontSize, sf::Color color, draw_pos pos)
@@ -32,4 +33,13 @@ void	drawText(sf::RenderWindow *window, sf::Text *text, std::string str,
 		text->setPosition(x - w, y - h);
 	text->setFillColor(color);
 	window->draw(*text);
+}
+
+int		rand_int(int start, int end)
+{
+	std::random_device dev;
+	std::mt19937 rng(dev());
+	std::uniform_int_distribution<std::mt19937::result_type> dist(start, end);
+
+	return dist(rng);
 }

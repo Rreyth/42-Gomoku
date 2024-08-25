@@ -50,12 +50,43 @@ void		Player::setTimer(game_mode mode)
 	}
 }
 
+float		Player::getTimer(void)
+{
+	return (this->timer);
+}
+
+void		Player::setName(std::string name)
+{
+	this->name = name;
+}
+
+std::string	Player::getName(void)
+{
+	return (this->name);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
-void		Player::tick(float delta, game_mode mode)
+void		Player::setPlayer(player_type type, game_mode mode, int pos)
 {
+	this->setType(type);
+	this->setTimer(mode);
+	if (pos != 0 && type == PLAYER)
+		this->setName("PLAYER " + std::to_string(pos));
+	else if (pos != 0 && type == AI)
+		this->setName("AI " + std::to_string(pos));
+	else if (type == PLAYER)
+		this->setName("PLAYER");
+	else
+		this->setName("AI");
+}
+
+void		Player::tick(float delta, game_mode mode, std::string turn)
+{
+	if (turn != this->name)
+		return ;
 	if (mode == BLITZ)
 	{
 		this->timer -= delta;

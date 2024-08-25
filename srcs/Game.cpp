@@ -1,13 +1,14 @@
 #include <Game.hpp>
 #include <Functions.hpp>
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
 ////////////////////////////////////////////////////////////////////////////////
 
 Game::Game(void)
 {
-	this->turn = "<NAME> TURN";
+	this->turn = "<NAME>";
 
 	this->leave = Button("LEAVE", 25, MID_CENTER, sf::Color::White,
 						20, WIN_H - 60, 190, 48,
@@ -31,10 +32,10 @@ Game::~Game()
 void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 {
 	this->leave.tick(mouse);
-	this->grid.tick(mouse);
+	this->grid.tick(mouse, &this->playerLeft, &this->playerRight, &this->turn);
 
-	this->playerLeft.tick(delta, this->mode);
-	this->playerRight.tick(delta, this->mode);
+	this->playerLeft.tick(delta, this->mode, this->turn);
+	this->playerRight.tick(delta, this->mode, this->turn);
 
 	if (this->leave.getPressed())
 		*displayState = DISPLAY_MENU;
@@ -43,7 +44,7 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 
 void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
 {
-	drawText(window, text, this->turn, WIN_W / 2, 20, 60, sf::Color::White, TOP_CENTER);
+	drawText(window, text, this->turn + " TURN", WIN_W / 2, 20, 60, sf::Color::White, TOP_CENTER);
 
 	//draw board
 	//draw stones
@@ -63,11 +64,21 @@ void	Game::setGame(player_type playerLeft, player_type playerRight, game_mode mo
 {
 	this->mode = mode;
 
-	this->playerLeft.setType(playerLeft);
-	this->playerLeft.setTimer(this->mode);
-
-	this->playerRight.setType(playerRight);
-	this->playerRight.setTimer(this->mode);
+	if ((playerLeft == PLAYER && playerRight == PLAYER)||
+		(playerLeft == AI && playerRight == AI))
+	{
+		this->playerLeft.setPlayer(playerLeft, mode, 1);
+		this->playerRight.setPlayer(playerRight, mode, 2);
+	}
+	else
+	{
+		this->playerLeft.setPlayer(playerLeft, mode, 0);
+		this->playerRight.setPlayer(playerRight, mode, 0);
+	}
+	if (rand_int(1, 2) == 1)
+		this->turn = this->playerLeft.getName();
+	else
+		this->turn = this->playerRight.getName();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -82,10 +93,18 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 	window->draw(this->rect);
 
 	sf::Vector2f size = this->rect.getSize();
-	drawText(window, text, "PLAYER 1", size.x / 2, gridY + (size.y * 0.05), 30, sf::Color::White, MID_CENTER);
+	std::string str = this->playerLeft.getName();
+	drawText(window, text, str, size.x / 2, gridY + (size.y * 0.05), 30, sf::Color::White, MID_CENTER);
+
 	drawText(window, text, "stone sprite", size.x / 2, gridY + (size.y * 0.4), 30, sf::Color::White, MID_CENTER);
-	drawText(window, text, "captured stones", size.x / 2, gridY + (size.y * 0.8), 30, sf::Color::White, MID_CENTER);
-	drawText(window, text, "TIMER", size.x / 2, gridY + (size.y * 0.95), 30, sf::Color::White, MID_CENTER);
+
+	str = std::to_string(this->playerLeft.getCaptured());
+	drawText(window, text, "captured stones", size.x / 2, gridY + (size.y * 0.75), 25, sf::Color::White, MID_CENTER);
+	drawText(window, text, str, size.x / 2, gridY + (size.y * 0.8), 30, sf::Color::White, MID_CENTER);
+
+	str = std::to_string((int)this->playerLeft.getTimer()) + " s";
+	drawText(window, text, "TIMER", size.x / 2, gridY + (size.y * 0.90), 25, sf::Color::White, MID_CENTER);
+	drawText(window, text, str, size.x / 2, gridY + (size.y * 0.95), 30, sf::Color::White, MID_CENTER);
 }
 
 void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
@@ -96,10 +115,18 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 	window->draw(this->rect);
 
 	sf::Vector2f size = this->rect.getSize();
-	drawText(window, text, "PLAYER 2", WIN_W - (size.x / 2), gridY + (size.y * 0.05), 30, sf::Color::White, MID_CENTER);
+	std::string str = this->playerRight.getName();
+	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.05), 30, sf::Color::White, MID_CENTER);
+
 	drawText(window, text, "stone sprite", WIN_W - (size.x / 2), gridY + (size.y * 0.4), 30, sf::Color::White, MID_CENTER);
-	drawText(window, text, "captured stones", WIN_W - (size.x / 2), gridY + (size.y * 0.8), 30, sf::Color::White, MID_CENTER);
-	drawText(window, text, "TIMER", WIN_W - (size.x / 2), gridY + (size.y * 0.95), 30, sf::Color::White, MID_CENTER);
+
+	str = std::to_string(this->playerRight.getCaptured());
+	drawText(window, text, "captured stones", WIN_W - (size.x / 2), gridY + (size.y * 0.75), 30, sf::Color::White, MID_CENTER);
+	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.80), 30, sf::Color::White, MID_CENTER);
+
+	str = std::to_string((int)this->playerRight.getTimer()) + " s";
+	drawText(window, text, "TIMER", WIN_W - (size.x / 2), gridY + (size.y * 0.90), 30, sf::Color::White, MID_CENTER);
+	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.95), 30, sf::Color::White, MID_CENTER);
 }
 
 void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)

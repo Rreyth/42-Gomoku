@@ -20,12 +20,19 @@ Grid::~Grid()
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
-void	Grid::tick(Mouse *mouse)
+void	Grid::tick(Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::string *turn)
 {
 	if (mouse->isPressed(MBUT_LEFT))
 	{
 		if (!mouse->inRectangle(this->x, this->y, this->w, this->h))
 			return;
+
+		//if valid move
+		if (*turn == leftPlayer->getName())
+			*turn = rightPlayer->getName();
+		else
+			*turn = leftPlayer->getName();
+
 		std::cout << "Mouse x in grid: " << mouse->getX() - this->x << std::endl;
 		std::cout << "Mouse y in grid: " << mouse->getY() - this->y << std::endl;
 		std::cout << "Mouse in rectangle: " << mouse->inRectangle(this->x, this->y, this->w, this->h) << std::endl;

@@ -3,6 +3,7 @@
 
 # include <define.hpp>
 # include <Button.hpp>
+# include <Player.hpp>
 
 class Grid
 {
@@ -10,7 +11,7 @@ public:
 	Grid(void);
 	~Grid();
 
-	void			tick(Mouse *mouse); //add player
+	void			tick(Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::string *turn);
 	void			draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	int 			getW(void);
 	int 			getH(void);
