@@ -10,8 +10,7 @@ Button::Button()
 }
 
 Button::Button(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
-				int x, int y, float w, float h, sprite_name onSprite, sprite_name offSprite,
-				TextureManager *textureManager)
+				int x, int y, float w, float h, sprite_name onSprite, sprite_name offSprite)
 {
 	this->x = x;
 	this->y = y;
@@ -25,8 +24,6 @@ Button::Button(std::string text, int fontSize, draw_pos textPos, sf::Color textC
 
 	this->onSprite = onSprite;
 	this->offSprite = offSprite;
-	// textureManager->scaleSprite(this->onSprite, w, h);
-	// textureManager->scaleSprite(this->offSprite, w, h);
 }
 
 
@@ -66,8 +63,7 @@ bool Button::getPressed( void )
 
 
 void	Button::setProperties(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
-						int x, int y, float w, float h, sprite_name onSprite, sprite_name offSprite,
-						TextureManager *textureManager)
+						int x, int y, float w, float h, sprite_name onSprite, sprite_name offSprite)
 {
 	this->x = x;
 	this->y = y;
@@ -81,6 +77,4 @@ void	Button::setProperties(std::string text, int fontSize, draw_pos textPos, sf:
 
 	this->onSprite = onSprite;
 	this->offSprite = offSprite;
-	// textureManager->scaleSprite(this->onSprite, w, h);
-	// textureManager->scaleSprite(this->offSprite, w, h);
 }

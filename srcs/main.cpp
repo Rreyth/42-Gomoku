@@ -19,7 +19,7 @@ int	main(void)
 	sf::Font			font;
 	sf::Text			text;
 	display_state		displayState = DISPLAY_MENU;
-	Menu				menu(&textureManager);
+	Menu				menu;
 
 	try
 	{

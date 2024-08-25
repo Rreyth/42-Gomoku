@@ -13,16 +13,14 @@ class Button
 public:
 	Button(void);
 	Button(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
-			int x, int y, float w, float h, sprite_name onSprite, sprite_name offSprite,
-			TextureManager *textureManager);
+			int x, int y, float w, float h, sprite_name onSprite, sprite_name offSprite);
 	~Button();
 
 	void	draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	void	tick(Mouse *mouse);
 	bool	getPressed(void);
 	void	setProperties(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
-							int x, int y, float w, float h, sprite_name onSprite, sprite_name offSprite,
-							TextureManager *textureManager);
+							int x, int y, float w, float h, sprite_name onSprite, sprite_name offSprite);
 
 private:
 	int					x, y, w, h, fontSize;

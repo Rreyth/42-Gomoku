@@ -7,7 +7,7 @@
 class Menu
 {
 public:
-	Menu(TextureManager *textureManager);
+	Menu(void);
 	~Menu();
 
 	void	tick(display_state *displayState, float delta, Mouse *mouse);
