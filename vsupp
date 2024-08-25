@@ -1,0 +1,3062 @@
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:malloc
+   fun:_dl_find_object_update
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_exception
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen_implementation
+   fun:dlopen@@GLIBC_2.34
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   fun:_XlcResolveLocaleName
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XimOpenIM
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcDefaultMapModifiers
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcAddLoader
+   fun:_XlcInitLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcAddLoader
+   fun:_XlcInitLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcAddLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   fun:_XlcResolveLocaleName
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcAddCT
+   fun:_XlcInitCTInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XrmInternalStringToQuark
+   fun:_XlcGetCharSet
+   fun:_XlcAddCT
+   fun:_XlcInitCTInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcInitCTInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcInitCTInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcInitCTInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcInitCTInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8Converters
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8Converters
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8Converters
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8Converters
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8Converters
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8Converters
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8LocaleConverters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8Converters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8Converters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8Converters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8Converters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8Converters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcAddUtf8Converters
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcSetConverter
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:main
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:XrmGetStringDatabase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:XGetDefault
+   fun:_XcursorGetDisplayInfo
+   fun:XcursorSupportsARGB
+   fun:XcursorNoticeCreateBitmap
+   fun:XCreatePixmap
+   fun:_ZN2sf4priv13WindowImplX1118createHiddenCursorEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcCreateDefaultCharSet
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcAddCharSet
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcCreateDefaultCharSet
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf12RenderWindowC1ENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:realloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:malloc
+   fun:strdup
+   fun:_dl_load_cache_lookup
+   fun:_dl_map_object
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_exception
+   fun:_dl_catch_error
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:malloc
+   fun:_dl_new_object
+   fun:_dl_map_object_from_fd
+   fun:_dl_map_object
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_exception
+   fun:_dl_catch_error
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:malloc
+   fun:add_to_global_resize
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_exception
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen_implementation
+   fun:dlopen@@GLIBC_2.34
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_XlcCreateDefaultCharSet
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:malloc
+   fun:strdup
+   fun:_dl_load_cache_lookup
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_exception
+   fun:_dl_map_object_deps
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:malloc
+   fun:_dl_new_object
+   fun:_dl_map_object_from_fd
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_exception
+   fun:_dl_map_object_deps
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcCreateDefaultCharSet
+   fun:_XlcAddCT
+   fun:_XlcInitCTInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcDefaultLoader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcAddCharSet
+   fun:_XlcAddCT
+   fun:_XlcInitCTInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcCreateDefaultCharSet
+   fun:_XlcAddCT
+   fun:_XlcInitCTInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:strdup
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XlcAddCT
+   fun:_XlcInitCTInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:calloc
+   fun:_dl_check_map_versions
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_exception
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen_implementation
+   fun:dlopen@@GLIBC_2.34
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_XlcCreateDefaultCharSet
+   fun:_XlcAddCT
+   fun:_XlcInitCTInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+   fun:Xutf8SetWMProperties
+   fun:_ZN2sf4priv13WindowImplX118setTitleERKNS_6StringE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XrmInternalStringToQuark
+   fun:_XlcGetCharSet
+   fun:_XlcAddCT
+   fun:_XlcInitCTInfo
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:Xutf8TextListToTextProperty
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_XrmInternalStringToQuark
+   fun:_XlcGetLocaleDataBase
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0
+   fun:_XlcCreateLC
+   fun:_XlcUtf8Loader
+   fun:_XOpenLC
+   fun:XSetLocaleModifiers
+   fun:_ZN2sf4priv7OpenXIMEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_XrmInternalStringToQuark
+   fun:XGetDefault
+   fun:_XcursorGetDisplayInfo
+   fun:XcursorSupportsARGB
+   fun:XcursorNoticeCreateBitmap
+   fun:XCreatePixmap
+   fun:_ZN2sf4priv13WindowImplX1118createHiddenCursorEv
+   fun:_ZN2sf4priv13WindowImplX1110initializeEv
+   fun:_ZN2sf4priv13WindowImplX11C1ENS_9VideoModeERKNS_6StringEmRKNS_15ContextSettingsE
+   fun:_ZN2sf4priv10WindowImpl6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+   fun:_ZN2sf6Window6createENS_9VideoModeERKNS_6StringEjRKNS_15ContextSettingsE
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:calloc
+   fun:_dl_new_object
+   fun:_dl_map_object_from_fd
+   fun:_dl_map_object
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_exception
+   fun:_dl_catch_error
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.555.42.06
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:calloc
+   fun:_dl_new_object
+   fun:_dl_map_object_from_fd
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_exception
+   fun:_dl_map_object_deps
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+}
