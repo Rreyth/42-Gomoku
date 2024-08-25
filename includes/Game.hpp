@@ -3,6 +3,7 @@
 
 # include <define.hpp>
 # include <Button.hpp>
+# include <Grid.hpp>
 
 class Game
 {
@@ -15,6 +16,7 @@ public:
 
 private:
 	Button		leave;
+	Grid		grid;
 };
 
 #endif

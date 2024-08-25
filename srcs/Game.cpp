@@ -22,6 +22,7 @@ Game::~Game()
 void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 {
 	this->leave.tick(mouse);
+	this->grid.tick(mouse);
 
 	if (this->leave.getPressed())
 		*displayState = DISPLAY_MENU;
@@ -34,8 +35,13 @@ void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 
 	//draw board
 	//draw stones
+	grid.draw(window, text, textureManager);
+
 	//draw players infos
 	//draw ai infos
+
+	//draw left side (p1)
+	//draw right side (p2)
 
 	//draw buttons
 	this->leave.draw(window, text, textureManager);
