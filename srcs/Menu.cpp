@@ -9,15 +9,15 @@ Menu::Menu(void)
 {
 	this->title = "GOMOCOOL";
 
-	this->play.setProperties("Play", 40, MID_CENTER, sf::Color::White,
+	this->play = Button("Play", 40, MID_CENTER, sf::Color::White,
 						WIN_W / 2 - 100, WIN_H / 2 - 40, 200, 80,
 						SPRITE_ROUND_BUTTON_ON, SPRITE_ROUND_BUTTON_OFF);
 
-	this->settings.setProperties("", 25, MID_CENTER, sf::Color::White,
+	this->settings = Button("", 25, MID_CENTER, sf::Color::White,
 						WIN_W - 70, WIN_H - 70, 50, 50,
 						SPRITE_GEAR_BUTTON_ON, SPRITE_GEAR_BUTTON_OFF);
 
-	this->quit.setProperties("QUIT", 25, MID_CENTER, sf::Color::White,
+	this->quit = Button("QUIT", 25, MID_CENTER, sf::Color::White,
 						20, WIN_H - 60, 190, 48,
 						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF);
 }

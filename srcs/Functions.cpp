@@ -3,11 +3,6 @@
 #include<cstdlib>
 #include <cmath>
 
-int	keyToInt(sf::Keyboard::Key key)
-{
-	return (key);
-}
-
 void	drawText(sf::RenderWindow *window, sf::Text *text, std::string str,
 					int x, int y, int fontSize, sf::Color color, draw_pos pos)
 {

@@ -1,11 +1,11 @@
-#include <Button.hpp>
+#include <ToggleButton.hpp>
 #include <Functions.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
 ////////////////////////////////////////////////////////////////////////////////
 
-Button::Button()
+ToggleButton::ToggleButton()
 {
 	this->x = 0;
 	this->y = 0;
@@ -19,13 +19,15 @@ Button::Button()
 
 	this->mouseOver = false;
 	this->pressed = false;
+	this->toggle = false;
 
 	this->onSprite = SPRITE_SQUARE_BUTTON_ON;
 	this->offSprite = SPRITE_SQUARE_BUTTON_OFF;
 }
 
-Button::Button(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
-				int x, int y, float w, float h, sprite_name onSprite, sprite_name offSprite)
+ToggleButton::ToggleButton(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
+							int x, int y, float w, float h,
+							sprite_name onSprite, sprite_name offSprite, sprite_name toggleSprite)
 {
 	this->x = x;
 	this->y = y;
@@ -39,13 +41,15 @@ Button::Button(std::string text, int fontSize, draw_pos textPos, sf::Color textC
 
 	this->mouseOver = false;
 	this->pressed = false;
+	this->toggle = false;
 
 	this->onSprite = onSprite;
 	this->offSprite = offSprite;
+	this->toggleSprite = toggleSprite;
 }
 
 
-Button::~Button()
+ToggleButton::~ToggleButton()
 {
 
 }
@@ -54,25 +58,42 @@ Button::~Button()
 // Getters and setters
 ////////////////////////////////////////////////////////////////////////////////
 
-bool Button::getPressed( void )
+bool ToggleButton::getPressed( void )
 {
 	return (this->pressed);
 }
 
 
-void	Button::setText(std::string text)
+bool	ToggleButton::getToggle(void)
+{
+	return (this->toggle);
+}
+
+
+void	ToggleButton::setText(std::string text)
 {
 	this->text = text;
+}
+
+
+void	ToggleButton::setToggle(bool toggle)
+{
+	this->toggle = toggle;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
-void Button::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
+void ToggleButton::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
 {
 	if (!this->mouseOver)
-		textureManager->drawTexture(window, this->offSprite, this->x, this->y, TOP_LEFT);
+	{
+		if (!this->toggle)
+			textureManager->drawTexture(window, this->offSprite, this->x, this->y, TOP_LEFT);
+		else
+			textureManager->drawTexture(window, this->toggleSprite, this->x, this->y, TOP_LEFT);
+	}
 	else
 		textureManager->drawTexture(window, this->onSprite, this->x, this->y, TOP_LEFT);
 
@@ -82,7 +103,7 @@ void Button::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *text
 }
 
 
-void Button::tick(Mouse *mouse)
+void ToggleButton::tick(Mouse *mouse)
 {
 	this->mouseOver = mouse->inRectangle(this->x, this->y, this->w, this->h);
 	this->pressed = this->mouseOver && mouse->isPressed(MBUT_LEFT);
@@ -92,7 +113,7 @@ void Button::tick(Mouse *mouse)
 // Operator
 ////////////////////////////////////////////////////////////////////////////////
 
-Button	&Button::operator=(const Button &btn)
+ToggleButton	&ToggleButton::operator=(const ToggleButton &btn)
 {
 	this->x = btn.x;
 	this->y = btn.y;
@@ -106,9 +127,11 @@ Button	&Button::operator=(const Button &btn)
 
 	this->mouseOver = btn.mouseOver;
 	this->pressed = btn.pressed;
+	this->toggle = btn.toggle;
 
 	this->onSprite = btn.onSprite;
 	this->offSprite = btn.offSprite;
+	this->toggleSprite = btn.toggleSprite;
 
 	return (*this);
 }

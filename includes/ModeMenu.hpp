@@ -3,6 +3,7 @@
 
 # include <define.hpp>
 # include <Button.hpp>
+# include <Select.hpp>
 
 class ModeMenu
 {
@@ -16,6 +17,7 @@ public:
 private:
 	std::string	title;
 	Button		back, play;
+	Select		playerLeft, playerRight, gamemode;
 };
 
 #endif

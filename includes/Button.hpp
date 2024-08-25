@@ -16,20 +16,22 @@ public:
 			int x, int y, float w, float h, sprite_name onSprite, sprite_name offSprite);
 	~Button();
 
-	void	draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
-	void	tick(Mouse *mouse);
 	bool	getPressed(void);
-	void	setProperties(std::string text, int fontSize, draw_pos textPos, sf::Color textColor,
-							int x, int y, float w, float h, sprite_name onSprite, sprite_name offSprite);
+	void	setText(std::string text);
+
+	void	tick(Mouse *mouse);
+	void	draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
+
+	Button	&operator=(const Button &btn);
 
 private:
-	int					x, y, w, h, fontSize;
-	draw_pos			textPos;
-	sprite_name			onSprite, offSprite;
-	bool				mouseOver, pressed;
-	sf::Color			textColor, colorOff, colorOn;
-	std::string			text;
+	int			x, y, w, h, fontSize;
+	draw_pos	textPos;
+	sprite_name	onSprite, offSprite;
+	bool		mouseOver, pressed;
+	sf::Color	textColor, colorOff, colorOn;
+	std::string	text;
 };
 
 
-#endif //RTB_BUTTON_H
+#endif
