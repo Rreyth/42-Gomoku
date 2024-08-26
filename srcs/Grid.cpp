@@ -55,7 +55,7 @@ int	Grid::getH(void)
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
-void	Grid::tick(Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::string *turn)
+void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::string *turn)
 {
 	if (!mouse->inRectangle(this->x, this->y, this->w, this->h))
 	{
@@ -72,6 +72,25 @@ void	Grid::tick(Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::stri
 
 	this->checkIfPreviewLegal();
 
+	if (mouse->isPressed(MBUT_RIGHT))
+	{
+		intersection	*inter = this->getIntersection(this->previewX, this->previewY);
+
+		if (!inter)
+			return ;
+
+		std::cout << "\nNeighbors : L  UL U  UR R  DR D  DL" << std::endl;
+		std::cout << "Neighbors : "
+					<< inter->neighbor[DIR_L] << "  "
+					<< inter->neighbor[DIR_UL] << "  "
+					<< inter->neighbor[DIR_U] << "  "
+					<< inter->neighbor[DIR_UR] << "  "
+					<< inter->neighbor[DIR_R] << "  "
+					<< inter->neighbor[DIR_DR] << "  "
+					<< inter->neighbor[DIR_D] << "  "
+					<< inter->neighbor[DIR_DL] << std::endl;
+	}
+
 	if (!mouse->isPressed(MBUT_LEFT) || !this->previewLegal)
 		return ;
 
@@ -80,14 +99,22 @@ void	Grid::tick(Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::stri
 	{
 		this->setInterState(this->previewX, this->previewY, INTER_LEFT);
 		updateNeighbor(this->previewX, this->previewY);
-		this->checkWinCondition(turn);
+		if (this->checkWinCondition(turn))
+		{
+			*displayState = DISPLAY_END;
+			return ;
+		}
 		*turn = rightPlayer->getName();
 	}
 	else
 	{
 		this->setInterState(this->previewX, this->previewY, INTER_RIGHT);
 		updateNeighbor(this->previewX, this->previewY);
-		this->checkWinCondition(turn);
+		if (this->checkWinCondition(turn))
+		{
+			*displayState = DISPLAY_END;
+			return ;
+		}
 		*turn = leftPlayer->getName();
 	}
 }
@@ -205,133 +232,73 @@ void	Grid::checkIfPreviewLegal(void)
 	this->previewLegal = true;
 }
 
-int	Grid::recusiveUpdateNeighbor(int x, int y, int suite, dir_neighbor dir, inter_type interType)
+int	Grid::loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType)
 {
 	intersection	*inter = this->getIntersection(x, y);
-	intersection	*interNext;
-	int				nextX, nextY;
+	int				nb_neighbor = 0;
 
-	// Out of grid
-	if (inter == NULL)
-		return (0);
-
-	if (dir == DIR_L)
+	while (inter && inter->type == interType)
 	{
-		nextX = x - 1;
-		nextY = y;
-		interNext = this->getIntersection(nextX, nextY);
-		inter->neighbor[DIR_R] = suite;
-		if (interNext == NULL || interType != interNext->type)
-			inter->neighbor[DIR_L] = 0;
-		else
-			inter->neighbor[DIR_L] = this->recusiveUpdateNeighbor(nextX, nextY, suite + 1, dir, interType);
-		return (inter->neighbor[DIR_L] + 1);
+		nb_neighbor++;
+
+		switch (dir)
+		{
+		case DIR_L:
+			x -= 1;
+			inter->neighbor[DIR_R] = nb_neighbor;
+			break;
+		case DIR_UL:
+			x -= 1;
+			y -= 1;
+			inter->neighbor[DIR_DR] = nb_neighbor;
+			break;
+		case DIR_U:
+			y -= 1;
+			inter->neighbor[DIR_D] = nb_neighbor;
+			break;
+		case DIR_UR:
+			x += 1;
+			y -= 1;
+			inter->neighbor[DIR_DL] = nb_neighbor;
+			break;
+		case DIR_R:
+			x += 1;
+			inter->neighbor[DIR_L] = nb_neighbor;
+			break;
+		case DIR_DR:
+			x += 1;
+			y += 1;
+			inter->neighbor[DIR_UL] = nb_neighbor;
+			break;
+		case DIR_D:
+			y += 1;
+			inter->neighbor[DIR_U] = nb_neighbor;
+			break;
+		case DIR_DL:
+			x -= 1;
+			y += 1;
+			inter->neighbor[DIR_UR] = nb_neighbor;
+			break;
+		}
+
+		inter = this->getIntersection(x, y);
 	}
 
-	else if (dir == DIR_UL)
-	{
-		nextX = x - 1;
-		nextY = y - 1;
-		interNext = this->getIntersection(nextX, nextY);
-		inter->neighbor[DIR_DR] = suite;
-		if (interNext == NULL || interType != interNext->type)
-			inter->neighbor[DIR_UL] = 0;
-		else
-			inter->neighbor[DIR_UL] = this->recusiveUpdateNeighbor(nextX, nextY, suite + 1, dir, interType);
-		return (inter->neighbor[DIR_UL] + 1);
-	}
-
-	else if (dir == DIR_U)
-	{
-		nextX = x;
-		nextY = y - 1;
-		interNext = this->getIntersection(nextX, nextY);
-		inter->neighbor[DIR_D] = suite;
-		if (interNext == NULL || interType != interNext->type)
-			inter->neighbor[DIR_U] = 0;
-		else
-			inter->neighbor[DIR_U] = this->recusiveUpdateNeighbor(nextX, nextY, suite + 1, dir, interType);
-		return (inter->neighbor[DIR_U] + 1);
-	}
-
-	else if (dir == DIR_UR)
-	{
-		nextX = x + 1;
-		nextY = y - 1;
-		interNext = this->getIntersection(nextX, nextY);
-		inter->neighbor[DIR_DL] = suite;
-		if (interNext == NULL || interType != interNext->type)
-			inter->neighbor[DIR_UR] = 0;
-		else
-			inter->neighbor[DIR_UR] = this->recusiveUpdateNeighbor(nextX, nextY, suite + 1, dir, interType);
-		return (inter->neighbor[DIR_UR] + 1);
-	}
-
-	else if (dir == DIR_R)
-	{
-		nextX = x + 1;
-		nextY = y;
-		interNext = this->getIntersection(nextX, nextY);
-		inter->neighbor[DIR_L] = suite;
-		if (interNext == NULL || interType != interNext->type)
-			inter->neighbor[DIR_R] = 0;
-		else
-			inter->neighbor[DIR_R] = this->recusiveUpdateNeighbor(nextX, nextY, suite + 1, dir, interType);
-		return (inter->neighbor[DIR_R] + 1);
-	}
-
-	else if (dir == DIR_DR)
-	{
-		nextX = x + 1;
-		nextY = y + 1;
-		interNext = this->getIntersection(nextX, nextY);
-		inter->neighbor[DIR_UL] = suite;
-		if (interNext == NULL || interType != interNext->type)
-			inter->neighbor[DIR_DR] = 0;
-		else
-			inter->neighbor[DIR_DR] = this->recusiveUpdateNeighbor(nextX, nextY, suite + 1, dir, interType);
-		return (inter->neighbor[DIR_DR] + 1);
-	}
-
-	else if (dir == DIR_D)
-	{
-		nextX = x;
-		nextY = y + 1;
-		interNext = this->getIntersection(nextX, nextY);
-		inter->neighbor[DIR_U] = suite;
-		if (interNext == NULL || interType != interNext->type)
-			inter->neighbor[DIR_D] = 0;
-		else
-			inter->neighbor[DIR_D] = this->recusiveUpdateNeighbor(nextX, nextY, suite + 1, dir, interType);
-		return (inter->neighbor[DIR_D] + 1);
-	}
-
-	else if (dir == DIR_DL)
-	{
-		nextX = x;
-		nextY = y + 1;
-		interNext = this->getIntersection(nextX, nextY);
-		inter->neighbor[DIR_UR] = suite;
-		if (interNext == NULL || interType != interNext->type)
-			inter->neighbor[DIR_DL] = 0;
-		else
-			inter->neighbor[DIR_DL] = this->recusiveUpdateNeighbor(nextX, nextY, suite + 1, dir, interType);
-		return (inter->neighbor[DIR_DL] + 1);
-	}
-
-	return (0);
+	return (nb_neighbor);
 }
 
 void	Grid::updateNeighbor(int x, int y)
 {
-	this->recusiveUpdateNeighbor(x, y, 0, DIR_L, this->getInterState(x, y));
-	this->recusiveUpdateNeighbor(x, y, 0, DIR_UL, this->getInterState(x, y));
-	this->recusiveUpdateNeighbor(x, y, 0, DIR_U, this->getInterState(x, y));
-	this->recusiveUpdateNeighbor(x, y, 0, DIR_UR, this->getInterState(x, y));
-	this->recusiveUpdateNeighbor(x, y, 0, DIR_R, this->getInterState(x, y));
-	this->recusiveUpdateNeighbor(x, y, 0, DIR_DR, this->getInterState(x, y));
-	this->recusiveUpdateNeighbor(x, y, 0, DIR_D, this->getInterState(x, y));
-	this->recusiveUpdateNeighbor(x, y, 0, DIR_DL, this->getInterState(x, y));
+	intersection	*inter = this->getIntersection(x, y);
+
+	inter->neighbor[DIR_L] = this->loopUpdateNeighbor(x - 1, y, DIR_L, this->getInterState(x, y));
+	inter->neighbor[DIR_UL] = this->loopUpdateNeighbor(x - 1, y - 1, DIR_UL, this->getInterState(x, y));
+	inter->neighbor[DIR_U] = this->loopUpdateNeighbor(x, y - 1, DIR_U, this->getInterState(x, y));
+	inter->neighbor[DIR_UR] = this->loopUpdateNeighbor(x + 1, y - 1, DIR_UR, this->getInterState(x, y));
+	inter->neighbor[DIR_R] = this->loopUpdateNeighbor(x + 1, y, DIR_R, this->getInterState(x, y));
+	inter->neighbor[DIR_DR] = this->loopUpdateNeighbor(x + 1, y + 1, DIR_DR, this->getInterState(x, y));
+	inter->neighbor[DIR_D] = this->loopUpdateNeighbor(x, y + 1, DIR_D, this->getInterState(x, y));
+	inter->neighbor[DIR_DL] = this->loopUpdateNeighbor(x - 1, y + 1, DIR_DL, this->getInterState(x, y));
 }
 
 
@@ -341,34 +308,19 @@ void	Grid::checkCapture(void)
 }
 
 
-void	Grid::checkWinCondition(std::string *turn)
+bool	Grid::checkWinCondition(std::string *turn)
 {
-	// TODO: 5+ align stone
 	intersection	*inter = this->getIntersection(this->previewX, this->previewY);
 
 	if (!inter)
-		return ;
+		return (false);
 
-	// TODO: NEIGHBORS NOT WORKING !!!
-	std::cout << "Neighbors : "
-				<< inter->neighbor[DIR_L] << " "
-				<< inter->neighbor[DIR_UL] << " "
-				<< inter->neighbor[DIR_U] << " "
-				<< inter->neighbor[DIR_UR] << " "
-				<< inter->neighbor[DIR_R] << " "
-				<< inter->neighbor[DIR_DR] << " "
-				<< inter->neighbor[DIR_D] << " "
-				<< inter->neighbor[DIR_DL] << std::endl;
+	// Check if there at least 5 align stones
+	if (inter->neighbor[DIR_L] + inter->neighbor[DIR_R] >= 4 ||
+		inter->neighbor[DIR_UL] + inter->neighbor[DIR_DR] >= 4 ||
+		inter->neighbor[DIR_U] + inter->neighbor[DIR_D] >= 4 ||
+		inter->neighbor[DIR_UR] + inter->neighbor[DIR_DL] >= 4)
+		return (true);
 
-	if (inter->neighbor[DIR_L] + inter->neighbor[DIR_R] >= 5)
-		std::cout << *turn << " win the game !" << std::endl;
-
-	else if (inter->neighbor[DIR_UL] + inter->neighbor[DIR_DR] >= 5)
-		std::cout << *turn << " win the game !" << std::endl;
-
-	else if (inter->neighbor[DIR_U] + inter->neighbor[DIR_D] >= 5)
-		std::cout << *turn << " win the game !" << std::endl;
-
-	else if (inter->neighbor[DIR_UR] + inter->neighbor[DIR_DL] >= 5)
-		std::cout << *turn << " win the game !" << std::endl;
+	return (false);
 }

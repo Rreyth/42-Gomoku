@@ -16,7 +16,7 @@ typedef enum e_draw_pos {
 	MID_RIGHT,
 	BOT_LEFT,
 	BOT_CENTER,
-	BOT_RIGHT,
+	BOT_RIGHT
 }	draw_pos;
 
 typedef enum e_display_state {

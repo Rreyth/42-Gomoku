@@ -30,7 +30,7 @@ Game::~Game()
 void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 {
 	this->leave.tick(mouse);
-	this->grid.tick(mouse, &this->playerLeft, &this->playerRight, &this->turn);
+	this->grid.tick(displayState, mouse, &this->playerLeft, &this->playerRight, &this->turn);
 
 	this->playerLeft.tick(delta, this->mode, this->turn);
 	this->playerRight.tick(delta, this->mode, this->turn);

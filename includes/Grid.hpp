@@ -23,6 +23,7 @@ typedef enum e_dir_neighbor
 	DIR_DL,
 }	dir_neighbor;
 
+
 typedef enum e_inter_type
 {
 	INTER_EMPTY,
@@ -31,11 +32,13 @@ typedef enum e_inter_type
 	INTER_INVALID,
 }	inter_type;
 
+
 typedef struct s_intersection
 {
 	inter_type	type;
 	int			neighbor[8];
 }	intersection;
+
 
 class Grid
 {
@@ -48,7 +51,7 @@ public:
 	int			getW(void);
 	int			getH(void);
 
-	void		tick(Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::string *turn);
+	void		tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::string *turn);
 	void		draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	void		clearGrid(void);
 
@@ -62,10 +65,10 @@ private:
 	inter_type		getInterPreviewState(void);
 	void			setInterState(int x, int y, inter_type interType);
 	void			checkIfPreviewLegal(void);
-	int				recusiveUpdateNeighbor(int x, int y, int suite, dir_neighbor dir, inter_type interType);
+	int				loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
 	void			updateNeighbor(int x, int y);
 	void			checkCapture(void);
-	void			checkWinCondition(std::string *turn);
+	bool			checkWinCondition(std::string *turn);
 };
 
 #endif
