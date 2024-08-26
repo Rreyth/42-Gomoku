@@ -42,6 +42,7 @@ int	main(void)
 	}
 
 	window.setFramerateLimit(1000);
+	window.setVerticalSyncEnabled(false);
 	text.setFont(font);
 
 	// Main loop

@@ -30,8 +30,10 @@ void	TextureManager::loadTextures(void)
 	this->loadTexture(SPRITE_SQUARE_BUTTON_ON, "square_button_on.png");
 	this->loadTexture(SPRITE_GEAR_BUTTON_OFF, "gear_button_off.png");
 	this->loadTexture(SPRITE_GEAR_BUTTON_ON, "gear_button_on.png");
-	this->loadTexture(SPRITE_STONE_RED, "stone_red.png");
-	this->loadTexture(SPRITE_STONE_BLUE, "stone_blue.png");
+	// this->loadTexture(SPRITE_STONE_RED, "stone_red.png");
+	this->loadTexture(SPRITE_STONE_RED, "rock_red.png");
+	// this->loadTexture(SPRITE_STONE_BLUE, "stone_blue.png");
+	this->loadTexture(SPRITE_STONE_BLUE, "rock_blue.png");
 
 	// Scale sprites
 	this->scaleSprite(SPRITE_ROUND_BUTTON_OFF, 2.0f, 2.0f);

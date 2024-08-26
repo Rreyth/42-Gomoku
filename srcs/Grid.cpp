@@ -11,34 +11,71 @@ Grid::Grid(void)
 	this->h = 647;
 	this->x = WIN_W / 2 - this->w / 2;
 	this->y = WIN_H / 2 - this->h / 2;
+
+	this->clearGrid();
 }
+
 
 Grid::~Grid()
 {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Getters and setters
+////////////////////////////////////////////////////////////////////////////////
+
+int	Grid::getX(void)
+{
+	return (this->x);
+}
+
+
+int	Grid::getY(void)
+{
+	return (this->y);
+}
+
+
+int	Grid::getW(void)
+{
+	return (this->w);
+}
+
+
+int	Grid::getH(void)
+{
+	return (this->h);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
+
 void	Grid::tick(Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::string *turn)
 {
-	if (mouse->isPressed(MBUT_LEFT))
+	if (!mouse->isPressed(MBUT_LEFT))
+		return ;
+
+	if (!mouse->inRectangle(this->x, this->y, this->w, this->h))
+		return;
+
+	int	mx = mouse->getX();
+	int	my = mouse->getY();
+	mx -= this->x;
+	my -= this->y;
+	int ix = (mx - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+	int iy = (my - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+
+	// if move is valid
+	if (*turn == leftPlayer->getName())
 	{
-		if (!mouse->inRectangle(this->x, this->y, this->w, this->h))
-			return;
-
-		//if valid move
-		if (*turn == leftPlayer->getName())
-			*turn = rightPlayer->getName();
-		else
-			*turn = leftPlayer->getName();
-
-		std::cout << "Mouse x in grid: " << mouse->getX() - this->x << std::endl;
-		std::cout << "Mouse y in grid: " << mouse->getY() - this->y << std::endl;
-		std::cout << "Mouse in rectangle: " << mouse->inRectangle(this->x, this->y, this->w, this->h) << std::endl;
-		// std::cout << "Mouse in intersection: " << this->isOnIntersection(mouse->getX() - this->x, mouse->getY() - this->y) << std::endl;
-		sf::Vector2i intersection = this->closestIntersection(mouse->getX() - this->x, mouse->getY() - this->y);
-
+		*turn = rightPlayer->getName();
+		this->setInterState(ix, iy, INTER_LEFT);
+	}
+	else
+	{
+		*turn = leftPlayer->getName();
+		this->setInterState(ix, iy, INTER_RIGHT);
 	}
 }
 
@@ -47,45 +84,77 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 {
 	textureManager->drawTexture(window, SPRITE_GRID, this->x, this->y, TOP_LEFT);
 
+	std::string	xlabels = "ABCDEFGHIJKLMNOPQRT";
+	std::string	label;
+	int	interX, interY, drawX, drawY;
+
+	drawY = this->y - 20;
 	//letters top
-	drawText(window, text, "A", this->x + 34, this->y - 20, 20, sf::Color::White, MID_CENTER);
+	for (int i = 0; i < GRID_W_INTER - 1; i++)
+	{
+		drawX = this->x + (i + 1) * GRID_SQUARE_SIZE;
+		label = "";
+		label += xlabels[i];
+		drawText(window, text, label, drawX, drawY, 20, sf::Color::White, MID_CENTER);
+	}
+
 	//numbers left
-	drawText(window, text, "1", this->x - 20, this->y + 30, 20, sf::Color::White, MID_CENTER);
+	drawX = this->x - 10;
+	for (int i = 1; i < GRID_W_INTER; i++)
+	{
+		drawY = this->y + i * GRID_SQUARE_SIZE - 4;
+		label = std::to_string(i);
+		if (i == 1)
+			drawText(window, text, label, drawX - 3, drawY, 20, sf::Color::White, MID_RIGHT);
+		else
+			drawText(window, text, label, drawX, drawY, 20, sf::Color::White, MID_RIGHT);
+	}
 
 	//draw stones
-	// textureManager->drawTexture(window, SPRITE_STONE_RED, this->x + 34, this->y + 34, MID_CENTER);
-	// textureManager->drawTexture(window, SPRITE_STONE_BLUE, this->x + 68, this->y + 68, MID_CENTER);
-	// textureManager->drawTexture(window, SPRITE_STONE_BLUE, this->x + 68 + 34, this->y + 68, MID_CENTER);
+	for (int i = 0; i < GRID_NB_INTER; i++)
+	{
+		if (this->gridState[i] == INTER_EMPTY || this->gridState[i] == INTER_INVALID)
+			continue;
+
+		interX = i % GRID_W_INTER;
+		interY = i / GRID_W_INTER;
+
+		drawX = this->x + (interX + 1) * GRID_SQUARE_SIZE;
+		drawY = this->y + (interY + 1) * GRID_SQUARE_SIZE;
+
+		if (this->gridState[i] == INTER_LEFT)
+			textureManager->drawTexture(window, SPRITE_STONE_BLUE, drawX, drawY, MID_CENTER);
+		else
+			textureManager->drawTexture(window, SPRITE_STONE_RED, drawX, drawY, MID_CENTER);
+	}
 }
 
-int		Grid::getW(void)
-{
-	return this->w;
-}
 
-int		Grid::getH(void)
+void	Grid::clearGrid(void)
 {
-	return this->h;
-}
-
-int		Grid::getX(void)
-{
-	return this->x;
-}
-
-int		Grid::getY(void)
-{
-	return this->y;
+	for (int i = 0; i < GRID_NB_INTER; i++)
+		this->gridState[i] = INTER_EMPTY;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////
 
-sf::Vector2i	Grid::closestIntersection(int x, int y)
+inter_type	Grid::getInterState(int x, int y)
 {
-	std::cout << "x inter: " << x / 19 << std::endl;
-	std::cout << "y inter: " << y / 19 << std::endl;
+	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
+		return (INTER_INVALID);
 
-	return sf::Vector2i(x / 19, y / 19);
+	int interId = y * GRID_W_INTER + x;
+	return (this->gridState[interId]);
+}
+
+
+void	Grid::setInterState(int x, int y, inter_type interType)
+{
+	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
+		return ;
+
+	int interId = y * GRID_W_INTER + x;
+	this->gridState[interId] = interType;
 }
