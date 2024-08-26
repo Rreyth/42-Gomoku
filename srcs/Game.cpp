@@ -74,6 +74,8 @@ void	Game::setGame(player_type playerLeft, player_type playerRight, game_mode mo
 		this->turn = this->playerLeft.getName();
 	else
 		this->turn = this->playerRight.getName();
+
+	this->grid.clearGrid();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

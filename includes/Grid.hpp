@@ -7,8 +7,21 @@
 
 # define GRID_SQUARE_HALF_SIZE 17
 # define GRID_SQUARE_SIZE 34
+# define GRID_SIZE 647
 # define GRID_W_INTER 18
 # define GRID_NB_INTER 324 // 324 = 18 * 18
+
+typedef enum e_dir_neighbor
+{
+	DIR_L = 0,
+	DIR_UL,
+	DIR_U,
+	DIR_UR,
+	DIR_R,
+	DIR_DR,
+	DIR_D,
+	DIR_DL,
+}	dir_neighbor;
 
 typedef enum e_inter_type
 {
@@ -17,6 +30,12 @@ typedef enum e_inter_type
 	INTER_RIGHT,
 	INTER_INVALID,
 }	inter_type;
+
+typedef struct s_intersection
+{
+	inter_type	type;
+	int			neighbor[8];
+}	intersection;
 
 class Grid
 {
@@ -34,13 +53,19 @@ public:
 	void		clearGrid(void);
 
 private:
-	int			x, y, w, h, previewX, previewY;
-	bool		previewLegal;
-	inter_type	gridState[GRID_NB_INTER];
+	int				x, y, w, h, previewX, previewY;
+	bool			previewLegal;
+	intersection	gridState[GRID_NB_INTER];
 
-	inter_type	getInterState(int x, int y);
-	void		setInterState(int x, int y, inter_type interType);
-	void		checkIfPreviewLegal(void);
+	intersection	*getIntersection(int x, int y);
+	inter_type		getInterState(int x, int y);
+	inter_type		getInterPreviewState(void);
+	void			setInterState(int x, int y, inter_type interType);
+	void			checkIfPreviewLegal(void);
+	int				recusiveUpdateNeighbor(int x, int y, int suite, dir_neighbor dir, inter_type interType);
+	void			updateNeighbor(int x, int y);
+	void			checkCapture(void);
+	void			checkWinCondition(std::string *turn);
 };
 
 #endif
