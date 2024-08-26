@@ -34,6 +34,7 @@ void	TextureManager::loadTextures(void)
 	this->loadTexture(SPRITE_STONE_RED, "rock_red.png");
 	// this->loadTexture(SPRITE_STONE_BLUE, "stone_blue.png");
 	this->loadTexture(SPRITE_STONE_BLUE, "rock_blue.png");
+	this->loadTexture(SPRITE_STONE_PREVIEW, "rock_preview.png");
 
 	// Scale sprites
 	this->scaleSprite(SPRITE_ROUND_BUTTON_OFF, 2.0f, 2.0f);

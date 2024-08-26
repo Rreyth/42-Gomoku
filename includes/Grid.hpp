@@ -34,11 +34,13 @@ public:
 	void		clearGrid(void);
 
 private:
-	int			x, y, w, h;
+	int			x, y, w, h, previewX, previewY;
+	bool		previewLegal;
 	inter_type	gridState[GRID_NB_INTER];
 
 	inter_type	getInterState(int x, int y);
 	void		setInterState(int x, int y, inter_type interType);
+	void		checkIfPreviewLegal(void);
 };
 
 #endif

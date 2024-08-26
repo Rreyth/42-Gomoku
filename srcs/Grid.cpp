@@ -12,6 +12,10 @@ Grid::Grid(void)
 	this->x = WIN_W / 2 - this->w / 2;
 	this->y = WIN_H / 2 - this->h / 2;
 
+	this->previewX = 0;
+	this->previewY = 0;
+	this->previewLegal = false;
+
 	this->clearGrid();
 }
 
@@ -53,29 +57,34 @@ int	Grid::getH(void)
 
 void	Grid::tick(Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::string *turn)
 {
-	if (!mouse->isPressed(MBUT_LEFT))
-		return ;
-
 	if (!mouse->inRectangle(this->x, this->y, this->w, this->h))
+	{
+		this->previewLegal = false;
 		return;
+	}
 
 	int	mx = mouse->getX();
 	int	my = mouse->getY();
 	mx -= this->x;
 	my -= this->y;
-	int ix = (mx - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
-	int iy = (my - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+	this->previewX = (mx - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+	this->previewY = (my - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+
+	this->checkIfPreviewLegal();
+
+	if (!mouse->isPressed(MBUT_LEFT) || !this->previewLegal)
+		return ;
 
 	// if move is valid
 	if (*turn == leftPlayer->getName())
 	{
 		*turn = rightPlayer->getName();
-		this->setInterState(ix, iy, INTER_LEFT);
+		this->setInterState(this->previewX, this->previewY, INTER_LEFT);
 	}
 	else
 	{
 		*turn = leftPlayer->getName();
-		this->setInterState(ix, iy, INTER_RIGHT);
+		this->setInterState(this->previewX, this->previewY, INTER_RIGHT);
 	}
 }
 
@@ -127,6 +136,14 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 		else
 			textureManager->drawTexture(window, SPRITE_STONE_RED, drawX, drawY, MID_CENTER);
 	}
+
+	//draw stone preview
+	if (this->previewLegal)
+	{
+		drawX = this->x + (this->previewX + 1) * GRID_SQUARE_SIZE;
+		drawY = this->y + (this->previewY + 1) * GRID_SQUARE_SIZE;
+		textureManager->drawTexture(window, SPRITE_STONE_PREVIEW, drawX, drawY, MID_CENTER);
+	}
 }
 
 
@@ -157,4 +174,15 @@ void	Grid::setInterState(int x, int y, inter_type interType)
 
 	int interId = y * GRID_W_INTER + x;
 	this->gridState[interId] = interType;
+}
+
+
+void	Grid::checkIfPreviewLegal(void)
+{
+	this->previewLegal = false;
+
+	if (this->getInterState(this->previewX, this->previewY) != INTER_EMPTY)
+		return ;
+
+	this->previewLegal = true;
 }
