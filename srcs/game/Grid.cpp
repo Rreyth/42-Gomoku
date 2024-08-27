@@ -79,16 +79,9 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	int px = (mx - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 	int py = (my - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 
-	if (px == this->previewX && py == this->previewY && !mouse->isPressed(MBUT_LEFT))
-		return ;
-
-	this->previewX = px;
-	this->previewY = py;
-	this->checkIfPreviewLegal();
-
 	if (mouse->isPressed(MBUT_RIGHT))
 	{
-		intersection	*inter = this->getIntersection(this->previewX, this->previewY);
+		intersection	*inter = this->getIntersection(px, py);
 
 		if (!inter)
 			return ;
@@ -104,6 +97,13 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 					<< inter->neighbor[DIR_D] << "  "
 					<< inter->neighbor[DIR_DL] << std::endl;
 	}
+
+	if (px == this->previewX && py == this->previewY && !mouse->isPressed(MBUT_LEFT))
+		return ;
+
+	this->previewX = px;
+	this->previewY = py;
+	this->checkIfPreviewLegal();
 
 	if (!mouse->isPressed(MBUT_LEFT) || !this->previewLegal)
 		return ;
@@ -263,7 +263,7 @@ int	Grid::loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interTyp
 
 		x += this->dirs[dir].x;
 		y += this->dirs[dir].y;
-		inter->neighbor[dir] = nb_neighbor;
+		inter->neighbor[(dir + 4) % 8] = nb_neighbor;
 
 		inter = this->getIntersection(x, y);
 	}
@@ -275,14 +275,12 @@ void	Grid::updateNeighbor(int x, int y)
 {
 	intersection	*inter = this->getIntersection(x, y);
 
-	inter->neighbor[DIR_L] = this->loopUpdateNeighbor(x - 1, y, DIR_L, this->getInterState(x, y));
-	inter->neighbor[DIR_UL] = this->loopUpdateNeighbor(x - 1, y - 1, DIR_UL, this->getInterState(x, y));
-	inter->neighbor[DIR_U] = this->loopUpdateNeighbor(x, y - 1, DIR_U, this->getInterState(x, y));
-	inter->neighbor[DIR_UR] = this->loopUpdateNeighbor(x + 1, y - 1, DIR_UR, this->getInterState(x, y));
-	inter->neighbor[DIR_R] = this->loopUpdateNeighbor(x + 1, y, DIR_R, this->getInterState(x, y));
-	inter->neighbor[DIR_DR] = this->loopUpdateNeighbor(x + 1, y + 1, DIR_DR, this->getInterState(x, y));
-	inter->neighbor[DIR_D] = this->loopUpdateNeighbor(x, y + 1, DIR_D, this->getInterState(x, y));
-	inter->neighbor[DIR_DL] = this->loopUpdateNeighbor(x - 1, y + 1, DIR_DL, this->getInterState(x, y));
+	for (int i = 0; i < 8; i++)
+		inter->neighbor[i] = this->loopUpdateNeighbor(
+									x + this->dirs[i].x,
+									y + this->dirs[i].y,
+									(dir_neighbor)i,
+									this->getInterState(x, y));
 }
 
 
@@ -340,25 +338,137 @@ int	Grid::checkCapture(void)
 }
 
 
-bool	Grid::checkWinCondition(Player *me, Player *oppenent)
+bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, dir_neighbor opdir)
 {
-	intersection	*inter = this->getIntersection(this->previewX, this->previewY);
+	intersection	*inter, *tmpInter;
+	inter_type		opType, tmpType1, tmpType2;
+	int				x, y, tmpX, tmpY, length;
+	bool			canBeCapture;
 
-	if (!inter)
+	inter = this->getIntersection(this->previewX, this->previewY);
+	// Check if me can win
+	if (!inter || inter->neighbor[dir] + inter->neighbor[opdir] + 1 < WIN_POINT)
 		return (false);
 
-	// Check if there at least 5 align stones
-	if (1 + inter->neighbor[DIR_L] + inter->neighbor[DIR_R] >= WIN_POINT ||
-		1 + inter->neighbor[DIR_UL] + inter->neighbor[DIR_DR] >= WIN_POINT ||
-		1 + inter->neighbor[DIR_U] + inter->neighbor[DIR_D] >= WIN_POINT ||
-		1 + inter->neighbor[DIR_UR] + inter->neighbor[DIR_DL] >= WIN_POINT)
+	// Get opponent type
+	if (inter->type == INTER_LEFT)
+		opType = INTER_RIGHT;
+	else
+		opType = INTER_LEFT;
+
+	x = this->previewX;
+	y = this->previewY;
+
+	// Go to the start of the win line
+	for (int i = 0; i < inter->neighbor[opdir]; i++)
+	{
+		x += this->dirs[opdir].x;
+		y += this->dirs[opdir].y;
+	}
+
+	length = 0;
+	// For each stone in win line
+	for (int i = 0; i < inter->neighbor[dir] + inter->neighbor[opdir] + 1; i++)
+	{
+		tmpInter = this->getIntersection(x, y);
+		canBeCapture = false;
+
+		// Check if the stone can be capture for each axis
+		for (int j = 0; j < 4; j++)
+		{
+			// If axis is the win line axis, skip
+			if (j == dir || j == opdir)
+				continue;
+
+			// If there isn't 2 stones on axis, stone cannot be capture on this axis
+			if (tmpInter->neighbor[j] + tmpInter->neighbor[j + 4] + 1 != 2)
+				continue;
+
+			// Get stone before my 2 stones
+			tmpX = x;
+			tmpY = y;
+			for (int k = 0; k < tmpInter->neighbor[j] + 1; k++)
+			{
+				tmpX += this->dirs[j].x;
+				tmpY += this->dirs[j].y;
+			}
+			tmpType1 = this->getInterState(tmpX, tmpY);
+
+			if (tmpType1 != INTER_EMPTY && tmpType1 != opType)
+			{
+
+				continue;
+			}
+
+			// Get stone after my 2 stones
+			tmpX = x;
+			tmpY = y;
+			for (int k = 0; k < tmpInter->neighbor[j + 4] + 1; k++)
+			{
+				tmpX += this->dirs[j + 4].x;
+				tmpY += this->dirs[j + 4].y;
+			}
+			tmpType2 = this->getInterState(tmpX, tmpY);
+
+			// In this case, my stone can be capture
+			if (tmpType1 == INTER_EMPTY && tmpType2 == opType ||
+				tmpType1 == opType && tmpType2 == INTER_EMPTY)
+			{
+				canBeCapture = true;
+				break;
+			}
+		}
+
+		// If stone can be capture, reset the length
+		if (canBeCapture)
+			length = 0;
+		else
+			length++;
+
+		if (length >= WIN_POINT)
+		{
+			me->setWinner(true);
+			this->previewLegal = false;
+			return (true);
+		}
+
+		x += this->dirs[dir].x;
+		y += this->dirs[dir].y;
+	}
+
+	if (length >= WIN_POINT)
 	{
 		me->setWinner(true);
 		this->previewLegal = false;
 		return (true);
 	}
 
-	// Check if the player capture at least 10 opponennt's stones
+	if (oppenent->getCaptured() >= WIN_CAPTURE - 2)
+	{
+		oppenent->setWinner(true);
+		oppenent->addCaptured(2);
+		this->previewLegal = false;
+		return (true);
+	}
+
+	return (false);
+}
+
+
+
+bool	Grid::checkWinCondition(Player *me, Player *oppenent)
+{
+	// Check if there at least 5 align stones
+	if (this->checkWinCaptureCase(me, oppenent, DIR_L, DIR_R))
+		return (true);
+	if (this->checkWinCaptureCase(me, oppenent, DIR_UL, DIR_DR))
+		return (true);
+	if (this->checkWinCaptureCase(me, oppenent, DIR_U, DIR_D))
+		return (true);
+	if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
+		return (true);
+
+	// Check if the player capture at least 10 opponent's stones
 	if (me->getCaptured() >= WIN_CAPTURE)
 	{
 		me->setWinner(true);

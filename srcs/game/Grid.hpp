@@ -26,7 +26,7 @@ typedef enum e_dir_neighbor
 
 typedef enum e_inter_type
 {
-	INTER_EMPTY,
+	INTER_EMPTY = 0,
 	INTER_LEFT,
 	INTER_RIGHT,
 	INTER_INVALID,
@@ -63,12 +63,12 @@ private:
 
 	intersection	*getIntersection(int x, int y);
 	inter_type		getInterState(int x, int y);
-	inter_type		getInterPreviewState(void);
 	void			setInterState(int x, int y, inter_type interType);
 	void			checkIfPreviewLegal(void);
 	int				loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
 	void			updateNeighbor(int x, int y);
 	int				checkCapture(void);
+	bool			checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, dir_neighbor opdir);
 	bool			checkWinCondition(Player *me, Player *oppenent);
 };
 
