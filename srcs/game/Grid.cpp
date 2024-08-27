@@ -17,6 +17,15 @@ Grid::Grid(void)
 	this->previewLegal = false;
 
 	this->clearGrid();
+
+	this->dirs[DIR_L] = sf::Vector2i(-1, 0);
+	this->dirs[DIR_UL] = sf::Vector2i(-1, -1);
+	this->dirs[DIR_U] = sf::Vector2i(0, -1);
+	this->dirs[DIR_UR] = sf::Vector2i(1, -1);
+	this->dirs[DIR_R] = sf::Vector2i(1, 0);
+	this->dirs[DIR_DR] = sf::Vector2i(1, 1);
+	this->dirs[DIR_D] = sf::Vector2i(0, 1);
+	this->dirs[DIR_DL] = sf::Vector2i(-1, 1);
 }
 
 
@@ -67,9 +76,14 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	int	my = mouse->getY();
 	mx -= this->x;
 	my -= this->y;
-	this->previewX = (mx - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
-	this->previewY = (my - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+	int px = (mx - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+	int py = (my - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 
+	if (px == this->previewX && py == this->previewY && !mouse->isPressed(MBUT_LEFT))
+		return ;
+
+	this->previewX = px;
+	this->previewY = py;
 	this->checkIfPreviewLegal();
 
 	if (mouse->isPressed(MBUT_RIGHT))
@@ -100,10 +114,8 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 		this->setInterState(this->previewX, this->previewY, INTER_LEFT);
 		updateNeighbor(this->previewX, this->previewY);
 		leftPlayer->addCaptured(this->checkCapture());
-		if (this->checkWinCondition(leftPlayer))
+		if (this->checkWinCondition(leftPlayer, rightPlayer))
 		{
-			leftPlayer->setWinner(true);
-			this->previewLegal = false;
 			*displayState = DISPLAY_END;
 			return ;
 		}
@@ -115,16 +127,16 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 		this->setInterState(this->previewX, this->previewY, INTER_RIGHT);
 		updateNeighbor(this->previewX, this->previewY);
 		rightPlayer->addCaptured(this->checkCapture());
-		if (this->checkWinCondition(rightPlayer))
+		if (this->checkWinCondition(rightPlayer, leftPlayer))
 		{
-			rightPlayer->setWinner(true);
-			this->previewLegal = false;
 			*displayState = DISPLAY_END;
 			return ;
 		}
 		rightPlayer->setPlaying(false);
 		leftPlayer->setPlaying(true);
 	}
+	this->checkIfPreviewLegal();
+
 }
 
 
@@ -249,45 +261,9 @@ int	Grid::loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interTyp
 	{
 		nb_neighbor++;
 
-		switch (dir)
-		{
-		case DIR_L:
-			x -= 1;
-			inter->neighbor[DIR_R] = nb_neighbor;
-			break;
-		case DIR_UL:
-			x -= 1;
-			y -= 1;
-			inter->neighbor[DIR_DR] = nb_neighbor;
-			break;
-		case DIR_U:
-			y -= 1;
-			inter->neighbor[DIR_D] = nb_neighbor;
-			break;
-		case DIR_UR:
-			x += 1;
-			y -= 1;
-			inter->neighbor[DIR_DL] = nb_neighbor;
-			break;
-		case DIR_R:
-			x += 1;
-			inter->neighbor[DIR_L] = nb_neighbor;
-			break;
-		case DIR_DR:
-			x += 1;
-			y += 1;
-			inter->neighbor[DIR_UL] = nb_neighbor;
-			break;
-		case DIR_D:
-			y += 1;
-			inter->neighbor[DIR_U] = nb_neighbor;
-			break;
-		case DIR_DL:
-			x -= 1;
-			y += 1;
-			inter->neighbor[DIR_UR] = nb_neighbor;
-			break;
-		}
+		x += this->dirs[dir].x;
+		y += this->dirs[dir].y;
+		inter->neighbor[dir] = nb_neighbor;
 
 		inter = this->getIntersection(x, y);
 	}
@@ -314,17 +290,7 @@ int	Grid::checkCapture(void)
 {
 	intersection	*inter = this->getIntersection(this->previewX, this->previewY);
 	intersection	*inters[3];
-	sf::Vector2i	dirs[8];
 	int				x, y, nbCapture;
-
-	dirs[DIR_L] = sf::Vector2i(-1, 0);
-	dirs[DIR_UL] = sf::Vector2i(-1, -1);
-	dirs[DIR_U] = sf::Vector2i(0, -1);
-	dirs[DIR_UR] = sf::Vector2i(1, -1);
-	dirs[DIR_R] = sf::Vector2i(1, 0);
-	dirs[DIR_DR] = sf::Vector2i(1, 1);
-	dirs[DIR_D] = sf::Vector2i(0, 1);
-	dirs[DIR_DL] = sf::Vector2i(-1, 1);
 
 	nbCapture = 0;
 	for (int i = 0; i < 8; i++)
@@ -333,22 +299,22 @@ int	Grid::checkCapture(void)
 		y = this->previewY;
 
 		// Get and check 3 next intersections
-		x += dirs[i].x;
-		y += dirs[i].y;
+		x += this->dirs[i].x;
+		y += this->dirs[i].y;
 		inters[0] = this->getIntersection(x, y);
 		if (!inters[0] || inters[0]->type == INTER_EMPTY ||
 			inters[0]->type == inter->type)
 			continue;
 
-		x += dirs[i].x;
-		y += dirs[i].y;
+		x += this->dirs[i].x;
+		y += this->dirs[i].y;
 		inters[1] = this->getIntersection(x, y);
 		if (!inters[1] || inters[1]->type == INTER_EMPTY ||
 			inters[1]->type == inter->type)
 			continue;
 
-		x += dirs[i].x;
-		y += dirs[i].y;
+		x += this->dirs[i].x;
+		y += this->dirs[i].y;
 		inters[2] = this->getIntersection(x, y);
 		if (!inters[2] || inters[2]->type != inter->type)
 			continue;
@@ -363,8 +329,8 @@ int	Grid::checkCapture(void)
 		for (int j = 0; j < 3; j++)
 		{
 			this->updateNeighbor(x, y);
-			x += dirs[i].x;
-			y += dirs[i].y;
+			x += this->dirs[i].x;
+			y += this->dirs[i].y;
 		}
 
 		nbCapture += 2;
@@ -374,7 +340,7 @@ int	Grid::checkCapture(void)
 }
 
 
-bool	Grid::checkWinCondition(Player *player)
+bool	Grid::checkWinCondition(Player *me, Player *oppenent)
 {
 	intersection	*inter = this->getIntersection(this->previewX, this->previewY);
 
@@ -386,11 +352,19 @@ bool	Grid::checkWinCondition(Player *player)
 		1 + inter->neighbor[DIR_UL] + inter->neighbor[DIR_DR] >= WIN_POINT ||
 		1 + inter->neighbor[DIR_U] + inter->neighbor[DIR_D] >= WIN_POINT ||
 		1 + inter->neighbor[DIR_UR] + inter->neighbor[DIR_DL] >= WIN_POINT)
+	{
+		me->setWinner(true);
+		this->previewLegal = false;
 		return (true);
+	}
 
 	// Check if the player capture at least 10 opponennt's stones
-	if (player->getCaptured() >= WIN_CAPTURE)
+	if (me->getCaptured() >= WIN_CAPTURE)
+	{
+		me->setWinner(true);
+		this->previewLegal = false;
 		return (true);
+	}
 
 	return (false);
 }
