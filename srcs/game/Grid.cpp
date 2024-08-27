@@ -114,10 +114,8 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 		this->setInterState(this->previewX, this->previewY, INTER_LEFT);
 		updateNeighbor(this->previewX, this->previewY);
 		leftPlayer->addCaptured(this->checkCapture());
-		if (this->checkWinCondition(leftPlayer))
+		if (this->checkWinCondition(leftPlayer, rightPlayer))
 		{
-			leftPlayer->setWinner(true);
-			this->previewLegal = false;
 			*displayState = DISPLAY_END;
 			return ;
 		}
@@ -129,10 +127,8 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 		this->setInterState(this->previewX, this->previewY, INTER_RIGHT);
 		updateNeighbor(this->previewX, this->previewY);
 		rightPlayer->addCaptured(this->checkCapture());
-		if (this->checkWinCondition(rightPlayer))
+		if (this->checkWinCondition(rightPlayer, leftPlayer))
 		{
-			rightPlayer->setWinner(true);
-			this->previewLegal = false;
 			*displayState = DISPLAY_END;
 			return ;
 		}
@@ -344,7 +340,7 @@ int	Grid::checkCapture(void)
 }
 
 
-bool	Grid::checkWinCondition(Player *player)
+bool	Grid::checkWinCondition(Player *me, Player *oppenent)
 {
 	intersection	*inter = this->getIntersection(this->previewX, this->previewY);
 
@@ -356,11 +352,19 @@ bool	Grid::checkWinCondition(Player *player)
 		1 + inter->neighbor[DIR_UL] + inter->neighbor[DIR_DR] >= WIN_POINT ||
 		1 + inter->neighbor[DIR_U] + inter->neighbor[DIR_D] >= WIN_POINT ||
 		1 + inter->neighbor[DIR_UR] + inter->neighbor[DIR_DL] >= WIN_POINT)
+	{
+		me->setWinner(true);
+		this->previewLegal = false;
 		return (true);
+	}
 
 	// Check if the player capture at least 10 opponennt's stones
-	if (player->getCaptured() >= WIN_CAPTURE)
+	if (me->getCaptured() >= WIN_CAPTURE)
+	{
+		me->setWinner(true);
+		this->previewLegal = false;
 		return (true);
+	}
 
 	return (false);
 }

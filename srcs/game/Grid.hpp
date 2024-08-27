@@ -69,7 +69,7 @@ private:
 	int				loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
 	void			updateNeighbor(int x, int y);
 	int				checkCapture(void);
-	bool			checkWinCondition(Player *player);
+	bool			checkWinCondition(Player *me, Player *oppenent);
 };
 
 #endif
