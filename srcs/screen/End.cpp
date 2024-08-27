@@ -12,6 +12,10 @@ End::End(void)
 	this->back = Button("BACK TO MENU", 25, MID_CENTER, sf::Color::White,
 						20, WIN_H - 60, 190, 48,
 						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF);
+
+	this->rect.setPosition(0, 0);
+	this->rect.setSize(sf::Vector2f(WIN_W, WIN_H));
+	this->rect.setFillColor(sf::Color(0, 0, 0, 75));
 }
 
 End::~End()
@@ -30,19 +34,21 @@ void	End::tick(display_state *displayState, float delta, Mouse *mouse)
 }
 
 
-void	End::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
+void	End::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager,
+					Player *leftPlayer, Player *rightPlayer, Grid *grid)
 {
-	drawText(window, text, this->title, WIN_W / 2, 20, 100, sf::Color::White, TOP_CENTER);
+	grid->draw(window, text, textureManager);
+
+	window->draw(this->rect);
+
+	drawText(window, text, this->title, 20, -20, 200, sf::Color::White, TOP_LEFT);
 	this->back.draw(window, text, textureManager);
 
-	drawText(window, text, "Player 1", WIN_W * 0.25, WIN_H * 0.40, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "WIN/LOSE", WIN_W * 0.25, WIN_H * 0.50, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "TIMER", WIN_W * 0.25, WIN_H * 0.60, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, leftPlayer->getName(), WIN_W * 0.20, WIN_H * 0.40, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, (leftPlayer->isWinner()) ? "WIN" : "LOSE", WIN_W * 0.20, WIN_H * 0.50, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, std::to_string((int)leftPlayer->getTimer()) + " s", WIN_W * 0.20, WIN_H * 0.60, 50, sf::Color::White, MID_CENTER);
 
-	drawText(window, text, "WINNER", WIN_W * 0.50, WIN_H * 0.47, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "SPRITE", WIN_W * 0.50, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
-
-	drawText(window, text, "Player 2", WIN_W * 0.75, WIN_H * 0.40, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "WIN/LOSE", WIN_W * 0.75, WIN_H * 0.50, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "TIMER", WIN_W * 0.75, WIN_H * 0.60, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, rightPlayer->getName(), WIN_W * 0.80, WIN_H * 0.40, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, (rightPlayer->isWinner()) ? "WIN" : "LOSE", WIN_W * 0.80, WIN_H * 0.50, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, std::to_string((int)rightPlayer->getTimer()) + " s", WIN_W * 0.80, WIN_H * 0.60, 50, sf::Color::White, MID_CENTER);
 }

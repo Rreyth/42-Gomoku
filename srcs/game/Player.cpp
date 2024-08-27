@@ -104,6 +104,7 @@ void		Player::setPlayer(player_type type, game_mode mode, int pos)
 		this->setName("AI");
 	this->captured = 0;
 	this->playing = false;
+	this->winner = false;
 }
 
 void		Player::tick(float delta, game_mode mode)

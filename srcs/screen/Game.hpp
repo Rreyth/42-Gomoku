@@ -16,6 +16,10 @@ public:
 	void		draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	void		setGame(player_type playerLeft, player_type playerRight, game_mode mode);
 
+	Player		*getLeftPlayer(void);
+	Player		*getRightPlayer(void);
+	Grid		*getGrid(void);
+
 private:
 	Button		leave;
 	Grid		grid;

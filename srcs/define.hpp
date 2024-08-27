@@ -5,7 +5,7 @@
 # define WIN_W 1600
 # define WIN_H 900
 
-# define FONT_PATH "data/fonts/Rrroboto.ttf"
+# define FONT_PATH "data/fonts/SquadaOne.ttf"
 
 typedef enum e_draw_pos {
 	TOP_LEFT,

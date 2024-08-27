@@ -16,7 +16,7 @@
 int	main(void)
 {
 	// Initialisation
-	sf::RenderWindow	window(sf::VideoMode(WIN_W, WIN_H), "42 :)");
+	sf::RenderWindow	window(sf::VideoMode(WIN_W, WIN_H), "42 :)", sf::Style::Titlebar | sf::Style::Close);
 	sf::Clock			clock;
 	TextureManager		textureManager;
 	Mouse				mouse;
@@ -106,7 +106,9 @@ int	main(void)
 			break;
 		case DISPLAY_END:
 			end.tick(&displayState, delta, &mouse);
-			end.draw(&window, &text, &textureManager);
+			end.draw(&window, &text, &textureManager,
+						game.getLeftPlayer(), game.getRightPlayer(),
+						game.getGrid());
 			break;
 		}
 

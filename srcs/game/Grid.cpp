@@ -101,6 +101,8 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 		updateNeighbor(this->previewX, this->previewY);
 		if (this->checkWinCondition())
 		{
+			leftPlayer->setWinner(true);
+			this->previewLegal = false;
 			*displayState = DISPLAY_END;
 			return ;
 		}
@@ -113,6 +115,8 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 		updateNeighbor(this->previewX, this->previewY);
 		if (this->checkWinCondition())
 		{
+			rightPlayer->setWinner(true);
+			this->previewLegal = false;
 			*displayState = DISPLAY_END;
 			return ;
 		}
