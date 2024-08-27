@@ -13,6 +13,7 @@ public:
 	void		setType(player_type type);
 	player_type	getType(void);
 	void 		setCaptured(int captured);
+	void 		addCaptured(int captured);
 	int			getCaptured(void);
 	void		setTimer(game_mode mode);
 	float		getTimer(void);

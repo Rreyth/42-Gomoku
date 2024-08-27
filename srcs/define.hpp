@@ -4,6 +4,8 @@
 // WINDOW DEFINE
 # define WIN_W 1600
 # define WIN_H 900
+# define WIN_POINT 5
+# define WIN_CAPTURE 10
 
 # define FONT_PATH "data/fonts/SquadaOne.ttf"
 

@@ -99,7 +99,8 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	{
 		this->setInterState(this->previewX, this->previewY, INTER_LEFT);
 		updateNeighbor(this->previewX, this->previewY);
-		if (this->checkWinCondition())
+		leftPlayer->addCaptured(this->checkCapture());
+		if (this->checkWinCondition(leftPlayer))
 		{
 			leftPlayer->setWinner(true);
 			this->previewLegal = false;
@@ -113,7 +114,8 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	{
 		this->setInterState(this->previewX, this->previewY, INTER_RIGHT);
 		updateNeighbor(this->previewX, this->previewY);
-		if (this->checkWinCondition())
+		rightPlayer->addCaptured(this->checkCapture());
+		if (this->checkWinCondition(rightPlayer))
 		{
 			rightPlayer->setWinner(true);
 			this->previewLegal = false;
@@ -308,13 +310,71 @@ void	Grid::updateNeighbor(int x, int y)
 }
 
 
-void	Grid::checkCapture(void)
+int	Grid::checkCapture(void)
 {
-	// TODO: Check capture
+	intersection	*inter = this->getIntersection(this->previewX, this->previewY);
+	intersection	*inters[3];
+	sf::Vector2i	dirs[8];
+	int				x, y, nbCapture;
+
+	dirs[DIR_L] = sf::Vector2i(-1, 0);
+	dirs[DIR_UL] = sf::Vector2i(-1, -1);
+	dirs[DIR_U] = sf::Vector2i(0, -1);
+	dirs[DIR_UR] = sf::Vector2i(1, -1);
+	dirs[DIR_R] = sf::Vector2i(1, 0);
+	dirs[DIR_DR] = sf::Vector2i(1, 1);
+	dirs[DIR_D] = sf::Vector2i(0, 1);
+	dirs[DIR_DL] = sf::Vector2i(-1, 1);
+
+	nbCapture = 0;
+	for (int i = 0; i < 8; i++)
+	{
+		x = this->previewX;
+		y = this->previewY;
+
+		// Get and check 3 next intersections
+		x += dirs[i].x;
+		y += dirs[i].y;
+		inters[0] = this->getIntersection(x, y);
+		if (!inters[0] || inters[0]->type == INTER_EMPTY ||
+			inters[0]->type == inter->type)
+			continue;
+
+		x += dirs[i].x;
+		y += dirs[i].y;
+		inters[1] = this->getIntersection(x, y);
+		if (!inters[1] || inters[1]->type == INTER_EMPTY ||
+			inters[1]->type == inter->type)
+			continue;
+
+		x += dirs[i].x;
+		y += dirs[i].y;
+		inters[2] = this->getIntersection(x, y);
+		if (!inters[2] || inters[2]->type != inter->type)
+			continue;
+
+		// Capture stones
+		inters[0]->type = inter->type;
+		inters[1]->type = inter->type;
+
+		// Update neighbor
+		x = this->previewX;
+		y = this->previewY;
+		for (int j = 0; j < 3; j++)
+		{
+			this->updateNeighbor(x, y);
+			x += dirs[i].x;
+			y += dirs[i].y;
+		}
+
+		nbCapture += 2;
+	}
+
+	return (nbCapture);
 }
 
 
-bool	Grid::checkWinCondition(void)
+bool	Grid::checkWinCondition(Player *player)
 {
 	intersection	*inter = this->getIntersection(this->previewX, this->previewY);
 
@@ -322,10 +382,14 @@ bool	Grid::checkWinCondition(void)
 		return (false);
 
 	// Check if there at least 5 align stones
-	if (inter->neighbor[DIR_L] + inter->neighbor[DIR_R] >= 4 ||
-		inter->neighbor[DIR_UL] + inter->neighbor[DIR_DR] >= 4 ||
-		inter->neighbor[DIR_U] + inter->neighbor[DIR_D] >= 4 ||
-		inter->neighbor[DIR_UR] + inter->neighbor[DIR_DL] >= 4)
+	if (1 + inter->neighbor[DIR_L] + inter->neighbor[DIR_R] >= WIN_POINT ||
+		1 + inter->neighbor[DIR_UL] + inter->neighbor[DIR_DR] >= WIN_POINT ||
+		1 + inter->neighbor[DIR_U] + inter->neighbor[DIR_D] >= WIN_POINT ||
+		1 + inter->neighbor[DIR_UR] + inter->neighbor[DIR_DL] >= WIN_POINT)
+		return (true);
+
+	// Check if the player capture at least 10 opponennt's stones
+	if (player->getCaptured() >= WIN_CAPTURE)
 		return (true);
 
 	return (false);

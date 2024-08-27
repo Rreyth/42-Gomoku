@@ -39,6 +39,11 @@ void		Player::setCaptured(int captured)
 	this->captured = captured;
 }
 
+void		Player::addCaptured(int captured)
+{
+	this->captured += captured;
+}
+
 void		Player::setTimer(game_mode mode)
 {
 	if (mode == BLITZ)

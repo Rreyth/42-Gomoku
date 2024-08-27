@@ -67,8 +67,8 @@ private:
 	void			checkIfPreviewLegal(void);
 	int				loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
 	void			updateNeighbor(int x, int y);
-	void			checkCapture(void);
-	bool			checkWinCondition(void);
+	int				checkCapture(void);
+	bool			checkWinCondition(Player *player);
 };
 
 #endif
