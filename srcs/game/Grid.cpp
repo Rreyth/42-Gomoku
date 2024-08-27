@@ -55,7 +55,7 @@ int	Grid::getH(void)
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
-void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::string *turn)
+void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer)
 {
 	if (!mouse->inRectangle(this->x, this->y, this->w, this->h))
 	{
@@ -94,28 +94,30 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	if (!mouse->isPressed(MBUT_LEFT) || !this->previewLegal)
 		return ;
 
-	// if move is valid
-	if (*turn == leftPlayer->getName())
+
+	if (leftPlayer->isPlaying())
 	{
 		this->setInterState(this->previewX, this->previewY, INTER_LEFT);
 		updateNeighbor(this->previewX, this->previewY);
-		if (this->checkWinCondition(turn))
+		if (this->checkWinCondition())
 		{
 			*displayState = DISPLAY_END;
 			return ;
 		}
-		*turn = rightPlayer->getName();
+		leftPlayer->setPlaying(false);
+		rightPlayer->setPlaying(true);
 	}
 	else
 	{
 		this->setInterState(this->previewX, this->previewY, INTER_RIGHT);
 		updateNeighbor(this->previewX, this->previewY);
-		if (this->checkWinCondition(turn))
+		if (this->checkWinCondition())
 		{
 			*displayState = DISPLAY_END;
 			return ;
 		}
-		*turn = leftPlayer->getName();
+		rightPlayer->setPlaying(false);
+		leftPlayer->setPlaying(true);
 	}
 }
 
@@ -308,7 +310,7 @@ void	Grid::checkCapture(void)
 }
 
 
-bool	Grid::checkWinCondition(std::string *turn)
+bool	Grid::checkWinCondition(void)
 {
 	intersection	*inter = this->getIntersection(this->previewX, this->previewY);
 

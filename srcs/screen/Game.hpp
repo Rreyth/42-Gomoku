@@ -19,7 +19,6 @@ public:
 private:
 	Button		leave;
 	Grid		grid;
-	std::string	turn;
 	sf::RectangleShape	rect;
 	Player 		playerLeft, playerRight;
 	game_mode	mode;

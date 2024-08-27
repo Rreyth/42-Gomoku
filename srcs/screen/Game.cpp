@@ -30,10 +30,10 @@ Game::~Game()
 void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 {
 	this->leave.tick(mouse);
-	this->grid.tick(displayState, mouse, &this->playerLeft, &this->playerRight, &this->turn);
+	this->grid.tick(displayState, mouse, &this->playerLeft, &this->playerRight);
 
-	this->playerLeft.tick(delta, this->mode, this->turn);
-	this->playerRight.tick(delta, this->mode, this->turn);
+	this->playerLeft.tick(delta, this->mode);
+	this->playerRight.tick(delta, this->mode);
 
 	if (this->leave.getPressed())
 		*displayState = DISPLAY_MENU;
@@ -42,10 +42,13 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 
 void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
 {
-	drawText(window, text, this->turn + " TURN", WIN_W / 2, 20, 60, sf::Color::White, TOP_CENTER);
+	std::string name;
+	if (this->playerLeft.isPlaying())
+		name = this->playerLeft.getName();
+	else
+		name = this->playerRight.getName();
+	drawText(window, text, name + " TURN", WIN_W / 2, 20, 60, sf::Color::White, TOP_CENTER);
 
-	//draw board
-	//draw stones
 	grid.draw(window, text, textureManager);
 
 	this->drawLeftSide(window, text, textureManager);
@@ -71,9 +74,9 @@ void	Game::setGame(player_type playerLeft, player_type playerRight, game_mode mo
 		this->playerRight.setPlayer(playerRight, mode, 0);
 	}
 	if (rand_int(1, 2) == 1)
-		this->turn = this->playerLeft.getName();
+		this->playerLeft.setPlaying(true);
 	else
-		this->turn = this->playerRight.getName();
+		this->playerRight.setPlaying(true);
 
 	this->grid.clearGrid();
 }

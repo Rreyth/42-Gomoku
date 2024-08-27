@@ -8,6 +8,7 @@ Player::Player(void)
 {
 	this->type = PLAYER;
 	this->captured = 0;
+	this->playing = false;
 }
 
 Player::~Player()
@@ -65,6 +66,26 @@ std::string	Player::getName(void)
 	return (this->name);
 }
 
+bool		Player::isPlaying(void)
+{
+	return (this->playing);
+}
+
+void		Player::setPlaying(bool playing)
+{
+	this->playing = playing;
+}
+
+bool		Player::isWinner(void)
+{
+	return (this->winner);
+}
+
+void		Player::setWinner(bool winner)
+{
+	this->winner = winner;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,11 +102,13 @@ void		Player::setPlayer(player_type type, game_mode mode, int pos)
 		this->setName("PLAYER");
 	else
 		this->setName("AI");
+	this->captured = 0;
+	this->playing = false;
 }
 
-void		Player::tick(float delta, game_mode mode, std::string turn)
+void		Player::tick(float delta, game_mode mode)
 {
-	if (turn != this->name)
+	if (!this->playing)
 		return ;
 	if (mode == BLITZ)
 	{

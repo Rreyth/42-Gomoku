@@ -19,15 +19,23 @@ public:
 	void		setName(std::string name);
 	std::string	getName(void);
 
+	bool 		isPlaying(void);
+	void 		setPlaying(bool playing);
+
+	bool 		isWinner(void);
+	void 		setWinner(bool winner);
+
 	void 		setPlayer(player_type type, game_mode mode, int pos);
 
-	void 		tick(float delta, game_mode mode, std::string turn);
+	void 		tick(float delta, game_mode mode);
 
 private:
 	std::string	name;
 	player_type	type;
 	int 		captured;
 	float		timer;
+	bool		playing;
+	bool		winner;
 };
 
 #endif

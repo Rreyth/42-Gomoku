@@ -51,7 +51,7 @@ public:
 	int			getW(void);
 	int			getH(void);
 
-	void		tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer, std::string *turn);
+	void		tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer);
 	void		draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	void		clearGrid(void);
 
@@ -68,7 +68,7 @@ private:
 	int				loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
 	void			updateNeighbor(int x, int y);
 	void			checkCapture(void);
-	bool			checkWinCondition(std::string *turn);
+	bool			checkWinCondition(void);
 };
 
 #endif
