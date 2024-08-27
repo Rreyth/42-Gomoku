@@ -59,6 +59,7 @@ private:
 	int				x, y, w, h, previewX, previewY;
 	bool			previewLegal;
 	intersection	gridState[GRID_NB_INTER];
+	sf::Vector2i	dirs[8];
 
 	intersection	*getIntersection(int x, int y);
 	inter_type		getInterState(int x, int y);
