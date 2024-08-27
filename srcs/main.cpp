@@ -1,13 +1,13 @@
 #include <define.hpp>
-#include <Functions.hpp>
-#include <TextureManager.hpp>
-#include <Mouse.hpp>
-#include <Button.hpp>
-#include <Menu.hpp>
-#include <Settings.hpp>
-#include <ModeMenu.hpp>
-#include <Game.hpp>
-#include <End.hpp>
+#include <utils/Functions.hpp>
+#include <utils/TextureManager.hpp>
+#include <utils/Mouse.hpp>
+#include <ui/Button.hpp>
+#include <screen/Menu.hpp>
+#include <screen/Settings.hpp>
+#include <screen/ModeMenu.hpp>
+#include <screen/Game.hpp>
+#include <screen/End.hpp>
 
 #include <SFML/Graphics.hpp>
 #include <iostream>

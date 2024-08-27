@@ -1,5 +1,5 @@
-#include <Game.hpp>
-#include <Functions.hpp>
+#include <screen/Game.hpp>
+#include <utils/Functions.hpp>
 
 
 ////////////////////////////////////////////////////////////////////////////////

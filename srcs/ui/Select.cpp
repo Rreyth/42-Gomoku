@@ -1,5 +1,5 @@
-#include <Select.hpp>
-#include <Functions.hpp>
+#include <ui/Select.hpp>
+#include <utils/Functions.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor

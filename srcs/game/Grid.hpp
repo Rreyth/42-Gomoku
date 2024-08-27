@@ -2,8 +2,8 @@
 # define GRID_HPP
 
 # include <define.hpp>
-# include <Button.hpp>
-# include <Player.hpp>
+# include <ui/Button.hpp>
+# include <game/Player.hpp>
 
 # define GRID_SQUARE_HALF_SIZE 17
 # define GRID_SQUARE_SIZE 34

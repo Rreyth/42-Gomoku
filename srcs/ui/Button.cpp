@@ -1,5 +1,5 @@
-#include <Button.hpp>
-#include <Functions.hpp>
+#include <ui/Button.hpp>
+#include <utils/Functions.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor

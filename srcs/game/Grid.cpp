@@ -1,5 +1,5 @@
-#include <Grid.hpp>
-#include <Functions.hpp>
+#include <game/Grid.hpp>
+#include <utils/Functions.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor

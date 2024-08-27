@@ -2,7 +2,7 @@
 # define MENU_HPP
 
 # include <define.hpp>
-# include <Button.hpp>
+# include <ui/Button.hpp>
 
 class Menu
 {

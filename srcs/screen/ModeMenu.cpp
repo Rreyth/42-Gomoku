@@ -1,5 +1,5 @@
-#include <ModeMenu.hpp>
-#include <Functions.hpp>
+#include <screen/ModeMenu.hpp>
+#include <utils/Functions.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor

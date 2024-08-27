@@ -2,8 +2,8 @@
 # define TOGGLEBUTTON_HPP
 
 # include <define.hpp>
-# include <Mouse.hpp>
-# include <TextureManager.hpp>
+# include <utils/Mouse.hpp>
+# include <utils/TextureManager.hpp>
 
 # include <SFML/Graphics.hpp>
 # include <iostream>

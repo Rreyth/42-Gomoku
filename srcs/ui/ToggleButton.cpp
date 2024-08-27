@@ -1,5 +1,5 @@
-#include <ToggleButton.hpp>
-#include <Functions.hpp>
+#include <ui/ToggleButton.hpp>
+#include <utils/Functions.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor

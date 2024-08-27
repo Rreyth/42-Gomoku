@@ -1,5 +1,5 @@
-#include <End.hpp>
-#include <Functions.hpp>
+#include <screen/End.hpp>
+#include <utils/Functions.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor

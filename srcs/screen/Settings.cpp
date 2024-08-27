@@ -1,5 +1,5 @@
-#include <Settings.hpp>
-#include <Functions.hpp>
+#include <screen/Settings.hpp>
+#include <utils/Functions.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor

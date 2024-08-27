@@ -2,9 +2,9 @@
 # define MODMENU_HPP
 
 # include <define.hpp>
-# include <Button.hpp>
-# include <Select.hpp>
-# include <Game.hpp>
+# include <ui/Button.hpp>
+# include <ui/Select.hpp>
+# include <screen/Game.hpp>
 
 class ModeMenu
 {

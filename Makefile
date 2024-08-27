@@ -4,11 +4,9 @@ MAKEFLAGS			:= --no-print-directory
 .DELETE_ON_ERROR:
 .SECONDEXPANSION:
 
-UNAME				:= $(shell uname)
-
 #=================================COMPILATION==================================#
 CC					:= g++
-CPPFLAGS			:= -MP -MMD -I SFML_linux/include -I includes -g3
+CPPFLAGS			:= -MP -MMD -I SFML_linux/include -I srcs -g3
 LIBFSMLFLAG			:= -L SFML_linux/lib -lsfml-graphics -lsfml-window -lsfml-system
 
 #=====================================NAME=====================================#
@@ -19,23 +17,23 @@ BUILD				:= build
 
 #====================================TARGETS===================================#
 SRCS				:=	srcs/main.cpp \
-						srcs/Functions.cpp \
-						srcs/TextureManager.cpp \
-						srcs/Mouse.cpp \
-						srcs/Button.cpp \
-						srcs/Menu.cpp \
-						srcs/Settings.cpp \
-						srcs/ModeMenu.cpp \
-						srcs/Game.cpp \
-						srcs/Grid.cpp \
-						srcs/ToggleButton.cpp \
-						srcs/Select.cpp \
-						srcs/Player.cpp \
-						srcs/End.cpp \
+						srcs/utils/Mouse.cpp \
+						srcs/utils/Functions.cpp \
+						srcs/utils/TextureManager.cpp \
+						srcs/ui/Select.cpp \
+						srcs/ui/Button.cpp \
+						srcs/ui/ToggleButton.cpp \
+						srcs/screen/End.cpp \
+						srcs/screen/Menu.cpp \
+						srcs/screen/Game.cpp \
+						srcs/screen/Settings.cpp \
+						srcs/screen/ModeMenu.cpp \
+						srcs/game/Grid.cpp \
+						srcs/game/Player.cpp \
 
 OBJS 				:= ${SRCS:srcs/%.cpp=$(BUILD)/%.o}
 DEPS				:= $(SRCS:srcs/%.cpp=$(BUILD)/%.d)
-DIRS				:= $(BUILD)
+DIRS				:= $(sort $(shell dirname $(BUILD) $(OBJS)))
 
 #====================================COLORS====================================#
 NOC					:= \033[0m

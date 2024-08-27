@@ -2,9 +2,9 @@
 # define GAME_HPP
 
 # include <define.hpp>
-# include <Button.hpp>
-# include <Grid.hpp>
-# include <Player.hpp>
+# include <ui/Button.hpp>
+# include <game/Grid.hpp>
+# include <game/Player.hpp>
 
 class Game
 {

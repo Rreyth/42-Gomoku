@@ -2,10 +2,8 @@
 # define SELECT_HPP
 
 # include <define.hpp>
-# include <Mouse.hpp>
-# include <TextureManager.hpp>
-# include <Button.hpp>
-# include <ToggleButton.hpp>
+# include <utils/Mouse.hpp>
+# include <utils/TextureManager.hpp>
 
 # include <SFML/Graphics.hpp>
 # include <iostream>
