@@ -84,7 +84,7 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 
 	this->previewX = px;
 	this->previewY = py;
-	this->checkIfPreviewLegal();
+	this->checkIfPreviewLegal(leftPlayer->isPlaying());
 
 	if (mouse->isPressed(MBUT_RIGHT))
 	{
@@ -135,7 +135,7 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 		rightPlayer->setPlaying(false);
 		leftPlayer->setPlaying(true);
 	}
-	this->checkIfPreviewLegal();
+	this->checkIfPreviewLegal(leftPlayer->isPlaying());
 
 }
 
@@ -242,15 +242,79 @@ void	Grid::setInterState(int x, int y, inter_type interType)
 }
 
 
-void	Grid::checkIfPreviewLegal(void)
+void	Grid::checkIfPreviewLegal(bool leftPlayer)
 {
 	this->previewLegal = false;
 
-	if (this->getInterState(this->previewX, this->previewY) != INTER_EMPTY)
+	if (this->getInterState(this->previewX, this->previewY))
 		return ;
+
+	inter_type player = (leftPlayer) ? INTER_LEFT : INTER_RIGHT;
+	if (this->checkDoubleFreeThree(player, sf::Vector2i(0, 0))) 
+	{
+		std::cout << "DOUBLE free three !" << std::endl;
+		return;
+	}
 
 	this->previewLegal = true;
 }
+
+bool	Grid::checkDoubleFreeThree(inter_type interType, sf::Vector2i ignoreDir)
+{
+	int				x, y;
+	bool			empty;
+	int				nb_neighbor;
+	sf::Vector2i	dir;
+
+	for (int i = 0; i < 8; i++)
+	{
+		if (this->dirs[i] == ignoreDir)
+			continue ;
+		empty = false;
+		nb_neighbor = 0;
+		x = this->previewX;
+		y = this->previewY;
+		for (int j = 0; j < 4; j++)
+		{
+			x += this->dirs[i].x;
+			y += this->dirs[i].y;
+			if (this->getInterState(x, y) == INTER_INVALID)
+				break ;
+			if (this->getInterState(x, y) != interType && this->getInterState(x, y) != INTER_EMPTY)
+				break ;
+			if (this->getInterState(x, y) == INTER_EMPTY && empty)
+			{
+				empty = false;
+				break ;
+			}
+			if (this->getInterState(x, y) == INTER_EMPTY)
+			{
+				if (nb_neighbor == 1 && j > 1)
+					break;
+				empty = true;
+				continue ;
+			}
+			empty = false;
+			nb_neighbor++;
+			if (j > 1 || (j == 1 && nb_neighbor == 2))
+			{
+				inter_type before = this->getInterState(this->previewX - this->dirs[i].x, this->previewY - this->dirs[i].y);
+				inter_type after = this->getInterState(x + this->dirs[i].x, y + this->dirs[i].y);
+				if (before == INTER_INVALID && after == INTER_INVALID)
+					break ;
+				if ((before != interType && before != INTER_EMPTY && before != INTER_INVALID) ||
+					(after != interType && after != INTER_EMPTY && after != INTER_INVALID))
+					break ;
+				if (ignoreDir != sf::Vector2i(0, 0))
+					return (true);
+				else
+					return (this->checkDoubleFreeThree(interType, this->dirs[i]));
+			}
+		}
+	}
+	return (false);
+}
+
 
 int	Grid::loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType)
 {

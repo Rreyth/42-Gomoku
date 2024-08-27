@@ -63,13 +63,13 @@ private:
 
 	intersection	*getIntersection(int x, int y);
 	inter_type		getInterState(int x, int y);
-	inter_type		getInterPreviewState(void);
 	void			setInterState(int x, int y, inter_type interType);
-	void			checkIfPreviewLegal(void);
+	void			checkIfPreviewLegal(bool leftPlayer);
 	int				loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
 	void			updateNeighbor(int x, int y);
 	int				checkCapture(void);
 	bool			checkWinCondition(Player *me, Player *oppenent);
+	bool			checkDoubleFreeThree(inter_type interType, sf::Vector2i ignoreDir);
 };
 
 #endif
