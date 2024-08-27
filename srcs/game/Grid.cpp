@@ -124,15 +124,15 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 {
 	textureManager->drawTexture(window, SPRITE_GRID, this->x, this->y, TOP_LEFT);
 
-	std::string	xlabels = "ABCDEFGHIJKLMNOPQRT";
+	std::string	xlabels = ".ABCDEFGHIJKLMNOPQR.";
 	std::string	label;
 	int	interX, interY, drawX, drawY;
 
 	drawY = this->y - 20;
 	//letters top
-	for (int i = 0; i < GRID_W_INTER - 1; i++)
+	for (int i = 1; i <= GRID_W_INTER; i++)
 	{
-		drawX = this->x + (i + 1) * GRID_SQUARE_SIZE;
+		drawX = this->x + i * GRID_SQUARE_SIZE;
 		label = "";
 		label += xlabels[i];
 		drawText(window, text, label, drawX, drawY, 20, sf::Color::White, MID_CENTER);
@@ -140,7 +140,7 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 
 	//numbers left
 	drawX = this->x - 10;
-	for (int i = 1; i < GRID_W_INTER; i++)
+	for (int i = 1; i <= GRID_W_INTER; i++)
 	{
 		drawY = this->y + i * GRID_SQUARE_SIZE - 4;
 		label = std::to_string(i);
