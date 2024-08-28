@@ -249,56 +249,65 @@ void	Grid::checkIfPreviewLegal(bool leftPlayer)
 	if (this->getInterState(this->previewX, this->previewY))
 		return ;
 
-	// inter_type player = (leftPlayer) ? INTER_LEFT : INTER_RIGHT;
-	// if (this->checkDoubleFreeThree(player, sf::Vector2i(0, 0)))
-	// 	return;
+	inter_type plState = (leftPlayer) ? INTER_LEFT : INTER_RIGHT;
+	inter_type opState = (leftPlayer) ? INTER_RIGHT : INTER_LEFT;
+	if (this->checkDoubleFreeThree(plState, opState))
+		return;
 
 	this->previewLegal = true;
 }
 
-bool	Grid::checkDoubleFreeThree(inter_type interType, sf::Vector2i ignoreDir)
+bool	Grid::checkDoubleFreeThree(inter_type plState, inter_type opState)
 {
-	int			x, y, nb_neighbor;
-	bool		empty;
-	inter_type	state;
+	int	x, y, nbThreeTree, nbInterMe, nbInterEmpty;
+	inter_type	tmpState;
 
+	nbThreeTree = 0;
 	for (int i = 0; i < 8; i++)
 	{
-		if (this->dirs[i] == ignoreDir)
-			continue ;
-		empty = false;
-		nb_neighbor = 0;
 		x = this->previewX;
 		y = this->previewY;
-		for (int j = 0; j < 4; j++)
+
+		// Check 3 next intersections in dir
+		nbInterMe = 0;
+		nbInterEmpty = 0;
+		for (int j = 0; j < 3; j++)
 		{
 			x += this->dirs[i].x;
 			y += this->dirs[i].y;
-			state = this->getInterState(x, y);
-			if (state == INTER_INVALID || (state != interType &&
-				state != INTER_EMPTY) || (state == INTER_EMPTY && empty) ||
-				(state == INTER_EMPTY && nb_neighbor == 1 && j > 1))
-				break ;
-			empty = (state == INTER_EMPTY);
-			if (empty)
-				continue;
-			nb_neighbor++;
-			if (j > 1 || (j == 1 && nb_neighbor == 2))
-			{
-				inter_type before = this->getInterState(this->previewX - this->dirs[i].x, this->previewY - this->dirs[i].y);
-				inter_type after = this->getInterState(x + this->dirs[i].x, y + this->dirs[i].y);
-				if ((before == INTER_INVALID && after == INTER_INVALID) ||
-					(before != interType && before != INTER_EMPTY && before != INTER_INVALID) ||
-					(after != interType && after != INTER_EMPTY && after != INTER_INVALID))
-					break ;
-				if (ignoreDir != sf::Vector2i(0, 0))
-					return (true);
-				else
-					return (this->checkDoubleFreeThree(interType, this->dirs[i]));
-			}
+			tmpState = this->getInterState(x, y);
+			if (tmpState == INTER_EMPTY)
+				nbInterEmpty++;
+			else if (tmpState == plState)
+				nbInterMe++;
+			else
+				break;
 		}
+
+		// If there is 2 me and one empty, it can be a free three
+		if (nbInterEmpty != 1 || nbInterMe != 2)
+			continue;
+
+		// Check opponenent obstruction after possible free three
+		x += this->dirs[i].x;
+		y += this->dirs[i].y;
+		tmpState = this->getInterState(x, y);
+		if (tmpState == opState)
+			continue;
+
+		// Check opponenent obstruction before possible free three
+		x = this->previewX - this->dirs[i].x;
+		y = this->previewY - this->dirs[i].y;
+		tmpState = this->getInterState(x, y);
+		if (tmpState == opState)
+			continue;
+
+		nbThreeTree++;
+		if (nbThreeTree > 1)
+			break;
 	}
-	return (false);
+
+	return (nbThreeTree >= 2);
 }
 
 
