@@ -249,18 +249,18 @@ void	Grid::checkIfPreviewLegal(bool leftPlayer)
 	if (this->getInterState(this->previewX, this->previewY))
 		return ;
 
-	inter_type player = (leftPlayer) ? INTER_LEFT : INTER_RIGHT;
-	if (this->checkDoubleFreeThree(player, sf::Vector2i(0, 0)))
-		return;
+	// inter_type player = (leftPlayer) ? INTER_LEFT : INTER_RIGHT;
+	// if (this->checkDoubleFreeThree(player, sf::Vector2i(0, 0)))
+	// 	return;
 
 	this->previewLegal = true;
 }
 
 bool	Grid::checkDoubleFreeThree(inter_type interType, sf::Vector2i ignoreDir)
 {
-	int				x, y, nb_neighbor;
-	bool			empty;
-	inter_type		state;
+	int			x, y, nb_neighbor;
+	bool		empty;
+	inter_type	state;
 
 	for (int i = 0; i < 8; i++)
 	{
