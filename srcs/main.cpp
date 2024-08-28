@@ -17,6 +17,7 @@ int	main(void)
 {
 	// Initialisation
 	sf::RenderWindow	window(sf::VideoMode(WIN_W, WIN_H), "42 :)", sf::Style::Titlebar | sf::Style::Close);
+	sf::View			view(sf::FloatRect(0, 0, WIN_W, WIN_H));
 	sf::Clock			clock;
 	TextureManager		textureManager;
 	Mouse				mouse;
@@ -43,6 +44,7 @@ int	main(void)
 
 	window.setFramerateLimit(1000);
 	window.setVerticalSyncEnabled(false);
+	window.setView(view);
 	text.setFont(font);
 
 	// Main loop
@@ -93,7 +95,7 @@ int	main(void)
 			menu.draw(&window, &text, &textureManager);
 			break;
 		case DISPLAY_SETTINGS:
-			settings.tick(&displayState, delta, &mouse);
+			settings.tick(&displayState, delta, &mouse, &window, &view);
 			settings.draw(&window, &text, &textureManager);
 			break;
 		case DISPLAY_MODEMENU:

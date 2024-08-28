@@ -454,10 +454,7 @@ bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, d
 			tmpType1 = this->getInterState(tmpX, tmpY);
 
 			if (tmpType1 != INTER_EMPTY && tmpType1 != opType)
-			{
-
 				continue;
-			}
 
 			// Get stone after my 2 stones
 			tmpX = x;

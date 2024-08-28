@@ -85,6 +85,16 @@ void	ToggleButton::setToggle(bool toggle)
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
+void ToggleButton::tick(Mouse *mouse)
+{
+	this->mouseOver = mouse->inRectangle(this->x, this->y, this->w, this->h);
+	this->pressed = this->mouseOver && mouse->isPressed(MBUT_LEFT);
+
+	if (this->pressed)
+		this->toggle = !this->toggle;
+}
+
+
 void ToggleButton::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
 {
 	if (!this->mouseOver)
@@ -100,13 +110,6 @@ void ToggleButton::draw(sf::RenderWindow *window, sf::Text *text, TextureManager
 	drawText(window, text, this->text,
 		this->x + (this->w / 2), this->y + (this->h / 2),
 		this->fontSize, this->textColor, this->textPos);
-}
-
-
-void ToggleButton::tick(Mouse *mouse)
-{
-	this->mouseOver = mouse->inRectangle(this->x, this->y, this->w, this->h);
-	this->pressed = this->mouseOver && mouse->isPressed(MBUT_LEFT);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

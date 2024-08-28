@@ -6,7 +6,7 @@
 # include <SFML/Graphics.hpp>
 # include <string>
 
-# define NB_SPRITES 10
+# define NB_SPRITES 12
 
 typedef enum e_sprite_name
 {
@@ -17,6 +17,8 @@ typedef enum e_sprite_name
 	SPRITE_SQUARE_BUTTON_ON,
 	SPRITE_GEAR_BUTTON_OFF,
 	SPRITE_GEAR_BUTTON_ON,
+	SPRITE_SMALL_ROUND_BUTTON_OFF,
+	SPRITE_SMALL_ROUND_BUTTON_ON,
 	SPRITE_STONE_RED,
 	SPRITE_STONE_BLUE,
 	SPRITE_STONE_PREVIEW,
