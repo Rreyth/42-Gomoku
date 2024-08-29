@@ -24,7 +24,7 @@ Settings::Settings(void)
 	this->currentResolutionId = 0;
 
 	this->fullscreen = ToggleButton("", 0, TOP_LEFT, sf::Color::White,
-									WIN_W / 2 + 80, WIN_H / 3 * 2, 24, 24,
+									WIN_W / 2 + 80, WIN_H / 3 * 2 - 7, 24, 24,
 									SPRITE_SMALL_ROUND_BUTTON_ON, SPRITE_SMALL_ROUND_BUTTON_OFF,
 									SPRITE_SMALL_ROUND_BUTTON_ON);
 }
@@ -52,20 +52,19 @@ void	Settings::tick(display_state *displayState, float delta, Mouse *mouse, sf::
 		{
 		case 0:
 			view->zoom(1);
-			window->setView(*view);
 			window->setSize(sf::Vector2u(1600, 900));
 			break;
 		case 1:
 			view->zoom(1920 / 1600);
-			window->setView(*view);
 			window->setSize(sf::Vector2u(1920, 1080));
 			break;
 		case 2:
 			view->zoom(2560 / 1600);
-			window->setView(*view);
 			window->setSize(sf::Vector2u(2560, 1440));
 			break;
 		}
+		window->setFramerateLimit(MAX_FPS);
+		window->setView(*view);
 		this->currentResolutionId = resId;
 	}
 
@@ -92,6 +91,7 @@ void	Settings::tick(display_state *displayState, float delta, Mouse *mouse, sf::
 		else
 			window->create(sf::VideoMode(w, h), "Gomocool", sf::Style::Titlebar | sf::Style::Close);
 		window->setPosition(sf::Vector2i(0, 0));
+		window->setFramerateLimit(MAX_FPS);
 		window->setView(*view);
 	}
 }

@@ -42,8 +42,7 @@ int	main(void)
 		return (1);
 	}
 
-	window.setFramerateLimit(1000);
-	window.setVerticalSyncEnabled(false);
+	window.setFramerateLimit(MAX_FPS);
 	window.setView(view);
 	text.setFont(font);
 

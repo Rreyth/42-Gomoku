@@ -12,7 +12,7 @@ void	drawText(sf::RenderWindow *window, sf::Text *text, std::string str,
 	text->setString(str);
 	text->setCharacterSize(fontSize);
 	w = text->getLocalBounds().width;
-	h = text->getLocalBounds().height;
+	h = text->getLocalBounds().height + fontSize / 2;
 	if (pos == TOP_LEFT)
 		text->setPosition(x, y);
 	else if (pos == TOP_CENTER)

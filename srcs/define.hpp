@@ -6,6 +6,7 @@
 # define WIN_H 900
 # define WIN_POINT 5
 # define WIN_CAPTURE 10
+# define MAX_FPS 1000
 
 # define FONT_PATH "data/fonts/SquadaOne.ttf"
 
