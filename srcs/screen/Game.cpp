@@ -179,7 +179,7 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 	textureManager->drawTexture(window, this->playerRight.getStoneSprite(), WIN_W - (size.x / 2), gridY + (size.y * 0.4), MID_CENTER);
 
 	str = std::to_string(this->playerRight.getCaptured());
-	drawText(window, text, "CAPTURED STONES", WIN_W - (size.x / 2), gridY + (size.y * 0.75), 30, sf::Color::White, MID_CENTER);
+	drawText(window, text, "CAPTURED STONES", WIN_W - (size.x / 2), gridY + (size.y * 0.75), 25, sf::Color::White, MID_CENTER);
 	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.80), 30, sf::Color::White, MID_CENTER);
 
 	str = std::to_string((int)this->playerRight.getTimer()) + " s";
