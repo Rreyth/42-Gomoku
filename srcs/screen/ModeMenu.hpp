@@ -12,13 +12,13 @@ public:
 	ModeMenu(void);
 	~ModeMenu();
 
-	void	tick(display_state *displayState, float delta, Mouse *mouse, Game *game);
+	void	tick(display_state *displayState, float delta, Mouse *mouse, Game *game, stone_sprite *sprite);
 	void	draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 
 private:
 	std::string	title;
 	Button		back, play;
-	Select		playerLeft, playerRight, gamemode;
+	Select		playerLeft, playerRight, gamemode, gamerules;
 };
 
 #endif

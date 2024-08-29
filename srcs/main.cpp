@@ -21,7 +21,7 @@ int	main(void)
 	sf::Clock			clock;
 	TextureManager		textureManager;
 	Mouse				mouse;
-	sf::Font			font;
+	sf::Font			font[3];
 	sf::Text			text;
 	display_state		displayState = DISPLAY_MENU;
 	Menu				menu;
@@ -29,11 +29,16 @@ int	main(void)
 	ModeMenu			modeMenu;
 	Game				game;
 	End					end;
+	stone_sprite		sprite = DEFAULT;
 
 	try
 	{
 		textureManager.loadTextures();
-		if (!font.loadFromFile(FONT_PATH))
+		if (!font[0].loadFromFile(FONT_PATH_SQUADA))
+			throw std::invalid_argument("");
+		if (!font[1].loadFromFile(FONT_PATH_ROBOTO))
+			throw std::invalid_argument("");
+		if (!font[2].loadFromFile(FONT_PATH_SANKOFA))
 			throw std::invalid_argument("");
 	}
 	catch (const std::exception &e)
@@ -44,7 +49,7 @@ int	main(void)
 
 	window.setFramerateLimit(MAX_FPS);
 	window.setView(view);
-	text.setFont(font);
+	text.setFont(font[0]);
 
 	// Main loop
 	while (window.isOpen())
@@ -94,11 +99,11 @@ int	main(void)
 			menu.draw(&window, &text, &textureManager);
 			break;
 		case DISPLAY_SETTINGS:
-			settings.tick(&displayState, delta, &mouse, &window, &view);
+			settings.tick(&displayState, delta, &mouse, &window, &view, &text, font, &sprite);
 			settings.draw(&window, &text, &textureManager);
 			break;
 		case DISPLAY_MODEMENU:
-			modeMenu.tick(&displayState, delta, &mouse, &game);
+			modeMenu.tick(&displayState, delta, &mouse, &game, &sprite);
 			modeMenu.draw(&window, &text, &textureManager);
 			break;
 		case DISPLAY_GAME:

@@ -19,14 +19,35 @@ Settings::Settings(void)
 	res.push_back("2560x1440");
 
 	this->resolution = Select(res, 30, MID_CENTER, sf::Color::White,
-						WIN_W / 2 - 95, WIN_H / 2 - 24, 190, 48,
+						WIN_W / 3 - 95, WIN_H * 0.45, 190, 48,
 						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF, SPRITE_SQUARE_BUTTON_ON);
 	this->currentResolutionId = 0;
 
+	res.clear();
+	res.push_back("Default");
+	res.push_back("Amogus");
+	res.push_back("Coins");
+
+	this->stones = Select(res, 30, MID_CENTER, sf::Color::White,
+						WIN_W / 3 * 2 - 95, WIN_H * 0.45, 190, 48,
+						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF, SPRITE_SQUARE_BUTTON_ON);
+	this->currentStoneId = 0;
+
+	res.clear();
+	res.push_back("Squada One");
+	res.push_back("Roboto");
+	res.push_back("Sankofa");
+
+	this->fonts = Select(res, 30, MID_CENTER, sf::Color::White,
+						WIN_W / 3 * 2 - 95, WIN_H * 0.65, 190, 48,
+						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF, SPRITE_SQUARE_BUTTON_ON);
+	this->currentFontId = 0;
+
 	this->fullscreen = ToggleButton("", 0, TOP_LEFT, sf::Color::White,
-									WIN_W / 2 + 80, WIN_H / 3 * 2 - 7, 24, 24,
+									WIN_W / 3 + 70, WIN_H * 0.6625, 24, 24,
 									SPRITE_SMALL_ROUND_BUTTON_ON, SPRITE_SMALL_ROUND_BUTTON_OFF,
 									SPRITE_SMALL_ROUND_BUTTON_ON);
+
 }
 
 Settings::~Settings()
@@ -36,15 +57,46 @@ Settings::~Settings()
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
-void	Settings::tick(display_state *displayState, float delta, Mouse *mouse, sf::RenderWindow *window, sf::View *view)
+void	Settings::tick(display_state *displayState, float delta, Mouse *mouse, sf::RenderWindow *window, sf::View *view, sf::Text *text, sf::Font *font, stone_sprite *sprite)
 {
 	this->back.tick(mouse);
 	this->resolution.tick(mouse);
 	this->fullscreen.tick(mouse);
+	this->stones.tick(mouse);
+	this->fonts.tick(mouse);
 
 	if (this->back.getPressed())
 		*displayState = DISPLAY_MENU;
 
+	this->updateWindow(window, view);
+	this->updateFont(text, font);
+	this->updateStone(sprite);
+}
+
+
+void	Settings::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
+{
+	drawText(window, text, this->title, WIN_W / 2, 20, 192, sf::Color::White, TOP_CENTER);
+	this->back.draw(window, text, textureManager);
+
+	drawText(window, text, "Resolution", WIN_W / 3, WIN_H * 0.4, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "Stones", WIN_W / 3 * 2, WIN_H * 0.4, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "Font", WIN_W / 3 * 2, WIN_H * 0.6, 50, sf::Color::White, MID_CENTER);
+
+	drawText(window, text, "Fullscreen", WIN_W * 0.325, WIN_H * 0.67, 35, sf::Color::White, MID_CENTER);
+	this->fullscreen.draw(window, text, textureManager);
+
+	this->fonts.draw(window, text, textureManager);
+	this->stones.draw(window, text, textureManager);
+	this->resolution.draw(window, text, textureManager);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Private methods
+////////////////////////////////////////////////////////////////////////////////
+
+void	Settings::updateWindow(sf::RenderWindow *window, sf::View *view)
+{
 	int	resId = this->resolution.getSelected();
 	if (resId != this->currentResolutionId)
 	{
@@ -96,15 +148,24 @@ void	Settings::tick(display_state *displayState, float delta, Mouse *mouse, sf::
 	}
 }
 
-
-void	Settings::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
+void	Settings::updateFont(sf::Text *text, sf::Font *font)
 {
-	drawText(window, text, this->title, WIN_W / 2, 20, 192, sf::Color::White, TOP_CENTER);
-	this->back.draw(window, text, textureManager);
+	int	fontId = this->fonts.getSelected();
 
-	drawText(window, text, "Fullscreen", WIN_W / 2, WIN_H / 3 * 2, 35,
-			sf::Color::White, MID_CENTER);
-	this->fullscreen.draw(window, text, textureManager);
+	if (fontId != this->currentFontId)
+	{
+		text->setFont(font[fontId]);
+		this->currentFontId = fontId;
+	}
+}
 
-	this->resolution.draw(window, text, textureManager);
+void	Settings::updateStone(stone_sprite *sprite)
+{
+	int	stoneId = this->stones.getSelected();
+
+	if (stoneId != this->currentStoneId)
+	{
+		*sprite = (stone_sprite)stoneId;
+		this->currentStoneId = stoneId;
+	}
 }

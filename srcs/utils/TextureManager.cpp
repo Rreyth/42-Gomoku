@@ -24,8 +24,8 @@ void	TextureManager::loadTextures(void)
 {
 	// Load sprites
 	this->loadTexture(SPRITE_GRID, "grid.png");
-	this->loadTexture(SPRITE_ROUND_BUTTON_OFF, "round_button_off.png");
-	this->loadTexture(SPRITE_ROUND_BUTTON_ON, "round_button_on.png");
+	this->loadTexture(SPRITE_SQUARE_ROUNDED_BUTTON_OFF, "square_rounded_butt(off).png");
+	this->loadTexture(SPRITE_SQUARE_ROUNDED_BUTTON_ON, "square_rounded_butt(on).png");
 	this->loadTexture(SPRITE_SQUARE_BUTTON_OFF, "square_button_off.png");
 	this->loadTexture(SPRITE_SQUARE_BUTTON_ON, "square_button_on.png");
 	this->loadTexture(SPRITE_GEAR_BUTTON_OFF, "gear_button_off.png");
@@ -34,11 +34,16 @@ void	TextureManager::loadTextures(void)
 	this->loadTexture(SPRITE_SMALL_ROUND_BUTTON_ON, "smallRoundToggleon.png");
 	this->loadTexture(SPRITE_STONE_RED, "stone_red.png");
 	this->loadTexture(SPRITE_STONE_BLUE, "stone_blue.png");
+	this->loadTexture(SPRITE_COIN_RED, "coin_red.png");
+	this->loadTexture(SPRITE_COIN_BLUE, "coin_blue.png");
+	this->loadTexture(SPRITE_AMOGUS_RED, "amogus_red.png");
+	this->loadTexture(SPRITE_AMOGUS_BLUE, "amogus_blue.png");
 	this->loadTexture(SPRITE_STONE_PREVIEW, "stone_preview.png");
+	this->loadTexture(SPRITE_ARROW, "down_arrow.png");
 
 	// Scale sprites
-	this->scaleSprite(SPRITE_ROUND_BUTTON_OFF, 2.0f, 2.0f);
-	this->scaleSprite(SPRITE_ROUND_BUTTON_ON, 2.0f, 2.0f);
+	// this->scaleSprite(SPRITE_SQUARE_ROUNDED_BUTTON_OFF, 2.0f, 2.0f);
+	// this->scaleSprite(SPRITE_SQUARE_ROUNDED_BUTTON_ON, 2.0f, 2.0f);
 	this->scaleSprite(SPRITE_SQUARE_BUTTON_OFF, 1.9f, 1.2f);
 	this->scaleSprite(SPRITE_SQUARE_BUTTON_ON, 1.9f, 1.2f);
 	this->scaleSprite(SPRITE_GEAR_BUTTON_OFF, 0.5f, 0.5f);

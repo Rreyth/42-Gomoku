@@ -2,6 +2,7 @@
 # define PLAYER_HPP
 
 # include <define.hpp>
+# include <utils/TextureManager.hpp>
 # include <string>
 
 class Player
@@ -23,20 +24,24 @@ public:
 	bool 		isPlaying(void);
 	void 		setPlaying(bool playing);
 
-	bool 		isWinner(void);
-	void 		setWinner(bool winner);
+	win_state 	getWinState(void);
+	void 		setWinState(win_state winState);
 
-	void 		setPlayer(player_type type, game_mode mode, int pos);
+	sprite_name	getStoneSprite(void);
+
+	void 		setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite);
 
 	void 		tick(float delta, game_mode mode);
 
 private:
-	std::string	name;
 	player_type	type;
-	int 		captured;
+	std::string	name;
+	win_state	winState;
+	sprite_name	stoneSprite;
+
 	float		timer;
 	bool		playing;
-	bool		winner;
+	int 		captured;
 };
 
 #endif

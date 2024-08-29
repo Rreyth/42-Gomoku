@@ -53,13 +53,14 @@ public:
 
 	void		tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer);
 	void		draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
-	void		clearGrid(void);
+	void		clearGrid(sprite_name leftStone, sprite_name rightStone);
 
 private:
 	int				x, y, w, h, previewX, previewY;
 	bool			previewLegal;
 	intersection	gridState[GRID_NB_INTER];
 	sf::Vector2i	dirs[8];
+	sprite_name		leftStone, rightStone;
 
 	intersection	*getIntersection(int x, int y);
 	inter_type		getInterState(int x, int y);

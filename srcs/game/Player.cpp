@@ -9,6 +9,9 @@ Player::Player(void)
 	this->type = PLAYER;
 	this->captured = 0;
 	this->playing = false;
+	this->winState = WIN_STATE_NONE;
+	this->timer = 0;
+	this->stoneSprite = SPRITE_STONE_BLUE;
 }
 
 Player::~Player()
@@ -47,13 +50,9 @@ void		Player::addCaptured(int captured)
 void		Player::setTimer(game_mode mode)
 {
 	if (mode == BLITZ)
-	{
 		this->timer = 180;
-	}
 	else
-	{
 		this->timer = 0;
-	}
 }
 
 float		Player::getTimer(void)
@@ -81,21 +80,26 @@ void		Player::setPlaying(bool playing)
 	this->playing = playing;
 }
 
-bool		Player::isWinner(void)
+win_state		Player::getWinState(void)
 {
-	return (this->winner);
+	return (this->winState);
 }
 
-void		Player::setWinner(bool winner)
+void		Player::setWinState(win_state winState)
 {
-	this->winner = winner;
+	this->winState = winState;
+}
+
+sprite_name	Player::getStoneSprite()
+{
+	return (this->stoneSprite);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
-void		Player::setPlayer(player_type type, game_mode mode, int pos)
+void		Player::setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite)
 {
 	this->setType(type);
 	this->setTimer(mode);
@@ -109,7 +113,8 @@ void		Player::setPlayer(player_type type, game_mode mode, int pos)
 		this->setName("AI");
 	this->captured = 0;
 	this->playing = false;
-	this->winner = false;
+	this->winState = WIN_STATE_NONE;
+	this->stoneSprite = stoneSprite;
 }
 
 void		Player::tick(float delta, game_mode mode)
@@ -120,14 +125,10 @@ void		Player::tick(float delta, game_mode mode)
 	{
 		this->timer -= delta;
 		if (this->timer < 0)
-		{
 			this->timer = 0;
-		}
 	}
 	else
-	{
 		this->timer += delta;
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

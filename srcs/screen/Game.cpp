@@ -54,6 +54,20 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 	this->playerLeft.tick(delta, this->mode);
 	this->playerRight.tick(delta, this->mode);
 
+	if (this->mode == BLITZ)
+	{
+		if (this->playerLeft.getTimer() <= 0)
+		{
+			this->playerRight.setWinState(WIN_STATE_TIME);
+			*displayState = DISPLAY_END;
+		}
+		else if (this->playerRight.getTimer() <= 0)
+		{
+			this->playerLeft.setWinState(WIN_STATE_TIME);
+			*displayState = DISPLAY_END;
+		}
+	}
+
 	if (this->leave.getPressed())
 		*displayState = DISPLAY_MENU;
 }
@@ -77,27 +91,41 @@ void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 	this->leave.draw(window, text, textureManager);
 }
 
-void	Game::setGame(player_type playerLeft, player_type playerRight, game_mode mode)
+void	Game::setGame(player_type playerLeft, player_type playerRight, game_mode mode, stone_sprite *sprite)
 {
 	this->mode = mode;
+
+	sprite_name	leftStone = SPRITE_STONE_BLUE;
+	sprite_name	rightStone = SPRITE_STONE_RED;
+	if (*sprite == AMOGUS)
+	{
+		leftStone = SPRITE_AMOGUS_BLUE;
+		rightStone = SPRITE_AMOGUS_RED;
+	}
+	else if (*sprite == COINS)
+	{
+		leftStone = SPRITE_COIN_BLUE;
+		rightStone = SPRITE_COIN_RED;
+	}
+
 
 	if ((playerLeft == PLAYER && playerRight == PLAYER)||
 		(playerLeft == AI && playerRight == AI))
 	{
-		this->playerLeft.setPlayer(playerLeft, mode, 1);
-		this->playerRight.setPlayer(playerRight, mode, 2);
+		this->playerLeft.setPlayer(playerLeft, mode, 1, leftStone);
+		this->playerRight.setPlayer(playerRight, mode, 2, rightStone);
 	}
 	else
 	{
-		this->playerLeft.setPlayer(playerLeft, mode, 0);
-		this->playerRight.setPlayer(playerRight, mode, 0);
+		this->playerLeft.setPlayer(playerLeft, mode, 0, leftStone);
+		this->playerRight.setPlayer(playerRight, mode, 0, rightStone);
 	}
 	if (rand_int(1, 2) == 1)
 		this->playerLeft.setPlaying(true);
 	else
 		this->playerRight.setPlaying(true);
 
-	this->grid.clearGrid();
+	this->grid.clearGrid(leftStone, rightStone);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -115,10 +143,15 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 	std::string str = this->playerLeft.getName();
 	drawText(window, text, str, size.x / 2, gridY + (size.y * 0.05), 30, sf::Color::White, MID_CENTER);
 
-	drawText(window, text, "stone sprite", size.x / 2, gridY + (size.y * 0.4), 30, sf::Color::White, MID_CENTER);
+	if (this->playerLeft.isPlaying())
+		textureManager->drawTexture(window, SPRITE_ARROW, size.x / 2, WIN_H * 0.075, MID_CENTER);
+
+	// replace with player stone sprite
+	// drawText(window, text, "stone sprite", size.x / 2, gridY + (size.y * 0.4), 30, sf::Color::White, MID_CENTER);
+	textureManager->drawTexture(window, this->playerLeft.getStoneSprite(), size.x / 2, gridY + (size.y * 0.4), MID_CENTER);
 
 	str = std::to_string(this->playerLeft.getCaptured());
-	drawText(window, text, "captured stones", size.x / 2, gridY + (size.y * 0.75), 25, sf::Color::White, MID_CENTER);
+	drawText(window, text, "CAPTURED STONES", size.x / 2, gridY + (size.y * 0.75), 25, sf::Color::White, MID_CENTER);
 	drawText(window, text, str, size.x / 2, gridY + (size.y * 0.8), 30, sf::Color::White, MID_CENTER);
 
 	str = std::to_string((int)this->playerLeft.getTimer()) + " s";
@@ -132,15 +165,21 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 
 	this->rect.setPosition(WIN_W * 0.85 - 2, gridY);
 	window->draw(this->rect);
+	//draw arrow if right player is playing
 
 	sf::Vector2f size = this->rect.getSize();
 	std::string str = this->playerRight.getName();
 	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.05), 30, sf::Color::White, MID_CENTER);
 
-	drawText(window, text, "stone sprite", WIN_W - (size.x / 2), gridY + (size.y * 0.4), 30, sf::Color::White, MID_CENTER);
+	if (this->playerRight.isPlaying())
+		textureManager->drawTexture(window, SPRITE_ARROW, WIN_W - (size.x / 2), WIN_H * 0.075, MID_CENTER);
+
+	// replace with player stone sprite
+	// drawText(window, text, "stone sprite", WIN_W - (size.x / 2), gridY + (size.y * 0.4), 30, sf::Color::White, MID_CENTER);
+	textureManager->drawTexture(window, this->playerRight.getStoneSprite(), WIN_W - (size.x / 2), gridY + (size.y * 0.4), MID_CENTER);
 
 	str = std::to_string(this->playerRight.getCaptured());
-	drawText(window, text, "captured stones", WIN_W - (size.x / 2), gridY + (size.y * 0.75), 30, sf::Color::White, MID_CENTER);
+	drawText(window, text, "CAPTURED STONES", WIN_W - (size.x / 2), gridY + (size.y * 0.75), 30, sf::Color::White, MID_CENTER);
 	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.80), 30, sf::Color::White, MID_CENTER);
 
 	str = std::to_string((int)this->playerRight.getTimer()) + " s";

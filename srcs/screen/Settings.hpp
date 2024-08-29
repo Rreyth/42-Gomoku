@@ -12,15 +12,19 @@ public:
 	Settings(void);
 	~Settings();
 
-	void	tick(display_state *displayState, float delta, Mouse *mouse, sf::RenderWindow *window, sf::View *view);
+	void	tick(display_state *displayState, float delta, Mouse *mouse, sf::RenderWindow *window, sf::View *view, sf::Text *text, sf::Font *font, stone_sprite *sprite);
 	void	draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 
 private:
 	std::string		title;
 	Button			back;
 	ToggleButton	fullscreen;
-	Select			resolution;
-	int				currentResolutionId;
+	Select			resolution, stones, fonts;
+	int				currentResolutionId, currentFontId, currentStoneId;
+
+	void	updateWindow(sf::RenderWindow *window, sf::View *view);
+	void	updateFont(sf::Text *text, sf::Font *font);
+	void	updateStone(stone_sprite *sprite);
 };
 
 #endif

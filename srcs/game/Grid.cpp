@@ -16,7 +16,7 @@ Grid::Grid(void)
 	this->previewY = 0;
 	this->previewLegal = false;
 
-	this->clearGrid();
+	this->clearGrid(SPRITE_STONE_BLUE, SPRITE_STONE_RED);
 
 	this->dirs[DIR_L] = sf::Vector2i(-1, 0);
 	this->dirs[DIR_UL] = sf::Vector2i(-1, -1);
@@ -183,9 +183,9 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 		drawY = this->y + (interY + 1) * GRID_SQUARE_SIZE;
 
 		if (this->gridState[i].type == INTER_LEFT)
-			textureManager->drawTexture(window, SPRITE_STONE_BLUE, drawX, drawY, MID_CENTER);
+			textureManager->drawTexture(window, this->leftStone, drawX, drawY, MID_CENTER);
 		else
-			textureManager->drawTexture(window, SPRITE_STONE_RED, drawX, drawY, MID_CENTER);
+			textureManager->drawTexture(window, this->rightStone, drawX, drawY, MID_CENTER);
 	}
 
 	//draw stone preview
@@ -198,8 +198,10 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 }
 
 
-void	Grid::clearGrid(void)
+void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone)
 {
+	this->leftStone = leftStone;
+	this->rightStone = rightStone;
 	for (int i = 0; i < GRID_NB_INTER; i++)
 	{
 		this->gridState[i].type = INTER_EMPTY;
@@ -483,7 +485,7 @@ bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, d
 
 		if (length >= WIN_POINT)
 		{
-			me->setWinner(true);
+			me->setWinState(WIN_STATE_ALIGN);
 			this->previewLegal = false;
 			return (true);
 		}
@@ -494,14 +496,14 @@ bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, d
 
 	if (length >= WIN_POINT)
 	{
-		me->setWinner(true);
+		me->setWinState(WIN_STATE_ALIGN);
 		this->previewLegal = false;
 		return (true);
 	}
 
 	if (oppenent->getCaptured() >= WIN_CAPTURE - 2)
 	{
-		oppenent->setWinner(true);
+		oppenent->setWinState(WIN_STATE_CAPTURE);
 		oppenent->addCaptured(2);
 		this->previewLegal = false;
 		return (true);
@@ -527,7 +529,7 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent)
 	// Check if the player capture at least 10 opponent's stones
 	if (me->getCaptured() >= WIN_CAPTURE)
 	{
-		me->setWinner(true);
+		me->setWinState(WIN_STATE_CAPTURE);
 		this->previewLegal = false;
 		return (true);
 	}

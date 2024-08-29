@@ -10,8 +10,8 @@ Menu::Menu(void)
 	this->title = "GOMOCOOL";
 
 	this->play = Button("Play", 40, MID_CENTER, sf::Color::White,
-						WIN_W / 2 - 100, WIN_H / 2 - 40, 200, 80,
-						SPRITE_ROUND_BUTTON_ON, SPRITE_ROUND_BUTTON_OFF);
+						WIN_W / 2 - 150, WIN_H / 2 - 40, 300, 60,
+						SPRITE_SQUARE_ROUNDED_BUTTON_ON, SPRITE_SQUARE_ROUNDED_BUTTON_OFF);
 
 	this->settings = Button("", 25, MID_CENTER, sf::Color::White,
 						WIN_W - 70, WIN_H - 70, 50, 50,

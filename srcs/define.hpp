@@ -8,7 +8,15 @@
 # define WIN_CAPTURE 10
 # define MAX_FPS 1000
 
-# define FONT_PATH "data/fonts/SquadaOne.ttf"
+# define FONT_PATH_SQUADA "data/fonts/SquadaOne.ttf"
+# define FONT_PATH_ROBOTO "data/fonts/Rrroboto.ttf"
+# define FONT_PATH_SANKOFA "data/fonts/Sankofa.ttf"
+
+typedef enum e_font {
+	FONT_SQUADA,
+	FONT_ROBOTO,
+	FONT_SANKOFA
+}	t_font;
 
 typedef enum e_draw_pos {
 	TOP_LEFT,
@@ -36,9 +44,22 @@ typedef enum e_player_type {
 	AI
 }	player_type;
 
+typedef enum e_stone_sprite {
+	DEFAULT,
+	AMOGUS,
+	COINS
+}	stone_sprite;
+
 typedef enum e_game_mode {
 	NORMAL,
 	BLITZ
 }	game_mode;
+
+typedef enum e_win_state {
+	WIN_STATE_NONE,
+	WIN_STATE_ALIGN,
+	WIN_STATE_CAPTURE,
+	WIN_STATE_TIME
+}	win_state;
 
 #endif

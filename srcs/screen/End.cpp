@@ -41,24 +41,27 @@ void	End::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *texture
 
 	window->draw(this->rect);
 
-	drawText(window, text, this->title, 20, -20, 200, sf::Color::White, TOP_LEFT);
+	drawText(window, text, this->title, 20, -40, 200, sf::Color::White, TOP_LEFT);
 
-	drawText(window, text, "WIN BY", WIN_W * 0.90, 10, 70, sf::Color::White, MID_CENTER);
-	if (leftPlayer->getCaptured() >= WIN_CAPTURE || rightPlayer->getCaptured() >= WIN_CAPTURE)
-		drawText(window, text, "CAPTURE", WIN_W * 0.90, 80, 70, sf::Color::White, MID_CENTER);
+	drawText(window, text, "WIN BY", WIN_W * 0.92, 40, 70, sf::Color::White, MID_CENTER);
+
+	std::string winStates[] = {"NONE", "ALIGN", "CAPTURE", "TIMEOUT"};
+
+	if (leftPlayer->getWinState() != WIN_STATE_NONE)
+		drawText(window, text, winStates[leftPlayer->getWinState()], WIN_W * 0.92, 110, 70, sf::Color::White, MID_CENTER);
 	else
-		drawText(window, text, "ALIGN", WIN_W * 0.90, 80, 70, sf::Color::White, MID_CENTER);
+		drawText(window, text, winStates[rightPlayer->getWinState()], WIN_W * 0.92, 110, 70, sf::Color::White, MID_CENTER);
 
 	this->back.draw(window, text, textureManager);
 
 	drawText(window, text, leftPlayer->getName(), WIN_W * 0.20, WIN_H * 0.33, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, (leftPlayer->isWinner()) ? "WIN" : "LOSE", WIN_W * 0.20, WIN_H * 0.43, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, (leftPlayer->getWinState() != WIN_STATE_NONE) ? "WIN" : "LOSE", WIN_W * 0.20, WIN_H * 0.43, 50, sf::Color::White, MID_CENTER);
 	drawText(window, text, std::to_string((int)leftPlayer->getTimer()) + " s", WIN_W * 0.20, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
 	drawText(window, text, "CAPTURED", WIN_W * 0.20, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
 	drawText(window, text, std::to_string(leftPlayer->getCaptured()), WIN_W * 0.20, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
 
 	drawText(window, text, rightPlayer->getName(), WIN_W * 0.80, WIN_H * 0.33, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, (rightPlayer->isWinner()) ? "WIN" : "LOSE", WIN_W * 0.80, WIN_H * 0.43, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, (rightPlayer->getWinState() != WIN_STATE_NONE) ? "WIN" : "LOSE", WIN_W * 0.80, WIN_H * 0.43, 50, sf::Color::White, MID_CENTER);
 	drawText(window, text, std::to_string((int)rightPlayer->getTimer()) + " s", WIN_W * 0.80, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
 	drawText(window, text, "CAPTURED", WIN_W * 0.80, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
 	drawText(window, text, std::to_string(rightPlayer->getCaptured()), WIN_W * 0.80, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
