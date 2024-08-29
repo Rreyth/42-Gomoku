@@ -336,6 +336,9 @@ void	Grid::updateNeighbor(int x, int y)
 {
 	intersection	*inter = this->getIntersection(x, y);
 
+	if (inter->type != INTER_LEFT && inter->type != INTER_RIGHT)
+		return ;
+
 	for (int i = 0; i < 8; i++)
 		inter->neighbor[i] = this->loopUpdateNeighbor(
 									x + this->dirs[i].x,
@@ -395,6 +398,8 @@ int	Grid::checkCapture(void)
 		nbCapture += 2;
 	}
 
+	if (nbCapture > 0)
+			this->updateNeighbor(this->previewX, this->previewY);
 	return (nbCapture);
 }
 
