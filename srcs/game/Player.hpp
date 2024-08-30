@@ -29,6 +29,9 @@ public:
 
 	sprite_name	getStoneSprite(void);
 
+	void		addMove(void);
+	int			getMoves(void);
+
 	void 		setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite);
 
 	void 		tick(float delta, game_mode mode);
@@ -42,6 +45,7 @@ private:
 	float		timer;
 	bool		playing;
 	int 		captured;
+	int			moves;
 };
 
 #endif

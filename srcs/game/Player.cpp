@@ -12,6 +12,7 @@ Player::Player(void)
 	this->winState = WIN_STATE_NONE;
 	this->timer = 0;
 	this->stoneSprite = SPRITE_STONE_BLUE;
+	this->moves = 0;
 }
 
 Player::~Player()
@@ -95,6 +96,16 @@ sprite_name	Player::getStoneSprite()
 	return (this->stoneSprite);
 }
 
+void		Player::addMove(void)
+{
+	this->moves++;
+}
+
+int			Player::getMoves(void)
+{
+	return (this->moves);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -111,10 +122,11 @@ void		Player::setPlayer(player_type type, game_mode mode, int pos, sprite_name s
 		this->setName("PLAYER");
 	else
 		this->setName("AI");
-	this->captured = 0;
-	this->playing = false;
 	this->winState = WIN_STATE_NONE;
 	this->stoneSprite = stoneSprite;
+	this->playing = false;
+	this->captured = 0;
+	this->moves = 0;
 }
 
 void		Player::tick(float delta, game_mode mode)

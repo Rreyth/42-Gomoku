@@ -103,7 +103,7 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 
 	this->previewX = px;
 	this->previewY = py;
-	this->checkIfPreviewLegal(leftPlayer->isPlaying());
+	this->checkIfPreviewLegal(leftPlayer->isPlaying(), rightPlayer->getMoves() + leftPlayer->getMoves());
 
 	if (!mouse->isPressed(MBUT_LEFT) || !this->previewLegal)
 		return ;
@@ -111,7 +111,7 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 
 	if (leftPlayer->isPlaying())
 	{
-		this->leftMoves++;
+		leftPlayer->addMove();
 		this->setInterState(this->previewX, this->previewY, INTER_LEFT);
 		updateNeighbor(this->previewX, this->previewY);
 		leftPlayer->addCaptured(this->checkCapture());
@@ -125,7 +125,7 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	}
 	else
 	{
-		this->rightMoves++;
+		rightPlayer->addMove();
 		this->setInterState(this->previewX, this->previewY, INTER_RIGHT);
 		updateNeighbor(this->previewX, this->previewY);
 		rightPlayer->addCaptured(this->checkCapture());
@@ -137,7 +137,7 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 		rightPlayer->setPlaying(false);
 		leftPlayer->setPlaying(true);
 	}
-	this->checkIfPreviewLegal(leftPlayer->isPlaying());
+	this->checkIfPreviewLegal(leftPlayer->isPlaying(), rightPlayer->getMoves() + leftPlayer->getMoves());
 
 }
 
@@ -202,8 +202,6 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 
 void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule)
 {
-	this->leftMoves = 0;
-	this->rightMoves = 0;
 	this->leftStone = leftStone;
 	this->rightStone = rightStone;
 	this->rule = rule;
@@ -249,7 +247,7 @@ void	Grid::setInterState(int x, int y, inter_type interType)
 }
 
 
-void	Grid::checkIfPreviewLegal(bool leftPlayer)
+void	Grid::checkIfPreviewLegal(bool leftPlayer, int nbMoves)
 {
 	this->previewLegal = false;
 
@@ -262,17 +260,15 @@ void	Grid::checkIfPreviewLegal(bool leftPlayer)
 		return;
 
 	//check rule
-	if (this->rule == PRO && leftMoves + rightMoves <= 2)
-		if (!this->checkProRule(plState))
+	if (this->rule == PRO && nbMoves <= 2)
+		if (!this->checkProRule(plState, nbMoves))
 			return ;
 
 	this->previewLegal = true;
 }
 
-bool	Grid::checkProRule(inter_type interPlayer)
+bool	Grid::checkProRule(inter_type interPlayer, int nbMoves)
 {
-	int	nbMoves = leftMoves + rightMoves;
-
 	// The first stone must be placed in the center of the board.
 	if (nbMoves == 0 &&
 		(this->previewX != GRID_W_INTER / 2 ||
@@ -582,7 +578,7 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent)
 	}
 
 	// Check for draw
-	int	nbMoves = leftMoves + rightMoves;
+	int nbMoves = me->getMoves() + oppenent->getMoves();
 	if (nbMoves >= GRID_NB_INTER)
 	{
 		me->setWinState(WIN_STATE_NONE);

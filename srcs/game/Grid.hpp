@@ -56,7 +56,7 @@ public:
 	void		clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
 
 private:
-	int				x, y, w, h, previewX, previewY, leftMoves, rightMoves;
+	int				x, y, w, h, previewX, previewY;
 	bool			previewLegal;
 	intersection	gridState[GRID_NB_INTER];
 	sf::Vector2i	dirs[8];
@@ -67,8 +67,8 @@ private:
 	inter_type		getInterState(int x, int y);
 	void			setInterState(int x, int y, inter_type interType);
 	bool			checkDoubleFreeThree(inter_type plState, inter_type opState);
-	void			checkIfPreviewLegal(bool leftPlayer);
-	bool			checkProRule(inter_type interPlayer);
+	void			checkIfPreviewLegal(bool leftPlayer, int nbMoves);
+	bool			checkProRule(inter_type interPlayer, int nbMoves);
 	int				loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
 	void			updateNeighbor(int x, int y);
 	int				checkCapture(void);

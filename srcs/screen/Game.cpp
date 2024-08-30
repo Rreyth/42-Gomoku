@@ -146,9 +146,12 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 	if (this->playerLeft.isPlaying())
 		textureManager->drawTexture(window, SPRITE_ARROW, size.x / 2, WIN_H * 0.075, MID_CENTER);
 
-	// replace with player stone sprite
-	// drawText(window, text, "stone sprite", size.x / 2, gridY + (size.y * 0.4), 30, sf::Color::White, MID_CENTER);
 	textureManager->drawTexture(window, this->playerLeft.getStoneSprite(), size.x / 2, gridY + (size.y * 0.4), MID_CENTER);
+
+	str = std::to_string(this->playerLeft.getMoves());
+
+	drawText(window, text, "MOVES", size.x / 2, gridY + (size.y * 0.60), 25, sf::Color::White, MID_CENTER);
+	drawText(window, text, str, size.x / 2, gridY + (size.y * 0.65), 30, sf::Color::White, MID_CENTER);
 
 	str = std::to_string(this->playerLeft.getCaptured());
 	drawText(window, text, "CAPTURED STONES", size.x / 2, gridY + (size.y * 0.75), 25, sf::Color::White, MID_CENTER);
@@ -165,7 +168,6 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 
 	this->rect.setPosition(WIN_W * 0.85 - 2, gridY);
 	window->draw(this->rect);
-	//draw arrow if right player is playing
 
 	sf::Vector2f size = this->rect.getSize();
 	std::string str = this->playerRight.getName();
@@ -174,9 +176,11 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 	if (this->playerRight.isPlaying())
 		textureManager->drawTexture(window, SPRITE_ARROW, WIN_W - (size.x / 2), WIN_H * 0.075, MID_CENTER);
 
-	// replace with player stone sprite
-	// drawText(window, text, "stone sprite", WIN_W - (size.x / 2), gridY + (size.y * 0.4), 30, sf::Color::White, MID_CENTER);
 	textureManager->drawTexture(window, this->playerRight.getStoneSprite(), WIN_W - (size.x / 2), gridY + (size.y * 0.4), MID_CENTER);
+
+	str = std::to_string(this->playerRight.getMoves());
+	drawText(window, text, "MOVES", WIN_W - (size.x / 2), gridY + (size.y * 0.60), 25, sf::Color::White, MID_CENTER);
+	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.65), 30, sf::Color::White, MID_CENTER);
 
 	str = std::to_string(this->playerRight.getCaptured());
 	drawText(window, text, "CAPTURED STONES", WIN_W - (size.x / 2), gridY + (size.y * 0.75), 25, sf::Color::White, MID_CENTER);
