@@ -55,6 +55,11 @@ typedef enum e_game_mode {
 	BLITZ
 }	game_mode;
 
+typedef enum e_game_rules {
+	STANDARD,
+	PRO
+}	game_rules;
+
 typedef enum e_win_state {
 	WIN_STATE_NONE,
 	WIN_STATE_ALIGN,

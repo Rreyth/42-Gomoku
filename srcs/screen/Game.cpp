@@ -91,7 +91,7 @@ void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 	this->leave.draw(window, text, textureManager);
 }
 
-void	Game::setGame(player_type playerLeft, player_type playerRight, game_mode mode, stone_sprite *sprite)
+void	Game::setGame(player_type playerLeft, player_type playerRight, game_mode mode, game_rules rule, stone_sprite *sprite)
 {
 	this->mode = mode;
 
@@ -125,7 +125,7 @@ void	Game::setGame(player_type playerLeft, player_type playerRight, game_mode mo
 	else
 		this->playerRight.setPlaying(true);
 
-	this->grid.clearGrid(leftStone, rightStone);
+	this->grid.clearGrid(leftStone, rightStone, rule);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

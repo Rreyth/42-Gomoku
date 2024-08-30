@@ -42,6 +42,7 @@ ModeMenu::ModeMenu(void)
 
 	vec.clear();
 	vec.push_back("Standard");
+	vec.push_back("Pro");
 
 	this->gamerules = Select(vec, 40, MID_CENTER, sf::Color::White,
 								50, WIN_H / 2 - 40, 300, 60,
@@ -72,6 +73,7 @@ void	ModeMenu::tick(display_state *displayState, float delta, Mouse *mouse, Game
 		game->setGame((player_type)this->playerLeft.getSelected(),
 						(player_type)this->playerRight.getSelected(),
 						(game_mode)this->gamemode.getSelected(),
+						(game_rules)this->gamerules.getSelected(),
 						sprite);
 		*displayState = DISPLAY_GAME;
 	}

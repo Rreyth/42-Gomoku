@@ -16,7 +16,7 @@ Grid::Grid(void)
 	this->previewY = 0;
 	this->previewLegal = false;
 
-	this->clearGrid(SPRITE_STONE_BLUE, SPRITE_STONE_RED);
+	this->clearGrid(SPRITE_STONE_BLUE, SPRITE_STONE_RED, STANDARD);
 
 	this->dirs[DIR_L] = sf::Vector2i(-1, 0);
 	this->dirs[DIR_UL] = sf::Vector2i(-1, -1);
@@ -111,6 +111,7 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 
 	if (leftPlayer->isPlaying())
 	{
+		this->leftMoves++;
 		this->setInterState(this->previewX, this->previewY, INTER_LEFT);
 		updateNeighbor(this->previewX, this->previewY);
 		leftPlayer->addCaptured(this->checkCapture());
@@ -124,6 +125,7 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	}
 	else
 	{
+		this->rightMoves++;
 		this->setInterState(this->previewX, this->previewY, INTER_RIGHT);
 		updateNeighbor(this->previewX, this->previewY);
 		rightPlayer->addCaptured(this->checkCapture());
@@ -198,10 +200,13 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 }
 
 
-void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone)
+void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule)
 {
+	this->leftMoves = 0;
+	this->rightMoves = 0;
 	this->leftStone = leftStone;
 	this->rightStone = rightStone;
+	this->rule = rule;
 	for (int i = 0; i < GRID_NB_INTER; i++)
 	{
 		this->gridState[i].type = INTER_EMPTY;
@@ -256,7 +261,44 @@ void	Grid::checkIfPreviewLegal(bool leftPlayer)
 	if (this->checkDoubleFreeThree(plState, opState))
 		return;
 
+	//check rule
+	if (this->rule == PRO && leftMoves + rightMoves <= 2)
+		if (!this->checkProRule(plState))
+			return ;
+
 	this->previewLegal = true;
+}
+
+bool	Grid::checkProRule(inter_type interPlayer)
+{
+	int	nbMoves = leftMoves + rightMoves;
+	
+	// The first stone must be placed in the center of the board.
+	if (nbMoves == 0 &&
+		(this->previewX != GRID_W_INTER / 2 ||
+		this->previewY != GRID_W_INTER / 2))
+		return (false);
+	// The second stone may be placed anywhere on the board.
+	// The third stone must be placed at least three intersections away from the first stone
+	else if (nbMoves == 2)
+	{
+		int	x, y;
+
+		for (int i = 0; i < 8; i++)
+		{
+			x = this->previewX;
+			y = this->previewY;
+			for (int j = 0; j < 2; j++)
+			{
+				x += this->dirs[i].x;
+				y += this->dirs[i].y;
+				if (this->getInterState(x, y) == interPlayer)
+					return (false);
+			}
+		}
+	}
+	
+	return (true);
 }
 
 bool	Grid::checkDoubleFreeThree(inter_type plState, inter_type opState)

@@ -53,20 +53,22 @@ public:
 
 	void		tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer);
 	void		draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
-	void		clearGrid(sprite_name leftStone, sprite_name rightStone);
+	void		clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
 
 private:
-	int				x, y, w, h, previewX, previewY;
+	int				x, y, w, h, previewX, previewY, leftMoves, rightMoves;
 	bool			previewLegal;
 	intersection	gridState[GRID_NB_INTER];
 	sf::Vector2i	dirs[8];
 	sprite_name		leftStone, rightStone;
+	game_rules		rule;
 
 	intersection	*getIntersection(int x, int y);
 	inter_type		getInterState(int x, int y);
 	void			setInterState(int x, int y, inter_type interType);
 	bool			checkDoubleFreeThree(inter_type plState, inter_type opState);
 	void			checkIfPreviewLegal(bool leftPlayer);
+	bool			checkProRule(inter_type interPlayer);
 	int				loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
 	void			updateNeighbor(int x, int y);
 	int				checkCapture(void);
