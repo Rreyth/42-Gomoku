@@ -5,6 +5,8 @@
 # include <ui/Button.hpp>
 # include <game/Player.hpp>
 
+# include <vector>
+
 # define GRID_SQUARE_HALF_SIZE 17
 # define GRID_SQUARE_SIZE 34
 # define GRID_SIZE 633
@@ -50,18 +52,25 @@ public:
 	int			getY(void);
 	int			getW(void);
 	int			getH(void);
+	std::string	getCurrentMove(void);
 
 	void		tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer);
 	void		draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	void		clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
+	void		goToFirstMove(void);
+	void		goToPreviousMove(void);
+	void		goToNextMove(void);
+	void		goToLastMove(void);
 
 private:
-	int				x, y, w, h, previewX, previewY;
-	bool			previewLegal;
-	intersection	gridState[GRID_NB_INTER];
-	sf::Vector2i	dirs[8];
-	sprite_name		leftStone, rightStone;
-	game_rules		rule;
+	int							x, y, w, h, previewX, previewY, idBoardState;
+	bool						previewLegal;
+	intersection				gridState[GRID_NB_INTER];
+	sf::Vector2i				dirs[8];
+	sprite_name					leftStone, rightStone;
+	game_rules					rule;
+	std::vector<std::string>	boardStates;
+	std::string					currentMove;
 
 	intersection	*getIntersection(int x, int y);
 	inter_type		getInterState(int x, int y);
@@ -74,6 +83,9 @@ private:
 	int				checkCapture(void);
 	bool			checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, dir_neighbor opdir);
 	bool			checkWinCondition(Player *me, Player *oppenent);
+	void			addBoardState(void);
+	void			setBoardState(int id);
+	void			createCurrentMoveText(void);
 };
 
 #endif

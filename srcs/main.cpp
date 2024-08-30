@@ -111,7 +111,7 @@ int	main(void)
 			game.draw(&window, &text, &textureManager);
 			break;
 		case DISPLAY_END:
-			end.tick(&displayState, delta, &mouse);
+			end.tick(&displayState, delta, &mouse, game.getGrid());
 			end.draw(&window, &text, &textureManager,
 						game.getLeftPlayer(), game.getRightPlayer(),
 						game.getGrid());

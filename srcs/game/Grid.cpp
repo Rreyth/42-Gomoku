@@ -26,6 +26,8 @@ Grid::Grid(void)
 	this->dirs[DIR_DR] = sf::Vector2i(1, 1);
 	this->dirs[DIR_D] = sf::Vector2i(0, 1);
 	this->dirs[DIR_DL] = sf::Vector2i(-1, 1);
+
+	this->currentMove = "";
 }
 
 
@@ -59,6 +61,13 @@ int	Grid::getH(void)
 {
 	return (this->h);
 }
+
+
+std::string	Grid::getCurrentMove(void)
+{
+	return (this->currentMove);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
@@ -115,8 +124,10 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 		this->setInterState(this->previewX, this->previewY, INTER_LEFT);
 		updateNeighbor(this->previewX, this->previewY);
 		leftPlayer->addCaptured(this->checkCapture());
+		this->addBoardState();
 		if (this->checkWinCondition(leftPlayer, rightPlayer))
 		{
+			this->goToLastMove();
 			*displayState = DISPLAY_END;
 			return ;
 		}
@@ -129,8 +140,10 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 		this->setInterState(this->previewX, this->previewY, INTER_RIGHT);
 		updateNeighbor(this->previewX, this->previewY);
 		rightPlayer->addCaptured(this->checkCapture());
+		this->addBoardState();
 		if (this->checkWinCondition(rightPlayer, leftPlayer))
 		{
+			this->goToLastMove();
 			*displayState = DISPLAY_END;
 			return ;
 		}
@@ -211,6 +224,44 @@ void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules r
 		for (int j = 0; j < 8; j++)
 			this->gridState[i].neighbor[j] = 0;
 	}
+	this->boardStates.clear();
+}
+
+void	Grid::goToFirstMove(void)
+{
+	this->idBoardState = 0;
+	this->createCurrentMoveText();
+	this->setBoardState(this->idBoardState);
+}
+
+
+void	Grid::goToPreviousMove(void)
+{
+	if (this->idBoardState <= 0)
+		return ;
+
+	this->idBoardState -= 1;
+	this->createCurrentMoveText();
+	this->setBoardState(this->idBoardState);
+}
+
+
+void	Grid::goToNextMove(void)
+{
+	if (this->idBoardState >= this->boardStates.size() - 1)
+		return ;
+
+	this->idBoardState += 1;
+	this->createCurrentMoveText();
+	this->setBoardState(this->idBoardState);
+}
+
+
+void	Grid::goToLastMove(void)
+{
+	this->idBoardState = this->boardStates.size() - 1;
+	this->createCurrentMoveText();
+	this->setBoardState(this->idBoardState);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -293,7 +344,7 @@ bool	Grid::checkProRule(inter_type interPlayer, int nbMoves)
 			}
 		}
 	}
-	
+
 	return (true);
 }
 
@@ -588,4 +639,46 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent)
 	}
 
 	return (false);
+}
+
+
+void	Grid::addBoardState(void)
+{
+	std::string	boardState = "";
+
+	for (int i = 0; i < GRID_NB_INTER; i++)
+	{
+		if (this->gridState[i].type == INTER_LEFT)
+			boardState += 'L';
+		else if (this->gridState[i].type == INTER_RIGHT)
+			boardState += 'R';
+		else
+			boardState += 'E';
+	}
+
+	this->boardStates.push_back(boardState);
+}
+
+
+void	Grid::setBoardState(int id)
+{
+	std::string	boardState = this->boardStates[id];
+
+	for (int i = 0; i < GRID_NB_INTER; i++)
+	{
+		if (boardState[i] == 'L')
+			this->gridState[i].type = INTER_LEFT;
+		else if (boardState[i] == 'R')
+			this->gridState[i].type = INTER_RIGHT;
+		else
+			this->gridState[i].type = INTER_EMPTY;
+	}
+}
+
+
+void	Grid::createCurrentMoveText(void)
+{
+	this->currentMove = std::to_string(this->idBoardState + 1);
+	this->currentMove += " / ";
+	this->currentMove += std::to_string(this->boardStates.size());
 }
