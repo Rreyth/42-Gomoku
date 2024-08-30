@@ -7,9 +7,9 @@
 
 # define GRID_SQUARE_HALF_SIZE 17
 # define GRID_SQUARE_SIZE 34
-# define GRID_SIZE 647
-# define GRID_W_INTER 18
-# define GRID_NB_INTER 324 // 324 = 18 * 18
+# define GRID_SIZE 633
+# define GRID_W_INTER 17
+# define GRID_NB_INTER 289 // 289 = 17 * 17
 
 typedef enum e_dir_neighbor
 {

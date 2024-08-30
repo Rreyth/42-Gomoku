@@ -150,11 +150,11 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 	std::string	label;
 	int	interX, interY, drawX, drawY;
 
-	drawY = this->y - 20;
+	drawY = this->y - 15;
 	//letters top
 	for (int i = 1; i <= GRID_W_INTER; i++)
 	{
-		drawX = this->x + i * GRID_SQUARE_SIZE;
+		drawX = this->x + i * GRID_SQUARE_SIZE + 10;
 		label = "";
 		label += xlabels[i];
 		drawText(window, text, label, drawX, drawY, 20, sf::Color::White, MID_CENTER);
@@ -164,7 +164,7 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 	drawX = this->x - 10;
 	for (int i = 1; i <= GRID_W_INTER; i++)
 	{
-		drawY = this->y + i * GRID_SQUARE_SIZE - 4;
+		drawY = this->y + i * GRID_SQUARE_SIZE - 4 + 10;
 		label = std::to_string(i);
 		if (i == 1)
 			drawText(window, text, label, drawX - 3, drawY, 20, sf::Color::White, MID_RIGHT);
@@ -181,8 +181,8 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 		interX = i % GRID_W_INTER;
 		interY = i / GRID_W_INTER;
 
-		drawX = this->x + (interX + 1) * GRID_SQUARE_SIZE;
-		drawY = this->y + (interY + 1) * GRID_SQUARE_SIZE;
+		drawX = this->x + (interX + 1) * GRID_SQUARE_SIZE + 10;
+		drawY = this->y + (interY + 1) * GRID_SQUARE_SIZE + 10;
 
 		if (this->gridState[i].type == INTER_LEFT)
 			textureManager->drawTexture(window, this->leftStone, drawX, drawY, MID_CENTER);
@@ -193,8 +193,8 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 	//draw stone preview
 	if (this->previewLegal)
 	{
-		drawX = this->x + (this->previewX + 1) * GRID_SQUARE_SIZE;
-		drawY = this->y + (this->previewY + 1) * GRID_SQUARE_SIZE;
+		drawX = this->x + (this->previewX + 1) * GRID_SQUARE_SIZE + 10;
+		drawY = this->y + (this->previewY + 1) * GRID_SQUARE_SIZE + 10;
 		textureManager->drawTexture(window, SPRITE_STONE_PREVIEW, drawX, drawY, MID_CENTER);
 	}
 }
@@ -272,7 +272,7 @@ void	Grid::checkIfPreviewLegal(bool leftPlayer)
 bool	Grid::checkProRule(inter_type interPlayer)
 {
 	int	nbMoves = leftMoves + rightMoves;
-	
+
 	// The first stone must be placed in the center of the board.
 	if (nbMoves == 0 &&
 		(this->previewX != GRID_W_INTER / 2 ||
@@ -577,6 +577,16 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent)
 	if (me->getCaptured() >= WIN_CAPTURE)
 	{
 		me->setWinState(WIN_STATE_CAPTURE);
+		this->previewLegal = false;
+		return (true);
+	}
+
+	// Check for draw
+	int	nbMoves = leftMoves + rightMoves;
+	if (nbMoves >= GRID_NB_INTER)
+	{
+		me->setWinState(WIN_STATE_NONE);
+		oppenent->setWinState(WIN_STATE_NONE);
 		this->previewLegal = false;
 		return (true);
 	}
