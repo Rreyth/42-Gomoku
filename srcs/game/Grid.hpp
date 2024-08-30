@@ -69,6 +69,7 @@ private:
 	sf::Vector2i				dirs[8];
 	sprite_name					leftStone, rightStone;
 	game_rules					rule;
+	std::vector<sf::Vector2i>	leftWinPos, rightWinPos;
 	std::vector<std::string>	boardStates;
 	std::string					currentMove;
 

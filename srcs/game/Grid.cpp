@@ -88,25 +88,6 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	int px = (mx - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 	int py = (my - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 
-	if (mouse->isPressed(MBUT_RIGHT))
-	{
-		intersection	*inter = this->getIntersection(px, py);
-
-		if (!inter)
-			return ;
-
-		std::cout << "\nNeighbors : L  UL U  UR R  DR D  DL" << std::endl;
-		std::cout << "Neighbors : "
-					<< inter->neighbor[DIR_L] << "  "
-					<< inter->neighbor[DIR_UL] << "  "
-					<< inter->neighbor[DIR_U] << "  "
-					<< inter->neighbor[DIR_UR] << "  "
-					<< inter->neighbor[DIR_R] << "  "
-					<< inter->neighbor[DIR_DR] << "  "
-					<< inter->neighbor[DIR_D] << "  "
-					<< inter->neighbor[DIR_DL] << std::endl;
-	}
-
 	if (px == this->previewX && py == this->previewY && !mouse->isPressed(MBUT_LEFT))
 		return ;
 
@@ -122,7 +103,7 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	{
 		leftPlayer->addMove();
 		this->setInterState(this->previewX, this->previewY, INTER_LEFT);
-		updateNeighbor(this->previewX, this->previewY);
+		this->updateNeighbor(this->previewX, this->previewY);
 		leftPlayer->addCaptured(this->checkCapture());
 		this->addBoardState();
 		if (this->checkWinCondition(leftPlayer, rightPlayer))
@@ -138,7 +119,7 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	{
 		rightPlayer->addMove();
 		this->setInterState(this->previewX, this->previewY, INTER_RIGHT);
-		updateNeighbor(this->previewX, this->previewY);
+		this->updateNeighbor(this->previewX, this->previewY);
 		rightPlayer->addCaptured(this->checkCapture());
 		this->addBoardState();
 		if (this->checkWinCondition(rightPlayer, leftPlayer))
@@ -225,6 +206,8 @@ void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules r
 			this->gridState[i].neighbor[j] = 0;
 	}
 	this->boardStates.clear();
+	this->leftWinPos.clear();
+	this->rightWinPos.clear();
 }
 
 void	Grid::goToFirstMove(void)
@@ -487,8 +470,6 @@ int	Grid::checkCapture(void)
 		nbCapture += 2;
 	}
 
-	if (nbCapture > 0)
-			this->updateNeighbor(this->previewX, this->previewY);
 	return (nbCapture);
 }
 
@@ -497,6 +478,7 @@ bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, d
 {
 	intersection	*inter, *tmpInter;
 	inter_type		opType, tmpType1, tmpType2;
+	sf::Vector2i	tmpWinpos;
 	int				x, y, tmpX, tmpY, length;
 	bool			canBeCapture;
 
@@ -527,6 +509,7 @@ bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, d
 	{
 		tmpInter = this->getIntersection(x, y);
 		canBeCapture = false;
+		tmpWinpos = sf::Vector2i(x, y);
 
 		// Check if the stone can be capture for each axis
 		for (int j = 0; j < 4; j++)
@@ -566,6 +549,18 @@ bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, d
 			if (tmpType1 == INTER_EMPTY && tmpType2 == opType ||
 				tmpType1 == opType && tmpType2 == INTER_EMPTY)
 			{
+				if (opType == INTER_RIGHT)
+				{
+					if (std::find(this->leftWinPos.begin(), this->leftWinPos.end(), tmpWinpos)
+							== this->leftWinPos.end())
+						this->leftWinPos.push_back(tmpWinpos);
+				}
+				else
+				{
+					if (std::find(this->rightWinPos.begin(), this->rightWinPos.end(), tmpWinpos)
+							== this->rightWinPos.end())
+						this->rightWinPos.push_back(tmpWinpos);
+				}
 				canBeCapture = true;
 				break;
 			}
@@ -619,6 +614,40 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent)
 		return (true);
 	if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
 		return (true);
+
+	// Check if any valid 5 stones line
+	if (this->getInterState(this->previewX, this->previewY) == INTER_LEFT)
+	{
+		for (std::size_t i = 0; i < this->leftWinPos.size(); i++)
+		{
+			this->previewX = this->leftWinPos[i].x;
+			this->previewY = this->leftWinPos[i].y;
+			if (this->checkWinCaptureCase(me, oppenent, DIR_L, DIR_R))
+				return (true);
+			if (this->checkWinCaptureCase(me, oppenent, DIR_UL, DIR_DR))
+				return (true);
+			if (this->checkWinCaptureCase(me, oppenent, DIR_U, DIR_D))
+				return (true);
+			if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
+				return (true);
+		}
+	}
+	else
+	{
+		for (std::size_t i = 0; i < this->rightWinPos.size(); i++)
+		{
+			this->previewX = this->rightWinPos[i].x;
+			this->previewY = this->rightWinPos[i].y;
+			if (this->checkWinCaptureCase(me, oppenent, DIR_L, DIR_R))
+				return (true);
+			if (this->checkWinCaptureCase(me, oppenent, DIR_UL, DIR_DR))
+				return (true);
+			if (this->checkWinCaptureCase(me, oppenent, DIR_U, DIR_D))
+				return (true);
+			if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
+				return (true);
+		}
+	}
 
 	// Check if the player capture at least 10 opponent's stones
 	if (me->getCaptured() >= WIN_CAPTURE)
