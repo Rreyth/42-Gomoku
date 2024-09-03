@@ -5,6 +5,7 @@
 # include <ui/Button.hpp>
 # include <game/Grid.hpp>
 # include <game/Player.hpp>
+# include <game/Evaluation.hpp>
 
 class Game
 {
@@ -26,6 +27,7 @@ private:
 	Grid				grid;
 	Player 				playerLeft, playerRight;
 	game_mode			mode;
+	Evaluation			evaluator;
 
 	void				swapTurn(void);
 	void				drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);

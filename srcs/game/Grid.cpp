@@ -74,7 +74,8 @@ std::string	Grid::getCurrentMove(void)
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
-void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer)
+void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer,
+					Evaluation *evaluator)
 {
 	if (!mouse->inRectangle(this->x, this->y, this->w, this->h))
 	{
@@ -89,14 +90,15 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	int px = (mx - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 	int py = (my - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 
+	// TODO: REMOVE PRINT TEST PART
 	if (mouse->isPressed(MBUT_RIGHT))
 	{
 		std::string	xaxis = "ABCDEFGHIJKLMNOPQ";
 		intersection	*inter = this->getIntersection(px, py);
 		std::cout << "\nPosition " << xaxis[px] << py + 1 << " :" << std::endl;
-		std::cout << "    Evalutation Left  : " << evaluationPosition(this, INTER_LEFT, px, py)
+		std::cout << "    Evalutation Left  : " << evaluator->evaluationPosition(this, INTER_LEFT, INTER_RIGHT, px, py)
 					<< std::endl;
-		std::cout << "    Evalutation Right : " << evaluationPosition(this, INTER_RIGHT, px, py)
+		std::cout << "    Evalutation Right : " << evaluator->evaluationPosition(this, INTER_RIGHT, INTER_LEFT, px, py)
 					<< std::endl;
 		std::cout << "    Neighbors :" << std::endl;
 		std::cout << "        " << inter->neighbor[DIR_UL] << " " << inter->neighbor[DIR_U] <<  " " << inter->neighbor[DIR_UR] << std::endl;

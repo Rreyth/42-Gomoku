@@ -7,6 +7,7 @@
 # include <vector>
 
 class Player;
+class Evaluation;
 
 class Grid
 {
@@ -22,7 +23,8 @@ public:
 	inter_type		getInterState(int x, int y);
 	intersection	*getIntersection(int x, int y);
 
-	void						tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer);
+	void						tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer,
+										Evaluation *evaluator);
 	void						draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	void						clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
 	void						goToFirstMove(void);

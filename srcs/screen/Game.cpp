@@ -49,7 +49,8 @@ Grid	*Game::getGrid(void)
 void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 {
 	this->leave.tick(mouse);
-	this->grid.tick(displayState, mouse, &this->playerLeft, &this->playerRight);
+	this->grid.tick(displayState, mouse, &this->playerLeft, &this->playerRight,
+						&this->evaluator);
 
 	sf::Vector2i	move;
 	int 			nbMoves = this->playerLeft.getMoves() + this->playerRight.getMoves();
