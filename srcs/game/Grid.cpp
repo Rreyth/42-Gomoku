@@ -131,8 +131,7 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 		rightPlayer->setPlaying(false);
 		leftPlayer->setPlaying(true);
 	}
-	this->checkIfPreviewLegal(leftPlayer->isPlaying(), rightPlayer->getMoves() + leftPlayer->getMoves());
-
+	this->previewLegal = false;
 }
 
 
@@ -283,46 +282,90 @@ void	Grid::setInterState(int x, int y, inter_type interType)
 
 void	Grid::checkIfPreviewLegal(bool leftPlayer, int nbMoves)
 {
-	this->previewLegal = false;
+	inter_type plState;
+	inter_type opState;
+	if (leftPlayer)
+	{
+		plState = INTER_LEFT;
+		opState = INTER_RIGHT;
+	}
+	else
+	{
+		plState = INTER_RIGHT;
+		opState = INTER_LEFT;
+	}
+	this->previewLegal = this->checkLegalMove(this->previewX, this->previewY, nbMoves, plState, opState);
+}
 
-	if (this->getInterState(this->previewX, this->previewY))
-		return ;
+bool	Grid::checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState)
+{
+	if (this->getInterState(x, y))
+		return (false);
 
-	inter_type plState = (leftPlayer) ? INTER_LEFT : INTER_RIGHT;
-	inter_type opState = (leftPlayer) ? INTER_RIGHT : INTER_LEFT;
-	if (this->checkDoubleFreeThree(plState, opState))
-		return;
+	if (this->checkDoubleFreeThree(x, y, plState, opState))
+		return (false);
 
 	//check rule
 	if (this->rule == PRO && nbMoves <= 2)
-		if (!this->checkProRule(plState, nbMoves))
-			return ;
+		if (!this->checkProRule(x, y, plState, nbMoves))
+			return (false);
 
-	this->previewLegal = true;
+	return (true);
 }
 
-bool	Grid::checkProRule(inter_type interPlayer, int nbMoves)
+std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *leftPlayer, Player *rightPlayer)
+{
+	std::vector<sf::Vector2i>	legalMoves;
+	int							nbMoves = leftPlayer->getMoves() + rightPlayer->getMoves();
+
+	inter_type					plState;
+	inter_type					opState;
+
+	if (leftPlayer->isPlaying())
+	{
+		plState = INTER_LEFT;
+		opState = INTER_RIGHT;
+	}
+	else
+	{
+		plState = INTER_RIGHT;
+		opState = INTER_LEFT;
+	}
+
+	for (int i = 0; i < GRID_W_INTER; i++)
+	{
+		for (int j = 0; j < GRID_W_INTER; j++)
+		{
+			if (checkLegalMove(i, j, nbMoves, plState, opState))
+				legalMoves.push_back(sf::Vector2i(i, j));
+		}
+	}
+
+	return (legalMoves);
+}
+
+bool	Grid::checkProRule(int x, int y, inter_type interPlayer, int nbMoves)
 {
 	// The first stone must be placed in the center of the board.
 	if (nbMoves == 0 &&
-		(this->previewX != GRID_W_INTER / 2 ||
-		this->previewY != GRID_W_INTER / 2))
+		(x != GRID_W_INTER / 2 ||
+		y != GRID_W_INTER / 2))
 		return (false);
 	// The second stone may be placed anywhere on the board.
 	// The third stone must be placed at least three intersections away from the first stone
 	else if (nbMoves == 2)
 	{
-		int	x, y;
+		int	tmp_x, tmp_y;
 
 		for (int i = 0; i < 8; i++)
 		{
-			x = this->previewX;
-			y = this->previewY;
+			tmp_x = x;
+			tmp_y = y;
 			for (int j = 0; j < 2; j++)
 			{
-				x += this->dirs[i].x;
-				y += this->dirs[i].y;
-				if (this->getInterState(x, y) == interPlayer)
+				tmp_x += this->dirs[i].x;
+				tmp_y += this->dirs[i].y;
+				if (this->getInterState(tmp_x, tmp_y) == interPlayer)
 					return (false);
 			}
 		}
@@ -331,25 +374,25 @@ bool	Grid::checkProRule(inter_type interPlayer, int nbMoves)
 	return (true);
 }
 
-bool	Grid::checkDoubleFreeThree(inter_type plState, inter_type opState)
+bool	Grid::checkDoubleFreeThree(int x, int y, inter_type plState, inter_type opState)
 {
-	int	x, y, nbThreeTree, nbInterMe, nbInterEmpty;
+	int	tmp_x, tmp_y, nbThreeTree, nbInterMe, nbInterEmpty;
 	inter_type	tmpState;
 
 	nbThreeTree = 0;
 	for (int i = 0; i < 8; i++)
 	{
-		x = this->previewX;
-		y = this->previewY;
+		tmp_x = x;
+		tmp_y = y;
 
 		// Check 3 next intersections in dir
 		nbInterMe = 0;
 		nbInterEmpty = 0;
 		for (int j = 0; j < 3; j++)
 		{
-			x += this->dirs[i].x;
-			y += this->dirs[i].y;
-			tmpState = this->getInterState(x, y);
+			tmp_x += this->dirs[i].x;
+			tmp_y += this->dirs[i].y;
+			tmpState = this->getInterState(tmp_x, tmp_y);
 			if (tmpState == INTER_EMPTY)
 				nbInterEmpty++;
 			else if (tmpState == plState)
@@ -363,16 +406,16 @@ bool	Grid::checkDoubleFreeThree(inter_type plState, inter_type opState)
 			continue;
 
 		// Check opponenent obstruction after possible free three
-		x += this->dirs[i].x;
-		y += this->dirs[i].y;
-		tmpState = this->getInterState(x, y);
+		tmp_x += this->dirs[i].x;
+		tmp_y += this->dirs[i].y;
+		tmpState = this->getInterState(tmp_x, tmp_y);
 		if (tmpState == opState)
 			continue;
 
 		// Check opponenent obstruction before possible free three
-		x = this->previewX - this->dirs[i].x;
-		y = this->previewY - this->dirs[i].y;
-		tmpState = this->getInterState(x, y);
+		tmp_x = x - this->dirs[i].x;
+		tmp_y = y - this->dirs[i].y;
+		tmpState = this->getInterState(tmp_x, tmp_y);
 		if (tmpState == opState)
 			continue;
 

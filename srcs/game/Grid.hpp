@@ -73,20 +73,22 @@ private:
 	std::vector<std::string>	boardStates;
 	std::string					currentMove;
 
-	intersection	*getIntersection(int x, int y);
-	inter_type		getInterState(int x, int y);
-	void			setInterState(int x, int y, inter_type interType);
-	bool			checkDoubleFreeThree(inter_type plState, inter_type opState);
-	void			checkIfPreviewLegal(bool leftPlayer, int nbMoves);
-	bool			checkProRule(inter_type interPlayer, int nbMoves);
-	int				loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
-	void			updateNeighbor(int x, int y);
-	int				checkCapture(void);
-	bool			checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, dir_neighbor opdir);
-	bool			checkWinCondition(Player *me, Player *oppenent);
-	void			addBoardState(void);
-	void			setBoardState(int id);
-	void			createCurrentMoveText(void);
+	intersection				*getIntersection(int x, int y);
+	inter_type					getInterState(int x, int y);
+	void						setInterState(int x, int y, inter_type interType);
+	bool						checkDoubleFreeThree(int x, int y, inter_type plState, inter_type opState);
+	void						checkIfPreviewLegal(bool leftPlayer, int nbMoves);
+	bool						checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState);
+	std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
+	bool						checkProRule(int x, int y, inter_type interPlayer, int nbMoves);
+	int							loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
+	void						updateNeighbor(int x, int y);
+	int							checkCapture(void);
+	bool						checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, dir_neighbor opdir);
+	bool						checkWinCondition(Player *me, Player *oppenent);
+	void						addBoardState(void);
+	void						setBoardState(int id);
+	void						createCurrentMoveText(void);
 };
 
 #endif
