@@ -92,11 +92,16 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	if (mouse->isPressed(MBUT_RIGHT))
 	{
 		std::string	xaxis = "ABCDEFGHIJKLMNOPQ";
-		std::cout << "\nEvaluation of " << xaxis[px] << py + 1 << " :" << std::endl;
-		std::cout << "    Left  : " << evaluationPosition(this, INTER_LEFT, px, py)
+		intersection	*inter = this->getIntersection(px, py);
+		std::cout << "\nPosition " << xaxis[px] << py + 1 << " :" << std::endl;
+		std::cout << "    Evalutation Left  : " << evaluationPosition(this, INTER_LEFT, px, py)
 					<< std::endl;
-		std::cout << "    Right : " << evaluationPosition(this, INTER_RIGHT, px, py)
+		std::cout << "    Evalutation Right : " << evaluationPosition(this, INTER_RIGHT, px, py)
 					<< std::endl;
+		std::cout << "    Neighbors :" << std::endl;
+		std::cout << "        " << inter->neighbor[DIR_UL] << " " << inter->neighbor[DIR_U] <<  " " << inter->neighbor[DIR_UR] << std::endl;
+		std::cout << "        " << inter->neighbor[DIR_L] << " S " << inter->neighbor[DIR_R] << std::endl;
+		std::cout << "        " << inter->neighbor[DIR_DL] << " " << inter->neighbor[DIR_D] <<  " " << inter->neighbor[DIR_DR] << std::endl;
 	}
 
 	if (px == this->previewX && py == this->previewY && !mouse->isPressed(MBUT_LEFT))
@@ -532,47 +537,63 @@ int	Grid::checkCapture(void)
 {
 	intersection	*inter = this->getIntersection(this->previewX, this->previewY);
 	intersection	*inters[3];
-	int				x, y, nbCapture;
+	inter_type		plType, opType;
+	int				x, y, nbCapture, invAxis;
+
+	plType = inter->type;
+	if (plType == INTER_LEFT)
+		opType = INTER_RIGHT;
+	else
+		opType = INTER_LEFT;
 
 	nbCapture = 0;
-	for (int i = 0; i < 8; i++)
+	for (int axis = 0; axis < 8; axis++)
 	{
 		x = this->previewX;
 		y = this->previewY;
 
 		// Get and check 3 next intersections
-		x += this->dirs[i].x;
-		y += this->dirs[i].y;
+		x += this->dirs[axis].x;
+		y += this->dirs[axis].y;
 		inters[0] = this->getIntersection(x, y);
-		if (!inters[0] || inters[0]->type == INTER_EMPTY ||
-			inters[0]->type == inter->type)
+		if (!inters[0] || inters[0]->type != opType)
 			continue;
 
-		x += this->dirs[i].x;
-		y += this->dirs[i].y;
+		x += this->dirs[axis].x;
+		y += this->dirs[axis].y;
 		inters[1] = this->getIntersection(x, y);
-		if (!inters[1] || inters[1]->type == INTER_EMPTY ||
-			inters[1]->type == inter->type)
+		if (!inters[1] || inters[1]->type != opType)
 			continue;
 
-		x += this->dirs[i].x;
-		y += this->dirs[i].y;
+		x += this->dirs[axis].x;
+		y += this->dirs[axis].y;
 		inters[2] = this->getIntersection(x, y);
-		if (!inters[2] || inters[2]->type != inter->type)
+		if (!inters[2] || inters[2]->type != plType)
 			continue;
 
 		// Capture stones
-		inters[0]->type = inter->type;
-		inters[1]->type = inter->type;
+		inters[0]->type = plType;
+		inters[1]->type = plType;
 
-		// Update neighbor
+		// Update neighbors in the axis
 		x = this->previewX;
 		y = this->previewY;
-		for (int j = 0; j < 3; j++)
+		while (this->getInterState(x, y) == plType)
 		{
 			this->updateNeighbor(x, y);
-			x += this->dirs[i].x;
-			y += this->dirs[i].y;
+			x += this->dirs[axis].x;
+			y += this->dirs[axis].y;
+		}
+
+		// Update neighbors in the inverse axis
+		invAxis = (axis + 4) % 8;
+		x = this->previewX;
+		y = this->previewY;
+		while (this->getInterState(x, y) == plType)
+		{
+			this->updateNeighbor(x, y);
+			x += this->dirs[invAxis].x;
+			y += this->dirs[invAxis].y;
 		}
 
 		nbCapture += 2;
