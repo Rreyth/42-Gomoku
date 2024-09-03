@@ -1,6 +1,7 @@
 #include <game/Grid.hpp>
 #include <utils/Functions.hpp>
 #include <game/Player.hpp>
+#include <game/Evaluation.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
@@ -69,7 +70,6 @@ std::string	Grid::getCurrentMove(void)
 	return (this->currentMove);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,6 +88,16 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	my -= this->y;
 	int px = (mx - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 	int py = (my - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+
+	if (mouse->isPressed(MBUT_RIGHT))
+	{
+		std::string	xaxis = "ABCDEFGHIJKLMNOPQ";
+		std::cout << "\nEvaluation of " << xaxis[px] << py + 1 << " :" << std::endl;
+		std::cout << "    Left  : " << evaluationPosition(this, INTER_LEFT, px, py)
+					<< std::endl;
+		std::cout << "    Right : " << evaluationPosition(this, INTER_RIGHT, px, py)
+					<< std::endl;
+	}
 
 	if (px == this->previewX && py == this->previewY && !mouse->isPressed(MBUT_LEFT))
 		return ;
