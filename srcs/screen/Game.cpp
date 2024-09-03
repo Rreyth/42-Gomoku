@@ -71,6 +71,7 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 	if (this->grid.putStone(move, nbMoves, me->getInterType(), opponent->getInterType()))
 	{
 		this->swapTurn();
+		this->grid.addBoardState();
 		if (this->grid.checkWinCondition(me, opponent))
 		{
 			this->grid.goToLastMove();

@@ -288,7 +288,6 @@ bool	Grid::putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_ty
 
 	this->setInterState(move.x, move.y, plState);
 	this->updateNeighbor(move.x, move.y);
-	this->addBoardState();
 	return (true);
 }
 
@@ -357,6 +356,23 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent)
 	}
 
 	return (false);
+}
+
+void	Grid::addBoardState(void)
+{
+	std::string	boardState = "";
+
+	for (int i = 0; i < GRID_NB_INTER; i++)
+	{
+		if (this->gridState[i].type == INTER_LEFT)
+			boardState += 'L';
+		else if (this->gridState[i].type == INTER_RIGHT)
+			boardState += 'R';
+		else
+			boardState += 'E';
+	}
+
+	this->boardStates.push_back(boardState);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -691,24 +707,6 @@ bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, d
 	}
 
 	return (false);
-}
-
-
-void	Grid::addBoardState(void)
-{
-	std::string	boardState = "";
-
-	for (int i = 0; i < GRID_NB_INTER; i++)
-	{
-		if (this->gridState[i].type == INTER_LEFT)
-			boardState += 'L';
-		else if (this->gridState[i].type == INTER_RIGHT)
-			boardState += 'R';
-		else
-			boardState += 'E';
-	}
-
-	this->boardStates.push_back(boardState);
 }
 
 

@@ -34,6 +34,7 @@ public:
 	std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
 	bool						putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState);
 	bool						checkWinCondition(Player *me, Player *oppenent);
+	void						addBoardState(void);
 
 private:
 	int							x, y, w, h, previewX, previewY, idBoardState;
@@ -48,12 +49,10 @@ private:
 
 	void			setInterState(int x, int y, inter_type interType);
 	bool			checkDoubleFreeThree(int x, int y, inter_type plState, inter_type opState);
-	void			checkIfPreviewLegal(bool leftPlayer, int nbMoves);
 	bool			checkProRule(int x, int y, inter_type interPlayer, int nbMoves);
 	int				loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
 	void			updateNeighbor(int x, int y);
 	bool			checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, dir_neighbor opdir);
-	void			addBoardState(void);
 	void			setBoardState(int id);
 	void			createCurrentMoveText(void);
 };
