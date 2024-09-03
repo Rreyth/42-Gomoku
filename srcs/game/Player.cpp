@@ -1,4 +1,5 @@
 #include <game/Player.hpp>
+#include <utils/Functions.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
@@ -144,12 +145,15 @@ sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse)
 			}
 		}
 	}
-// 	else
-// 	{
-// 		move = grid->getIntersection(mouse->getX(), mouse->getY());
-// 		if (grid->isLegalMove(move, INTER_RIGHT))
-// 			this->playing = true;
-// 	}
+	else
+	{
+		std::vector<sf::Vector2i>	legalMoves = grid->getLegalMoves(this, opponent);
+		if (legalMoves.size() > 0)
+		{
+			int index = rand_int(0, legalMoves.size() - 1);
+			move = legalMoves[index];
+		}
+	}
 	return (move);
 }
 
