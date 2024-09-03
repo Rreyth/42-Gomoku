@@ -147,6 +147,7 @@ sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse)
 	}
 	else
 	{
+		grid->disablePreview();
 		std::vector<sf::Vector2i>	legalMoves = grid->getLegalMoves(this, opponent);
 		if (legalMoves.size() > 0)
 		{

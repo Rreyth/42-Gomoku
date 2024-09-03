@@ -66,6 +66,7 @@ public:
 	std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
 	bool						putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState);
 	bool						checkWinCondition(Player *me, Player *oppenent);
+	void						disablePreview(void);
 
 private:
 	int							x, y, w, h, previewX, previewY, idBoardState;
