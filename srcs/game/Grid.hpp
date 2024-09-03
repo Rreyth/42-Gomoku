@@ -35,6 +35,7 @@ public:
 	bool						putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState);
 	bool						checkWinCondition(Player *me, Player *oppenent);
 	void						addBoardState(void);
+	void						disablePreview(void);
 
 private:
 	int							x, y, w, h, previewX, previewY, idBoardState;
