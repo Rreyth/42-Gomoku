@@ -147,6 +147,7 @@ sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse)
 	}
 	else
 	{
+		double time = clock()/(double)(CLOCKS_PER_SEC);
 		grid->disablePreview();
 		std::vector<sf::Vector2i>	legalMoves = grid->getLegalMoves(this, opponent);
 		if (legalMoves.size() > 0)
@@ -154,6 +155,8 @@ sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse)
 			int index = rand_int(0, legalMoves.size() - 1);
 			move = legalMoves[index];
 		}
+		time = ((clock()/(double)(CLOCKS_PER_SEC)) - time) * 1000000;
+		// std::cout << this->name << " took " << time << " ms to play" << std::endl;
 	}
 	return (move);
 }
