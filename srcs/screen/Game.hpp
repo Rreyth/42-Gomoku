@@ -27,6 +27,7 @@ private:
 	Player 				playerLeft, playerRight;
 	game_mode			mode;
 
+	void				swapTurn(void);
 	void				drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	void				drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	void				drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);

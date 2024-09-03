@@ -106,22 +106,72 @@ int			Player::getMoves(void)
 	return (this->moves);
 }
 
+void		Player::setInterType(inter_type interType)
+{
+	this->interType = interType;
+}
+
+inter_type	Player::getInterType(void)
+{
+	return (this->interType);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
-void		Player::setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite)
+sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse)
+{
+	sf::Vector2i	move(-1, -1);
+
+	int				nbMoves = this->moves + opponent->getMoves();
+
+
+	if (this->type == PLAYER)
+	{
+		if (mouse->isPressed(MBUT_LEFT))
+		{
+			int	mx = mouse->getX();
+			int	my = mouse->getY();
+			mx -= grid->getX();
+			my -= grid->getY();
+			int px = (mx - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+			int py = (my - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+			if (grid->checkLegalMove(px, py, nbMoves, this->interType, opponent->getInterType()))
+			{
+				move.x = px;
+				move.y = py;
+			}
+		}
+	}
+// 	else
+// 	{
+// 		move = grid->getIntersection(mouse->getX(), mouse->getY());
+// 		if (grid->isLegalMove(move, INTER_RIGHT))
+// 			this->playing = true;
+// 	}
+	return (move);
+}
+
+
+void		Player::setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite, bool solo)
 {
 	this->setType(type);
 	this->setTimer(mode);
-	if (pos != 0 && type == PLAYER)
+	if (!solo && type == PLAYER)
 		this->setName("PLAYER " + std::to_string(pos));
-	else if (pos != 0 && type == AI)
+	else if (!solo && type == AI)
 		this->setName("AI " + std::to_string(pos));
 	else if (type == PLAYER)
 		this->setName("PLAYER");
 	else
 		this->setName("AI");
+
+	if (pos == 1)
+		this->interType = INTER_LEFT;
+	else
+		this->interType = INTER_RIGHT;
+
 	this->winState = WIN_STATE_NONE;
 	this->stoneSprite = stoneSprite;
 	this->playing = false;
@@ -131,8 +181,6 @@ void		Player::setPlayer(player_type type, game_mode mode, int pos, sprite_name s
 
 void		Player::tick(float delta, game_mode mode)
 {
-	if (!this->playing)
-		return ;
 	if (mode == BLITZ)
 	{
 		this->timer -= delta;

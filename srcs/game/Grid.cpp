@@ -1,5 +1,6 @@
 #include <game/Grid.hpp>
 #include <utils/Functions.hpp>
+#include <game/Player.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
@@ -93,44 +94,21 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 
 	this->previewX = px;
 	this->previewY = py;
-	this->checkIfPreviewLegal(leftPlayer->isPlaying(), rightPlayer->getMoves() + leftPlayer->getMoves());
+	inter_type	plState = INTER_LEFT;
+	inter_type	opState = INTER_RIGHT;
+	if (!leftPlayer->isPlaying())
+	{
+		plState = INTER_RIGHT;
+		opState = INTER_LEFT;
+	}
+
+	this->previewLegal = this->checkLegalMove(px, py,
+							rightPlayer->getMoves() + leftPlayer->getMoves(),
+							plState, opState);
 
 	if (!mouse->isPressed(MBUT_LEFT) || !this->previewLegal)
 		return ;
 
-
-	if (leftPlayer->isPlaying())
-	{
-		leftPlayer->addMove();
-		this->setInterState(this->previewX, this->previewY, INTER_LEFT);
-		this->updateNeighbor(this->previewX, this->previewY);
-		leftPlayer->addCaptured(this->checkCapture());
-		this->addBoardState();
-		if (this->checkWinCondition(leftPlayer, rightPlayer))
-		{
-			this->goToLastMove();
-			*displayState = DISPLAY_END;
-			return ;
-		}
-		leftPlayer->setPlaying(false);
-		rightPlayer->setPlaying(true);
-	}
-	else
-	{
-		rightPlayer->addMove();
-		this->setInterState(this->previewX, this->previewY, INTER_RIGHT);
-		this->updateNeighbor(this->previewX, this->previewY);
-		rightPlayer->addCaptured(this->checkCapture());
-		this->addBoardState();
-		if (this->checkWinCondition(rightPlayer, leftPlayer))
-		{
-			this->goToLastMove();
-			*displayState = DISPLAY_END;
-			return ;
-		}
-		rightPlayer->setPlaying(false);
-		leftPlayer->setPlaying(true);
-	}
 	this->previewLegal = false;
 }
 
@@ -246,57 +224,6 @@ void	Grid::goToLastMove(void)
 	this->setBoardState(this->idBoardState);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Private methods
-////////////////////////////////////////////////////////////////////////////////
-
-intersection	*Grid::getIntersection(int x, int y)
-{
-	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
-		return (NULL);
-
-	int interId = y * GRID_W_INTER + x;
-	return (&this->gridState[interId]);
-}
-
-
-inter_type	Grid::getInterState(int x, int y)
-{
-	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
-		return (INTER_INVALID);
-
-	int interId = y * GRID_W_INTER + x;
-	return (this->gridState[interId].type);
-}
-
-
-void	Grid::setInterState(int x, int y, inter_type interType)
-{
-	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
-		return ;
-
-	int interId = y * GRID_W_INTER + x;
-	this->gridState[interId].type = interType;
-}
-
-
-void	Grid::checkIfPreviewLegal(bool leftPlayer, int nbMoves)
-{
-	inter_type plState;
-	inter_type opState;
-	if (leftPlayer)
-	{
-		plState = INTER_LEFT;
-		opState = INTER_RIGHT;
-	}
-	else
-	{
-		plState = INTER_RIGHT;
-		opState = INTER_LEFT;
-	}
-	this->previewLegal = this->checkLegalMove(this->previewX, this->previewY, nbMoves, plState, opState);
-}
-
 bool	Grid::checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState)
 {
 	if (this->getInterState(x, y))
@@ -343,6 +270,118 @@ std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *leftPlayer, Player *rightP
 
 	return (legalMoves);
 }
+
+bool	Grid::putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState)
+{
+	if (!this->checkLegalMove(move.x, move.y, nbMoves, plState, opState))
+		return (false);
+
+	this->setInterState(move.x, move.y, plState);
+	this->updateNeighbor(move.x, move.y);
+	this->addBoardState();
+	return (true);
+}
+
+bool	Grid::checkWinCondition(Player *me, Player *oppenent)
+{
+	// Check if there at least 5 align stones
+	if (this->checkWinCaptureCase(me, oppenent, DIR_L, DIR_R))
+		return (true);
+	if (this->checkWinCaptureCase(me, oppenent, DIR_UL, DIR_DR))
+		return (true);
+	if (this->checkWinCaptureCase(me, oppenent, DIR_U, DIR_D))
+		return (true);
+	if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
+		return (true);
+
+	// Check if any valid 5 stones line
+	if (this->getInterState(this->previewX, this->previewY) == INTER_LEFT)
+	{
+		for (std::size_t i = 0; i < this->leftWinPos.size(); i++)
+		{
+			this->previewX = this->leftWinPos[i].x;
+			this->previewY = this->leftWinPos[i].y;
+			if (this->checkWinCaptureCase(me, oppenent, DIR_L, DIR_R))
+				return (true);
+			if (this->checkWinCaptureCase(me, oppenent, DIR_UL, DIR_DR))
+				return (true);
+			if (this->checkWinCaptureCase(me, oppenent, DIR_U, DIR_D))
+				return (true);
+			if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
+				return (true);
+		}
+	}
+	else
+	{
+		for (std::size_t i = 0; i < this->rightWinPos.size(); i++)
+		{
+			this->previewX = this->rightWinPos[i].x;
+			this->previewY = this->rightWinPos[i].y;
+			if (this->checkWinCaptureCase(me, oppenent, DIR_L, DIR_R))
+				return (true);
+			if (this->checkWinCaptureCase(me, oppenent, DIR_UL, DIR_DR))
+				return (true);
+			if (this->checkWinCaptureCase(me, oppenent, DIR_U, DIR_D))
+				return (true);
+			if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
+				return (true);
+		}
+	}
+
+	// Check if the player capture at least 10 opponent's stones
+	if (me->getCaptured() >= WIN_CAPTURE)
+	{
+		me->setWinState(WIN_STATE_CAPTURE);
+		this->previewLegal = false;
+		return (true);
+	}
+
+	// Check for draw
+	int nbMoves = me->getMoves() + oppenent->getMoves();
+	if (nbMoves >= GRID_NB_INTER)
+	{
+		me->setWinState(WIN_STATE_NONE);
+		oppenent->setWinState(WIN_STATE_NONE);
+		this->previewLegal = false;
+		return (true);
+	}
+
+	return (false);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Private methods
+////////////////////////////////////////////////////////////////////////////////
+
+intersection	*Grid::getIntersection(int x, int y)
+{
+	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
+		return (NULL);
+
+	int interId = y * GRID_W_INTER + x;
+	return (&this->gridState[interId]);
+}
+
+
+inter_type	Grid::getInterState(int x, int y)
+{
+	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
+		return (INTER_INVALID);
+
+	int interId = y * GRID_W_INTER + x;
+	return (this->gridState[interId].type);
+}
+
+
+void	Grid::setInterState(int x, int y, inter_type interType)
+{
+	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
+		return ;
+
+	int interId = y * GRID_W_INTER + x;
+	this->gridState[interId].type = interType;
+}
+
 
 bool	Grid::checkProRule(int x, int y, inter_type interPlayer, int nbMoves)
 {
@@ -637,75 +676,6 @@ bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, d
 	{
 		oppenent->setWinState(WIN_STATE_CAPTURE);
 		oppenent->addCaptured(2);
-		this->previewLegal = false;
-		return (true);
-	}
-
-	return (false);
-}
-
-
-
-bool	Grid::checkWinCondition(Player *me, Player *oppenent)
-{
-	// Check if there at least 5 align stones
-	if (this->checkWinCaptureCase(me, oppenent, DIR_L, DIR_R))
-		return (true);
-	if (this->checkWinCaptureCase(me, oppenent, DIR_UL, DIR_DR))
-		return (true);
-	if (this->checkWinCaptureCase(me, oppenent, DIR_U, DIR_D))
-		return (true);
-	if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
-		return (true);
-
-	// Check if any valid 5 stones line
-	if (this->getInterState(this->previewX, this->previewY) == INTER_LEFT)
-	{
-		for (std::size_t i = 0; i < this->leftWinPos.size(); i++)
-		{
-			this->previewX = this->leftWinPos[i].x;
-			this->previewY = this->leftWinPos[i].y;
-			if (this->checkWinCaptureCase(me, oppenent, DIR_L, DIR_R))
-				return (true);
-			if (this->checkWinCaptureCase(me, oppenent, DIR_UL, DIR_DR))
-				return (true);
-			if (this->checkWinCaptureCase(me, oppenent, DIR_U, DIR_D))
-				return (true);
-			if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
-				return (true);
-		}
-	}
-	else
-	{
-		for (std::size_t i = 0; i < this->rightWinPos.size(); i++)
-		{
-			this->previewX = this->rightWinPos[i].x;
-			this->previewY = this->rightWinPos[i].y;
-			if (this->checkWinCaptureCase(me, oppenent, DIR_L, DIR_R))
-				return (true);
-			if (this->checkWinCaptureCase(me, oppenent, DIR_UL, DIR_DR))
-				return (true);
-			if (this->checkWinCaptureCase(me, oppenent, DIR_U, DIR_D))
-				return (true);
-			if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
-				return (true);
-		}
-	}
-
-	// Check if the player capture at least 10 opponent's stones
-	if (me->getCaptured() >= WIN_CAPTURE)
-	{
-		me->setWinState(WIN_STATE_CAPTURE);
-		this->previewLegal = false;
-		return (true);
-	}
-
-	// Check for draw
-	int nbMoves = me->getMoves() + oppenent->getMoves();
-	if (nbMoves >= GRID_NB_INTER)
-	{
-		me->setWinState(WIN_STATE_NONE);
-		oppenent->setWinState(WIN_STATE_NONE);
 		this->previewLegal = false;
 		return (true);
 	}

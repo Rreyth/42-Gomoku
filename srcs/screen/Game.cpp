@@ -51,8 +51,33 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 	this->leave.tick(mouse);
 	this->grid.tick(displayState, mouse, &this->playerLeft, &this->playerRight);
 
-	this->playerLeft.tick(delta, this->mode);
-	this->playerRight.tick(delta, this->mode);
+	sf::Vector2i	move;
+	int 			nbMoves = this->playerLeft.getMoves() + this->playerRight.getMoves();
+	Player			*me = &this->playerLeft;
+	Player			*opponent = &this->playerRight;
+	if (this->playerLeft.isPlaying())
+	{
+		this->playerLeft.tick(delta, this->mode);
+		move = this->playerLeft.getNextMove(&this->grid, &this->playerRight, mouse);
+	}
+	else
+	{
+		me = &this->playerRight;
+		opponent = &this->playerLeft;
+		this->playerRight.tick(delta, this->mode);
+		move = this->playerRight.getNextMove(&this->grid, &this->playerLeft, mouse);
+	}
+
+	if (this->grid.putStone(move, nbMoves, me->getInterType(), opponent->getInterType()))
+	{
+		this->swapTurn();
+		if (this->grid.checkWinCondition(me, opponent))
+		{
+			this->grid.goToLastMove();
+			*displayState = DISPLAY_END;
+			return ;
+		}
+	}
 
 	if (this->mode == BLITZ)
 	{
@@ -72,6 +97,23 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 		*displayState = DISPLAY_MENU;
 }
 
+void	Game::swapTurn(void)
+{
+	if (this->playerLeft.isPlaying())
+	{
+		this->playerLeft.addMove();
+		this->playerLeft.addCaptured(this->grid.checkCapture());
+		this->playerLeft.setPlaying(false);
+		this->playerRight.setPlaying(true);
+	}
+	else
+	{
+		this->playerRight.addMove();
+		this->playerRight.addCaptured(this->grid.checkCapture());
+		this->playerRight.setPlaying(false);
+		this->playerLeft.setPlaying(true);
+	}
+}
 
 void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
 {
@@ -108,18 +150,12 @@ void	Game::setGame(player_type playerLeft, player_type playerRight, game_mode mo
 		rightStone = SPRITE_COIN_RED;
 	}
 
-
+	bool solo = true;
 	if ((playerLeft == PLAYER && playerRight == PLAYER)||
 		(playerLeft == AI && playerRight == AI))
-	{
-		this->playerLeft.setPlayer(playerLeft, mode, 1, leftStone);
-		this->playerRight.setPlayer(playerRight, mode, 2, rightStone);
-	}
-	else
-	{
-		this->playerLeft.setPlayer(playerLeft, mode, 0, leftStone);
-		this->playerRight.setPlayer(playerRight, mode, 0, rightStone);
-	}
+		solo = false;
+	this->playerLeft.setPlayer(playerLeft, mode, 1, leftStone, solo);
+	this->playerRight.setPlayer(playerRight, mode, 2, rightStone, solo);
 	if (rand_int(1, 2) == 1)
 		this->playerLeft.setPlaying(true);
 	else

@@ -3,6 +3,7 @@
 
 # include <define.hpp>
 # include <utils/TextureManager.hpp>
+# include <game/Grid.hpp>
 # include <string>
 
 class Player
@@ -11,36 +12,42 @@ public:
 	Player(void);
 	~Player();
 
-	void		setType(player_type type);
-	player_type	getType(void);
-	void 		setCaptured(int captured);
-	void 		addCaptured(int captured);
-	int			getCaptured(void);
-	void		setTimer(game_mode mode);
-	float		getTimer(void);
-	void		setName(std::string name);
-	std::string	getName(void);
+	void			setType(player_type type);
+	player_type		getType(void);
+	void 			setCaptured(int captured);
+	void 			addCaptured(int captured);
+	int				getCaptured(void);
+	void			setTimer(game_mode mode);
+	float			getTimer(void);
+	void			setName(std::string name);
+	std::string		getName(void);
 
-	bool 		isPlaying(void);
-	void 		setPlaying(bool playing);
+	bool 			isPlaying(void);
+	void 			setPlaying(bool playing);
 
-	win_state 	getWinState(void);
-	void 		setWinState(win_state winState);
+	win_state 		getWinState(void);
+	void 			setWinState(win_state winState);
 
-	sprite_name	getStoneSprite(void);
+	sprite_name		getStoneSprite(void);
 
-	void		addMove(void);
-	int			getMoves(void);
+	void			addMove(void);
+	int				getMoves(void);
 
-	void 		setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite);
+	void			setInterType(inter_type interType);
+	inter_type		getInterType(void);
 
-	void 		tick(float delta, game_mode mode);
+	sf::Vector2i	getNextMove(Grid *grid, Player *opponent, Mouse *mouse);
+
+	void 			setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite, bool solo);
+
+	void 			tick(float delta, game_mode mode);
 
 private:
 	player_type	type;
 	std::string	name;
 	win_state	winState;
 	sprite_name	stoneSprite;
+	inter_type	interType;
 
 	float		timer;
 	bool		playing;

@@ -3,7 +3,6 @@
 
 # include <define.hpp>
 # include <ui/Button.hpp>
-# include <game/Player.hpp>
 
 # include <vector>
 
@@ -41,6 +40,7 @@ typedef struct s_intersection
 	int			neighbor[8];
 }	intersection;
 
+class Player;
 
 class Grid
 {
@@ -48,19 +48,24 @@ public:
 	Grid(void);
 	~Grid();
 
-	int			getX(void);
-	int			getY(void);
-	int			getW(void);
-	int			getH(void);
-	std::string	getCurrentMove(void);
+	int							getX(void);
+	int							getY(void);
+	int							getW(void);
+	int							getH(void);
+	std::string					getCurrentMove(void);
 
-	void		tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer);
-	void		draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
-	void		clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
-	void		goToFirstMove(void);
-	void		goToPreviousMove(void);
-	void		goToNextMove(void);
-	void		goToLastMove(void);
+	void						tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer);
+	void						draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
+	void						clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
+	void						goToFirstMove(void);
+	void						goToPreviousMove(void);
+	void						goToNextMove(void);
+	void						goToLastMove(void);
+	int							checkCapture(void);
+	bool						checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState);
+	std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
+	bool						putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState);
+	bool						checkWinCondition(Player *me, Player *oppenent);
 
 private:
 	int							x, y, w, h, previewX, previewY, idBoardState;
@@ -78,14 +83,10 @@ private:
 	void						setInterState(int x, int y, inter_type interType);
 	bool						checkDoubleFreeThree(int x, int y, inter_type plState, inter_type opState);
 	void						checkIfPreviewLegal(bool leftPlayer, int nbMoves);
-	bool						checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState);
-	std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
 	bool						checkProRule(int x, int y, inter_type interPlayer, int nbMoves);
 	int							loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
 	void						updateNeighbor(int x, int y);
-	int							checkCapture(void);
 	bool						checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, dir_neighbor opdir);
-	bool						checkWinCondition(Player *me, Player *oppenent);
 	void						addBoardState(void);
 	void						setBoardState(int id);
 	void						createCurrentMoveText(void);
