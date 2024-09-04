@@ -30,8 +30,8 @@ SRCS				:=	srcs/main.cpp \
 						srcs/screen/ModeMenu.cpp \
 						srcs/game/Grid.cpp \
 						srcs/game/Player.cpp \
-						srcs/game/Evaluation.cpp \
 						srcs/AI/AI.cpp \
+						srcs/AI/Evaluation.cpp \
 
 OBJS 				:= ${SRCS:srcs/%.cpp=$(BUILD)/%.o}
 DEPS				:= $(SRCS:srcs/%.cpp=$(BUILD)/%.d)

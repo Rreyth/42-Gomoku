@@ -39,7 +39,7 @@ public:
 
 	AI				*getAI(void);
 
-	sf::Vector2i	getNextMove(Grid *grid, Player *opponent, Mouse *mouse);
+	sf::Vector2i	getNextMove(Grid *grid, Player *opponent, Mouse *mouse, Evaluation *evaluator);
 
 	void 			setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite, bool solo, AI_difficulty difficulty);
 

@@ -126,7 +126,7 @@ AI			*Player::getAI(void)
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
-sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse)
+sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse, Evaluation *evaluator)
 {
 	sf::Vector2i	move(-1, -1);
 
@@ -153,7 +153,7 @@ sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse)
 	else
 	{
 		grid->disablePreview();
-		move = this->ai.getNextMove(grid, this, opponent);
+		move = this->ai.getNextMove(grid, this, opponent, evaluator);
 	}
 	return (move);
 }

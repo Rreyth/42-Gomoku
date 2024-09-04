@@ -58,14 +58,14 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 	Player			*opponent = &this->playerRight;
 	if (this->playerLeft.isPlaying())
 	{
-		move = this->playerLeft.getNextMove(&this->grid, &this->playerRight, mouse);
+		move = this->playerLeft.getNextMove(&this->grid, &this->playerRight, mouse, &this->evaluator);
 		this->playerLeft.tick(delta, this->mode);
 	}
 	else
 	{
 		me = &this->playerRight;
 		opponent = &this->playerLeft;
-		move = this->playerRight.getNextMove(&this->grid, &this->playerLeft, mouse);
+		move = this->playerRight.getNextMove(&this->grid, &this->playerLeft, mouse, &this->evaluator);
 		this->playerRight.tick(delta, this->mode);
 	}
 

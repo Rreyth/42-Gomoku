@@ -3,6 +3,8 @@
 
 # include <define.hpp>
 # include <game/Grid.hpp>
+# include <AI/Evaluation.hpp>
+
 
 class Player;
 
@@ -19,7 +21,7 @@ public:
 
 	void			setAI(AI_difficulty difficulty);
 
-	sf::Vector2i	getNextMove(Grid *grid, Player *player, Player *opponent);
+	sf::Vector2i	getNextMove(Grid *grid, Player *player, Player *opponent, Evaluation *evaluator);
 
 private:
 	double			timer;
@@ -27,6 +29,7 @@ private:
 
 	sf::Vector2i	getRandomMove(Grid *grid, Player *player, Player *opponent);
 	sf::Vector2i	getBetterRandom(Grid *grid, Player *player, Player *opponent);
+	sf::Vector2i	getEasyMove(Grid *grid, Player *player, Player *opponent, Evaluation *evaluator);
 };
 
 #endif

@@ -5,7 +5,7 @@
 # include <ui/Button.hpp>
 # include <game/Grid.hpp>
 # include <game/Player.hpp>
-# include <game/Evaluation.hpp>
+# include <AI/Evaluation.hpp>
 
 class Game
 {

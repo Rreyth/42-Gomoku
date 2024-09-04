@@ -1,7 +1,7 @@
 #include <game/Grid.hpp>
 #include <utils/Functions.hpp>
 #include <game/Player.hpp>
-#include <game/Evaluation.hpp>
+#include <AI/Evaluation.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
