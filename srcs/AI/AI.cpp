@@ -53,17 +53,21 @@ void	AI::setAI(AI_difficulty difficulty)
 sf::Vector2i	AI::getNextMove(Grid *grid, Player *player, Player *opponent)
 {
 	sf::Vector2i	move(-1, -1);
+	std::clock_t	start, diff;
 
-	double time = clock()/(double)(CLOCKS_PER_SEC);
+	// Start timer
+	start = std::clock();
+
+	// Get move to play
 	if (this->difficulty == RANDOM)
 		move = this->getRandomMove(grid, player, opponent);
 	else if (this->difficulty == BETTER_RANDOM)
 		move = this->getBetterRandom(grid, player, opponent);
 	//TODO: Implement other difficulties
 
-
-	time = ((clock()/(double)(CLOCKS_PER_SEC)) - time) * 1000000;
-	this->timer = time;
+	// Compute time taken to choose ai
+	diff = std::clock() - start;
+	this->timer = ((double)diff / CLOCKS_PER_SEC) * 1000000;
 	return (move);
 }
 
