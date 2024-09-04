@@ -591,6 +591,7 @@ void	Grid::updateNeighbor(int x, int y)
 	if (inter->type != INTER_LEFT && inter->type != INTER_RIGHT)
 		return ;
 
+	// TODO: Rework by begin at (x, y)
 	for (int i = 0; i < 8; i++)
 		inter->neighbor[i] = this->loopUpdateNeighbor(
 									x + this->dirs[i].x,
@@ -644,30 +645,51 @@ int	Grid::checkCapture(sf::Vector2i *move)
 		if (!inters[2] || inters[2]->type != plType)
 			continue;
 
-		// Capture stones
-		inters[0]->type = plType;
-		inters[1]->type = plType;
+		// Remove captured stones from board
+		inters[0]->type = INTER_EMPTY;
+		inters[1]->type = INTER_EMPTY;
+		for (int i = 0; i < 8; i++)
+		{
+			inters[0]->neighbor[i] = 0;
+			inters[1]->neighbor[i] = 0;
+		}
+
+		// Update stone arround first captured stone
+		x = move->x + this->dirs[axis].x;
+		y = move->y + this->dirs[axis].y;
+		for (int i = 0; i < 8; i++)
+			this->updateNeighbor(x + this->dirs[i].x, y + this->dirs[i].y);
+
+		// Update stone arround second captured stone
+		x = move->x + this->dirs[axis].x * 2;
+		y = move->y + this->dirs[axis].y * 2;
+		for (int i = 0; i < 8; i++)
+			this->updateNeighbor(x + this->dirs[i].x, y + this->dirs[i].y);
 
 		// Update neighbors in the axis
-		x = move->x;
-		y = move->y;
-		while (this->getInterState(x, y) == plType)
-		{
-			this->updateNeighbor(x, y);
-			x += this->dirs[axis].x;
-			y += this->dirs[axis].y;
-		}
+		this->updateNeighbor(x + this->dirs[axis].x * 4,
+							y + this->dirs[axis].y * 4);
+		// x = move->x + this->dirs[axis].x * 4;
+		// y = move->y + this->dirs[axis].y * 4;
+		// while (this->getInterState(x, y) == plType)
+		// {
+		// 	this->updateNeighbor(x, y);
+		// 	x += this->dirs[axis].x;
+		// 	y += this->dirs[axis].y;
+		// }
 
 		// Update neighbors in the inverse axis
 		invAxis = (axis + 4) % 8;
-		x = move->x + this->dirs[invAxis].x;
-		y = move->y + this->dirs[invAxis].y;
-		while (this->getInterState(x, y) == plType)
-		{
-			this->updateNeighbor(x, y);
-			x += this->dirs[invAxis].x;
-			y += this->dirs[invAxis].y;
-		}
+		this->updateNeighbor(x + this->dirs[invAxis].x * 4,
+							y + this->dirs[invAxis].y * 4);
+		// x = move->x + this->dirs[invAxis].x * 2;
+		// y = move->y + this->dirs[invAxis].y * 2;
+		// while (this->getInterState(x, y) == plType)
+		// {
+		// 	this->updateNeighbor(x, y);
+		// 	x += this->dirs[invAxis].x;
+		// 	y += this->dirs[invAxis].y;
+		// }
 
 		nbCapture += 2;
 	}
