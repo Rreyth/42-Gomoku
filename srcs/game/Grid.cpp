@@ -551,28 +551,30 @@ void	Grid::updateNeighbor(int x, int y)
 }
 
 
-int	Grid::checkCapture(void)
+int	Grid::checkCapture(sf::Vector2i *move)
 {
 	intersection	*inter;
 	intersection	*inters[3];
 	inter_type		plType, opType;
 	int				x, y, nbCapture, invAxis;
 
-	inter = this->getIntersection(this->previewX, this->previewY);
+	inter = this->getIntersection(move->x, move->y);
 	if (!inter)
 		return (0);
 
 	plType = inter->type;
 	if (plType == INTER_LEFT)
 		opType = INTER_RIGHT;
-	else
+	else if (plType == INTER_RIGHT)
 		opType = INTER_LEFT;
+	else
+		return (0);
 
 	nbCapture = 0;
 	for (int axis = 0; axis < 8; axis++)
 	{
-		x = this->previewX;
-		y = this->previewY;
+		x = move->x;
+		y = move->y;
 
 		// Get and check 3 next intersections
 		x += this->dirs[axis].x;
@@ -598,8 +600,8 @@ int	Grid::checkCapture(void)
 		inters[1]->type = plType;
 
 		// Update neighbors in the axis
-		x = this->previewX;
-		y = this->previewY;
+		x = move->x;
+		y = move->y;
 		while (this->getInterState(x, y) == plType)
 		{
 			this->updateNeighbor(x, y);
@@ -609,8 +611,8 @@ int	Grid::checkCapture(void)
 
 		// Update neighbors in the inverse axis
 		invAxis = (axis + 4) % 8;
-		x = this->previewX;
-		y = this->previewY;
+		x = move->x + this->dirs[invAxis].x;
+		y = move->y + this->dirs[invAxis].y;
 		while (this->getInterState(x, y) == plType)
 		{
 			this->updateNeighbor(x, y);

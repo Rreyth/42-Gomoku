@@ -29,7 +29,7 @@ private:
 	game_mode			mode;
 	Evaluation			evaluator;
 
-	void				swapTurn(void);
+	void				swapTurn(sf::Vector2i *move);
 	void				drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	void				drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	void				drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);

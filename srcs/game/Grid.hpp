@@ -31,7 +31,7 @@ public:
 	void						goToPreviousMove(void);
 	void						goToNextMove(void);
 	void						goToLastMove(void);
-	int							checkCapture(void);
+	int							checkCapture(sf::Vector2i *move);
 	bool						checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState);
 	std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
 	bool						putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState);
