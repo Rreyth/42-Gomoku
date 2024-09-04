@@ -15,7 +15,10 @@ public:
 
 	void				tick(display_state *displayState, float delta, Mouse *mouse);
 	void				draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
-	void				setGame(player_type playerLeft, player_type playerRight, game_mode mode, game_rules rule, stone_sprite *sprite);
+	void				setGame(player_type playerLeft, player_type playerRight,
+								game_mode mode, game_rules rule,
+								AI_difficulty aiLeft, AI_difficulty aiRight,
+								stone_sprite *sprite);
 
 	Player				*getLeftPlayer(void);
 	Player				*getRightPlayer(void);

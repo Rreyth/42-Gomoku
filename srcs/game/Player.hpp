@@ -4,6 +4,7 @@
 # include <define.hpp>
 # include <utils/TextureManager.hpp>
 # include <game/Grid.hpp>
+# include <AI/AI.hpp>
 # include <string>
 
 class Player
@@ -36,9 +37,11 @@ public:
 	void			setInterType(inter_type interType);
 	inter_type		getInterType(void);
 
+	AI				*getAI(void);
+
 	sf::Vector2i	getNextMove(Grid *grid, Player *opponent, Mouse *mouse);
 
-	void 			setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite, bool solo);
+	void 			setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite, bool solo, AI_difficulty difficulty);
 
 	void 			tick(float delta, game_mode mode);
 
@@ -48,6 +51,7 @@ private:
 	win_state	winState;
 	sprite_name	stoneSprite;
 	inter_type	interType;
+	AI			ai;
 
 	float		timer;
 	bool		playing;

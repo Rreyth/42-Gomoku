@@ -272,15 +272,10 @@ std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *leftPlayer, Player *rightP
 	std::vector<sf::Vector2i>	legalMoves;
 	int							nbMoves = leftPlayer->getMoves() + rightPlayer->getMoves();
 
-	inter_type					plState;
-	inter_type					opState;
+	inter_type					plState = INTER_LEFT;
+	inter_type					opState = INTER_RIGHT;
 
-	if (leftPlayer->isPlaying())
-	{
-		plState = INTER_LEFT;
-		opState = INTER_RIGHT;
-	}
-	else
+	if (!leftPlayer->isPlaying())
 	{
 		plState = INTER_RIGHT;
 		opState = INTER_LEFT;
@@ -296,6 +291,60 @@ std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *leftPlayer, Player *rightP
 	}
 
 	return (legalMoves);
+}
+
+bool	Grid::checkInterestingMove(int x, int y)
+{
+	if (this->getInterState(x, y))
+		return (false);
+
+	int			new_x;
+	int			new_y;
+	inter_type	state;
+	for (int i = 0; i < 8; i++)
+	{
+		new_x = x + this->dirs[i].x;
+		new_y = y + this->dirs[i].y;
+		state = this->getInterState(new_x, new_y);
+		if (state && state != INTER_INVALID)
+			return (true);
+		new_x += this->dirs[i].x;
+		new_y += this->dirs[i].y;
+		state = this->getInterState(new_x, new_y);
+		if (state && state != INTER_INVALID)
+			return (true);
+	}
+
+	return (false);
+}
+
+std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *leftPlayer, Player *rightPlayer)
+{
+	std::vector<sf::Vector2i>	InterestingMoves;
+	int							nbMoves = leftPlayer->getMoves() + rightPlayer->getMoves();
+
+	inter_type					plState = INTER_LEFT;
+	inter_type					opState = INTER_RIGHT;
+
+	if (!leftPlayer->isPlaying())
+	{
+		plState = INTER_RIGHT;
+		opState = INTER_LEFT;
+	}
+
+	for (int i = 0; i < GRID_W_INTER; i++)
+	{
+		for (int j = 0; j < GRID_W_INTER; j++)
+		{
+			if(checkInterestingMove(i, j))
+				if (checkLegalMove(i, j, nbMoves, plState, opState))
+					InterestingMoves.push_back(sf::Vector2i(i, j));
+		}
+	}
+	if (InterestingMoves.size() == 0)
+		InterestingMoves.push_back(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
+
+	return (InterestingMoves);
 }
 
 bool	Grid::putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState)

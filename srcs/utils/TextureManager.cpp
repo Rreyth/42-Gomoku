@@ -26,6 +26,8 @@ void	TextureManager::loadTextures(void)
 	this->loadTexture(SPRITE_GRID, "grid.png");
 	this->loadTexture(SPRITE_SQUARE_ROUNDED_BUTTON_OFF, "square_rounded_butt(off).png");
 	this->loadTexture(SPRITE_SQUARE_ROUNDED_BUTTON_ON, "square_rounded_butt(on).png");
+	this->loadTexture(SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_OFF, "compact_square_rounded_butt(off).png");
+	this->loadTexture(SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_ON, "compact_square_rounded_butt(on).png");
 	this->loadTexture(SPRITE_SQUARE_BUTTON_OFF, "square_button_off.png");
 	this->loadTexture(SPRITE_SQUARE_BUTTON_ON, "square_button_on.png");
 	this->loadTexture(SPRITE_GEAR_BUTTON_OFF, "gear_button_off.png");
