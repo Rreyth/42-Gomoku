@@ -184,7 +184,6 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 	std::string str = this->playerLeft.getName();
 	drawText(window, text, str, size.x / 2, gridY + (size.y * 0.05), 30, sf::Color::White, MID_CENTER);
 
-
 	if (this->playerLeft.getType() == AI_PLAYER)
 	{
 		std::string	difficulty[] = {"RANDOM", "BETTER_RANDOM", "EASY", "MEDIUM", "HARD"};
@@ -194,10 +193,9 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 
 		str = "TIME OF PREDICTION";
 		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.25), 25, sf::Color::White, MID_CENTER);
-		str = std::to_string((int)ai->getTimer()) + " ms";
+		str = std::to_string((int)ai->getTimer()) + " μs";
 		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.30), 30, sf::Color::White, MID_CENTER);
 	}
-
 
 	if (this->playerLeft.isPlaying())
 		textureManager->drawTexture(window, SPRITE_ARROW, size.x / 2, WIN_H * 0.075, MID_CENTER);
@@ -228,6 +226,19 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 	sf::Vector2f size = this->rect.getSize();
 	std::string str = this->playerRight.getName();
 	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.05), 30, sf::Color::White, MID_CENTER);
+
+	if (this->playerRight.getType() == AI_PLAYER)
+	{
+		std::string	difficulty[] = {"RANDOM", "BETTER_RANDOM", "EASY", "MEDIUM", "HARD"};
+		AI *ai = this->playerRight.getAI();
+		str = difficulty[ai->getDifficulty()];
+		drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.15), 30, sf::Color::White, MID_CENTER);
+
+		str = "TIME OF PREDICTION";
+		drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.25), 25, sf::Color::White, MID_CENTER);
+		str = std::to_string((int)ai->getTimer()) + " μs";
+		drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.30), 30, sf::Color::White, MID_CENTER);
+	}
 
 	if (this->playerRight.isPlaying())
 		textureManager->drawTexture(window, SPRITE_ARROW, WIN_W - (size.x / 2), WIN_H * 0.075, MID_CENTER);

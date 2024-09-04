@@ -190,7 +190,7 @@ void		Player::setPlayer(player_type type, game_mode mode, int pos, sprite_name s
 void		Player::tick(float delta, game_mode mode)
 {
 	double time_add = delta;
-	if (this->type == AI_PLAYER)
+	if (this->type == AI_PLAYER) //TODO: REMOVE THIS WHEN AI BECOME THREAD
 	{
 		time_add += this->ai.getTimer() / 1000;
 	}
