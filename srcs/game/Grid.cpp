@@ -412,8 +412,7 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
 	}
 
 	// Check for draw
-	int nbMoves = me->getMoves() + oppenent->getMoves();
-	if (nbMoves >= GRID_NB_INTER)
+	if (this->getLegalMoves(me, oppenent).size() == 0)
 	{
 		me->setWinState(WIN_STATE_NONE);
 		oppenent->setWinState(WIN_STATE_NONE);
