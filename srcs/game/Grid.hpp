@@ -37,7 +37,7 @@ public:
 	bool						checkInterestingMove(int x, int y);
 	std::vector<sf::Vector2i>	getInterestingMoves(Player *leftPlayer, Player *rightPlayer);
 	bool						putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState);
-	bool						checkWinCondition(Player *me, Player *oppenent);
+	bool						checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move);
 	void						addBoardState(void);
 	void						disablePreview(void);
 
@@ -57,7 +57,7 @@ private:
 	bool			checkProRule(int x, int y, inter_type interPlayer, int nbMoves);
 	int				loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
 	void			updateNeighbor(int x, int y);
-	bool			checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, dir_neighbor opdir);
+	bool			checkWinCaptureCase(Player *me, Player *oppenent, sf::Vector2i *move, dir_neighbor dir, dir_neighbor opdir);
 	void			setBoardState(int id);
 	void			createCurrentMoveText(void);
 };

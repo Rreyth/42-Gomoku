@@ -357,32 +357,32 @@ bool	Grid::putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_ty
 	return (true);
 }
 
-bool	Grid::checkWinCondition(Player *me, Player *oppenent)
+bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
 {
 	// Check if there at least 5 align stones
-	if (this->checkWinCaptureCase(me, oppenent, DIR_L, DIR_R))
+	if (this->checkWinCaptureCase(me, oppenent, &move, DIR_L, DIR_R))
 		return (true);
-	if (this->checkWinCaptureCase(me, oppenent, DIR_UL, DIR_DR))
+	if (this->checkWinCaptureCase(me, oppenent, &move, DIR_UL, DIR_DR))
 		return (true);
-	if (this->checkWinCaptureCase(me, oppenent, DIR_U, DIR_D))
+	if (this->checkWinCaptureCase(me, oppenent, &move, DIR_U, DIR_D))
 		return (true);
-	if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
+	if (this->checkWinCaptureCase(me, oppenent, &move, DIR_UR, DIR_DL))
 		return (true);
 
 	// Check if any valid 5 stones line
-	if (this->getInterState(this->previewX, this->previewY) == INTER_LEFT)
+	if (this->getInterState(move.x, move.y) == INTER_LEFT)
 	{
 		for (std::size_t i = 0; i < this->leftWinPos.size(); i++)
 		{
-			this->previewX = this->leftWinPos[i].x;
-			this->previewY = this->leftWinPos[i].y;
-			if (this->checkWinCaptureCase(me, oppenent, DIR_L, DIR_R))
+			move.x = this->leftWinPos[i].x;
+			move.y = this->leftWinPos[i].y;
+			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_L, DIR_R))
 				return (true);
-			if (this->checkWinCaptureCase(me, oppenent, DIR_UL, DIR_DR))
+			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_UL, DIR_DR))
 				return (true);
-			if (this->checkWinCaptureCase(me, oppenent, DIR_U, DIR_D))
+			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_U, DIR_D))
 				return (true);
-			if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
+			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_UR, DIR_DL))
 				return (true);
 		}
 	}
@@ -390,15 +390,15 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent)
 	{
 		for (std::size_t i = 0; i < this->rightWinPos.size(); i++)
 		{
-			this->previewX = this->rightWinPos[i].x;
-			this->previewY = this->rightWinPos[i].y;
-			if (this->checkWinCaptureCase(me, oppenent, DIR_L, DIR_R))
+			move.x = this->rightWinPos[i].x;
+			move.y = this->rightWinPos[i].y;
+			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_L, DIR_R))
 				return (true);
-			if (this->checkWinCaptureCase(me, oppenent, DIR_UL, DIR_DR))
+			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_UL, DIR_DR))
 				return (true);
-			if (this->checkWinCaptureCase(me, oppenent, DIR_U, DIR_D))
+			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_U, DIR_D))
 				return (true);
-			if (this->checkWinCaptureCase(me, oppenent, DIR_UR, DIR_DL))
+			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_UR, DIR_DL))
 				return (true);
 		}
 	}
@@ -676,7 +676,7 @@ int	Grid::checkCapture(sf::Vector2i *move)
 }
 
 
-bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, dir_neighbor opdir)
+bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, sf::Vector2i *move, dir_neighbor dir, dir_neighbor opdir)
 {
 	intersection	*inter, *tmpInter;
 	inter_type		opType, tmpType1, tmpType2;
@@ -684,7 +684,7 @@ bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, d
 	int				x, y, tmpX, tmpY, length;
 	bool			canBeCapture;
 
-	inter = this->getIntersection(this->previewX, this->previewY);
+	inter = this->getIntersection(move->x, move->y);
 	// Check if me can win
 	if (!inter || inter->neighbor[dir] + inter->neighbor[opdir] + 1 < WIN_POINT)
 		return (false);
@@ -695,8 +695,8 @@ bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, dir_neighbor dir, d
 	else
 		opType = INTER_LEFT;
 
-	x = this->previewX;
-	y = this->previewY;
+	x = move->x;
+	y = move->y;
 
 	// Go to the start of the win line
 	for (int i = 0; i < inter->neighbor[opdir]; i++)
