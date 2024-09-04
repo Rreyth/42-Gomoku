@@ -193,7 +193,7 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 
 		str = "TIME OF PREDICTION";
 		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.25), 25, sf::Color::White, MID_CENTER);
-		str = std::to_string((int)ai->getTimer()) + " μs";
+		str = std::to_string((int)ai->getTimer()) + " us";
 		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.30), 30, sf::Color::White, MID_CENTER);
 	}
 
@@ -236,7 +236,7 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 
 		str = "TIME OF PREDICTION";
 		drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.25), 25, sf::Color::White, MID_CENTER);
-		str = std::to_string((int)ai->getTimer()) + " μs";
+		str = std::to_string((int)ai->getTimer()) + " us";
 		drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.30), 30, sf::Color::White, MID_CENTER);
 	}
 
