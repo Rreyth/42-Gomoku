@@ -44,11 +44,16 @@ Evaluation::~Evaluation()
 ////////////////////////////////////////////////////////////////////////////////
 
 int	Evaluation::evaluationPosition(Grid *grid, inter_type plType,
-									inter_type opType, int x, int y)
+									inter_type opType,
+									int plCapture, int opCapture,
+									int x, int y)
 {
 	int				result, completeLine, blockLine, invAxis;
 	bool			isCompleteLine, isBlockLine;
 	intersection	*inter;
+
+	plCapture = plCapture * 4 + 1;
+	opCapture = opCapture * 4 + 1;
 
 	// If intersection isn't empty, return 0;
 	if (grid->getInterState(x, y) != INTER_EMPTY)
@@ -67,13 +72,15 @@ int	Evaluation::evaluationPosition(Grid *grid, inter_type plType,
 
 		// Check front of axis
 		this->updateCompleteAndBlockLine(
-				grid, plType, opType, x, y, axis,
+				grid, plType, opType,
+				plCapture, opCapture, x, y, axis,
 				&completeLine, &isCompleteLine,
 				&blockLine, &isBlockLine, &result);
 
 		// Check back of axis
 		this->updateCompleteAndBlockLine(
-				grid, plType, opType, x, y, invAxis,
+				grid, plType, opType,
+				plCapture, opCapture, x, y, invAxis,
 				&completeLine, &isCompleteLine,
 				&blockLine, &isBlockLine, &result);
 
@@ -102,6 +109,7 @@ int	Evaluation::evaluationPosition(Grid *grid, inter_type plType,
 
 void	Evaluation::updateCompleteAndBlockLine(
 						Grid *grid, inter_type plType, inter_type opType,
+						int plCapture, int opCapture,
 						int x, int y, int axis,
 						int *completeLine, bool *isCompleteLine,
 						int *blockLine, bool *isBlockLine, int *result)
@@ -117,7 +125,21 @@ void	Evaluation::updateCompleteAndBlockLine(
 		{
 			*completeLine += inter->neighbor[axis] + 1;
 			*isCompleteLine = true;
-			// TODO : Add point for blocking capture
+
+			// Check if a capture is possible for opponent
+			if (inter->neighbor[axis] != 1)
+				return ;
+
+			interTmp = grid->getIntersection(x + this->dirs[axis].x * 3,
+											y + this->dirs[axis].y * 3);
+			if (!interTmp || interTmp->type != opType)
+				return ;
+
+			// Opponent capture possible !
+			if (interTmp->neighbor[axis] > 0)
+				*result += this->blockLinePoint[5] * opCapture;
+			else
+				*result += this->blockLinePoint[4] * opCapture;
 		}
 
 		// Stone of opponent
@@ -132,16 +154,15 @@ void	Evaluation::updateCompleteAndBlockLine(
 
 			interTmp = grid->getIntersection(x + this->dirs[axis].x * 3,
 											y + this->dirs[axis].y * 3);
-			// Capture possible !
 			if (!interTmp || interTmp->type != plType)
 				return ;
 
+			// Capture possible !
 			if (interTmp->neighbor[axis] > 0)
-				*result += this->completeLinePoint[5];
+				*result += this->completeLinePoint[5] * plCapture;
 			else
-				*result += this->completeLinePoint[4];
+				*result += this->completeLinePoint[4] * plCapture;
 
-			// TODO : Add point multiply by number of capture already done
 		}
 	}
 }

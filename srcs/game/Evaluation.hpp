@@ -11,8 +11,8 @@ public:
 	Evaluation(void);
 	~Evaluation();
 
-	int	evaluationPosition(Grid *grid, inter_type plType,
-							inter_type opType, int x, int y);
+	int	evaluationPosition(Grid *grid, inter_type plType, inter_type opType,
+							int plCapture, int opCapture, int x, int y);
 
 private:
 	int				completeLinePoint[6], blockLinePoint[6];
@@ -20,6 +20,7 @@ private:
 
 	void	updateCompleteAndBlockLine(
 				Grid *grid, inter_type plType, inter_type opType,
+				int plCapture, int opCapture,
 				int x, int y, int axis,
 				int *completeLine, bool *isCompleteLine,
 				int *blockLine, bool *isBlockLine, int *result);

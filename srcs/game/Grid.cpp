@@ -96,9 +96,19 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 		std::string	xaxis = "ABCDEFGHIJKLMNOPQ";
 		intersection	*inter = this->getIntersection(px, py);
 		std::cout << "\nPosition " << xaxis[px] << py + 1 << " :" << std::endl;
-		std::cout << "    Evalutation Left  : " << evaluator->evaluationPosition(this, INTER_LEFT, INTER_RIGHT, px, py)
+		std::cout << "    Evalutation Left  : "
+					<< evaluator->evaluationPosition(
+									this, INTER_LEFT, INTER_RIGHT,
+									leftPlayer->getCaptured(),
+									rightPlayer->getCaptured(),
+									px, py)
 					<< std::endl;
-		std::cout << "    Evalutation Right : " << evaluator->evaluationPosition(this, INTER_RIGHT, INTER_LEFT, px, py)
+		std::cout << "    Evalutation Right : "
+					<< evaluator->evaluationPosition(
+									this, INTER_RIGHT, INTER_LEFT,
+									rightPlayer->getCaptured(),
+									leftPlayer->getCaptured(),
+									px, py)
 					<< std::endl;
 		std::cout << "    Neighbors :" << std::endl;
 		std::cout << "        " << inter->neighbor[DIR_UL] << " " << inter->neighbor[DIR_U] <<  " " << inter->neighbor[DIR_UR] << std::endl;
