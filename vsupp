@@ -3060,3 +3060,173 @@
    fun:_dl_catch_exception
    fun:_dl_open
 }
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libGLX_nvidia.so.550.90.07
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:realloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:*
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+}
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   obj:*
+   obj:*
+   obj:*
+   obj:*
+   fun:drmSLInsert
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+   obj:/usr/lib/x86_64-linux-gnu/libnvidia-glcore.so.550.90.07
+}

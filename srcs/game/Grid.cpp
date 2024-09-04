@@ -553,10 +553,14 @@ void	Grid::updateNeighbor(int x, int y)
 
 int	Grid::checkCapture(void)
 {
-	intersection	*inter = this->getIntersection(this->previewX, this->previewY);
+	intersection	*inter;
 	intersection	*inters[3];
 	inter_type		plType, opType;
 	int				x, y, nbCapture, invAxis;
+
+	inter = this->getIntersection(this->previewX, this->previewY);
+	if (!inter)
+		return (0);
 
 	plType = inter->type;
 	if (plType == INTER_LEFT)
