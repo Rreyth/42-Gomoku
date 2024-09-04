@@ -117,6 +117,11 @@ inter_type	Player::getInterType(void)
 	return (this->interType);
 }
 
+AI			*Player::getAI(void)
+{
+	return (&this->ai);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -147,33 +152,28 @@ sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse)
 	}
 	else
 	{
-		double time = clock()/(double)(CLOCKS_PER_SEC);
 		grid->disablePreview();
-		std::vector<sf::Vector2i>	legalMoves = grid->getLegalMoves(this, opponent);
-		if (legalMoves.size() > 0)
-		{
-			int index = rand_int(0, legalMoves.size() - 1);
-			move = legalMoves[index];
-		}
-		time = ((clock()/(double)(CLOCKS_PER_SEC)) - time) * 1000000;
-		// std::cout << this->name << " took " << time << " ms to play" << std::endl;
+		move = this->ai.getNextMove(grid, this, opponent);
 	}
 	return (move);
 }
 
 
-void		Player::setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite, bool solo)
+void		Player::setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite, bool solo, AI_difficulty difficulty)
 {
 	this->setType(type);
 	this->setTimer(mode);
 	if (!solo && type == PLAYER)
 		this->setName("PLAYER " + std::to_string(pos));
-	else if (!solo && type == AI)
+	else if (!solo && type == AI_PLAYER)
 		this->setName("AI " + std::to_string(pos));
 	else if (type == PLAYER)
 		this->setName("PLAYER");
 	else
 		this->setName("AI");
+
+	if (type == AI_PLAYER)
+		this->ai.setAI(difficulty);
 
 	if (pos == 1)
 		this->interType = INTER_LEFT;
@@ -189,14 +189,19 @@ void		Player::setPlayer(player_type type, game_mode mode, int pos, sprite_name s
 
 void		Player::tick(float delta, game_mode mode)
 {
+	double time_add = delta;
+	if (this->type == AI_PLAYER)
+	{
+		time_add += this->ai.getTimer() / 1000;
+	}
 	if (mode == BLITZ)
 	{
-		this->timer -= delta;
+		this->timer -= time_add;
 		if (this->timer < 0)
 			this->timer = 0;
 	}
 	else
-		this->timer += delta;
+		this->timer += time_add;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

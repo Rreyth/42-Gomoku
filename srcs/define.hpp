@@ -19,6 +19,8 @@
 # define GRID_W_INTER 17
 # define GRID_NB_INTER 289 // 289 = 17 * 17
 
+# define AI_MAX_DEPTH 10
+
 typedef enum e_font {
 	FONT_SQUADA,
 	FONT_ROBOTO,
@@ -48,7 +50,7 @@ typedef enum e_display_state {
 
 typedef enum e_player_type {
 	PLAYER,
-	AI
+	AI_PLAYER
 }	player_type;
 
 typedef enum e_stone_sprite {
@@ -95,6 +97,14 @@ typedef enum e_inter_type
 	INTER_INVALID,
 }	inter_type;
 
+typedef enum e_AI_difficulty
+{
+	RANDOM,
+	BETTER_RANDOM,
+	EASY,
+	MEDIUM,
+	HARD
+}	AI_difficulty;
 
 typedef struct s_intersection
 {

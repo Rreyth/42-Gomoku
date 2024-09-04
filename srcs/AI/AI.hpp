@@ -1,0 +1,32 @@
+#ifndef AI_HPP
+# define AI_HPP
+
+# include <define.hpp>
+# include <game/Grid.hpp>
+
+class Player;
+
+class AI
+{
+public:
+	AI(void);
+	~AI();
+
+	AI_difficulty	getDifficulty(void);
+	void			setDifficulty(AI_difficulty difficulty);
+	double			getTimer(void);
+	void			setTimer(double timer);
+
+	void			setAI(AI_difficulty difficulty);
+
+	sf::Vector2i	getNextMove(Grid *grid, Player *player, Player *opponent);
+
+private:
+	double			timer;
+	AI_difficulty	difficulty;
+
+	sf::Vector2i	getRandomMove(Grid *grid, Player *player, Player *opponent);
+	sf::Vector2i	getBetterRandom(Grid *grid, Player *player, Player *opponent);
+};
+
+#endif

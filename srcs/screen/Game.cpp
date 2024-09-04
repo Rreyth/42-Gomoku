@@ -57,15 +57,15 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 	Player			*opponent = &this->playerRight;
 	if (this->playerLeft.isPlaying())
 	{
-		this->playerLeft.tick(delta, this->mode);
 		move = this->playerLeft.getNextMove(&this->grid, &this->playerRight, mouse);
+		this->playerLeft.tick(delta, this->mode);
 	}
 	else
 	{
 		me = &this->playerRight;
 		opponent = &this->playerLeft;
-		this->playerRight.tick(delta, this->mode);
 		move = this->playerRight.getNextMove(&this->grid, &this->playerLeft, mouse);
+		this->playerRight.tick(delta, this->mode);
 	}
 
 	if (this->grid.putStone(move, nbMoves, me->getInterType(), opponent->getInterType()))
@@ -134,7 +134,10 @@ void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 	this->leave.draw(window, text, textureManager);
 }
 
-void	Game::setGame(player_type playerLeft, player_type playerRight, game_mode mode, game_rules rule, stone_sprite *sprite)
+void	Game::setGame(player_type playerLeft, player_type playerRight,
+						game_mode mode, game_rules rule,
+						AI_difficulty aiLeft, AI_difficulty aiRight,
+						stone_sprite *sprite)
 {
 	this->mode = mode;
 
@@ -153,10 +156,10 @@ void	Game::setGame(player_type playerLeft, player_type playerRight, game_mode mo
 
 	bool solo = true;
 	if ((playerLeft == PLAYER && playerRight == PLAYER)||
-		(playerLeft == AI && playerRight == AI))
+		(playerLeft == AI_PLAYER && playerRight == AI_PLAYER))
 		solo = false;
-	this->playerLeft.setPlayer(playerLeft, mode, 1, leftStone, solo);
-	this->playerRight.setPlayer(playerRight, mode, 2, rightStone, solo);
+	this->playerLeft.setPlayer(playerLeft, mode, 1, leftStone, solo, aiLeft);
+	this->playerRight.setPlayer(playerRight, mode, 2, rightStone, solo, aiRight);
 	if (rand_int(1, 2) == 1)
 		this->playerLeft.setPlaying(true);
 	else
@@ -179,6 +182,21 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 	sf::Vector2f size = this->rect.getSize();
 	std::string str = this->playerLeft.getName();
 	drawText(window, text, str, size.x / 2, gridY + (size.y * 0.05), 30, sf::Color::White, MID_CENTER);
+
+
+	if (this->playerLeft.getType() == AI_PLAYER)
+	{
+		std::string	difficulty[] = {"RANDOM", "BETTER_RANDOM", "EASY", "MEDIUM", "HARD"};
+		AI *ai = this->playerLeft.getAI();
+		str = difficulty[ai->getDifficulty()];
+		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.15), 30, sf::Color::White, MID_CENTER);
+
+		str = "TIME OF PREDICTION";
+		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.25), 25, sf::Color::White, MID_CENTER);
+		str = std::to_string((int)ai->getTimer()) + " ms";
+		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.30), 30, sf::Color::White, MID_CENTER);
+	}
+
 
 	if (this->playerLeft.isPlaying())
 		textureManager->drawTexture(window, SPRITE_ARROW, size.x / 2, WIN_H * 0.075, MID_CENTER);
@@ -228,8 +246,10 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.95), 30, sf::Color::White, MID_CENTER);
 }
 
-void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
+void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager) //TODO: not for actual ai player
 {
+	// if (this->playerLeft.getType() != AI_PLAYER && this->playerRight.getType() != AI_PLAYER) //not a player but just a predict
+
 	int gridX = this->grid.getX();
 
 	this->rect.setSize(sf::Vector2f(this->grid.getW(), WIN_H * 0.1));
