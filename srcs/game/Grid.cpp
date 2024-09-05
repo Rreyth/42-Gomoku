@@ -442,6 +442,20 @@ void	Grid::disablePreview(void)
 }
 
 
+void	Grid::reset(void)
+{
+	for (int i = 0; i < GRID_NB_INTER; i++)
+	{
+		this->gridState[i].type = INTER_EMPTY;
+		for (int j = 0; j < 8; j++)
+			this->gridState[i].neighbor[j] = 0;
+	}
+	this->boardStates.clear();
+	this->leftWinPos.clear();
+	this->rightWinPos.clear();
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////

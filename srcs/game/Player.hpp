@@ -44,6 +44,7 @@ public:
 	void 			setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite, bool solo, AI_difficulty difficulty);
 
 	void 			tick(float delta, game_mode mode);
+	void			reset(game_mode mode);
 
 private:
 	player_type	type;

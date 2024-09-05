@@ -40,6 +40,7 @@ public:
 	bool						checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move);
 	void						addBoardState(void);
 	void						disablePreview(void);
+	void						reset(void);
 
 private:
 	int							x, y, w, h, previewX, previewY, idBoardState;

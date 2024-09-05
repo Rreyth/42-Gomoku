@@ -169,6 +169,19 @@ void	Game::setGame(player_type playerLeft, player_type playerRight,
 	this->grid.clearGrid(leftStone, rightStone, rule);
 }
 
+
+void	Game::replay(display_state *displayState)
+{
+	this->grid.reset();
+	this->playerLeft.reset(this->mode);
+	this->playerRight.reset(this->mode);
+	if (rand_int(1, 2) == 1)
+		this->playerLeft.setPlaying(true);
+	else
+		this->playerRight.setPlaying(true);
+	*displayState = DISPLAY_GAME;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////

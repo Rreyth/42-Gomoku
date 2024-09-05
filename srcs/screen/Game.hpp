@@ -19,6 +19,7 @@ public:
 								game_mode mode, game_rules rule,
 								AI_difficulty aiLeft, AI_difficulty aiRight,
 								stone_sprite *sprite);
+	void				replay(display_state *displayState);
 
 	Player				*getLeftPlayer(void);
 	Player				*getRightPlayer(void);

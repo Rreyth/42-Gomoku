@@ -1,5 +1,6 @@
 #include <screen/End.hpp>
 #include <utils/Functions.hpp>
+#include <screen/Game.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
@@ -27,6 +28,10 @@ End::End(void)
 						WIN_W * 0.565, WIN_H * 0.92, 24, 24,
 						SPRITE_SMALL_ROUND_BUTTON_ON, SPRITE_SMALL_ROUND_BUTTON_OFF);
 
+	this->replay = Button("REPLAY", 25, MID_CENTER, sf::Color::White,
+						WIN_W * 0.875, WIN_H - 60, 190, 48,
+						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF);
+
 	this->rect.setPosition(0, 0);
 	this->rect.setSize(sf::Vector2f(WIN_W, WIN_H));
 	this->rect.setFillColor(sf::Color(0, 0, 0, 75));
@@ -39,24 +44,27 @@ End::~End()
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
-void	End::tick(display_state *displayState, float delta, Mouse *mouse, Grid *grid)
+void	End::tick(display_state *displayState, float delta, Mouse *mouse, Game *game)
 {
 	this->back.tick(mouse);
 	this->firstMove.tick(mouse);
 	this->previousMove.tick(mouse);
 	this->nextMove.tick(mouse);
 	this->lastMove.tick(mouse);
+	this->replay.tick(mouse);
 
 	if (this->back.getPressed())
 		*displayState = DISPLAY_MENU;
 	else if (this->firstMove.getPressed())
-		grid->goToFirstMove();
+		game->getGrid()->goToFirstMove();
 	else if (this->previousMove.getPressed())
-		grid->goToPreviousMove();
+		game->getGrid()->goToPreviousMove();
 	else if (this->nextMove.getPressed())
-		grid->goToNextMove();
+		game->getGrid()->goToNextMove();
 	else if (this->lastMove.getPressed())
-		grid->goToLastMove();
+		game->getGrid()->goToLastMove();
+	else if (this->replay.getPressed())
+		game->replay(displayState);
 }
 
 
@@ -123,4 +131,5 @@ void	End::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *texture
 	drawText(window, text, grid->getCurrentMove(), WIN_W / 2, WIN_H * 0.93, 35, sf::Color::White, MID_CENTER);
 	this->nextMove.draw(window, text, textureManager);
 	this->lastMove.draw(window, text, textureManager);
+	this->replay.draw(window, text, textureManager);
 }

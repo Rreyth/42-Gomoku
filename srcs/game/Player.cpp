@@ -204,6 +204,18 @@ void		Player::tick(float delta, game_mode mode)
 		this->timer += time_add;
 }
 
+
+void		Player::reset(game_mode mode)
+{
+	this->setTimer(mode);
+	this->winState = WIN_STATE_NONE;
+	this->playing = false;
+	this->captured = 0;
+	this->moves = 0;
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////
