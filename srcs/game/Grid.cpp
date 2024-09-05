@@ -269,19 +269,13 @@ bool	Grid::checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_t
 }
 
 
-std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *leftPlayer, Player *rightPlayer)
+std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *player, Player *opponent)
 {
 	std::vector<sf::Vector2i>	legalMoves;
-	int							nbMoves = leftPlayer->getMoves() + rightPlayer->getMoves();
+	int							nbMoves = player->getMoves() + opponent->getMoves();
 
-	inter_type					plState = INTER_LEFT;
-	inter_type					opState = INTER_RIGHT;
-
-	if (!leftPlayer->isPlaying())
-	{
-		plState = INTER_RIGHT;
-		opState = INTER_LEFT;
-	}
+	inter_type					plState = player->getInterType();
+	inter_type					opState = opponent->getInterType();
 
 	for (int i = 0; i < GRID_W_INTER; i++)
 	{
