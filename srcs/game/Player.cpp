@@ -192,7 +192,7 @@ void		Player::tick(float delta, game_mode mode)
 	double time_add = delta;
 	if (this->type == AI_PLAYER) //TODO: REMOVE THIS WHEN AI BECOME THREAD
 	{
-		time_add += this->ai.getTimer() / 1000;
+		time_add += this->ai.getTimer() / 1000000;
 	}
 	if (mode == BLITZ)
 	{

@@ -586,7 +586,7 @@ void	Grid::loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type plType)
 	// Go inverse direction to find start of line
 	x += this->dirs[invDir].x;
 	y += this->dirs[invDir].y;
-	while (inter && this->getInterState(x, y) == plType)
+	while (this->getInterState(x, y) == plType)
 	{
 		x += this->dirs[invDir].x;
 		y += this->dirs[invDir].y;
@@ -616,7 +616,7 @@ void	Grid::updateNeighbor(int x, int y)
 
 	// Get current intersection
 	inter = this->getIntersection(x, y);
-	if (inter->type != INTER_LEFT && inter->type != INTER_RIGHT)
+	if (!inter || (inter->type != INTER_LEFT && inter->type != INTER_RIGHT))
 		return ;
 
 	// Compute neighbors for each direction
