@@ -103,6 +103,24 @@ int	Evaluation::evaluationPosition(Grid *grid, inter_type plType,
 	return	(result);
 }
 
+
+long	Evaluation::evaluateGrid(Grid *grid, inter_type plType, inter_type opType,
+								int plCapture, int opCapture)
+{
+	long	value;
+
+	value = 0;
+	for (int y = 0; y < GRID_W_INTER; y++)
+	{
+		for (int x = 0; x < GRID_W_INTER; x++)
+		{
+			value += this->evaluationPosition(grid, plType, opType, plCapture, opCapture, x, y);
+		}
+	}
+
+	return (value);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////

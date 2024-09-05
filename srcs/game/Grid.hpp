@@ -15,13 +15,15 @@ public:
 	Grid(void);
 	~Grid();
 
-	int				getX(void);
-	int				getY(void);
-	int				getW(void);
-	int				getH(void);
-	std::string		getCurrentMove(void);
-	inter_type		getInterState(int x, int y);
-	intersection	*getIntersection(int x, int y);
+	int							getX(void);
+	int							getY(void);
+	int							getW(void);
+	int							getH(void);
+	std::string					getCurrentMove(void);
+	inter_type					getInterState(int x, int y);
+	intersection				*getIntersection(int x, int y);
+
+	Grid						&operator=(const Grid &grid);
 
 	void						tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer,
 										Evaluation *evaluator);

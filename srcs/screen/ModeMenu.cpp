@@ -65,6 +65,11 @@ ModeMenu::ModeMenu(void)
 								WIN_W * 0.6, WIN_H * 0.625, 300, 45,
 								SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_ON, SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_OFF,
 								SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_ON);
+
+	// TODO: REMOVE THIS SHIT
+	this->playerRight.setSelected(1);
+	this->aiRight.setSelected(3);
+
 }
 
 ModeMenu::~ModeMenu()

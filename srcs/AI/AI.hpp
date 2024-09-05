@@ -30,6 +30,7 @@ private:
 	sf::Vector2i	getRandomMove(Grid *grid, Player *player, Player *opponent);
 	sf::Vector2i	getBetterRandom(Grid *grid, Player *player, Player *opponent);
 	sf::Vector2i	getEasyMove(Grid *grid, Player *player, Player *opponent, Evaluation *evaluator);
+	sf::Vector2i	getMediumMove(Grid *grid, Player *player, Player *opponent, Evaluation *evaluator);
 };
 
 #endif

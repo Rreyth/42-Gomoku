@@ -74,6 +74,38 @@ std::string	Grid::getCurrentMove(void)
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
+Grid	&Grid::operator=(const Grid &grid)
+{
+	if (this == &grid)
+		return (*this);
+
+	// Copy game rule
+	this->rule = grid.rule;
+
+	// Copy board
+	for (int i = 0; i < GRID_NB_INTER; i++)
+	{
+		this->gridState[i].type = grid.gridState[i].type;
+		for (int j = 0; j < 8; j++)
+			this->gridState[i].neighbor[j] = grid.gridState[i].neighbor[j];
+	}
+
+	// Copy win pos
+	this->leftWinPos.clear();
+	for (std::size_t i = 0; i < grid.leftWinPos.size(); i++)
+		this->leftWinPos.push_back(grid.leftWinPos[i]);
+
+	this->rightWinPos.clear();
+	for (std::size_t i = 0; i < grid.rightWinPos.size(); i++)
+		this->rightWinPos.push_back(grid.rightWinPos[i]);
+
+	return (*this);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Public methods
+////////////////////////////////////////////////////////////////////////////////
+
 void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer,
 					Evaluation *evaluator)
 {
@@ -333,8 +365,6 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *oppo
 					InterestingMoves.push_back(sf::Vector2i(i, j));
 		}
 	}
-	if (InterestingMoves.size() == 0)
-		InterestingMoves.push_back(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
 
 	return (InterestingMoves);
 }
