@@ -52,8 +52,8 @@ int	Evaluation::evaluationPosition(Grid *grid, inter_type plType,
 	bool			isCompleteLine, isBlockLine;
 	intersection	*inter;
 
-	plCapture = plCapture * 4 + 1;
-	opCapture = opCapture * 4 + 1;
+	plCapture = plCapture + 1;
+	opCapture = opCapture + 1;
 
 	// If intersection isn't empty, return 0;
 	if (grid->getInterState(x, y) != INTER_EMPTY)
@@ -136,10 +136,7 @@ void	Evaluation::updateCompleteAndBlockLine(
 				return ;
 
 			// Opponent capture possible !
-			if (interTmp->neighbor[axis] > 0)
-				*result += this->blockLinePoint[5] * opCapture;
-			else
-				*result += this->blockLinePoint[4] * opCapture;
+			*result += this->completeLinePoint[3] * opCapture;
 		}
 
 		// Stone of opponent
@@ -159,9 +156,9 @@ void	Evaluation::updateCompleteAndBlockLine(
 
 			// Capture possible !
 			if (interTmp->neighbor[axis] > 0)
-				*result += this->completeLinePoint[5] * plCapture;
+				*result += this->blockLinePoint[5] * plCapture;
 			else
-				*result += this->completeLinePoint[4] * plCapture;
+				*result += this->blockLinePoint[4] * plCapture;
 
 		}
 	}
