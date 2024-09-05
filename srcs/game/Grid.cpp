@@ -565,39 +565,53 @@ bool	Grid::checkDoubleFreeThree(int x, int y, inter_type plState, inter_type opS
 }
 
 
-int	Grid::loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType)
+void	Grid::loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type plType)
 {
-	intersection	*inter = this->getIntersection(x, y);
-	int				nb_neighbor = 0;
+	intersection	*inter;
+	int				nb_neighbor, invDir;
 
-	while (inter && inter->type == interType)
+	nb_neighbor = 0;
+	invDir = (dir + 4) % 8;
+
+	// Go inverse direction to find start of line
+	x += this->dirs[invDir].x;
+	y += this->dirs[invDir].y;
+	while (inter && this->getInterState(x, y) == plType)
 	{
-		nb_neighbor++;
-
-		x += this->dirs[dir].x;
-		y += this->dirs[dir].y;
-		inter->neighbor[(dir + 4) % 8] = nb_neighbor;
-
-		inter = this->getIntersection(x, y);
+		x += this->dirs[invDir].x;
+		y += this->dirs[invDir].y;
 	}
 
-	return (nb_neighbor);
+	// Get first stone of line
+	x += this->dirs[dir].x;
+	y += this->dirs[dir].y;
+	inter = this->getIntersection(x, y);
+
+	// Update each stone of line
+	while (inter && inter->type == plType)
+	{
+		inter->neighbor[invDir] = nb_neighbor;
+		x += this->dirs[dir].x;
+		y += this->dirs[dir].y;
+		inter = this->getIntersection(x, y);
+		nb_neighbor++;
+	}
 }
 
 void	Grid::updateNeighbor(int x, int y)
 {
-	intersection	*inter = this->getIntersection(x, y);
+	intersection	*inter;
+	inter_type		plType;
 
+	// Get current intersection
+	inter = this->getIntersection(x, y);
 	if (inter->type != INTER_LEFT && inter->type != INTER_RIGHT)
 		return ;
 
-	// TODO: Rework by begin at (x, y)
+	// Compute neighbors for each direction
+	plType = this->getInterState(x, y);
 	for (int i = 0; i < 8; i++)
-		inter->neighbor[i] = this->loopUpdateNeighbor(
-									x + this->dirs[i].x,
-									y + this->dirs[i].y,
-									(dir_neighbor)i,
-									this->getInterState(x, y));
+		this->loopUpdateNeighbor(x, y, (dir_neighbor)i, plType);
 }
 
 

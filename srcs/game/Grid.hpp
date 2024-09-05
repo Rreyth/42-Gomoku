@@ -55,7 +55,7 @@ private:
 	void			setInterState(int x, int y, inter_type interType);
 	bool			checkDoubleFreeThree(int x, int y, inter_type plState, inter_type opState);
 	bool			checkProRule(int x, int y, inter_type interPlayer, int nbMoves);
-	int				loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type interType);
+	void			loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type plType);
 	void			updateNeighbor(int x, int y);
 	bool			checkWinCaptureCase(Player *me, Player *oppenent, sf::Vector2i *move, dir_neighbor dir, dir_neighbor opdir);
 	void			setBoardState(int id);
