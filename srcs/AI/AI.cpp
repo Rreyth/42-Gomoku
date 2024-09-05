@@ -113,8 +113,6 @@ sf::Vector2i	AI::getEasyMove(Grid *grid, Player *player, Player *opponent, Evalu
 	plCapture = player->getCaptured();
 	opCapture = opponent->getCaptured();
 	maxEval = -1;
-	std::string xaxis = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	std::cout << "\nNb InterestingMoves : " << interestingMoves.size() << std::endl;
 	for (int i = 0; i < interestingMoves.size(); i++)
 	{
 		tmpEval = evaluator->evaluationPosition(grid, plType, opType, plCapture, opCapture, interestingMoves[i].x, interestingMoves[i].y);
@@ -122,13 +120,8 @@ sf::Vector2i	AI::getEasyMove(Grid *grid, Player *player, Player *opponent, Evalu
 		{
 			maxEval = tmpEval;
 			move = interestingMoves[i];
-			std::cout << " move : " << xaxis[move.x] << " " << move.y + 1 << " [" << maxEval << "]" << std::endl;
 		}
 	}
-	if (move.x == -1)
-		std::cout << "Best move found error : " << move.x << " " << move.y << " for " << maxEval << " points" << std::endl;
-	else
-		std::cout << "Best move found : " << xaxis[move.x] << " " << move.y + 1 << " for " << maxEval << " points" << std::endl;
 
 	return (move);
 }

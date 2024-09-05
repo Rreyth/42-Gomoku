@@ -35,7 +35,7 @@ public:
 	bool						checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState);
 	std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
 	bool						checkInterestingMove(int x, int y);
-	std::vector<sf::Vector2i>	getInterestingMoves(Player *leftPlayer, Player *rightPlayer);
+	std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
 	bool						putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState);
 	bool						checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move);
 	void						addBoardState(void);
