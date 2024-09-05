@@ -90,15 +90,6 @@ Grid	&Grid::operator=(const Grid &grid)
 			this->gridState[i].neighbor[j] = grid.gridState[i].neighbor[j];
 	}
 
-	// Copy win pos
-	this->leftWinPos.clear();
-	for (std::size_t i = 0; i < grid.leftWinPos.size(); i++)
-		this->leftWinPos.push_back(grid.leftWinPos[i]);
-
-	this->rightWinPos.clear();
-	for (std::size_t i = 0; i < grid.rightWinPos.size(); i++)
-		this->rightWinPos.push_back(grid.rightWinPos[i]);
-
 	return (*this);
 }
 
@@ -450,6 +441,12 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
 
 void	Grid::addBoardState(void)
 {
+	this->boardStates.push_back(this->createBoardState());
+}
+
+
+std::string	Grid::createBoardState(void)
+{
 	std::string	boardState = "";
 
 	for (int i = 0; i < GRID_NB_INTER; i++)
@@ -461,8 +458,7 @@ void	Grid::addBoardState(void)
 		else
 			boardState += 'E';
 	}
-
-	this->boardStates.push_back(boardState);
+	return (boardState);
 }
 
 

@@ -41,6 +41,7 @@ public:
 	bool						putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState);
 	bool						checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move);
 	void						addBoardState(void);
+	std::string					createBoardState(void);
 	void						disablePreview(void);
 	void						reset(void);
 

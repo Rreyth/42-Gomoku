@@ -107,14 +107,38 @@ int	Evaluation::evaluationPosition(Grid *grid, inter_type plType,
 long	Evaluation::evaluateGrid(Grid *grid, inter_type plType, inter_type opType,
 								int plCapture, int opCapture)
 {
-	long	value;
+	long			value, opValue;
+	int				tmp;
+	intersection	*inter;
 
 	value = 0;
 	for (int y = 0; y < GRID_W_INTER; y++)
 	{
 		for (int x = 0; x < GRID_W_INTER; x++)
 		{
+			inter = grid->getIntersection(x, y);
+			if (inter->type == plType)
+			{
+				for (int i = 0; i < 8; i++)
+				{
+					tmp = inter->neighbor[i] + 1;
+					if (tmp > 5)
+						tmp = 5;
+					value += this->completeLinePoint[tmp];
+				}
+			}
+			else if (inter->type == opType)
+			{
+				for (int i = 0; i < 8; i++)
+				{
+					tmp = inter->neighbor[i] + 1;
+					if (tmp > 5)
+						tmp = 5;
+					value -= this->completeLinePoint[tmp];
+				}
+			}
 			value += this->evaluationPosition(grid, plType, opType, plCapture, opCapture, x, y);
+			value -= this->evaluationPosition(grid, opType, plType, opCapture, plCapture, x, y);
 		}
 	}
 

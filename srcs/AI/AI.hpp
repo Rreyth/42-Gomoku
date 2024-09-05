@@ -5,6 +5,7 @@
 # include <game/Grid.hpp>
 # include <AI/Evaluation.hpp>
 
+# include <unordered_map>
 
 class Player;
 
@@ -18,6 +19,7 @@ public:
 	void			setDifficulty(AI_difficulty difficulty);
 	double			getTimer(void);
 	void			setTimer(double timer);
+	void			reset(void);
 
 	void			setAI(AI_difficulty difficulty);
 
@@ -26,6 +28,7 @@ public:
 private:
 	double			timer;
 	AI_difficulty	difficulty;
+	std::unordered_map<std::string, long>	memory;
 
 	sf::Vector2i	getRandomMove(Grid *grid, Player *player, Player *opponent);
 	sf::Vector2i	getBetterRandom(Grid *grid, Player *player, Player *opponent);

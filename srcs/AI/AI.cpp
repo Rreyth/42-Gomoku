@@ -48,6 +48,7 @@ void	AI::setAI(AI_difficulty difficulty)
 {
 	this->difficulty = difficulty;
 	this->timer = 0;
+	this->memory.clear();
 }
 
 sf::Vector2i	AI::getNextMove(Grid *grid, Player *player, Player *opponent, Evaluation *evaluator)
@@ -72,7 +73,15 @@ sf::Vector2i	AI::getNextMove(Grid *grid, Player *player, Player *opponent, Evalu
 	// Compute time taken to choose ai
 	diff = std::clock() - start;
 	this->timer = ((double)diff / CLOCKS_PER_SEC) * 1000000;
+
+	printf(" in %i us\n", (int)this->timer);
 	return (move);
+}
+
+
+void	AI::reset(void)
+{
+	this->memory.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -158,12 +167,13 @@ sf::Vector2i	AI::getEasyMove(
 }
 
 
-static long	mediumMiniMax(
+static long	mediumMiniMax(std::unordered_map<std::string, long> *memory,
 				Grid *grid, Player *player, Player *opponent,
-				Evaluation *evaluator, int x, int y, int depth)
+				Evaluation *evaluator, int x, int y, int depth, int *nbEval)
 {
 	long						maxEval, tmpEval;
 	int							plCapture, opCapture;
+	std::string					boardId;
 	std::vector<sf::Vector2i>	interestingMoves;
 	inter_type					plType, opType;
 	Grid						gridCopy;
@@ -174,11 +184,6 @@ static long	mediumMiniMax(
 	plCapture = player->getCaptured();
 	opCapture = opponent->getCaptured();
 
-
-	// End of recursion, return only the evaluation of this move
-	if (depth <= 0)
-		return (evaluator->evaluationPosition(
-							grid, plType, opType, plCapture, opCapture, x, y));
 	// Copy grid
 	gridCopy = *grid;
 
@@ -187,6 +192,24 @@ static long	mediumMiniMax(
 					sf::Vector2i(x, y),
 					player->getMoves() + opponent->getMoves(), plType, opType))
 		return (-1);
+
+	// End of recursion, return only the evaluation of this move
+	if (depth <= 0)
+	{
+		boardId = gridCopy.createBoardState();
+		try
+		{
+			tmpEval = memory->at(boardId);
+		}
+		catch (std::exception &e)
+		{
+			(*nbEval)++;
+			tmpEval = evaluator->evaluateGrid(
+								&gridCopy, plType, opType, plCapture, opCapture);
+			memory->insert(std::pair<std::string, long>(boardId, tmpEval));
+		}
+		return (tmpEval);
+	}
 
 	// Get interesting moves
 	interestingMoves = gridCopy.getInterestingMoves(opponent, player);
@@ -197,21 +220,23 @@ static long	mediumMiniMax(
 	// Find moves
 	// std::string	xaxis = "ABCDEFGHIKLMNOPQRST";
 	depth--;
-	maxEval = mediumMiniMax(
+	maxEval = mediumMiniMax(memory,
 						&gridCopy, opponent, player, evaluator,
-						interestingMoves[0].x, interestingMoves[0].y, depth);
+						interestingMoves[0].x, interestingMoves[0].y, depth,
+						nbEval);
 	for (int i = 1; i < interestingMoves.size(); i++)
 	{
-		tmpEval = mediumMiniMax(
+		tmpEval = mediumMiniMax(memory,
 						&gridCopy, opponent, player, evaluator,
-						interestingMoves[i].x, interestingMoves[i].y, depth);
+						interestingMoves[i].x, interestingMoves[i].y, depth,
+						nbEval);
 		// printf("   - stone at %c%i for %i points\n",
 		// 			xaxis[interestingMoves[i].x], interestingMoves[i].y, tmpEval);
 		if (tmpEval > maxEval)
 			maxEval = tmpEval;
 	}
 	// Find best move for opponent
-	return (maxEval);
+	return (-maxEval);
 }
 
 
@@ -220,6 +245,7 @@ sf::Vector2i	AI::getMediumMove(
 						Evaluation *evaluator)
 {
 	long						maxEval, tmpEval;
+	int							nbEval;
 	std::vector<sf::Vector2i>	interestingMoves;
 	sf::Vector2i				move;
 
@@ -233,17 +259,18 @@ sf::Vector2i	AI::getMediumMove(
 			return (sf::Vector2i(-1, -1));
 	}
 
-	std::string	xaxis = "ABCDEFGHIKLMNOPQRST";
+	// std::string	xaxis = "ABCDEFGHIKLMNOPQRST";
 
 	// printf("\n\nIA choosen process\n");
 	// Find move to play
+	nbEval = 0;
 	move = sf::Vector2i(-1, -1);
 	maxEval = -10000000000;
 	for (int i = 0; i < interestingMoves.size(); i++)
 	{
-		tmpEval = mediumMiniMax(
-					grid, opponent, player, evaluator,
-					interestingMoves[i].x, interestingMoves[i].y, 0);
+		tmpEval = mediumMiniMax(&this->memory,
+					grid, player, opponent, evaluator,
+					interestingMoves[i].x, interestingMoves[i].y, 2, &nbEval);
 		// printf(" - stone at %c%i for %li points\n",
 		// 			xaxis[interestingMoves[i].x], interestingMoves[i].y, tmpEval);
 		if (tmpEval > maxEval)
@@ -255,6 +282,8 @@ sf::Vector2i	AI::getMediumMove(
 
 	// printf("CHOOSE: stone at %c%i for %li points\n",
 	// 		xaxis[move.x], move.y + 1, maxEval);
+
+	printf("Number of evaluation %i", nbEval);
 
 	return (move);
 }

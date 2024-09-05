@@ -212,6 +212,7 @@ void		Player::reset(game_mode mode)
 	this->playing = false;
 	this->captured = 0;
 	this->moves = 0;
+	this->ai.reset();
 }
 
 
