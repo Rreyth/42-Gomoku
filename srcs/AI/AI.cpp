@@ -231,7 +231,7 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 
 		if (playerTurn)
 		{
-			if (!gridCopy.putStone(moves[i], nbMoves, plType, opType))
+			if (!gridCopy.putStone(&moves[i], nbMoves, player, opponent))
 			{
 				printf("  - CAN'T PUT STONE at %c %i (depth %i)\n",
 							xaxis[moves[i].x], moves[i].y + 1, depth);
@@ -240,7 +240,7 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 		}
 		else
 		{
-			if (!gridCopy.putStone(moves[i], nbMoves, opType, plType))
+			if (!gridCopy.putStone(&moves[i], nbMoves, opponent, player))
 			{
 				printf("  - CAN'T PUT STONE at %c %i (depth %i)\n",
 							xaxis[moves[i].x], moves[i].y + 1, depth);
@@ -251,19 +251,38 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 		// Check victory / defeat
 		if (gridCopy.checkWinCondition(player, opponent, moves[i]))
 		{
-			if (playerTurn && (player->getWinState() == WIN_STATE_ALIGN
-								|| player->getWinState() == WIN_STATE_CAPTURE))
+			if ((player->getWinState() != WIN_STATE_NONE))
 			{
-				player->setWinState(WIN_STATE_NONE);
-				return (1000000000);
+				if (playerTurn)
+				{
+					// printf("player win !\n");
+					player->setWinState(WIN_STATE_NONE);
+					return (1000000000);
+				}
+
+				// printf("opponent loose !\n");
+				// printf("move  %c %i (depth %i)\n",
+				// 				xaxis[moves[i].x], moves[i].y + 1, depth);
+				// std::cout << gridCopy.getCurrentBoardState() << std::endl;
+
+				return (-1000000000);
 			}
-			else if (!playerTurn && (opponent->getWinState() == WIN_STATE_ALIGN
-								|| opponent->getWinState() == WIN_STATE_CAPTURE))
+
+			if (opponent->getWinState() != WIN_STATE_NONE)
 			{
+				if (playerTurn)
+				{
+					// printf("player loose !\n");
+					return (-1000000000);
+				}
+
+				// printf("opponent win !\n");
 				opponent->setWinState(WIN_STATE_NONE);
 				return (1000000000);
 			}
-			return (-1000000000);
+
+			// printf("EUHHHHH\n");
+			return (0);
 		}
 
 		tmpEval = -mediumMiniMax(memory, &gridCopy,
@@ -326,9 +345,12 @@ sf::Vector2i	AI::getMediumMove(
 		player->setCaptured(plCapture);
 		opponent->setMoves(opMoves);
 		opponent->setCaptured(opCapture);
-		if (!gridCopy.putStone(moves[i],
-								nbMoves, plType, opType))
+		if (!gridCopy.putStone(&moves[i],
+								nbMoves, player, opponent))
+		{
+			printf("pb ?\n");
 			continue;
+		}
 		tmpEval = mediumMiniMax(&this->memory, &gridCopy,
 					player, opponent, evaluator, !playerTurn, depth, &nbEval);
 		if (depth % 2 == 1)

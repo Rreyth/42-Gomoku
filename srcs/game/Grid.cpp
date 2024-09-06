@@ -30,6 +30,11 @@ Grid::Grid(void)
 	this->dirs[DIR_DL] = sf::Vector2i(-1, 1);
 
 	this->currentMove = "";
+	// this->currentBoardState = "";
+	this->createBoardState();
+
+	this->bboxUP = sf::Vector2i(GRID_W_INTER - 1, GRID_W_INTER - 1);
+	this->bboxDR = sf::Vector2i(0, 0);
 }
 
 
@@ -95,6 +100,10 @@ Grid	&Grid::operator=(const Grid &grid)
 		for (int j = 0; j < 8; j++)
 			this->gridState[i].neighbor[j] = grid.gridState[i].neighbor[j];
 	}
+
+	this->bboxUP = grid.bboxUP;
+	this->bboxDR = grid.bboxDR;
+	this->currentBoardState = grid.currentBoardState;
 
 	return (*this);
 }
@@ -353,13 +362,30 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *oppo
 	nbMoves = player->getMoves() + opponent->getMoves();
 	plState = player->getInterType();
 	opState = opponent->getInterType();
-	for (int i = 0; i < GRID_W_INTER; i++)
+	// Case of no bbox set (0 stone on grid)
+	if (this->bboxUP.x > this->bboxDR.x)
 	{
-		for (int j = 0; j < GRID_W_INTER; j++)
+		for (int i = 0; i < GRID_W_INTER; i++)
 		{
-			if(checkInterestingMove(i, j))
-				if (checkLegalMove(i, j, nbMoves, plState, opState))
-					InterestingMoves.push_back(sf::Vector2i(i, j));
+			for (int j = 0; j < GRID_W_INTER; j++)
+			{
+				if(checkInterestingMove(i, j))
+					if (checkLegalMove(i, j, nbMoves, plState, opState))
+						InterestingMoves.push_back(sf::Vector2i(i, j));
+			}
+		}
+	}
+	// Check only tile in bbox to know if there are interesting
+	else
+	{
+		for (int i = this->bboxUP.x; i <= this->bboxDR.x; i++)
+		{
+			for (int j = this->bboxUP.y; j <= this->bboxDR.y; j++)
+			{
+				if(checkInterestingMove(i, j))
+					if (checkLegalMove(i, j, nbMoves, plState, opState))
+						InterestingMoves.push_back(sf::Vector2i(i, j));
+			}
 		}
 	}
 
@@ -367,20 +393,77 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *oppo
 }
 
 
-bool	Grid::putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState)
+bool	Grid::putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent)
 {
-	if (!this->checkLegalMove(move.x, move.y, nbMoves, plState, opState))
+	inter_type	plType, opType;
+
+	plType = player->getInterType();
+	opType = opponent->getInterType();
+
+	if (!this->checkLegalMove(move->x, move->y, nbMoves, plType, opType))
 		return (false);
 
-	this->setInterState(move.x, move.y, plState);
-	this->updateNeighbor(move.x, move.y);
+	this->setInterState(move->x, move->y, plType);
+	// TODO: Patch capture
+	// player->addCaptured(this->checkCapture(move, plType, opType));
+	this->updateNeighbor(move->x, move->y);
+
+	// std::string before = this->currentBoardState;
+	// if (plType == INTER_LEFT)
+	// 	this->currentBoardState[interId] = 'L';
+	// else if (plType == INTER_RIGHT)
+	// 	this->currentBoardState[interId] = 'R';
+	// else
+	// 	this->currentBoardState[interId] = 'E';
+	// std::string tkt = this->currentBoardState;
 	this->createBoardState();
+
+	// std::string xaxis = "ABCDEFGHIJKLMNOPQRST";
+	// std::string	uwu[4] = {"empty", "left", "right", "invalid"};
+
+	// if (tkt != this->currentBoardState)
+	// {
+	// 	printf("MAIS WESH %c %i %s\n", xaxis[x], y + 1, uwu[interType].c_str());
+
+	// 	printf("before == tkt %i\n", before == tkt);
+	// 	printf("before == currentBoardState %i\n", before == this->currentBoardState);
+	// 	printf("interId %i\n", interId);
+	// 	printf("%s\n", before.c_str());
+	// 	printf("%s\n", tkt.c_str());
+	// 	printf("%s\n", this->currentBoardState.c_str());
+	// }
+
+	// for (int y = 0; y < GRID_W_INTER; y++)
+	// 	printf("-");
+	// printf("\n");
+	// for (int y = 0; y < GRID_W_INTER; y++)
+	// {
+	// 	for (int x = 0; x < GRID_W_INTER; x++)
+	// 	{
+	// 		int id = y * GRID_W_INTER + x;
+
+	// 		if (this->currentBoardState[id] == 'E')
+	// 			printf(" ");
+	// 		else
+	// 			printf("%c", this->currentBoardState[id]);
+	// 	}
+	// 	printf("\n");
+	// }
+
 	return (true);
 }
 
 
 bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
 {
+	// Check if the player capture at least 10 opponent's stones
+	if (me->getCaptured() >= WIN_CAPTURE)
+	{
+		me->setWinState(WIN_STATE_CAPTURE);
+		this->previewLegal = false;
+		return (true);
+	}
+
 	// Check if there at least 5 align stones
 	if (this->checkWinCaptureCase(me, oppenent, &move, DIR_L, DIR_R))
 		return (true);
@@ -425,15 +508,8 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
 		}
 	}
 
-	// Check if the player capture at least 10 opponent's stones
-	if (me->getCaptured() >= WIN_CAPTURE)
-	{
-		me->setWinState(WIN_STATE_CAPTURE);
-		this->previewLegal = false;
-		return (true);
-	}
-
 	// Check for draw
+	// TODO: Opti by find a 'E' into currentBoardState
 	if (this->getLegalMoves(me, oppenent).size() == 0)
 	{
 		me->setWinState(WIN_STATE_NONE);
@@ -503,6 +579,35 @@ void	Grid::setInterState(int x, int y, inter_type interType)
 
 	int interId = y * GRID_W_INTER + x;
 	this->gridState[interId].type = interType;
+
+	if (interType == INTER_EMPTY)
+		return ;
+
+	// Update bbox
+	if (bboxUP.x >= x)
+	{
+		bboxUP.x = x - 1;
+		if (bboxUP.x < 0)
+			bboxUP.x = 0;
+	}
+	if (bboxUP.y >= y)
+	{
+		bboxUP.y = y - 1;
+		if (bboxUP.y < 0)
+			bboxUP.y = 0;
+	}
+	if (bboxDR.x <= x)
+	{
+		bboxDR.x = x + 1;
+		if (bboxDR.x >= GRID_W_INTER)
+			bboxDR.x = GRID_W_INTER - 1;
+	}
+	if (bboxDR.y <= y)
+	{
+		bboxDR.y = y + 1;
+		if (bboxDR.y >= GRID_W_INTER)
+			bboxDR.y = GRID_W_INTER - 1;
+	}
 }
 
 
@@ -642,11 +747,10 @@ void	Grid::updateNeighbor(int x, int y)
 }
 
 
-int	Grid::checkCapture(sf::Vector2i *move)
+int	Grid::checkCapture(sf::Vector2i *move, inter_type plType, inter_type opType)
 {
 	intersection	*inter;
 	intersection	*inters[3];
-	inter_type		plType, opType;
 	int				x, y, nbCapture, invAxis;
 
 	inter = this->getIntersection(move->x, move->y);

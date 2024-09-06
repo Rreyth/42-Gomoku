@@ -67,6 +67,8 @@ ModeMenu::ModeMenu(void)
 								SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_ON);
 
 	// TODO: REMOVE THIS SHIT
+	this->playerLeft.setSelected(1);
+	this->aiLeft.setSelected(2);
 	this->playerRight.setSelected(1);
 	this->aiRight.setSelected(3);
 

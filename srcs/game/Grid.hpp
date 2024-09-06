@@ -34,12 +34,11 @@ public:
 	void						goToPreviousMove(void);
 	void						goToNextMove(void);
 	void						goToLastMove(void);
-	int							checkCapture(sf::Vector2i *move);
 	bool						checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState);
 	std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
 	bool						checkInterestingMove(int x, int y);
 	std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
-	bool						putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState);
+	bool						putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
 	bool						checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move);
 	void						addBoardState(void);
 	void						disablePreview(void);
@@ -49,7 +48,7 @@ private:
 	int							x, y, w, h, previewX, previewY, idBoardState;
 	bool						previewLegal;
 	intersection				gridState[GRID_NB_INTER];
-	sf::Vector2i				dirs[8];
+	sf::Vector2i				dirs[8], bboxUP, bboxDR;
 	sprite_name					leftStone, rightStone;
 	game_rules					rule;
 	std::vector<sf::Vector2i>	leftWinPos, rightWinPos;
@@ -58,7 +57,8 @@ private:
 	std::string					currentMove;
 
 	void			setInterState(int x, int y, inter_type interType);
-	bool			checkDoubleFreeThree(int x, int y, inter_type plState, inter_type opState);
+	bool			checkDoubleFreeThree(int x, int y, inter_type plType, inter_type opType);
+	int				checkCapture(sf::Vector2i *move, inter_type plType, inter_type opType);
 	bool			checkProRule(int x, int y, inter_type interPlayer, int nbMoves);
 	void			loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type plType);
 	void			updateNeighbor(int x, int y);

@@ -69,7 +69,7 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 		this->playerRight.tick(delta, this->mode);
 	}
 
-	if (this->grid.putStone(move, nbMoves, me->getInterType(), opponent->getInterType()))
+	if (this->grid.putStone(&move, nbMoves, me, opponent))
 	{
 		this->swapTurn(&move);
 		this->grid.addBoardState();
@@ -104,14 +104,12 @@ void	Game::swapTurn(sf::Vector2i *move)
 	if (this->playerLeft.isPlaying())
 	{
 		this->playerLeft.addMove();
-		this->playerLeft.addCaptured(this->grid.checkCapture(move));
 		this->playerLeft.setPlaying(false);
 		this->playerRight.setPlaying(true);
 	}
 	else
 	{
 		this->playerRight.addMove();
-		this->playerRight.addCaptured(this->grid.checkCapture(move));
 		this->playerRight.setPlaying(false);
 		this->playerLeft.setPlaying(true);
 	}
