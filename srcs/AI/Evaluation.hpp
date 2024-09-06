@@ -13,7 +13,7 @@ public:
 
 	int	evaluationPosition(Grid *grid, inter_type plType, inter_type opType,
 							int plCapture, int opCapture, int x, int y);
-	long	evaluateGrid(Grid *grid, inter_type plType, inter_type opType,
+	int	evaluateGrid(Grid *grid, inter_type plType, inter_type opType,
 							int plCapture, int opCapture);
 
 private:

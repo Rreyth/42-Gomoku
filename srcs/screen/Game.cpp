@@ -161,10 +161,13 @@ void	Game::setGame(player_type playerLeft, player_type playerRight,
 		solo = false;
 	this->playerLeft.setPlayer(playerLeft, mode, 1, leftStone, solo, aiLeft);
 	this->playerRight.setPlayer(playerRight, mode, 2, rightStone, solo, aiRight);
-	if (rand_int(1, 2) == 1)
-		this->playerLeft.setPlaying(true);
-	else
-		this->playerRight.setPlaying(true);
+
+	// TODO: RE SET RANDOM
+	this->playerRight.setPlaying(true);
+	// if (rand_int(1, 2) == 1)
+	// 	this->playerLeft.setPlaying(true);
+	// else
+	// 	this->playerRight.setPlaying(true);
 
 	this->grid.clearGrid(leftStone, rightStone, rule);
 }

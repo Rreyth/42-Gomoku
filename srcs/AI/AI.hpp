@@ -28,7 +28,7 @@ public:
 private:
 	double			timer;
 	AI_difficulty	difficulty;
-	std::unordered_map<std::string, long>	memory;
+	std::unordered_map<std::string, int>	memory;
 
 	sf::Vector2i	getRandomMove(Grid *grid, Player *player, Player *opponent);
 	sf::Vector2i	getBetterRandom(Grid *grid, Player *player, Player *opponent);

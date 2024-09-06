@@ -31,6 +31,7 @@ public:
 
 	sprite_name		getStoneSprite(void);
 
+	void			setMoves(int moves);
 	void			addMove(void);
 	int				getMoves(void);
 

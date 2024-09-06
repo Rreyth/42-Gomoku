@@ -20,6 +20,7 @@ public:
 	int							getW(void);
 	int							getH(void);
 	std::string					getCurrentMove(void);
+	std::string					getCurrentBoardState(void);
 	inter_type					getInterState(int x, int y);
 	intersection				*getIntersection(int x, int y);
 
@@ -41,7 +42,6 @@ public:
 	bool						putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_type opState);
 	bool						checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move);
 	void						addBoardState(void);
-	std::string					createBoardState(void);
 	void						disablePreview(void);
 	void						reset(void);
 
@@ -54,6 +54,7 @@ private:
 	game_rules					rule;
 	std::vector<sf::Vector2i>	leftWinPos, rightWinPos;
 	std::vector<std::string>	boardStates;
+	std::string					currentBoardState;
 	std::string					currentMove;
 
 	void			setInterState(int x, int y, inter_type interType);
@@ -63,6 +64,7 @@ private:
 	void			updateNeighbor(int x, int y);
 	bool			checkWinCaptureCase(Player *me, Player *oppenent, sf::Vector2i *move, dir_neighbor dir, dir_neighbor opdir);
 	void			setBoardState(int id);
+	void			createBoardState(void);
 	void			createCurrentMoveText(void);
 };
 

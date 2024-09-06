@@ -97,6 +97,12 @@ sprite_name	Player::getStoneSprite()
 	return (this->stoneSprite);
 }
 
+void		Player::setMoves(int moves)
+{
+	this->moves = moves;
+}
+
+
 void		Player::addMove(void)
 {
 	this->moves++;

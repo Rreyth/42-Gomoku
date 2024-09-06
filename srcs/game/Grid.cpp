@@ -70,6 +70,12 @@ std::string	Grid::getCurrentMove(void)
 	return (this->currentMove);
 }
 
+
+std::string	Grid::getCurrentBoardState(void)
+{
+	return (this->currentBoardState);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -277,13 +283,16 @@ void	Grid::goToLastMove(void)
 
 bool	Grid::checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState)
 {
-	if (this->getInterState(x, y))
+	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
+		return (false);
+
+	if (this->getInterState(x, y) != INTER_EMPTY)
 		return (false);
 
 	if (this->checkDoubleFreeThree(x, y, plState, opState))
 		return (false);
 
-	//check rule
+	// check rule
 	if (this->rule == PRO && nbMoves <= 2)
 		if (!this->checkProRule(x, y, plState, nbMoves))
 			return (false);
@@ -315,21 +324,17 @@ std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *player, Player *opponent)
 
 bool	Grid::checkInterestingMove(int x, int y)
 {
-	if (this->getInterState(x, y))
+	int			new_x, new_y;
+	inter_type	state;
+
+	if (this->getInterState(x, y) != INTER_EMPTY)
 		return (false);
 
-	int			new_x;
-	int			new_y;
-	inter_type	state;
 	for (int i = 0; i < 8; i++)
 	{
+		// Check for intersection next to stone
 		new_x = x + this->dirs[i].x;
 		new_y = y + this->dirs[i].y;
-		state = this->getInterState(new_x, new_y);
-		if (state && state != INTER_INVALID)
-			return (true);
-		new_x += this->dirs[i].x;
-		new_y += this->dirs[i].y;
 		state = this->getInterState(new_x, new_y);
 		if (state && state != INTER_INVALID)
 			return (true);
@@ -342,11 +347,12 @@ bool	Grid::checkInterestingMove(int x, int y)
 std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *opponent)
 {
 	std::vector<sf::Vector2i>	InterestingMoves;
-	int							nbMoves = player->getMoves() + opponent->getMoves();
+	inter_type					plState, opState;
+	int							nbMoves;
 
-	inter_type					plState = player->getInterType();
-	inter_type					opState = opponent->getInterType();
-
+	nbMoves = player->getMoves() + opponent->getMoves();
+	plState = player->getInterType();
+	opState = opponent->getInterType();
 	for (int i = 0; i < GRID_W_INTER; i++)
 	{
 		for (int j = 0; j < GRID_W_INTER; j++)
@@ -368,6 +374,7 @@ bool	Grid::putStone(sf::Vector2i move, int nbMoves, inter_type plState, inter_ty
 
 	this->setInterState(move.x, move.y, plState);
 	this->updateNeighbor(move.x, move.y);
+	this->createBoardState();
 	return (true);
 }
 
@@ -441,24 +448,7 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
 
 void	Grid::addBoardState(void)
 {
-	this->boardStates.push_back(this->createBoardState());
-}
-
-
-std::string	Grid::createBoardState(void)
-{
-	std::string	boardState = "";
-
-	for (int i = 0; i < GRID_NB_INTER; i++)
-	{
-		if (this->gridState[i].type == INTER_LEFT)
-			boardState += 'L';
-		else if (this->gridState[i].type == INTER_RIGHT)
-			boardState += 'R';
-		else
-			boardState += 'E';
-	}
-	return (boardState);
+	this->boardStates.push_back(this->currentBoardState);
 }
 
 
@@ -873,6 +863,22 @@ void	Grid::setBoardState(int id)
 			this->gridState[i].type = INTER_RIGHT;
 		else
 			this->gridState[i].type = INTER_EMPTY;
+	}
+}
+
+
+void	Grid::createBoardState(void)
+{
+	this->currentBoardState = "";
+
+	for (int i = 0; i < GRID_NB_INTER; i++)
+	{
+		if (this->gridState[i].type == INTER_LEFT)
+			this->currentBoardState += 'L';
+		else if (this->gridState[i].type == INTER_RIGHT)
+			this->currentBoardState += 'R';
+		else
+			this->currentBoardState += 'E';
 	}
 }
 

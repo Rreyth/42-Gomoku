@@ -104,11 +104,10 @@ int	Evaluation::evaluationPosition(Grid *grid, inter_type plType,
 }
 
 
-long	Evaluation::evaluateGrid(Grid *grid, inter_type plType, inter_type opType,
+int	Evaluation::evaluateGrid(Grid *grid, inter_type plType, inter_type opType,
 								int plCapture, int opCapture)
 {
-	long			value, opValue;
-	int				tmp;
+	int				value, opValue, tmp;
 	intersection	*inter;
 
 	value = 0;
@@ -160,48 +159,48 @@ void	Evaluation::updateCompleteAndBlockLine(
 
 	inter = grid->getIntersection(x + this->dirs[axis].x,
 								y + this->dirs[axis].y);
-	if (inter)
+	if (!inter)
+		return ;
+
+	// Stone of player
+	if (inter->type == plType)
 	{
-		// Stone of player
-		if (inter->type == plType)
-		{
-			*completeLine += inter->neighbor[axis] + 1;
-			*isCompleteLine = true;
+		*completeLine += inter->neighbor[axis] + 1;
+		*isCompleteLine = true;
 
-			// Check if a capture is possible for opponent
-			if (inter->neighbor[axis] != 1)
-				return ;
+		// Check if a capture is possible for opponent
+		if (inter->neighbor[axis] != 1)
+			return ;
 
-			interTmp = grid->getIntersection(x + this->dirs[axis].x * 3,
-											y + this->dirs[axis].y * 3);
-			if (!interTmp || interTmp->type != opType)
-				return ;
+		interTmp = grid->getIntersection(x + this->dirs[axis].x * 3,
+										y + this->dirs[axis].y * 3);
+		if (!interTmp || interTmp->type != opType)
+			return ;
 
-			// Opponent capture possible !
-			*result += this->completeLinePoint[3] * opCapture;
-		}
+		// Opponent capture possible !
+		*result += this->completeLinePoint[3] * opCapture;
+	}
 
-		// Stone of opponent
-		else if (inter->type == opType)
-		{
-			*blockLine += inter->neighbor[axis] + 1;
-			*isBlockLine = true;
+	// Stone of opponent
+	else if (inter->type == opType)
+	{
+		*blockLine += inter->neighbor[axis] + 1;
+		*isBlockLine = true;
 
-			// Check if a capture is possible
-			if (inter->neighbor[axis] != 1)
-				return ;
+		// Check if a capture is possible
+		if (inter->neighbor[axis] != 1)
+			return ;
 
-			interTmp = grid->getIntersection(x + this->dirs[axis].x * 3,
-											y + this->dirs[axis].y * 3);
-			if (!interTmp || interTmp->type != plType)
-				return ;
+		interTmp = grid->getIntersection(x + this->dirs[axis].x * 3,
+										y + this->dirs[axis].y * 3);
+		if (!interTmp || interTmp->type != plType)
+			return ;
 
-			// Capture possible !
-			if (interTmp->neighbor[axis] > 0)
-				*result += this->blockLinePoint[5] * plCapture;
-			else
-				*result += this->blockLinePoint[4] * plCapture;
+		// Capture possible !
+		if (interTmp->neighbor[axis] > 0)
+			*result += this->blockLinePoint[5] * plCapture;
+		else
+			*result += this->blockLinePoint[4] * plCapture;
 
-		}
 	}
 }

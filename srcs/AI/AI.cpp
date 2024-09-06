@@ -166,15 +166,14 @@ sf::Vector2i	AI::getEasyMove(
 	return (move);
 }
 
-
-static long	mediumMiniMax(std::unordered_map<std::string, long> *memory,
+static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 				Grid *grid, Player *player, Player *opponent,
-				Evaluation *evaluator, int x, int y, int depth, int *nbEval)
+				Evaluation *evaluator, bool playerTurn, int depth, int *nbEval)
 {
-	long						maxEval, tmpEval;
-	int							plCapture, opCapture;
+	int							maxEval, tmpEval, plCapture, opCapture,
+								nbMoves, plMoves, opMoves;
 	std::string					boardId;
-	std::vector<sf::Vector2i>	interestingMoves;
+	std::vector<sf::Vector2i>	moves;
 	inter_type					plType, opType;
 	Grid						gridCopy;
 
@@ -184,59 +183,96 @@ static long	mediumMiniMax(std::unordered_map<std::string, long> *memory,
 	plCapture = player->getCaptured();
 	opCapture = opponent->getCaptured();
 
-	// Copy grid
-	gridCopy = *grid;
-
-	// Simulate put stone
-	if (!gridCopy.putStone(
-					sf::Vector2i(x, y),
-					player->getMoves() + opponent->getMoves(), plType, opType))
-		return (-1);
-
-	// End of recursion, return only the evaluation of this move
 	if (depth <= 0)
 	{
-		boardId = gridCopy.createBoardState();
+		boardId = grid->getCurrentBoardState();
+		// Check in memory if we already compute the evaluation of this grid
 		try
 		{
+			// If yes, just get it from memory
 			tmpEval = memory->at(boardId);
 		}
-		catch (std::exception &e)
+		catch (std::exception e)
 		{
+			// If not, compute it and store it in memory
 			(*nbEval)++;
 			tmpEval = evaluator->evaluateGrid(
-								&gridCopy, plType, opType, plCapture, opCapture);
-			memory->insert(std::pair<std::string, long>(boardId, tmpEval));
+								grid, plType, opType, plCapture, opCapture);
+			memory->insert(std::pair<std::string, int>(boardId, tmpEval));
 		}
 		return (tmpEval);
 	}
 
 	// Get interesting moves
-	interestingMoves = gridCopy.getInterestingMoves(opponent, player);
-	if (interestingMoves.size() == 0)
-		return (-1);
-
-	// Find best move for player
-	// Find moves
-	// std::string	xaxis = "ABCDEFGHIKLMNOPQRST";
-	depth--;
-	maxEval = mediumMiniMax(memory,
-						&gridCopy, opponent, player, evaluator,
-						interestingMoves[0].x, interestingMoves[0].y, depth,
-						nbEval);
-	for (int i = 1; i < interestingMoves.size(); i++)
+	if (playerTurn)
+		moves = grid->getInterestingMoves(player, opponent);
+	else
+		moves = grid->getInterestingMoves(opponent, player);
+	if (moves.size() == 0)
 	{
-		tmpEval = mediumMiniMax(memory,
-						&gridCopy, opponent, player, evaluator,
-						interestingMoves[i].x, interestingMoves[i].y, depth,
-						nbEval);
-		// printf("   - stone at %c%i for %i points\n",
-		// 			xaxis[interestingMoves[i].x], interestingMoves[i].y, tmpEval);
+		printf("NO MOVE FOUND\n");
+		return (0);
+	}
+
+	plMoves = player->getMoves();
+	opMoves = opponent->getMoves();
+	nbMoves = plMoves + opMoves;
+
+	std::string	xaxis = "ABCDEFGHIKLMNOPQRST";
+	// Find move
+	maxEval = -1000000000;
+	for (int i = 0; i < moves.size(); i++)
+	{
+		gridCopy = *grid;
+		player->setMoves(plMoves);
+		player->setCaptured(plCapture);
+		opponent->setMoves(opMoves);
+		opponent->setCaptured(opCapture);
+
+		if (playerTurn)
+		{
+			if (!gridCopy.putStone(moves[i], nbMoves, plType, opType))
+			{
+				printf("  - CAN'T PUT STONE at %c %i (depth %i)\n",
+							xaxis[moves[i].x], moves[i].y + 1, depth);
+				continue;
+			}
+		}
+		else
+		{
+			if (!gridCopy.putStone(moves[i], nbMoves, opType, plType))
+			{
+				printf("  - CAN'T PUT STONE at %c %i (depth %i)\n",
+							xaxis[moves[i].x], moves[i].y + 1, depth);
+				continue;
+			}
+		}
+
+		// Check victory / defeat
+		if (gridCopy.checkWinCondition(player, opponent, moves[i]))
+		{
+			if (playerTurn && (player->getWinState() == WIN_STATE_ALIGN
+								|| player->getWinState() == WIN_STATE_CAPTURE))
+			{
+				player->setWinState(WIN_STATE_NONE);
+				return (1000000000);
+			}
+			else if (!playerTurn && (opponent->getWinState() == WIN_STATE_ALIGN
+								|| opponent->getWinState() == WIN_STATE_CAPTURE))
+			{
+				opponent->setWinState(WIN_STATE_NONE);
+				return (1000000000);
+			}
+			return (-1000000000);
+		}
+
+		tmpEval = -mediumMiniMax(memory, &gridCopy,
+						player, opponent, evaluator, !playerTurn, depth - 1, nbEval);
 		if (tmpEval > maxEval)
 			maxEval = tmpEval;
 	}
-	// Find best move for opponent
-	return (-maxEval);
+
+	return (maxEval);
 }
 
 
@@ -244,14 +280,27 @@ sf::Vector2i	AI::getMediumMove(
 						Grid *grid, Player *player, Player *opponent,
 						Evaluation *evaluator)
 {
-	long						maxEval, tmpEval;
-	int							nbEval;
-	std::vector<sf::Vector2i>	interestingMoves;
+	int							maxEval, tmpEval, plCapture, opCapture,
+								nbMoves, plMoves, opMoves, nbEval;
+	bool						playerTurn;
+	std::vector<sf::Vector2i>	moves;
 	sf::Vector2i				move;
+	inter_type					plType, opType;
+	Grid						gridCopy;
+
+	// Compute variables for evaluation and put stone
+	plType = player->getInterType();
+	opType = opponent->getInterType();
+	plCapture = player->getCaptured();
+	opCapture = opponent->getCaptured();
+	plMoves = player->getMoves();
+	opMoves = opponent->getMoves();
+	nbMoves = plMoves + opMoves;
+	playerTurn = true;
 
 	// Get interesting move
-	interestingMoves = grid->getInterestingMoves(player, opponent);
-	if (interestingMoves.size() == 0)
+	moves = grid->getInterestingMoves(player, opponent);
+	if (moves.size() == 0)
 	{
 		if (player->getMoves() + opponent->getMoves() == 0)
 			return(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
@@ -260,27 +309,40 @@ sf::Vector2i	AI::getMediumMove(
 	}
 
 	// std::string	xaxis = "ABCDEFGHIKLMNOPQRST";
-
 	// printf("\n\nIA choosen process\n");
+
+	int depth = 2;
+
 	// Find move to play
 	nbEval = 0;
 	move = sf::Vector2i(-1, -1);
-	maxEval = -10000000000;
-	for (int i = 0; i < interestingMoves.size(); i++)
+	maxEval = -1000000000;
+	for (int i = 0; i < moves.size(); i++)
 	{
-		tmpEval = mediumMiniMax(&this->memory,
-					grid, player, opponent, evaluator,
-					interestingMoves[i].x, interestingMoves[i].y, 2, &nbEval);
-		// printf(" - stone at %c%i for %li points\n",
-		// 			xaxis[interestingMoves[i].x], interestingMoves[i].y, tmpEval);
+		// printf("put stone at %c%i\n",
+		// 			xaxis[moves[i].x], moves[i].y);
+		gridCopy = *grid;
+		player->setMoves(plMoves);
+		player->setCaptured(plCapture);
+		opponent->setMoves(opMoves);
+		opponent->setCaptured(opCapture);
+		if (!gridCopy.putStone(moves[i],
+								nbMoves, plType, opType))
+			continue;
+		tmpEval = mediumMiniMax(&this->memory, &gridCopy,
+					player, opponent, evaluator, !playerTurn, depth, &nbEval);
+		if (depth % 2 == 1)
+			tmpEval = -tmpEval;
+		// printf(" - stone at %c%i for %i points\n",
+		// 			xaxis[moves[i].x], moves[i].y, tmpEval);
 		if (tmpEval > maxEval)
 		{
 			maxEval = tmpEval;
-			move = interestingMoves[i];
+			move = moves[i];
 		}
 	}
 
-	// printf("CHOOSE: stone at %c%i for %li points\n",
+	// printf("CHOOSE: stone at %c%i for %i points\n",
 	// 		xaxis[move.x], move.y + 1, maxEval);
 
 	printf("Number of evaluation %i", nbEval);
