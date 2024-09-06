@@ -136,8 +136,8 @@ int	Evaluation::evaluateGrid(Grid *grid, inter_type plType, inter_type opType,
 					value -= this->completeLinePoint[tmp];
 				}
 			}
-			value += this->evaluationPosition(grid, plType, opType, plCapture, opCapture, x, y);
-			value -= this->evaluationPosition(grid, opType, plType, opCapture, plCapture, x, y);
+			// value += this->evaluationPosition(grid, plType, opType, plCapture, opCapture, x, y) / 2;
+			// value -= this->evaluationPosition(grid, opType, plType, opCapture, plCapture, x, y);
 		}
 	}
 

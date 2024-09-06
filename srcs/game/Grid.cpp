@@ -405,7 +405,7 @@ bool	Grid::putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opp
 
 	this->setInterState(move->x, move->y, plType);
 	// TODO: Patch capture
-	// player->addCaptured(this->checkCapture(move, plType, opType));
+	player->addCaptured(this->checkCapture(move, plType, opType));
 	this->updateNeighbor(move->x, move->y);
 
 	// std::string before = this->currentBoardState;
