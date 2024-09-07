@@ -396,6 +396,7 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *oppo
 bool	Grid::putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent)
 {
 	inter_type	plType, opType;
+	int			interId;
 
 	plType = player->getInterType();
 	opType = opponent->getInterType();
@@ -404,51 +405,16 @@ bool	Grid::putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opp
 		return (false);
 
 	this->setInterState(move->x, move->y, plType);
-	// TODO: Patch capture
 	player->addCaptured(this->checkCapture(move, plType, opType));
 	this->updateNeighbor(move->x, move->y);
 
-	// std::string before = this->currentBoardState;
-	// if (plType == INTER_LEFT)
-	// 	this->currentBoardState[interId] = 'L';
-	// else if (plType == INTER_RIGHT)
-	// 	this->currentBoardState[interId] = 'R';
-	// else
-	// 	this->currentBoardState[interId] = 'E';
-	// std::string tkt = this->currentBoardState;
-	this->createBoardState();
-
-	// std::string xaxis = "ABCDEFGHIJKLMNOPQRST";
-	// std::string	uwu[4] = {"empty", "left", "right", "invalid"};
-
-	// if (tkt != this->currentBoardState)
-	// {
-	// 	printf("MAIS WESH %c %i %s\n", xaxis[x], y + 1, uwu[interType].c_str());
-
-	// 	printf("before == tkt %i\n", before == tkt);
-	// 	printf("before == currentBoardState %i\n", before == this->currentBoardState);
-	// 	printf("interId %i\n", interId);
-	// 	printf("%s\n", before.c_str());
-	// 	printf("%s\n", tkt.c_str());
-	// 	printf("%s\n", this->currentBoardState.c_str());
-	// }
-
-	// for (int y = 0; y < GRID_W_INTER; y++)
-	// 	printf("-");
-	// printf("\n");
-	// for (int y = 0; y < GRID_W_INTER; y++)
-	// {
-	// 	for (int x = 0; x < GRID_W_INTER; x++)
-	// 	{
-	// 		int id = y * GRID_W_INTER + x;
-
-	// 		if (this->currentBoardState[id] == 'E')
-	// 			printf(" ");
-	// 		else
-	// 			printf("%c", this->currentBoardState[id]);
-	// 	}
-	// 	printf("\n");
-	// }
+	interId = move->y * GRID_W_INTER + move->x;
+	if (plType == INTER_LEFT)
+		this->currentBoardState[interId] = 'L';
+	else if (plType == INTER_RIGHT)
+		this->currentBoardState[interId] = 'R';
+	else
+		this->currentBoardState[interId] = 'E';
 
 	return (true);
 }
@@ -751,7 +717,7 @@ int	Grid::checkCapture(sf::Vector2i *move, inter_type plType, inter_type opType)
 {
 	intersection	*inter;
 	intersection	*inters[3];
-	int				x, y, nbCapture, invAxis;
+	int				x, y, nbCapture, invAxis, interId;
 
 	inter = this->getIntersection(move->x, move->y);
 	if (!inter)
@@ -804,12 +770,16 @@ int	Grid::checkCapture(sf::Vector2i *move, inter_type plType, inter_type opType)
 		y = move->y + this->dirs[axis].y;
 		for (int i = 0; i < 8; i++)
 			this->updateNeighbor(x + this->dirs[i].x, y + this->dirs[i].y);
+		// Update current board state
+		this->currentBoardState[y * GRID_W_INTER + x] = 'E';
 
 		// Update stone arround second captured stone
 		x = move->x + this->dirs[axis].x * 2;
 		y = move->y + this->dirs[axis].y * 2;
 		for (int i = 0; i < 8; i++)
 			this->updateNeighbor(x + this->dirs[i].x, y + this->dirs[i].y);
+		// Update current board state
+		this->currentBoardState[y * GRID_W_INTER + x] = 'E';
 
 		// Update neighbors in the axis
 		this->updateNeighbor(x + this->dirs[axis].x * 4,
