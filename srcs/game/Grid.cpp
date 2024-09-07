@@ -33,7 +33,7 @@ Grid::Grid(void)
 	// this->currentBoardState = "";
 	this->createBoardState();
 
-	this->bboxUP = sf::Vector2i(GRID_W_INTER - 1, GRID_W_INTER - 1);
+	this->bboxUL = sf::Vector2i(GRID_W_INTER - 1, GRID_W_INTER - 1);
 	this->bboxDR = sf::Vector2i(0, 0);
 }
 
@@ -101,7 +101,7 @@ Grid	&Grid::operator=(const Grid &grid)
 			this->gridState[i].neighbor[j] = grid.gridState[i].neighbor[j];
 	}
 
-	this->bboxUP = grid.bboxUP;
+	this->bboxUL = grid.bboxUL;
 	this->bboxDR = grid.bboxDR;
 	this->currentBoardState = grid.currentBoardState;
 
@@ -363,7 +363,7 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *oppo
 	plState = player->getInterType();
 	opState = opponent->getInterType();
 	// Case of no bbox set (0 stone on grid)
-	if (this->bboxUP.x > this->bboxDR.x)
+	if (this->bboxUL.x > this->bboxDR.x)
 	{
 		for (int i = 0; i < GRID_W_INTER; i++)
 		{
@@ -378,9 +378,9 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *oppo
 	// Check only tile in bbox to know if there are interesting
 	else
 	{
-		for (int i = this->bboxUP.x; i <= this->bboxDR.x; i++)
+		for (int i = this->bboxUL.x; i <= this->bboxDR.x; i++)
 		{
-			for (int j = this->bboxUP.y; j <= this->bboxDR.y; j++)
+			for (int j = this->bboxUL.y; j <= this->bboxDR.y; j++)
 			{
 				if(checkInterestingMove(i, j))
 					if (checkLegalMove(i, j, nbMoves, plState, opState))
@@ -417,6 +417,120 @@ bool	Grid::putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opp
 		this->currentBoardState[interId] = 'E';
 
 	return (true);
+}
+
+
+void	Grid::removeStone(sf::Vector2i *move)
+{
+	int				nbNeighbor, x, y, invAxis;
+	intersection	*inter, *interTmp;
+
+	// Get the intersection to clean
+	inter = this->getIntersection(move->x, move->y);
+	if (!inter)
+		return ;
+
+	// If the intersection is already empty, stop remove process here
+	if (inter->type == INTER_EMPTY)
+		return ;
+
+	// Put the intersection to empty
+	inter->type = INTER_EMPTY;
+
+	// Update board state
+	this->currentBoardState[x + y * GRID_W_INTER] = 'E';
+
+	// For each axis
+	for (int axis = 0; axis < 8; axis++)
+	{
+		// Get the number of neighbor in this axis
+		nbNeighbor = inter->neighbor[axis];
+
+		// If there are no neighbor, go to next axis
+		if (nbNeighbor == 0)
+			continue;
+
+		// Reset the number of neighbor in this direction
+		inter->neighbor[axis] = 0;
+
+		// Reverse axis
+		invAxis = (axis + 4) % 8;
+
+		// For each neighbor in the axis, remove one neighbor in the reverse axis
+		x = move->x;
+		y = move->y;
+		for (int i = 0; i < nbNeighbor; i++)
+		{
+			x += this->dirs[axis].x;
+			y += this->dirs[axis].y;
+			interTmp = this->getIntersection(x, y);
+			if (!interTmp)
+				continue;
+			interTmp->neighbor[invAxis]--;
+		}
+
+	}
+}
+
+
+void	Grid::resetGridByBoardState(std::string boardState)
+{
+	char	c;
+	int		x, y;
+
+	std::string	xaxis = "ABCDEFGHIJKLMNOPQRSTU";
+
+	std::cout << boardState << std::endl;
+
+	// For each intersection
+	for (int i = 0; i < GRID_NB_INTER; i++)
+	{
+		c = boardState[i];
+
+		// If inter is empty and c != E, there was a capture
+		if (c != 'E' && this->gridState[i].type == INTER_EMPTY)
+		{
+			// Get x and y
+			x = i % 17;
+			y = i / 17;
+			printf("Anomalie detected at %c %i\n",
+					xaxis[x], y + 1);
+
+			// Reput the previous type
+			if (c == 'L')
+			{
+				this->gridState[i].type = INTER_LEFT;
+				printf("must be left\n");
+				// Update board state
+				this->currentBoardState[i] = 'L';
+			}
+			else
+			{
+				this->gridState[i].type = INTER_RIGHT;
+				printf("must be right\n");
+				// Update board state
+				this->currentBoardState[i] = 'R';
+			}
+
+
+			// Update neighbor
+			this->updateNeighbor(x, y);
+		}
+	}
+}
+
+
+void	Grid::saveBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR)
+{
+	*bboxUL = this->bboxUL;
+	*bboxDR = this->bboxDR;
+}
+
+
+void	Grid::loadBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR)
+{
+	this->bboxUL = *bboxUL;
+	this->bboxDR = *bboxDR;
 }
 
 
@@ -550,17 +664,17 @@ void	Grid::setInterState(int x, int y, inter_type interType)
 		return ;
 
 	// Update bbox
-	if (bboxUP.x >= x)
+	if (bboxUL.x >= x)
 	{
-		bboxUP.x = x - 1;
-		if (bboxUP.x < 0)
-			bboxUP.x = 0;
+		bboxUL.x = x - 1;
+		if (bboxUL.x < 0)
+			bboxUL.x = 0;
 	}
-	if (bboxUP.y >= y)
+	if (bboxUL.y >= y)
 	{
-		bboxUP.y = y - 1;
-		if (bboxUP.y < 0)
-			bboxUP.y = 0;
+		bboxUL.y = y - 1;
+		if (bboxUL.y < 0)
+			bboxUL.y = 0;
 	}
 	if (bboxDR.x <= x)
 	{
@@ -774,8 +888,8 @@ int	Grid::checkCapture(sf::Vector2i *move, inter_type plType, inter_type opType)
 		this->currentBoardState[y * GRID_W_INTER + x] = 'E';
 
 		// Update stone arround second captured stone
-		x = move->x + this->dirs[axis].x * 2;
-		y = move->y + this->dirs[axis].y * 2;
+		x += this->dirs[axis].x;
+		y += this->dirs[axis].y;
 		for (int i = 0; i < 8; i++)
 			this->updateNeighbor(x + this->dirs[i].x, y + this->dirs[i].y);
 		// Update current board state

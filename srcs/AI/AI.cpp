@@ -174,25 +174,26 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 {
 	int							maxEval, tmpEval, plCapture, opCapture,
 								nbMoves, plMoves, opMoves;
-	std::string					boardId;
+	std::string					boardState;
 	std::vector<sf::Vector2i>	moves;
 	inter_type					plType, opType;
-	Grid						gridCopy;
+	// Grid						gridCopy;
+	sf::Vector2i				bboxUL, bboxDR;
 
 	// Compute variables for evaluation and put stone
 	plType = player->getInterType();
 	opType = opponent->getInterType();
 	plCapture = player->getCaptured();
 	opCapture = opponent->getCaptured();
+	boardState = grid->getCurrentBoardState();
 
 	if (depth <= 0)
 	{
-		boardId = grid->getCurrentBoardState();
 		// Check in memory if we already compute the evaluation of this grid
 		try
 		{
 			// If yes, just get it from memory
-			tmpEval = memory->at(boardId);
+			tmpEval = memory->at(boardState);
 		}
 		catch (std::exception e)
 		{
@@ -200,7 +201,7 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 			(*nbEval)++;
 			tmpEval = evaluator->evaluateGrid(
 								grid, plType, opType, plCapture, opCapture);
-			memory->insert(std::pair<std::string, int>(boardId, tmpEval));
+			memory->insert(std::pair<std::string, int>(boardState, tmpEval));
 		}
 		return (tmpEval);
 	}
@@ -217,6 +218,7 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 	plMoves = player->getMoves();
 	opMoves = opponent->getMoves();
 	nbMoves = plMoves + opMoves;
+	grid->saveBbox(&bboxUL, &bboxDR);
 
 	// Find move
 	if (maximizingEval)
@@ -227,35 +229,76 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 	for (int i = 0; i < moves.size(); i++)
 	{
 		// Copy grid
-		gridCopy = *grid;
-		// Reset players
-		player->setMoves(plMoves);
-		player->setCaptured(plCapture);
-		opponent->setMoves(opMoves);
-		opponent->setCaptured(opCapture);
+		// gridCopy = *grid;
+
+		if (i > 0)
+		{
+			// Reset grid
+			grid->loadBbox(&bboxUL, &bboxDR);
+			grid->removeStone(&moves[i]);
+			if (player->getCaptured() != plCapture
+				|| opponent->getCaptured() != opCapture)
+				grid->resetGridByBoardState(boardState);
+
+			// Reset players
+			player->setMoves(plMoves);
+			player->setCaptured(plCapture);
+			opponent->setMoves(opMoves);
+			opponent->setCaptured(opCapture);
+		}
 
 		// Simulate new move
 		if (maximizingEval)
 		{
-			if (!gridCopy.putStone(&moves[i], nbMoves, player, opponent))
+			if (!grid->putStone(&moves[i], nbMoves, player, opponent))
 				continue;
 			player->addMove();
 		}
 		else
 		{
-			if (!gridCopy.putStone(&moves[i], nbMoves, opponent, player))
+			if (!grid->putStone(&moves[i], nbMoves, opponent, player))
 				continue;
 			opponent->addMove();
 		}
 
 		// Check victory by capture
 		if (player->getCaptured() >= WIN_CAPTURE)
+		{
+			// Reset grid
+			grid->loadBbox(&bboxUL, &bboxDR);
+			grid->removeStone(&moves[i]);
+			if (player->getCaptured() != plCapture
+				|| opponent->getCaptured() != opCapture)
+				grid->resetGridByBoardState(boardState);
+
+			// Reset players
+			player->setMoves(plMoves);
+			player->setCaptured(plCapture);
+			opponent->setMoves(opMoves);
+			opponent->setCaptured(opCapture);
+
 			return (1000000000); // Nothing is better than a victory
+		}
 		else if (opponent->getCaptured() >= WIN_CAPTURE)
+		{
+			// Reset grid
+			grid->loadBbox(&bboxUL, &bboxDR);
+			grid->removeStone(&moves[i]);
+			if (player->getCaptured() != plCapture
+				|| opponent->getCaptured() != opCapture)
+				grid->resetGridByBoardState(boardState);
+
+			// Reset players
+			player->setMoves(plMoves);
+			player->setCaptured(plCapture);
+			opponent->setMoves(opMoves);
+			opponent->setCaptured(opCapture);
+
 			return (-1000000000); // Nothing is worst than a defeat
+		}
 
 		// Get evaluation for this move
-		tmpEval = mediumMiniMax(memory, &gridCopy,
+		tmpEval = mediumMiniMax(memory, grid,
 						player, opponent, evaluator,
 						!maximizingEval, depth - 1, nbEval);
 
@@ -266,6 +309,13 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 		else if (!maximizingEval && tmpEval < maxEval)
 			maxEval = tmpEval;
 	}
+
+	// Reset grid
+	grid->loadBbox(&bboxUL, &bboxDR);
+	grid->removeStone(&moves[moves.size() - 1]);
+	if (player->getCaptured() != plCapture
+		|| opponent->getCaptured() != opCapture)
+		grid->resetGridByBoardState(boardState);
 
 	// Reset players
 	player->setMoves(plMoves);
@@ -284,9 +334,10 @@ sf::Vector2i	AI::getMediumMove(
 	int							maxEval, tmpEval, plCapture, opCapture,
 								nbMoves, plMoves, opMoves, nbEval;
 	std::vector<sf::Vector2i>	moves;
-	sf::Vector2i				move;
+	sf::Vector2i				move, bboxUL, bboxDR;
 	inter_type					plType, opType;
-	Grid						gridCopy;
+	// Grid						gridCopy;
+	std::string					boardState;
 
 	// Compute variables for evaluation and put stone
 	plType = player->getInterType();
@@ -296,6 +347,8 @@ sf::Vector2i	AI::getMediumMove(
 	plMoves = player->getMoves();
 	opMoves = opponent->getMoves();
 	nbMoves = plMoves + opMoves;
+	grid->saveBbox(&bboxUL, &bboxDR);
+	boardState = grid->getCurrentBoardState();
 
 	// Get interesting move
 	moves = grid->getInterestingMoves(player, opponent);
@@ -313,22 +366,33 @@ sf::Vector2i	AI::getMediumMove(
 	maxEval = -1000000001;
 	for (int i = 0; i < moves.size(); i++)
 	{
-		// Copy grid
-		gridCopy = *grid;
-		// Reset players
-		player->setMoves(plMoves);
-		player->setCaptured(plCapture);
-		opponent->setMoves(opMoves);
-		opponent->setCaptured(opCapture);
+		// // Copy grid
+		// gridCopy = *grid;
+
+		if (i > 0)
+		{
+			// Reset grid
+			grid->loadBbox(&bboxUL, &bboxDR);
+			grid->removeStone(&moves[i]);
+			if (player->getCaptured() != plCapture
+				|| opponent->getCaptured() != opCapture)
+				grid->resetGridByBoardState(boardState);
+
+			// Reset players
+			player->setMoves(plMoves);
+			player->setCaptured(plCapture);
+			opponent->setMoves(opMoves);
+			opponent->setCaptured(opCapture);
+		}
 
 		// Simulate new move
-		if (!gridCopy.putStone(&moves[i],
+		if (!grid->putStone(&moves[i],
 								nbMoves, player, opponent))
 			continue;
 		player->addMove();
 
 		// Get evaluation for this move
-		tmpEval = mediumMiniMax(&this->memory, &gridCopy,
+		tmpEval = mediumMiniMax(&this->memory, grid,
 					player, opponent, evaluator, false, DEPTH, &nbEval);
 
 		// Keep the higher scored move
@@ -340,6 +404,14 @@ sf::Vector2i	AI::getMediumMove(
 	}
 
 	printf("Number of evaluation %i", nbEval);
+
+	// Reset grid
+	grid->loadBbox(&bboxUL, &bboxDR);
+	grid->removeStone(&moves[moves.size() - 1]);
+	if (player->getCaptured() != plCapture
+		|| opponent->getCaptured() != opCapture)
+		grid->resetGridByBoardState(boardState);
+
 	// Reset players
 	player->setMoves(plMoves);
 	player->setCaptured(plCapture);

@@ -39,6 +39,10 @@ public:
 	bool						checkInterestingMove(int x, int y);
 	std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
 	bool						putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
+	void						removeStone(sf::Vector2i *move);
+	void						resetGridByBoardState(std::string boardState);
+	void						saveBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR);
+	void						loadBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR);
 	bool						checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move);
 	void						addBoardState(void);
 	void						disablePreview(void);
@@ -48,7 +52,7 @@ private:
 	int							x, y, w, h, previewX, previewY, idBoardState;
 	bool						previewLegal;
 	intersection				gridState[GRID_NB_INTER];
-	sf::Vector2i				dirs[8], bboxUP, bboxDR;
+	sf::Vector2i				dirs[8], bboxUL, bboxDR;
 	sprite_name					leftStone, rightStone;
 	game_rules					rule;
 	std::vector<sf::Vector2i>	leftWinPos, rightWinPos;
