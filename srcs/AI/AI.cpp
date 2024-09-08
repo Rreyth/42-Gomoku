@@ -208,9 +208,13 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 
 	// Get interesting moves
 	if (maximizingEval)
-		moves = grid->getInterestingMoves(player, opponent);
+		moves = grid->getInterestingMovesSorted(player, opponent, evaluator, true);
 	else
-		moves = grid->getInterestingMoves(opponent, player);
+		moves = grid->getInterestingMovesSorted(opponent, player, evaluator, false);
+	// if (maximizingEval)
+	// 	moves = grid->getInterestingMoves(player, opponent);
+	// else
+	// 	moves = grid->getInterestingMoves(opponent, player);
 	if (moves.size() == 0)
 		return (0);
 

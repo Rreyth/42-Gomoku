@@ -356,12 +356,12 @@ bool	Grid::checkInterestingMove(int x, int y)
 std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *opponent)
 {
 	std::vector<sf::Vector2i>	InterestingMoves;
-	inter_type					plState, opState;
+	inter_type					plType, opType;
 	int							nbMoves;
 
 	nbMoves = player->getMoves() + opponent->getMoves();
-	plState = player->getInterType();
-	opState = opponent->getInterType();
+	plType = player->getInterType();
+	opType = opponent->getInterType();
 	// Case of no bbox set (0 stone on grid)
 	if (this->bboxUL.x > this->bboxDR.x)
 	{
@@ -370,7 +370,7 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *oppo
 			for (int j = 0; j < GRID_W_INTER; j++)
 			{
 				if(checkInterestingMove(i, j))
-					if (checkLegalMove(i, j, nbMoves, plState, opState))
+					if (checkLegalMove(i, j, nbMoves, plType, opType))
 						InterestingMoves.push_back(sf::Vector2i(i, j));
 			}
 		}
@@ -383,7 +383,7 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *oppo
 			for (int j = this->bboxUL.y; j <= this->bboxDR.y; j++)
 			{
 				if(checkInterestingMove(i, j))
-					if (checkLegalMove(i, j, nbMoves, plState, opState))
+					if (checkLegalMove(i, j, nbMoves, plType, opType))
 						InterestingMoves.push_back(sf::Vector2i(i, j));
 			}
 		}
@@ -393,7 +393,68 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *oppo
 }
 
 
-bool	Grid::putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent)
+std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
+									Player *player, Player *opponent,
+									Evaluation *evaluator, bool reverse)
+{
+	int							size, eval, j, plCapture, opCapture;
+	sf::Vector2i				tmp;
+	std::vector<sf::Vector2i>	moves;
+	std::vector<int>			evaluations;
+	inter_type					plType, opType;
+
+	moves = this->getInterestingMoves(player, opponent);
+	size = moves.size();
+	if (size < 2)
+		return (moves);
+
+	for (int i = 1; i < size; i++)
+		evaluations.push_back(evaluator->evaluationPosition(this,
+											plType, opType, plCapture, opCapture,
+											moves[i].x, moves[i].y));
+
+	plType = player->getInterType();
+	opType = opponent->getInterType();
+	plCapture = player->getCaptured();
+	opCapture = opponent->getCaptured();
+
+	for (int i = 1; i < size; i++)
+	{
+		tmp = moves[i];
+		eval = evaluations[i];
+		j = i - 1;
+
+		// Classic order
+		if (!reverse)
+		{
+			while (j >= 0 && evaluations[j] > eval)
+			{
+				moves[j + 1] = moves[j];
+				evaluations[j + 1] = evaluations[j];
+				j = j - 1;
+			}
+		}
+		// Reverse order
+		else
+		{
+			while (j >= 0 && evaluations[j] < eval)
+			{
+				moves[j + 1] = moves[j];
+				evaluations[j + 1] = evaluations[j];
+				j = j - 1;
+			}
+		}
+
+		moves[j + 1] = tmp;
+		evaluations[j + 1] = eval;
+	}
+
+	return (moves);
+}
+
+
+bool	Grid::putStone(
+				sf::Vector2i *move, int nbMoves, Player *player, Player *opponent)
 {
 	inter_type	plType, opType;
 	int			interId;
