@@ -250,6 +250,7 @@ void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules r
 	this->boardStates.clear();
 	this->leftWinPos.clear();
 	this->rightWinPos.clear();
+	this->createBoardState();
 }
 
 void	Grid::goToFirstMove(void)
@@ -677,6 +678,7 @@ void	Grid::reset(void)
 	this->boardStates.clear();
 	this->leftWinPos.clear();
 	this->rightWinPos.clear();
+	this->createBoardState();
 }
 
 
