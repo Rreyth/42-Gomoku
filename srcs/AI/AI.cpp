@@ -235,7 +235,7 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 		{
 			// Reset grid
 			grid->loadBbox(&bboxUL, &bboxDR);
-			grid->removeStone(&moves[i]);
+			grid->removeStone(&moves[i - 1]);
 			if (player->getCaptured() != plCapture
 				|| opponent->getCaptured() != opCapture)
 				grid->resetGridByBoardState(boardState);
@@ -373,7 +373,7 @@ sf::Vector2i	AI::getMediumMove(
 		{
 			// Reset grid
 			grid->loadBbox(&bboxUL, &bboxDR);
-			grid->removeStone(&moves[i]);
+			grid->removeStone(&moves[i - 1]);
 			if (player->getCaptured() != plCapture
 				|| opponent->getCaptured() != opCapture)
 				grid->resetGridByBoardState(boardState);

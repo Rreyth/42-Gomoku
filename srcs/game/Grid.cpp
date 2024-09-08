@@ -438,7 +438,7 @@ void	Grid::removeStone(sf::Vector2i *move)
 	inter->type = INTER_EMPTY;
 
 	// Update board state
-	this->currentBoardState[x + y * GRID_W_INTER] = 'E';
+	this->currentBoardState[move->x + move->y * GRID_W_INTER] = 'E';
 
 	// For each axis
 	for (int axis = 0; axis < 8; axis++)
@@ -478,10 +478,6 @@ void	Grid::resetGridByBoardState(std::string boardState)
 	char	c;
 	int		x, y;
 
-	std::string	xaxis = "ABCDEFGHIJKLMNOPQRSTU";
-
-	std::cout << boardState << std::endl;
-
 	// For each intersection
 	for (int i = 0; i < GRID_NB_INTER; i++)
 	{
@@ -493,25 +489,20 @@ void	Grid::resetGridByBoardState(std::string boardState)
 			// Get x and y
 			x = i % 17;
 			y = i / 17;
-			printf("Anomalie detected at %c %i\n",
-					xaxis[x], y + 1);
 
 			// Reput the previous type
 			if (c == 'L')
 			{
 				this->gridState[i].type = INTER_LEFT;
-				printf("must be left\n");
 				// Update board state
 				this->currentBoardState[i] = 'L';
 			}
 			else
 			{
 				this->gridState[i].type = INTER_RIGHT;
-				printf("must be right\n");
 				// Update board state
 				this->currentBoardState[i] = 'R';
 			}
-
 
 			// Update neighbor
 			this->updateNeighbor(x, y);
