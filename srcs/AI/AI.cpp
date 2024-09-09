@@ -61,9 +61,16 @@ sf::Vector2i	AI::getNextMove(
 	// TODO : REMOVE TRACKER
 	Tracker	tracker;
 	tracker.nbEvaluations = 0;
+	tracker.evaluationTime = 0;
+	tracker.getSortMoveNumber = 0;
 	tracker.getMoveTime = 0;
 	tracker.sortMoveTime = 0;
-	tracker.getSortMoveNumber = 0;
+	tracker.checkStoneNumber = 0;
+	tracker.putStoneTime = 0;
+	tracker.removeStoneTime = 0;
+	tracker.checkWinTime = 0;
+	tracker.reverseStoneCaptureNumber = 0;
+	tracker.reverseStoneCaptureTime = 0;
 
 	// Start timer
 	start = std::clock();
@@ -85,26 +92,55 @@ sf::Vector2i	AI::getNextMove(
 
 	if (this->difficulty == MEDIUM)
 	{
-		printf("\nEvaluate %i grid in %i us\n",
-				tracker.nbEvaluations, (int)this->timer);
-		printf("  Number of get sorted moves %i\n",
-				tracker.getSortMoveNumber);
+		setlocale(LC_NUMERIC, "");
+		printf("\n\nGet move in %'i us\n", (int)this->timer);
+		printf("  evaluate position\n");
+		printf("   - number of call : %'i\n", tracker.nbEvaluations);
+		printf("   - took %'i us\n", tracker.evaluationTime);
+		if (tracker.nbEvaluations > 0)
+			printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
+		else
+			printf("   - about 0 us per call\n");
+		printf("  get sort moves\n");
+		printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
+		printf("   - get moves took %'i us\n", tracker.getMoveTime);
 		if (tracker.getSortMoveNumber > 0)
-		{
-			printf("  Time of get sort moves %i (%i per call)\n",
-					tracker.getMoveTime + tracker.sortMoveTime,
-					(tracker.getMoveTime + tracker.sortMoveTime) / tracker.getSortMoveNumber);
-			printf("    time get moves %i (%i per call)\n",
-					tracker.getMoveTime,
-					tracker.getMoveTime / tracker.getSortMoveNumber);
-			printf("    time sort moves %i (%i per call)\n",
-					tracker.sortMoveTime,
-					tracker.sortMoveTime / tracker.getSortMoveNumber);
-		}
+			printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
+		else
+			printf("   - about 0 us per call\n");
+		printf("   - sort moves took %'i us\n", tracker.sortMoveTime);
+		if (tracker.getSortMoveNumber > 0)
+			printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
+		else
+			printf("   - about 0 us per call\n");
+		printf("  check stone\n");
+		printf("   - number of call : %'i\n", tracker.checkStoneNumber);
+		printf("   - put stone took %'i us\n", tracker.putStoneTime);
+		if (tracker.checkStoneNumber > 0)
+			printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
+		else
+			printf("   - about 0 us per call\n");
+		printf("   - remove stone took %'i us\n", tracker.removeStoneTime);
+		if (tracker.checkStoneNumber > 0)
+			printf("   - about %'f us per call\n", (float)tracker.removeStoneTime / tracker.checkStoneNumber);
+		else
+			printf("   - about 0 us per call\n");
+		printf("   - check win took %'i us\n", tracker.checkWinTime);
+		if (tracker.checkStoneNumber > 0)
+			printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkStoneNumber);
+		else
+			printf("   - about 0 us per call\n");
+		printf("  reverse capture\n");
+		printf("   - number of call : %'i\n", tracker.reverseStoneCaptureNumber);
+		printf("   - took %'i us\n", tracker.reverseStoneCaptureTime);
+		if (tracker.reverseStoneCaptureNumber > 0)
+			printf("   - about %'f us per call\n", (float)tracker.reverseStoneCaptureTime / tracker.reverseStoneCaptureNumber);
+		else
+			printf("   - about 0 us per call\n");
 	}
 	else
 	{
-		printf("Compute move in %i us\n", (int)this->timer);
+		printf("Compute move in %'i us\n", (int)this->timer);
 	}
 	return (move);
 }
@@ -206,10 +242,15 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 {
 	int							maxEval, tmpEval, plCapture, opCapture,
 								nbMoves, plMoves, opMoves;
+	bool						someoneWin;
 	std::string					boardState;
 	std::vector<sf::Vector2i>	moves;
 	inter_type					plType, opType;
 	sf::Vector2i				bboxUL, bboxDR;
+
+	// TODO : REMOVE
+	std::clock_t	start;
+	int				diff;
 
 	// Compute variables for evaluation and put stone
 	plType = player->getInterType();
@@ -230,9 +271,12 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 		{
 			// If not, compute it and store it in memory
 			tracker->nbEvaluations++;
+			start = std::clock();
 			tmpEval = evaluator->evaluateGrid(
 								grid, plType, opType, plCapture, opCapture);
 			memory->insert(std::pair<std::string, int>(boardState, tmpEval));
+			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+			tracker->evaluationTime += diff;
 		}
 		return (tmpEval);
 	}
@@ -260,8 +304,6 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 	else
 		maxEval = 1000000001;
 
-	bool	someoneWin;
-
 	for (int i = 0; i < moves.size(); i++)
 	{
 		if (i > 0)
@@ -269,10 +311,10 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 			// Reset grid
 			grid->loadBbox(&bboxUL, &bboxDR);
 			grid->loadWinPos(&leftWinPos, &rightWinPos);
-			grid->removeStone(&moves[i - 1]);
+			grid->removeStone(&moves[i - 1], tracker);
 			if (player->getCaptured() != plCapture
 				|| opponent->getCaptured() != opCapture)
-				grid->resetGridByBoardState(boardState);
+				grid->resetGridByBoardState(boardState, tracker);
 
 			// Reset players
 			player->setMoves(plMoves);
@@ -281,6 +323,7 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 			opponent->setCaptured(opCapture);
 		}
 
+		start = std::clock();
 		// Simulate new move
 		if (maximizingEval)
 		{
@@ -294,12 +337,18 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 				continue;
 			opponent->addMove();
 		}
+		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+		tracker->putStoneTime += diff;
+		tracker->checkStoneNumber++;
 
+		start = std::clock();
 		// Check victory
 		if (maximizingEval)
 			someoneWin = grid->checkWinCondition(player, opponent, moves[i]);
 		else
 			someoneWin = grid->checkWinCondition(opponent, player, moves[i]);
+		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+		tracker->checkWinTime += diff;
 		if (someoneWin)
 		{
 			// Player wins
@@ -308,10 +357,10 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 				// Reset grid
 				grid->loadBbox(&bboxUL, &bboxDR);
 				grid->loadWinPos(&leftWinPos, &rightWinPos);
-				grid->removeStone(&moves[i]);
+				grid->removeStone(&moves[i], tracker);
 				if (player->getCaptured() != plCapture
 					|| opponent->getCaptured() != opCapture)
-					grid->resetGridByBoardState(boardState);
+					grid->resetGridByBoardState(boardState, tracker);
 
 				// Reset players
 				player->setWinState(WIN_STATE_NONE);
@@ -328,10 +377,10 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 				// Reset grid
 				grid->loadBbox(&bboxUL, &bboxDR);
 				grid->loadWinPos(&leftWinPos, &rightWinPos);
-				grid->removeStone(&moves[i]);
+				grid->removeStone(&moves[i], tracker);
 				if (player->getCaptured() != plCapture
 					|| opponent->getCaptured() != opCapture)
-					grid->resetGridByBoardState(boardState);
+					grid->resetGridByBoardState(boardState, tracker);
 
 				// Reset players
 				opponent->setWinState(WIN_STATE_NONE);
@@ -378,10 +427,10 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 		{
 			// Reset grid
 			grid->loadBbox(&bboxUL, &bboxDR);
-			grid->removeStone(&moves[i]);
+			grid->removeStone(&moves[i], tracker);
 			if (player->getCaptured() != plCapture
 				|| opponent->getCaptured() != opCapture)
-				grid->resetGridByBoardState(boardState);
+				grid->resetGridByBoardState(boardState, tracker);
 
 			// Reset players
 			player->setMoves(plMoves);
@@ -396,10 +445,10 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 	// Reset grid
 	grid->loadBbox(&bboxUL, &bboxDR);
 	grid->loadWinPos(&leftWinPos, &rightWinPos);
-	grid->removeStone(&moves[moves.size() - 1]);
+	grid->removeStone(&moves[moves.size() - 1], tracker);
 	if (player->getCaptured() != plCapture
 		|| opponent->getCaptured() != opCapture)
-		grid->resetGridByBoardState(boardState);
+		grid->resetGridByBoardState(boardState, tracker);
 
 	// Reset players
 	player->setMoves(plMoves);
@@ -452,10 +501,10 @@ sf::Vector2i	AI::getMediumMove(
 		{
 			// Reset grid
 			grid->loadBbox(&bboxUL, &bboxDR);
-			grid->removeStone(&moves[i - 1]);
+			grid->removeStone(&moves[i - 1], NULL);
 			if (player->getCaptured() != plCapture
 				|| opponent->getCaptured() != opCapture)
-				grid->resetGridByBoardState(boardState);
+				grid->resetGridByBoardState(boardState, NULL);
 
 			// Reset players
 			player->setMoves(plMoves);
@@ -480,10 +529,10 @@ sf::Vector2i	AI::getMediumMove(
 		{
 			// Reset grid
 			grid->loadBbox(&bboxUL, &bboxDR);
-			grid->removeStone(&moves[i]);
+			grid->removeStone(&moves[i], NULL);
 			if (player->getCaptured() != plCapture
 				|| opponent->getCaptured() != opCapture)
-				grid->resetGridByBoardState(boardState);
+				grid->resetGridByBoardState(boardState, NULL);
 
 			// Reset players
 			player->setMoves(plMoves);
@@ -505,10 +554,10 @@ sf::Vector2i	AI::getMediumMove(
 
 	// Reset grid
 	grid->loadBbox(&bboxUL, &bboxDR);
-	grid->removeStone(&moves[moves.size() - 1]);
+	grid->removeStone(&moves[moves.size() - 1], NULL);
 	if (player->getCaptured() != plCapture
 		|| opponent->getCaptured() != opCapture)
-		grid->resetGridByBoardState(boardState);
+		grid->resetGridByBoardState(boardState, NULL);
 
 	// Reset players
 	player->setMoves(plMoves);

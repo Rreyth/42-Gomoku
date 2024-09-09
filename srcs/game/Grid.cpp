@@ -497,10 +497,15 @@ bool	Grid::putStone(
 }
 
 
-void	Grid::removeStone(sf::Vector2i *move)
+void	Grid::removeStone(sf::Vector2i *move, Tracker *tracker)
 {
 	int				nbNeighbor, x, y, invAxis;
 	intersection	*inter, *interTmp;
+
+	// TODO : REMOVE
+	std::clock_t	start;
+	int				diff;
+	start = std::clock();
 
 	// Get the intersection to clean
 	inter = this->getIntersection(move->x, move->y);
@@ -547,13 +552,23 @@ void	Grid::removeStone(sf::Vector2i *move)
 		}
 
 	}
+
+	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+	if (!tracker)
+		return ;
+	tracker->removeStoneTime += diff;
 }
 
 
-void	Grid::resetGridByBoardState(std::string boardState)
+void	Grid::resetGridByBoardState(std::string boardState, Tracker *tracker)
 {
 	char	c;
 	int		x, y;
+
+	// TODO : REMOVE
+	std::clock_t	start;
+	int				diff;
+	start = std::clock();
 
 	// For each intersection
 	for (int i = 0; i < GRID_NB_INTER; i++)
@@ -585,6 +600,12 @@ void	Grid::resetGridByBoardState(std::string boardState)
 			this->updateNeighbor(x, y);
 		}
 	}
+
+	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+	if (!tracker)
+		return ;
+	tracker->reverseStoneCaptureNumber++;
+	tracker->reverseStoneCaptureTime += diff;
 }
 
 

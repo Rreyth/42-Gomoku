@@ -55,36 +55,36 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 	static std::vector<std::string>		lastBoardStates;
 
 	// TODO : REMOVE
-	if (mouse->isPressed(MBUT_MIDDLE) && lastMoves.size() > 0)
-	{
-		int	lastId = lastMoves.size() - 1;
-		printf("Remove last move !\n");
-		this->grid.removeStone(&lastMoves[lastId]);
-		if (lCaptures[lastId] != this->playerLeft.getCaptured()
-			|| rCaptures[lastId] != this->playerRight.getCaptured())
-			this->grid.resetGridByBoardState(lastBoardStates[lastId]);
+	// if (mouse->isPressed(MBUT_MIDDLE) && lastMoves.size() > 0)
+	// {
+	// 	int	lastId = lastMoves.size() - 1;
+	// 	printf("Remove last move !\n");
+	// 	this->grid.removeStone(&lastMoves[lastId]);
+	// 	if (lCaptures[lastId] != this->playerLeft.getCaptured()
+	// 		|| rCaptures[lastId] != this->playerRight.getCaptured())
+	// 		this->grid.resetGridByBoardState(lastBoardStates[lastId]);
 
-		this->playerLeft.setCaptured(lCaptures[lastId]);
-		this->playerRight.setCaptured(rCaptures[lastId]);
+	// 	this->playerLeft.setCaptured(lCaptures[lastId]);
+	// 	this->playerRight.setCaptured(rCaptures[lastId]);
 
-		lastMoves.pop_back();
-		lCaptures.pop_back();
-		rCaptures.pop_back();
-		lastBoardStates.pop_back();
+	// 	lastMoves.pop_back();
+	// 	lCaptures.pop_back();
+	// 	rCaptures.pop_back();
+	// 	lastBoardStates.pop_back();
 
-		if (this->playerLeft.isPlaying())
-		{
-			this->playerLeft.setPlaying(false);
-			this->playerRight.setPlaying(true);
-			this->playerRight.setMoves(this->playerRight.getMoves() - 1);
-		}
-		else
-		{
-			this->playerRight.setPlaying(false);
-			this->playerLeft.setPlaying(true);
-			this->playerLeft.setMoves(this->playerLeft.getMoves() - 1);
-		}
-	}
+	// 	if (this->playerLeft.isPlaying())
+	// 	{
+	// 		this->playerLeft.setPlaying(false);
+	// 		this->playerRight.setPlaying(true);
+	// 		this->playerRight.setMoves(this->playerRight.getMoves() - 1);
+	// 	}
+	// 	else
+	// 	{
+	// 		this->playerRight.setPlaying(false);
+	// 		this->playerLeft.setPlaying(true);
+	// 		this->playerLeft.setMoves(this->playerLeft.getMoves() - 1);
+	// 	}
+	// }
 
 	this->leave.tick(mouse);
 	this->grid.tick(displayState, mouse, &this->playerLeft, &this->playerRight,

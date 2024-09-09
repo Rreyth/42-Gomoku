@@ -40,8 +40,8 @@ public:
 	std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
 	std::vector<sf::Vector2i>	getInterestingMovesSorted(Player *player, Player *opponent, Evaluation *evaluator, bool reverse, Tracker *tracker);
 	bool						putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
-	void						removeStone(sf::Vector2i *move);
-	void						resetGridByBoardState(std::string boardState);
+	void						removeStone(sf::Vector2i *move, Tracker *tracker);
+	void						resetGridByBoardState(std::string boardState, Tracker *tracker);
 	void						saveBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR);
 	void						loadBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR);
 	void						saveWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos);

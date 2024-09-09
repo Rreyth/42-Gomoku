@@ -116,9 +116,16 @@ typedef struct s_intersection
 typedef struct s_tracker
 {
 	int	nbEvaluations;
+	int	evaluationTime;
+	int	getSortMoveNumber;
 	int	getMoveTime;
 	int	sortMoveTime;
-	int	getSortMoveNumber;
+	int	checkStoneNumber;
+	int	putStoneTime;
+	int	removeStoneTime;
+	int	checkWinTime;
+	int	reverseStoneCaptureNumber;
+	int	reverseStoneCaptureTime;
 }	Tracker;
 
 #endif
