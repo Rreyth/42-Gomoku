@@ -44,6 +44,8 @@ public:
 	void						resetGridByBoardState(std::string boardState);
 	void						saveBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR);
 	void						loadBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR);
+	void						saveWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos);
+	void						loadWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos);
 	bool						checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move);
 	void						addBoardState(void);
 	void						disablePreview(void);

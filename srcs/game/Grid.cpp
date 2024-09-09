@@ -602,6 +602,20 @@ void	Grid::loadBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR)
 }
 
 
+void	Grid::saveWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos)
+{
+	*leftWinPos = this->leftWinPos;
+	*rightWinPos = this->rightWinPos;
+}
+
+
+void	Grid::loadWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos)
+{
+	this->leftWinPos = *leftWinPos;
+	this->rightWinPos = *rightWinPos;
+}
+
+
 bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
 {
 	// Check if the player capture at least 10 opponent's stones
@@ -657,8 +671,8 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
 	}
 
 	// Check for draw
-	// TODO: Opti by find a 'E' into currentBoardState
-	if (this->getLegalMoves(me, oppenent).size() == 0)
+	// Opti by find a 'E' into currentBoardState
+	if (this->currentBoardState.find('E') == this->currentBoardState.npos)
 	{
 		me->setWinState(WIN_STATE_NONE);
 		oppenent->setWinState(WIN_STATE_NONE);

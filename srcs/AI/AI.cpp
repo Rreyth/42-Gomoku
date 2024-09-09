@@ -85,7 +85,7 @@ sf::Vector2i	AI::getNextMove(
 
 	if (this->difficulty == MEDIUM)
 	{
-		printf("Evaluate %i grid in %i us\n",
+		printf("\nEvaluate %i grid in %i us\n",
 				tracker.nbEvaluations, (int)this->timer);
 		printf("  Number of get sorted moves %i\n",
 				tracker.getSortMoveNumber);
@@ -251,11 +251,16 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 	nbMoves = plMoves + opMoves;
 	grid->saveBbox(&bboxUL, &bboxDR);
 
+	std::vector<sf::Vector2i>	leftWinPos, rightWinPos;
+	grid->saveWinPos(&leftWinPos, &rightWinPos);
+
 	// Find move
 	if (maximizingEval)
 		maxEval = -1000000001;
 	else
 		maxEval = 1000000001;
+
+	bool	someoneWin;
 
 	for (int i = 0; i < moves.size(); i++)
 	{
@@ -263,6 +268,7 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 		{
 			// Reset grid
 			grid->loadBbox(&bboxUL, &bboxDR);
+			grid->loadWinPos(&leftWinPos, &rightWinPos);
 			grid->removeStone(&moves[i - 1]);
 			if (player->getCaptured() != plCapture
 				|| opponent->getCaptured() != opCapture)
@@ -289,40 +295,53 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 			opponent->addMove();
 		}
 
-		// Check victory by capture
-		if (player->getCaptured() >= WIN_CAPTURE)
+		// Check victory
+		if (maximizingEval)
+			someoneWin = grid->checkWinCondition(player, opponent, moves[i]);
+		else
+			someoneWin = grid->checkWinCondition(opponent, player, moves[i]);
+		if (someoneWin)
 		{
-			// Reset grid
-			grid->loadBbox(&bboxUL, &bboxDR);
-			grid->removeStone(&moves[i]);
-			if (player->getCaptured() != plCapture
-				|| opponent->getCaptured() != opCapture)
-				grid->resetGridByBoardState(boardState);
+			// Player wins
+			if (player->getWinState() != WIN_STATE_NONE)
+			{
+				// Reset grid
+				grid->loadBbox(&bboxUL, &bboxDR);
+				grid->loadWinPos(&leftWinPos, &rightWinPos);
+				grid->removeStone(&moves[i]);
+				if (player->getCaptured() != plCapture
+					|| opponent->getCaptured() != opCapture)
+					grid->resetGridByBoardState(boardState);
 
-			// Reset players
-			player->setMoves(plMoves);
-			player->setCaptured(plCapture);
-			opponent->setMoves(opMoves);
-			opponent->setCaptured(opCapture);
+				// Reset players
+				player->setWinState(WIN_STATE_NONE);
+				player->setMoves(plMoves);
+				player->setCaptured(plCapture);
+				opponent->setMoves(opMoves);
+				opponent->setCaptured(opCapture);
 
-			return (1000000000); // Nothing is better than a victory
-		}
-		else if (opponent->getCaptured() >= WIN_CAPTURE)
-		{
-			// Reset grid
-			grid->loadBbox(&bboxUL, &bboxDR);
-			grid->removeStone(&moves[i]);
-			if (player->getCaptured() != plCapture
-				|| opponent->getCaptured() != opCapture)
-				grid->resetGridByBoardState(boardState);
+				return (1000000000); // Nothing is better than a victory
+			}
+			// Opponent wins
+			else if (opponent->getWinState() != WIN_STATE_NONE)
+			{
+				// Reset grid
+				grid->loadBbox(&bboxUL, &bboxDR);
+				grid->loadWinPos(&leftWinPos, &rightWinPos);
+				grid->removeStone(&moves[i]);
+				if (player->getCaptured() != plCapture
+					|| opponent->getCaptured() != opCapture)
+					grid->resetGridByBoardState(boardState);
 
-			// Reset players
-			player->setMoves(plMoves);
-			player->setCaptured(plCapture);
-			opponent->setMoves(opMoves);
-			opponent->setCaptured(opCapture);
+				// Reset players
+				opponent->setWinState(WIN_STATE_NONE);
+				player->setMoves(plMoves);
+				player->setCaptured(plCapture);
+				opponent->setMoves(opMoves);
+				opponent->setCaptured(opCapture);
 
-			return (-1000000000); // Nothing is worst than a defeat
+				return (-1000000000); // Nothing is worst than a defeat
+			}
 		}
 
 		// Get evaluation for this move
@@ -376,6 +395,7 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 
 	// Reset grid
 	grid->loadBbox(&bboxUL, &bboxDR);
+	grid->loadWinPos(&leftWinPos, &rightWinPos);
 	grid->removeStone(&moves[moves.size() - 1]);
 	if (player->getCaptured() != plCapture
 		|| opponent->getCaptured() != opCapture)
@@ -455,12 +475,32 @@ sf::Vector2i	AI::getMediumMove(
 					player, opponent, evaluator, false, -1000000001, 1000000001,
 					DEPTH, tracker);
 
+		// If we detect a victory, stop it
+		if (tmpEval >= 1000000000)
+		{
+			// Reset grid
+			grid->loadBbox(&bboxUL, &bboxDR);
+			grid->removeStone(&moves[i]);
+			if (player->getCaptured() != plCapture
+				|| opponent->getCaptured() != opCapture)
+				grid->resetGridByBoardState(boardState);
+
+			// Reset players
+			player->setMoves(plMoves);
+			player->setCaptured(plCapture);
+			opponent->setMoves(opMoves);
+			opponent->setCaptured(opCapture);
+
+			return (moves[i]);
+		}
+
 		// Keep the higher scored move
 		if (tmpEval > maxEval)
 		{
 			maxEval = tmpEval;
 			move = moves[i];
 		}
+
 	}
 
 	// Reset grid
