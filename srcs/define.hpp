@@ -112,4 +112,13 @@ typedef struct s_intersection
 	int			neighbor[8];
 }	intersection;
 
+// TODO : REMOVE
+typedef struct s_tracker
+{
+	int	nbEvaluations;
+	int	getMoveTime;
+	int	sortMoveTime;
+	int	getSortMoveNumber;
+}	Tracker;
+
 #endif

@@ -38,7 +38,7 @@ public:
 	std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
 	bool						checkInterestingMove(int x, int y);
 	std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
-	std::vector<sf::Vector2i>	getInterestingMovesSorted(Player *player, Player *opponent, Evaluation *evaluator, bool reverse);
+	std::vector<sf::Vector2i>	getInterestingMovesSorted(Player *player, Player *opponent, Evaluation *evaluator, bool reverse, Tracker *tracker);
 	bool						putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
 	void						removeStone(sf::Vector2i *move);
 	void						resetGridByBoardState(std::string boardState);

@@ -396,7 +396,8 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *oppo
 
 std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
 									Player *player, Player *opponent,
-									Evaluation *evaluator, bool reverse)
+									Evaluation *evaluator, bool reverse,
+									Tracker *tracker)
 {
 	int							size, eval, j, plCapture, opCapture;
 	sf::Vector2i				tmp;
@@ -404,7 +405,18 @@ std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
 	std::vector<int>			evaluations;
 	inter_type					plType, opType;
 
+	// TODO : REMOVE
+	std::clock_t	start;
+	int				diff;
+	start = std::clock();
+
+	tracker->getSortMoveNumber++;
 	moves = this->getInterestingMoves(player, opponent);
+	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+	tracker->getMoveTime += diff;
+
+	start = std::clock();
+
 	size = moves.size();
 	if (size < 2)
 		return (moves);
@@ -449,6 +461,9 @@ std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
 		moves[j + 1] = tmp;
 		evaluations[j + 1] = eval;
 	}
+
+	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+	tracker->sortMoveTime += diff;
 
 	return (moves);
 }

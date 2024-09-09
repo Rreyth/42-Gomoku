@@ -51,10 +51,19 @@ void	AI::setAI(AI_difficulty difficulty)
 	this->memory.clear();
 }
 
-sf::Vector2i	AI::getNextMove(Grid *grid, Player *player, Player *opponent, Evaluation *evaluator)
+sf::Vector2i	AI::getNextMove(
+					Grid *grid, Player *player, Player *opponent,
+					Evaluation *evaluator)
 {
 	sf::Vector2i	move(-1, -1);
 	std::clock_t	start, diff;
+
+	// TODO : REMOVE TRACKER
+	Tracker	tracker;
+	tracker.nbEvaluations = 0;
+	tracker.getMoveTime = 0;
+	tracker.sortMoveTime = 0;
+	tracker.getSortMoveNumber = 0;
 
 	// Start timer
 	start = std::clock();
@@ -67,14 +76,36 @@ sf::Vector2i	AI::getNextMove(Grid *grid, Player *player, Player *opponent, Evalu
 	else if (this->difficulty == EASY)
 		move = this->getEasyMove(grid, player, opponent, evaluator);
 	else if (this->difficulty == MEDIUM)
-		move = this->getMediumMove(grid, player, opponent, evaluator);
+		move = this->getMediumMove(grid, player, opponent, evaluator, &tracker);
 	//TODO: Implement other difficulties
 
 	// Compute time taken to choose ai
 	diff = std::clock() - start;
 	this->timer = ((double)diff / CLOCKS_PER_SEC) * 1000000;
 
-	printf(" in %i us\n", (int)this->timer);
+	if (this->difficulty == MEDIUM)
+	{
+		printf("Evaluate %i grid in %i us\n",
+				tracker.nbEvaluations, (int)this->timer);
+		printf("  Number of get sorted moves %i\n",
+				tracker.getSortMoveNumber);
+		if (tracker.getSortMoveNumber > 0)
+		{
+			printf("  Time of get sort moves %i (%i per call)\n",
+					tracker.getMoveTime + tracker.sortMoveTime,
+					(tracker.getMoveTime + tracker.sortMoveTime) / tracker.getSortMoveNumber);
+			printf("    time get moves %i (%i per call)\n",
+					tracker.getMoveTime,
+					tracker.getMoveTime / tracker.getSortMoveNumber);
+			printf("    time sort moves %i (%i per call)\n",
+					tracker.sortMoveTime,
+					tracker.sortMoveTime / tracker.getSortMoveNumber);
+		}
+	}
+	else
+	{
+		printf("Compute move in %i us\n", (int)this->timer);
+	}
 	return (move);
 }
 
@@ -171,7 +202,7 @@ sf::Vector2i	AI::getEasyMove(
 static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 				Grid *grid, Player *player, Player *opponent,
 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
-				int depth, int *nbEval)
+				int depth, Tracker *tracker)
 {
 	int							maxEval, tmpEval, plCapture, opCapture,
 								nbMoves, plMoves, opMoves;
@@ -198,7 +229,7 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 		catch (std::exception e)
 		{
 			// If not, compute it and store it in memory
-			(*nbEval)++;
+			tracker->nbEvaluations++;
 			tmpEval = evaluator->evaluateGrid(
 								grid, plType, opType, plCapture, opCapture);
 			memory->insert(std::pair<std::string, int>(boardState, tmpEval));
@@ -208,13 +239,9 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 
 	// Get interesting moves
 	if (maximizingEval)
-		moves = grid->getInterestingMovesSorted(player, opponent, evaluator, true);
+		moves = grid->getInterestingMovesSorted(player, opponent, evaluator, true, tracker);
 	else
-		moves = grid->getInterestingMovesSorted(opponent, player, evaluator, false);
-	// if (maximizingEval)
-	// 	moves = grid->getInterestingMoves(player, opponent);
-	// else
-	// 	moves = grid->getInterestingMoves(opponent, player);
+		moves = grid->getInterestingMovesSorted(opponent, player, evaluator, false, tracker);
 	if (moves.size() == 0)
 		return (0);
 
@@ -302,7 +329,7 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 		tmpEval = mediumMiniMax(memory, grid,
 						player, opponent, evaluator,
 						!maximizingEval, alpha, beta,
-						depth - 1, nbEval);
+						depth - 1, tracker);
 
 		// For maximizing
 		if (maximizingEval)
@@ -366,10 +393,10 @@ static int	mediumMiniMax(std::unordered_map<std::string, int> *memory,
 
 sf::Vector2i	AI::getMediumMove(
 						Grid *grid, Player *player, Player *opponent,
-						Evaluation *evaluator)
+						Evaluation *evaluator, Tracker *tracker)
 {
 	int							maxEval, tmpEval, plCapture, opCapture,
-								nbMoves, plMoves, opMoves, nbEval;
+								nbMoves, plMoves, opMoves;
 	std::vector<sf::Vector2i>	moves;
 	sf::Vector2i				move, bboxUL, bboxDR;
 	inter_type					plType, opType;
@@ -397,7 +424,6 @@ sf::Vector2i	AI::getMediumMove(
 	}
 
 	// Find move to play
-	nbEval = 0;
 	move = sf::Vector2i(-1, -1);
 	maxEval = -1000000001;
 	for (int i = 0; i < moves.size(); i++)
@@ -427,7 +453,7 @@ sf::Vector2i	AI::getMediumMove(
 		// Get evaluation for this move
 		tmpEval = mediumMiniMax(&this->memory, grid,
 					player, opponent, evaluator, false, -1000000001, 1000000001,
-					DEPTH, &nbEval);
+					DEPTH, tracker);
 
 		// Keep the higher scored move
 		if (tmpEval > maxEval)
@@ -450,6 +476,5 @@ sf::Vector2i	AI::getMediumMove(
 	opponent->setMoves(opMoves);
 	opponent->setCaptured(opCapture);
 
-	printf("Number of evaluation %i", nbEval);
 	return (move);
 }
