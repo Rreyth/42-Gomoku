@@ -250,6 +250,8 @@ void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules r
 	this->boardStates.clear();
 	this->leftWinPos.clear();
 	this->rightWinPos.clear();
+	this->interestingMovesLeft.clear();
+	this->interestingMovesRight.clear();
 	this->createBoardState();
 }
 
@@ -467,6 +469,141 @@ std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
 
 	return (moves);
 }
+
+
+void	Grid::computeInterestingMovesSorted(
+				Player *player, Player *opponent, Evaluation *evaluator,
+				Tracker *tracker)
+{
+	if (player->getInterType() == INTER_LEFT)
+	{
+		this->interestingMovesLeft = this->getInterestingMovesSorted(
+											player, opponent, evaluator,
+											true, tracker);
+		this->interestingMovesRight = this->getInterestingMovesSorted(
+											opponent, player, evaluator,
+											false, tracker);
+	}
+	else
+	{
+		this->interestingMovesRight = this->getInterestingMovesSorted(
+											player, opponent, evaluator,
+											true, tracker);
+		this->interestingMovesLeft = this->getInterestingMovesSorted(
+											opponent, player, evaluator,
+											false, tracker);
+	}
+}
+
+
+void	Grid::updateInterestingMovesSorted(
+				Player *player, Player *opponent, Evaluation *evaluator,
+				Tracker *tracker, sf::Vector2i *move)
+{
+	int									nbMoves;
+	inter_type							type, plType, opType;
+	sf::Vector2i						tmpMove;
+	std::vector<sf::Vector2i>::iterator	it;
+
+	// TODO : REMOVE
+	std::clock_t	start;
+	int				diff;
+	start = std::clock();
+
+	nbMoves = player->getMoves() + opponent->getMoves();
+	plType = player->getInterType();
+	opType = opponent->getInterType();
+
+	// Remove new placed stone from left interesting moves
+	it = std::find(this->interestingMovesLeft.begin(), this->interestingMovesLeft.end(), *move);
+	if (it != this->interestingMovesLeft.end())
+		this->interestingMovesLeft.erase(it);
+
+	// Remove new placed stone from right interesting moves
+	it = std::find(this->interestingMovesRight.begin(), this->interestingMovesRight.end(), *move);
+	if (it != this->interestingMovesRight.end())
+		this->interestingMovesRight.erase(it);
+
+	// For each stone arround the new placed stone
+	for (int i = 0; i < 8; i++)
+	{
+		tmpMove = *move + this->dirs[i];
+
+		// Check if the intersection is empty
+		type = this->getInterState(tmpMove.x, tmpMove.y);
+		if (type != INTER_EMPTY)
+			continue;
+
+		// Check if the move is already in the left moves
+		it = std::find(this->interestingMovesLeft.begin(),
+						this->interestingMovesLeft.end(), tmpMove);
+
+		// Check if the move is legal for player
+		if (it == this->interestingMovesLeft.end()
+			&& checkLegalMove(tmpMove.x, tmpMove.y, nbMoves, plType, opType))
+		{
+			if (plType == INTER_LEFT)
+				this->insertMoves(
+						this->interestingMovesLeft, &tmpMove, true,
+						evaluator, player, opponent);
+			else
+				this->insertMoves(
+						this->interestingMovesRight, &tmpMove, false,
+						evaluator, player, opponent);
+		}
+
+		// Check if the move is already in the right moves
+		it = std::find(this->interestingMovesRight.begin(),
+						this->interestingMovesRight.end(), tmpMove);
+
+		// Check if the move is legal for opponent
+		if (it == this->interestingMovesRight.end()
+			&& checkLegalMove(tmpMove.x, tmpMove.y, nbMoves, opType, plType))
+		{
+			if (opType == INTER_LEFT)
+				this->insertMoves(
+						this->interestingMovesLeft, &tmpMove, true,
+						evaluator, player, opponent);
+			else
+				this->insertMoves(
+						this->interestingMovesRight, &tmpMove, false,
+						evaluator, player, opponent);
+		}
+	}
+
+	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+	tracker->updateMoveNumber++;
+	tracker->updateMoveTime += diff;
+}
+
+
+std::vector<sf::Vector2i>	Grid::getInterestingMovesSortedSaved(
+									inter_type plType)
+{
+	if (plType == INTER_LEFT)
+		return (this->interestingMovesLeft);
+	return (this->interestingMovesRight);
+}
+
+
+void	Grid::saveInterestingMovesSorted(
+				std::vector<sf::Vector2i> *movesLeft,
+				std::vector<sf::Vector2i> *movesRight)
+{
+	*movesLeft = this->interestingMovesLeft;
+	*movesRight = this->interestingMovesRight;
+}
+
+
+void	Grid::loadInterestingMovesSorted(
+				std::vector<sf::Vector2i> *movesLeft,
+				std::vector<sf::Vector2i> *movesRight)
+{
+	this->interestingMovesLeft = *movesLeft;
+	this->interestingMovesRight = *movesRight;
+}
+
+
 
 
 bool	Grid::putStone(
@@ -728,6 +865,8 @@ void	Grid::reset(void)
 	this->boardStates.clear();
 	this->leftWinPos.clear();
 	this->rightWinPos.clear();
+	this->interestingMovesLeft.clear();
+	this->interestingMovesRight.clear();
 	this->createBoardState();
 }
 
@@ -1180,4 +1319,66 @@ void	Grid::createCurrentMoveText(void)
 	this->currentMove = std::to_string(this->idBoardState + 1);
 	this->currentMove += " / ";
 	this->currentMove += std::to_string(this->boardStates.size());
+}
+
+
+void	Grid::insertMoves(
+				std::vector<sf::Vector2i> &moves, sf::Vector2i *move,
+				bool reverse, Evaluation *evaluator,
+				Player *player, Player *opponent)
+{
+	int			eval, tmpEval, plCapture, opCapture, start, end, mid;
+	inter_type	plType, opType;
+
+	plCapture = player->getCaptured();
+	opCapture = opponent->getCaptured();
+	plType = player->getInterType();
+	opType = opponent->getInterType();
+
+	eval = evaluator->evaluationPosition(
+						this, plType, opType, plCapture, opCapture,
+						move->x, move->y);
+
+	start = 0;
+	end = moves.size();
+	if (end == 0)
+	{
+		moves.push_back(*move);
+		return ;
+	}
+
+	while (start < end)
+	{
+		mid = (start + end) / 2;
+
+		tmpEval = evaluator->evaluationPosition(
+						this, plType, opType, plCapture, opCapture,
+						moves[mid].x, moves[mid].y);
+		if (!reverse)
+		{
+			if (tmpEval < eval)
+				start = mid + 1;
+			else if (tmpEval > eval)
+				end = mid - 1;
+			else
+				break;
+		}
+		else
+		{
+			if (tmpEval > eval)
+				start = mid + 1;
+			else if (tmpEval < eval)
+				end = mid - 1;
+			else
+				break;
+		}
+	}
+
+	if (start == end)
+		mid = start;
+
+	if (mid == moves.size() - 1)
+		moves.push_back(*move);
+	else
+		moves.insert(moves.begin() + mid, *move);
 }

@@ -39,6 +39,11 @@ public:
 	bool						checkInterestingMove(int x, int y);
 	std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
 	std::vector<sf::Vector2i>	getInterestingMovesSorted(Player *player, Player *opponent, Evaluation *evaluator, bool reverse, Tracker *tracker);
+	void						computeInterestingMovesSorted(Player *player, Player *opponent, Evaluation *evaluator, Tracker *tracker);
+	void						updateInterestingMovesSorted(Player *player, Player *opponent, Evaluation *evaluator, Tracker *tracker, sf::Vector2i *move);
+	std::vector<sf::Vector2i>	getInterestingMovesSortedSaved(inter_type plType);
+	void						saveInterestingMovesSorted(std::vector<sf::Vector2i> *movesLeft, std::vector<sf::Vector2i> *movesRight);
+	void						loadInterestingMovesSorted(std::vector<sf::Vector2i> *movesLeft, std::vector<sf::Vector2i> *movesRight);
 	bool						putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
 	void						removeStone(sf::Vector2i *move, Tracker *tracker);
 	void						resetGridByBoardState(std::string boardState, Tracker *tracker);
@@ -58,7 +63,7 @@ private:
 	sf::Vector2i				dirs[8], bboxUL, bboxDR;
 	sprite_name					leftStone, rightStone;
 	game_rules					rule;
-	std::vector<sf::Vector2i>	leftWinPos, rightWinPos;
+	std::vector<sf::Vector2i>	leftWinPos, rightWinPos, interestingMovesLeft, interestingMovesRight;
 	std::vector<std::string>	boardStates;
 	std::string					currentBoardState;
 	std::string					currentMove;
@@ -73,6 +78,7 @@ private:
 	void			setBoardState(int id);
 	void			createBoardState(void);
 	void			createCurrentMoveText(void);
+	void			insertMoves(std::vector<sf::Vector2i> &moves, sf::Vector2i *move, bool reverse, Evaluation *evaluator, Player *player, Player *opponent);
 };
 
 #endif
