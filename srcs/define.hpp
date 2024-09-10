@@ -136,4 +136,43 @@ typedef struct s_tracker
 	int	reverseStoneCaptureTime;
 }	Tracker;
 
+
+// bb = bitboard
+// H = horizontal | V = vertical | D = diagonal | A = anti diagonal
+typedef struct	s_bitboard
+{
+	int	bbH[GRID_W_INTER];
+	int	bbV[GRID_W_INTER];
+	int	bbD[GRID_W_INTER];
+	int	bbA[GRID_W_INTER];
+
+	struct s_bitboard &operator=(const struct s_bitboard &bb)
+	{
+		if (this == &bb)
+			return (*this);
+
+		for (int i = 0; i < GRID_W_INTER; i++)
+		{
+			this->bbH[i] = bb.bbH[i];
+			this->bbV[i] = bb.bbV[i];
+			this->bbD[i] = bb.bbD[i];
+			this->bbA[i] = bb.bbA[i];
+		}
+		return (*this);
+	}
+
+	bool	operator==(const struct s_bitboard &bb)
+	{
+		if (this == &bb)
+			return (true);
+		for (int i = 0; i < GRID_W_INTER; i++)
+		{
+			if (this->bbH[i] != bb.bbH[i])
+				return (false);
+		}
+		return (true);
+	}
+
+}	bitboard;
+
 #endif

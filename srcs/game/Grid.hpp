@@ -63,10 +63,7 @@ private:
 	sprite_name	leftStone, rightStone;
 	game_rules	rule;
 	std::string	currentMove;
-	// bb = bitboard
-	// H = horizontal | V = vertical | D = diagonal | A = anti diagonal
-	// L = left | R = right
-	int32_t		bbHL[GRID_W_INTER], bbHR[GRID_W_INTER];
+	bitboard	bitboardL, bitboardR;
 
 	// intersection				gridState[GRID_NB_INTER];
 	// sf::Vector2i				dirs[8], bboxUL, bboxDR;

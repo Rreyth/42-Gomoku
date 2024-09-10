@@ -3,38 +3,6 @@
 #include <game/Player.hpp>
 #include <AI/Evaluation.hpp>
 
-// static std::string	createOptiBoardFromBoard(std::string &board)
-// {
-// 	char		tmp;
-// 	std::string	optiBoard = "                                                                                          ";
-
-// 	for (int i = 0; i < OPTI_BOARD_SIZE; i++)
-// 	{
-// 		tmp = 0;
-
-// 		for (int j = 0; j < 4; j++)
-// 		{
-// 			int id = (i + 1) * 4 - (j + 1);
-
-// 			if (id >= GRID_NB_INTER)
-// 				continue;
-
-// 			if (board[id] == 'E')
-// 				tmp += 0b00 << (j * 2);
-// 			else if (board[id] == 'L')
-// 				tmp += 0b01 << (j * 2);
-// 			else if (board[id] == 'R')
-// 				tmp += 0b10 << (j * 2);
-// 			else
-// 				tmp += 0b11 << (j * 2);
-// 		}
-
-// 		optiBoard[i] = tmp;
-// 	}
-
-// 	return (optiBoard);
-// }
-
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +19,6 @@ Grid::Grid(void)
 	this->previewLegal = false;
 
 	this->clearGrid(SPRITE_STONE_BLUE, SPRITE_STONE_RED, STANDARD);
-
 	// this->dirs[DIR_L] = sf::Vector2i(-1, 0);
 	// this->dirs[DIR_UL] = sf::Vector2i(-1, -1);
 	// this->dirs[DIR_U] = sf::Vector2i(0, -1);
@@ -330,12 +297,19 @@ void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules r
 	this->leftStone = leftStone;
 	this->rightStone = rightStone;
 	this->rule = rule;
-	// for (int i = 0; i < GRID_NB_INTER; i++)
-	// {
-	// 	this->gridState[i].type = INTER_EMPTY;
-	// 	for (int j = 0; j < 8; j++)
-	// 		this->gridState[i].neighbor[j] = 0;
-	// }
+
+	for (int i = 0; i < GRID_W_INTER; i++)
+	{
+		this->bitboardL.bbH[i] = 0;
+		this->bitboardL.bbV[i] = 0;
+		this->bitboardL.bbD[i] = 0;
+		this->bitboardL.bbA[i] = 0;
+		this->bitboardR.bbH[i] = 0;
+		this->bitboardR.bbV[i] = 0;
+		this->bitboardR.bbD[i] = 0;
+		this->bitboardR.bbA[i] = 0;
+	}
+
 	// this->boardStates.clear();
 	// this->leftWinPos.clear();
 	// this->rightWinPos.clear();
@@ -347,12 +321,17 @@ void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules r
 
 void	Grid::reset(void)
 {
-	// for (int i = 0; i < GRID_NB_INTER; i++)
-	// {
-	// 	this->gridState[i].type = INTER_EMPTY;
-	// 	for (int j = 0; j < 8; j++)
-	// 		this->gridState[i].neighbor[j] = 0;
-	// }
+	for (int i = 0; i < GRID_W_INTER; i++)
+	{
+		this->bitboardL.bbH[i] = 0;
+		this->bitboardL.bbV[i] = 0;
+		this->bitboardL.bbD[i] = 0;
+		this->bitboardL.bbA[i] = 0;
+		this->bitboardR.bbH[i] = 0;
+		this->bitboardR.bbV[i] = 0;
+		this->bitboardR.bbD[i] = 0;
+		this->bitboardR.bbA[i] = 0;
+	}
 	// this->boardStates.clear();
 	// this->leftWinPos.clear();
 	// this->rightWinPos.clear();
@@ -916,41 +895,73 @@ void	Grid::reset(void)
 
 void	Grid::setStoneLeft(int x, int y, bool stone)
 {
-	int		check, shift;
+	int	check, checkV, yD, yA;
 
-	shift = GRID_W_INTER - x - 1;
-	check = 1 << shift;
+	check = 1 << (GRID_W_INTER - x - 1);
+	checkV = 1 << y;
+	yD = (y + x) % GRID_W_INTER;
+	yA = (y - x) % GRID_W_INTER;
+	if (yA < 0)
+		yA = GRID_W_INTER + yA;
 
-	if (stone && !(this->bbHL[y] & check))
-		this->bbHL[y] += check;
-	else if (!stone && (this->bbHL[y] & check))
-		this->bbHL[y] -= check;
+	// Set stone at true if it's not
+	if (stone && !(this->bitboardL.bbH[y] & check))
+	{
+		this->bitboardL.bbH[y] += check;
+		this->bitboardL.bbV[x] += checkV;
+		this->bitboardL.bbD[yD] += check;
+		this->bitboardL.bbA[yA] += check;
+	}
+	// Set stone at false if it's not
+	else if (!stone && (this->bitboardL.bbH[y] & check))
+	{
+		this->bitboardL.bbH[y] -= check;
+		this->bitboardL.bbV[x] -= checkV;
+		this->bitboardL.bbD[yD] -= check;
+		this->bitboardL.bbA[yA] -= check;
+	}
 }
 
 
 void	Grid::setStoneRight(int x, int y, bool stone)
 {
-	int		check, shift;
+	int	check, checkV, yD, yA;
 
-	shift = GRID_W_INTER - x - 1;
-	check = 1 << shift;
+	check = 1 << (GRID_W_INTER - x - 1);
+	checkV = 1 << y;
+	yD = (y + x) % GRID_W_INTER;
+	yA = (y - x) % GRID_W_INTER;
+	if (yA < 0)
+		yA = GRID_W_INTER + yA;
 
-	if (stone && !(this->bbHR[y] & check))
-		this->bbHR[y] += check;
-	else if (!stone && (this->bbHR[y] & check))
-		this->bbHR[y] -= check;
+	// Set stone at true if it's not
+	if (stone && !(this->bitboardR.bbH[y] & check))
+	{
+		this->bitboardR.bbH[y] += check;
+		this->bitboardR.bbV[x] += checkV;
+		this->bitboardR.bbD[yD] += check;
+		this->bitboardR.bbA[yA] += check;
+	}
+	// Set stone at false if it's not
+	else if (!stone && (this->bitboardR.bbH[y] & check))
+	{
+		this->bitboardR.bbH[y] -= check;
+		this->bitboardR.bbV[x] -= checkV;
+		this->bitboardR.bbD[yD] -= check;
+		this->bitboardR.bbA[yA] -= check;
+	}
 }
 
 
 bool	Grid::getStoneLeft(int x, int y)
 {
-	return (this->bbHL[y] & 1 << (GRID_W_INTER - x - 1));
+	return (this->bitboardL.bbH[y] & 1 << (GRID_W_INTER - x - 1));
 }
 
 
 bool	Grid::getStoneRight(int x, int y)
 {
-	return (this->bbHR[y] & 1 << (GRID_W_INTER - x - 1));
+	return (this->bitboardR.bbH[y] & 1 << (GRID_W_INTER - x - 1));
 }
 
 
