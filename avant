@@ -1,0 +1,881 @@
+Get move in 32 us
+  evaluate position
+   - number of call : 0
+   - number of memory call : 0
+   - memory call usage : -nan
+   - TIME 0 us
+   - about -nan us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 27 us
+   - about 13.500000 us per call
+   - sort moves took 0 us
+   - about 0.000000 us per call
+  update moves
+   - number of call : 0
+   - TIME 0 us
+   - about -nan us per call
+  check stone
+   - number of call : 0
+   - put stone TIME 0 us
+   - about -nan us per call
+   - remove stone took 0 us
+   - about -nan us per call
+   - check win took 0 us
+   - about -nan us per call
+  reverse capture
+   - number of call : 0
+   - TIME 0 us
+   - about -nan us per call
+  memory usage
+   - memory evaluation : 0 elements for 0 octets
+Compute move in 5 us
+
+
+Get move in 43,526 us
+  evaluate position
+   - number of call : 4,006
+   - number of memory call : 2,335
+   - memory call usage : 0.368238
+   - TIME 8,352 us
+   - about 2.084873 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 9 us
+   - about 4.500000 us per call
+   - sort moves took 6 us
+   - about 3.000000 us per call
+  update moves
+   - number of call : 1,412
+   - TIME 7,416 us
+   - about 5.252125 us per call
+  check stone
+   - number of call : 7,741
+   - put stone TIME 5,165 us
+   - about 0.667226 us per call
+   - remove stone took 1,722 us
+   - about 0.222452 us per call
+   - check win took 2,090 us
+   - about 0.269991 us per call
+  reverse capture
+   - number of call : 39
+   - TIME 47 us
+   - about 1.205128 us per call
+  memory usage
+   - memory evaluation : 4,006 elements for 1,173,758 octets
+Compute move in 9 us
+
+
+Get move in 89,038 us
+  evaluate position
+   - number of call : 8,992
+   - number of memory call : 4,619
+   - memory call usage : 0.339358
+   - TIME 19,748 us
+   - about 2.196174 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 12 us
+   - about 6.000000 us per call
+   - sort moves took 7 us
+   - about 3.500000 us per call
+  update moves
+   - number of call : 2,142
+   - TIME 11,854 us
+   - about 5.534081 us per call
+  check stone
+   - number of call : 15,737
+   - put stone TIME 10,271 us
+   - about 0.652666 us per call
+   - remove stone took 3,338 us
+   - about 0.212112 us per call
+   - check win took 4,144 us
+   - about 0.263328 us per call
+  reverse capture
+   - number of call : 5
+   - TIME 5 us
+   - about 1.000000 us per call
+  memory usage
+   - memory evaluation : 12,998 elements for 3,808,414 octets
+Compute move in 11 us
+
+
+Get move in 106,641 us
+  evaluate position
+   - number of call : 10,548
+   - number of memory call : 5,161
+   - memory call usage : 0.328538
+   - TIME 23,931 us
+   - about 2.268771 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 15 us
+   - about 7.500000 us per call
+   - sort moves took 7 us
+   - about 3.500000 us per call
+  update moves
+   - number of call : 2,608
+   - TIME 14,322 us
+   - about 5.491564 us per call
+  check stone
+   - number of call : 18,298
+   - put stone TIME 12,197 us
+   - about 0.666576 us per call
+   - remove stone took 4,062 us
+   - about 0.221991 us per call
+   - check win took 4,899 us
+   - about 0.267734 us per call
+  reverse capture
+   - number of call : 70
+   - TIME 87 us
+   - about 1.242857 us per call
+  memory usage
+   - memory evaluation : 23,546 elements for 6,898,978 octets
+Compute move in 12 us
+
+
+Get move in 398,038 us
+  evaluate position
+   - number of call : 42,213
+   - number of memory call : 20,123
+   - memory call usage : 0.322815
+   - TIME 94,751 us
+   - about 2.244593 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 17 us
+   - about 8.500000 us per call
+   - sort moves took 9 us
+   - about 4.500000 us per call
+  update moves
+   - number of call : 7,180
+   - TIME 41,232 us
+   - about 5.742619 us per call
+  check stone
+   - number of call : 69,493
+   - put stone TIME 46,688 us
+   - about 0.671837 us per call
+   - remove stone took 14,811 us
+   - about 0.213129 us per call
+   - check win took 18,337 us
+   - about 0.263868 us per call
+  reverse capture
+   - number of call : 353
+   - TIME 446 us
+   - about 1.263456 us per call
+  memory usage
+   - memory evaluation : 65,759 elements for 19,267,387 octets
+Compute move in 14 us
+
+
+Get move in 381,928 us
+  evaluate position
+   - number of call : 34,853
+   - number of memory call : 29,048
+   - memory call usage : 0.454578
+   - TIME 84,607 us
+   - about 2.427539 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 21 us
+   - about 10.500000 us per call
+   - sort moves took 11 us
+   - about 5.500000 us per call
+  update moves
+   - number of call : 6,612
+   - TIME 36,632 us
+   - about 5.540230 us per call
+  check stone
+   - number of call : 74,327
+   - put stone TIME 48,388 us
+   - about 0.651015 us per call
+   - remove stone took 15,744 us
+   - about 0.211821 us per call
+   - check win took 20,822 us
+   - about 0.280140 us per call
+  reverse capture
+   - number of call : 145
+   - TIME 212 us
+   - about 1.462069 us per call
+  memory usage
+   - memory evaluation : 100,612 elements for 29,479,316 octets
+Compute move in 17 us
+
+
+Get move in 1,951,344 us
+  evaluate position
+   - number of call : 200,497
+   - number of memory call : 139,357
+   - memory call usage : 0.410050
+   - TIME 465,713 us
+   - about 2.322793 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 26 us
+   - about 13.000000 us per call
+   - sort moves took 11 us
+   - about 5.500000 us per call
+  update moves
+   - number of call : 24,667
+   - TIME 136,894 us
+   - about 5.549682 us per call
+  check stone
+   - number of call : 364,528
+   - put stone TIME 239,264 us
+   - about 0.656367 us per call
+   - remove stone took 77,357 us
+   - about 0.212211 us per call
+   - check win took 96,112 us
+   - about 0.263662 us per call
+  reverse capture
+   - number of call : 1,110
+   - TIME 1,532 us
+   - about 1.380180 us per call
+  memory usage
+   - memory evaluation : 301,109 elements for 88,224,937 octets
+Compute move in 20 us
+
+
+Get move in 2,965,996 us
+  evaluate position
+   - number of call : 320,520
+   - number of memory call : 187,731
+   - memory call usage : 0.369367
+   - TIME 764,801 us
+   - about 2.386126 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 29 us
+   - about 14.500000 us per call
+   - sort moves took 12 us
+   - about 6.000000 us per call
+  update moves
+   - number of call : 27,963
+   - TIME 158,175 us
+   - about 5.656582 us per call
+  check stone
+   - number of call : 536,172
+   - put stone TIME 359,704 us
+   - about 0.670874 us per call
+   - remove stone took 113,437 us
+   - about 0.211568 us per call
+   - check win took 142,839 us
+   - about 0.266405 us per call
+  reverse capture
+   - number of call : 5,087
+   - TIME 7,108 us
+   - about 1.397287 us per call
+  memory usage
+   - memory evaluation : 621,629 elements for 182,137,297 octets
+Compute move in 28 us
+
+
+Get move in 2,993,783 us
+  evaluate position
+   - number of call : 327,380
+   - number of memory call : 169,361
+   - memory call usage : 0.340944
+   - TIME 829,019 us
+   - about 2.532284 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 35 us
+   - about 17.500000 us per call
+   - sort moves took 15 us
+   - about 7.500000 us per call
+  update moves
+   - number of call : 24,767
+   - TIME 151,093 us
+   - about 6.100577 us per call
+  check stone
+   - number of call : 521,467
+   - put stone TIME 357,688 us
+   - about 0.685926 us per call
+   - remove stone took 112,498 us
+   - about 0.215734 us per call
+   - check win took 139,690 us
+   - about 0.267879 us per call
+  reverse capture
+   - number of call : 7,779
+   - TIME 11,051 us
+   - about 1.420620 us per call
+  memory usage
+   - memory evaluation : 949,009 elements for 278,059,637 octets
+Compute move in 22 us
+
+
+Get move in 2,848,388 us
+  evaluate position
+   - number of call : 317,078
+   - number of memory call : 161,841
+   - memory call usage : 0.337930
+   - TIME 723,782 us
+   - about 2.282662 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 31 us
+   - about 15.500000 us per call
+   - sort moves took 13 us
+   - about 6.500000 us per call
+  update moves
+   - number of call : 28,872
+   - TIME 166,163 us
+   - about 5.755161 us per call
+  check stone
+   - number of call : 507,747
+   - put stone TIME 338,609 us
+   - about 0.666885 us per call
+   - remove stone took 106,717 us
+   - about 0.210178 us per call
+   - check win took 134,286 us
+   - about 0.264474 us per call
+  reverse capture
+   - number of call : 4,269
+   - TIME 5,825 us
+   - about 1.364488 us per call
+  memory usage
+   - memory evaluation : 1,266,087 elements for 370,963,491 octets
+Compute move in 22 us
+
+
+Get move in 4,301,071 us
+  evaluate position
+   - number of call : 453,065
+   - number of memory call : 267,640
+   - memory call usage : 0.371359
+   - TIME 1,229,955 us
+   - about 2.714743 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 31 us
+   - about 15.500000 us per call
+   - sort moves took 13 us
+   - about 6.500000 us per call
+  update moves
+   - number of call : 35,877
+   - TIME 209,858 us
+   - about 5.849374 us per call
+  check stone
+   - number of call : 756,537
+   - put stone TIME 503,587 us
+   - about 0.665648 us per call
+   - remove stone took 158,642 us
+   - about 0.209695 us per call
+   - check win took 200,639 us
+   - about 0.265207 us per call
+  reverse capture
+   - number of call : 5,675
+   - TIME 8,081 us
+   - about 1.423965 us per call
+  memory usage
+   - memory evaluation : 1,719,152 elements for 503,711,536 octets
+Compute move in 24 us
+
+
+Get move in 5,527,027 us
+  evaluate position
+   - number of call : 599,991
+   - number of memory call : 386,559
+   - memory call usage : 0.391829
+   - TIME 1,414,026 us
+   - about 2.356745 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 32 us
+   - about 16.000000 us per call
+   - sort moves took 13 us
+   - about 6.500000 us per call
+  update moves
+   - number of call : 42,372
+   - TIME 239,347 us
+   - about 5.648707 us per call
+  check stone
+   - number of call : 1,028,878
+   - put stone TIME 700,067 us
+   - about 0.680418 us per call
+   - remove stone took 217,673 us
+   - about 0.211563 us per call
+   - check win took 270,939 us
+   - about 0.263334 us per call
+  reverse capture
+   - number of call : 10,460
+   - TIME 15,210 us
+   - about 1.454111 us per call
+  memory usage
+   - memory evaluation : 2,319,143 elements for 679,508,899 octets
+Compute move in 22 us
+
+
+Get move in 6,745,590 us
+  evaluate position
+   - number of call : 642,618
+   - number of memory call : 507,126
+   - memory call usage : 0.441077
+   - TIME 1,938,633 us
+   - about 3.016773 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 31 us
+   - about 15.500000 us per call
+   - sort moves took 13 us
+   - about 6.500000 us per call
+  update moves
+   - number of call : 50,208
+   - TIME 284,071 us
+   - about 5.657883 us per call
+  check stone
+   - number of call : 1,199,910
+   - put stone TIME 833,534 us
+   - about 0.694664 us per call
+   - remove stone took 258,534 us
+   - about 0.215461 us per call
+   - check win took 318,742 us
+   - about 0.265638 us per call
+  reverse capture
+   - number of call : 13,115
+   - TIME 19,190 us
+   - about 1.463210 us per call
+  memory usage
+   - memory evaluation : 2,961,761 elements for 867,795,973 octets
+Compute move in 24 us
+
+
+Get move in 8,538,277 us
+  evaluate position
+   - number of call : 830,750
+   - number of memory call : 802,375
+   - memory call usage : 0.491313
+   - TIME 1,978,097 us
+   - about 2.381098 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 33 us
+   - about 16.500000 us per call
+   - sort moves took 12 us
+   - about 6.000000 us per call
+  update moves
+   - number of call : 58,716
+   - TIME 340,653 us
+   - about 5.801706 us per call
+  check stone
+   - number of call : 1,691,797
+   - put stone TIME 1,256,308 us
+   - about 0.742588 us per call
+   - remove stone took 361,133 us
+   - about 0.213461 us per call
+   - check win took 447,559 us
+   - about 0.264547 us per call
+  reverse capture
+   - number of call : 59,599
+   - TIME 83,845 us
+   - about 1.406819 us per call
+  memory usage
+   - memory evaluation : 3,792,511 elements for 1,111,205,723 octets
+Compute move in 24 us
+
+
+Get move in 5,895,398 us
+  evaluate position
+   - number of call : 644,172
+   - number of memory call : 360,628
+   - memory call usage : 0.358905
+   - TIME 1,564,204 us
+   - about 2.428240 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 35 us
+   - about 17.500000 us per call
+   - sort moves took 13 us
+   - about 6.500000 us per call
+  update moves
+   - number of call : 39,273
+   - TIME 244,895 us
+   - about 6.235709 us per call
+  check stone
+   - number of call : 1,044,024
+   - put stone TIME 737,538 us
+   - about 0.706438 us per call
+   - remove stone took 225,438 us
+   - about 0.215932 us per call
+   - check win took 278,009 us
+   - about 0.266286 us per call
+  reverse capture
+   - number of call : 14,608
+   - TIME 21,715 us
+   - about 1.486514 us per call
+  memory usage
+   - memory evaluation : 4,436,683 elements for 1,299,948,119 octets
+Compute move in 26 us
+
+
+Get move in 429,677 us
+  evaluate position
+   - number of call : 50,116
+   - number of memory call : 15,524
+   - memory call usage : 0.236502
+   - TIME 123,013 us
+   - about 2.454566 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 36 us
+   - about 18.000000 us per call
+   - sort moves took 14 us
+   - about 7.000000 us per call
+  update moves
+   - number of call : 3,330
+   - TIME 20,859 us
+   - about 6.263964 us per call
+  check stone
+   - number of call : 69,016
+   - put stone TIME 47,105 us
+   - about 0.682523 us per call
+   - remove stone took 14,877 us
+   - about 0.215559 us per call
+   - check win took 18,987 us
+   - about 0.275110 us per call
+  reverse capture
+   - number of call : 410
+   - TIME 627 us
+   - about 1.529268 us per call
+  memory usage
+   - memory evaluation : 4,486,799 elements for 1,314,632,107 octets
+Compute move in 28 us
+
+
+Get move in 10,394,612 us
+  evaluate position
+   - number of call : 1,129,492
+   - number of memory call : 661,564
+   - memory call usage : 0.369371
+   - TIME 2,798,379 us
+   - about 2.477556 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 39 us
+   - about 19.500000 us per call
+   - sort moves took 15 us
+   - about 7.500000 us per call
+  update moves
+   - number of call : 61,715
+   - TIME 384,695 us
+   - about 6.233412 us per call
+  check stone
+   - number of call : 1,852,717
+   - put stone TIME 1,292,465 us
+   - about 0.697605 us per call
+   - remove stone took 397,901 us
+   - about 0.214766 us per call
+   - check win took 490,597 us
+   - about 0.264799 us per call
+  reverse capture
+   - number of call : 21,255
+   - TIME 32,082 us
+   - about 1.509386 us per call
+  memory usage
+   - memory evaluation : 5,616,291 elements for 1,645,573,263 octets
+Compute move in 29 us
+
+
+Get move in 16,671,496 us
+  evaluate position
+   - number of call : 1,568,954
+   - number of memory call : 1,455,545
+   - memory call usage : 0.481252
+   - TIME 4,777,181 us
+   - about 3.044819 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 40 us
+   - about 20.000000 us per call
+   - sort moves took 15 us
+   - about 7.500000 us per call
+  update moves
+   - number of call : 90,295
+   - TIME 566,257 us
+   - about 6.271189 us per call
+  check stone
+   - number of call : 3,114,739
+   - put stone TIME 2,152,566 us
+   - about 0.691090 us per call
+   - remove stone took 671,022 us
+   - about 0.215434 us per call
+   - check win took 824,756 us
+   - about 0.264791 us per call
+  reverse capture
+   - number of call : 26,645
+   - TIME 40,501 us
+   - about 1.520023 us per call
+  memory usage
+   - memory evaluation : 7,185,245 elements for 2,105,276,785 octets
+Compute move in 32 us
+
+
+Get move in 16,772,776 us
+  evaluate position
+   - number of call : 1,768,885
+   - number of memory call : 1,173,173
+   - memory call usage : 0.398759
+   - TIME 4,477,510 us
+   - about 2.531261 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 43 us
+   - about 21.500000 us per call
+   - sort moves took 16 us
+   - about 8.000000 us per call
+  update moves
+   - number of call : 97,788
+   - TIME 598,629 us
+   - about 6.121702 us per call
+  check stone
+   - number of call : 3,039,788
+   - put stone TIME 2,114,880 us
+   - about 0.695733 us per call
+   - remove stone took 648,103 us
+   - about 0.213207 us per call
+   - check win took 804,524 us
+   - about 0.264665 us per call
+  reverse capture
+   - number of call : 30,820
+   - TIME 47,079 us
+   - about 1.527547 us per call
+  memory usage
+   - memory evaluation : 8,954,130 elements for 2,623,560,090 octets
+Compute move in 32 us
+
+
+Get move in 12,022,809 us
+  evaluate position
+   - number of call : 1,306,950
+   - number of memory call : 676,484
+   - memory call usage : 0.341067
+   - TIME 3,342,105 us
+   - about 2.557179 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 43 us
+   - about 21.500000 us per call
+   - sort moves took 16 us
+   - about 8.000000 us per call
+  update moves
+   - number of call : 60,220
+   - TIME 390,051 us
+   - about 6.477101 us per call
+  check stone
+   - number of call : 2,043,597
+   - put stone TIME 1,473,612 us
+   - about 0.721087 us per call
+   - remove stone took 440,302 us
+   - about 0.215454 us per call
+   - check win took 548,094 us
+   - about 0.268201 us per call
+  reverse capture
+   - number of call : 50,187
+   - TIME 72,397 us
+   - about 1.442545 us per call
+  memory usage
+   - memory evaluation : 10,261,080 elements for 3,006,496,440 octets
+Compute move in 30 us
+
+
+Get move in 9,780,930 us
+  evaluate position
+   - number of call : 1,064,230
+   - number of memory call : 320,888
+   - memory call usage : 0.231668
+   - TIME 2,881,097 us
+   - about 2.707213 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 42 us
+   - about 21.000000 us per call
+   - sort moves took 17 us
+   - about 8.500000 us per call
+  update moves
+   - number of call : 55,649
+   - TIME 385,031 us
+   - about 6.918921 us per call
+  check stone
+   - number of call : 1,440,769
+   - put stone TIME 1,092,462 us
+   - about 0.758249 us per call
+   - remove stone took 318,024 us
+   - about 0.220732 us per call
+   - check win took 397,982 us
+   - about 0.276229 us per call
+  reverse capture
+   - number of call : 36,389
+   - TIME 55,176 us
+   - about 1.516282 us per call
+  memory usage
+   - memory evaluation : 11,325,310 elements for 3,318,315,830 octets
+Compute move in 32 us
+
+
+Get move in 890,206 us
+  evaluate position
+   - number of call : 103,537
+   - number of memory call : 24,434
+   - memory call usage : 0.190934
+   - TIME 273,756 us
+   - about 2.644040 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 44 us
+   - about 22.000000 us per call
+   - sort moves took 17 us
+   - about 8.500000 us per call
+  update moves
+   - number of call : 4,707
+   - TIME 30,228 us
+   - about 6.421925 us per call
+  check stone
+   - number of call : 132,739
+   - put stone TIME 92,931 us
+   - about 0.700103 us per call
+   - remove stone took 28,793 us
+   - about 0.216914 us per call
+   - check win took 36,989 us
+   - about 0.278660 us per call
+  reverse capture
+   - number of call : 1,646
+   - TIME 2,446 us
+   - about 1.486027 us per call
+  memory usage
+   - memory evaluation : 11,428,847 elements for 3,348,652,171 octets
+Compute move in 37 us
+
+
+Get move in 18,751,434 us
+  evaluate position
+   - number of call : 1,834,421
+   - number of memory call : 819,263
+   - memory call usage : 0.308727
+   - TIME 6,745,742 us
+   - about 3.677314 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 50 us
+   - about 25.000000 us per call
+   - sort moves took 19 us
+   - about 9.500000 us per call
+  update moves
+   - number of call : 79,065
+   - TIME 500,940 us
+   - about 6.335800 us per call
+  check stone
+   - number of call : 2,732,686
+   - put stone TIME 2,017,338 us
+   - about 0.738225 us per call
+   - remove stone took 589,317 us
+   - about 0.215655 us per call
+   - check win took 745,330 us
+   - about 0.272746 us per call
+  reverse capture
+   - number of call : 59,883
+   - TIME 92,065 us
+   - about 1.537415 us per call
+  memory usage
+   - memory evaluation : 13,263,268 elements for 3,886,137,524 octets
+Compute move in 38 us
+
+
+Get move in 40,713,928 us
+  evaluate position
+   - number of call : 3,961,485
+   - number of memory call : 3,427,842
+   - memory call usage : 0.463891
+   - TIME 10,582,032 us
+   - about 2.671229 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 54 us
+   - about 27.000000 us per call
+   - sort moves took 19 us
+   - about 9.500000 us per call
+  update moves
+   - number of call : 195,087
+   - TIME 1,143,117 us
+   - about 5.859524 us per call
+  check stone
+   - number of call : 7,584,484
+   - put stone TIME 5,377,227 us
+   - about 0.708977 us per call
+   - remove stone took 1,628,203 us
+   - about 0.214676 us per call
+   - check win took 2,046,855 us
+   - about 0.269874 us per call
+  reverse capture
+   - number of call : 74,976
+   - TIME 120,895 us
+   - about 1.612449 us per call
+  memory usage
+   - memory evaluation : 17,224,753 elements for 5,046,852,629 octets
+Compute move in 38 us
+
+
+Get move in 813,692 us
+  evaluate position
+   - number of call : 97,079
+   - number of memory call : 22,883
+   - memory call usage : 0.190752
+   - TIME 256,918 us
+   - about 2.646484 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 67 us
+   - about 33.500000 us per call
+   - sort moves took 20 us
+   - about 10.000000 us per call
+  update moves
+   - number of call : 3,444
+   - TIME 20,602 us
+   - about 5.981997 us per call
+  check stone
+   - number of call : 123,479
+   - put stone TIME 85,016 us
+   - about 0.688506 us per call
+   - remove stone took 26,321 us
+   - about 0.213162 us per call
+   - check win took 33,425 us
+   - about 0.270694 us per call
+  reverse capture
+   - number of call : 728
+   - TIME 1,224 us
+   - about 1.681319 us per call
+  memory usage
+   - memory evaluation : 17,321,832 elements for 5,075,296,776 octets
+Compute move in 42 us
+
+
+Get move in 18,976,338 us
+  evaluate position
+   - number of call : 1,418,526
+   - number of memory call : 2,433,211
+   - memory call usage : 0.631718
+   - TIME 4,033,915 us
+   - about 2.843737 us per call
+  get sort moves
+   - number of call : 2
+   - get moves TIME 57 us
+   - about 28.500000 us per call
+   - sort moves took 21 us
+   - about 10.500000 us per call
+  update moves
+   - number of call : 95,198
+   - TIME 632,130 us
+   - about 6.640161 us per call
+  check stone
+   - number of call : 3,954,185
+   - put stone TIME 2,894,215 us
+   - about 0.731937 us per call
+   - remove stone took 863,085 us
+   - about 0.218271 us per call
+   - check win took 1,086,601 us
+   - about 0.274798 us per call
+  reverse capture
+   - number of call : 47,595
+   - TIME 78,744 us
+   - about 1.654459 us per call
+  memory usage
+   - memory evaluation : 18,740,358 elements for 5,490,924,894 octets

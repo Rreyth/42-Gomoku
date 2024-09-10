@@ -423,15 +423,15 @@ std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
 	if (size < 2)
 		return (moves);
 
-	for (int i = 1; i < size; i++)
-		evaluations.push_back(evaluator->evaluationPosition(this,
-											plType, opType, plCapture, opCapture,
-											moves[i].x, moves[i].y));
-
 	plType = player->getInterType();
 	opType = opponent->getInterType();
 	plCapture = player->getCaptured();
 	opCapture = opponent->getCaptured();
+
+	for (int i = 0; i < size; i++)
+		evaluations.push_back(evaluator->evaluationPosition(this,
+											plType, opType, plCapture, opCapture,
+											moves[i].x, moves[i].y));
 
 	for (int i = 1; i < size; i++)
 	{

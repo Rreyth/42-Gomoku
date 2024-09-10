@@ -106,21 +106,21 @@ sf::Vector2i	AI::getNextMove(
 		printf("   - number of call : %'i\n", tracker.nbEvaluations);
 		printf("   - number of memory call : %'i\n", tracker.nbEvaluationsMemory);
 		printf("   - memory call usage : %'f\n", (float)tracker.nbEvaluationsMemory / (tracker.nbEvaluations + tracker.nbEvaluationsMemory));
-		printf("   - took %'i us\n", tracker.evaluationTime);
+		printf("   - TIME %'i us\n", tracker.evaluationTime);
 		printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
 		printf("  get sort moves\n");
 		printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
-		printf("   - get moves took %'i us\n", tracker.getMoveTime);
+		printf("   - get moves TIME %'i us\n", tracker.getMoveTime);
 		printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
 		printf("   - sort moves took %'i us\n", tracker.sortMoveTime);
 		printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
 		printf("  update moves\n");
 		printf("   - number of call : %'i\n", tracker.updateMoveNumber);
-		printf("   - took %'i us\n", tracker.updateMoveTime);
+		printf("   - TIME %'i us\n", tracker.updateMoveTime);
 		printf("   - about %'f us per call\n", (float)tracker.updateMoveTime / tracker.updateMoveNumber);
 		printf("  check stone\n");
 		printf("   - number of call : %'i\n", tracker.checkStoneNumber);
-		printf("   - put stone took %'i us\n", tracker.putStoneTime);
+		printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
 		printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
 		printf("   - remove stone took %'i us\n", tracker.removeStoneTime);
 		printf("   - about %'f us per call\n", (float)tracker.removeStoneTime / tracker.checkStoneNumber);
@@ -128,14 +128,13 @@ sf::Vector2i	AI::getNextMove(
 		printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkStoneNumber);
 		printf("  reverse capture\n");
 		printf("   - number of call : %'i\n", tracker.reverseStoneCaptureNumber);
-		printf("   - took %'i us\n", tracker.reverseStoneCaptureTime);
+		printf("   - TIME %'i us\n", tracker.reverseStoneCaptureTime);
 		printf("   - about %'f us per call\n", (float)tracker.reverseStoneCaptureTime / tracker.reverseStoneCaptureNumber);
 		printf("  memory usage\n");
-		long size, memorySize;
-		size = this->memoryEvaluation.size();
-		memorySize = size * (sizeof(char) * GRID_NB_INTER + sizeof(int));
+		long size = this->memoryEvaluation.size();
+		std::string boardState = grid->getCurrentBoardState();
+		long memorySize = size * (sizeof(boardState) + sizeof(int));
 		printf("   - memory evaluation : %'li elements for %'li octets\n", size, memorySize);
-		printf("   - memory move : %'lu elements\n", this->memoryMoves.size());
 	}
 	else
 	{
