@@ -3,6 +3,38 @@
 #include <game/Player.hpp>
 #include <AI/Evaluation.hpp>
 
+static std::string	createOptiBoardFromBoard(std::string &board)
+{
+	char		tmp;
+	std::string	optiBoard = "                                                                         ";
+
+	for (int i = 0; i < OPTI_BOARD_SIZE; i++)
+	{
+		tmp = 0;
+
+		for (int j = 0; j < 4; j++)
+		{
+			int id = (i + 1) * 4 - (j + 1);
+
+			if (id >= GRID_NB_INTER)
+				continue;
+
+			if (board[id] == 'E')
+				tmp += 0b00 << (j * 2);
+			else if (board[id] == 'L')
+				tmp += 0b01 << (j * 2);
+			else if (board[id] == 'R')
+				tmp += 0b10 << (j * 2);
+			else
+				tmp += 0b11 << (j * 2);
+		}
+
+		optiBoard[i] = tmp;
+	}
+
+	return (optiBoard);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +62,6 @@ Grid::Grid(void)
 	this->dirs[DIR_DL] = sf::Vector2i(-1, 1);
 
 	this->currentMove = "";
-	// this->currentBoardState = "";
 	this->createBoardState();
 
 	this->bboxUL = sf::Vector2i(GRID_W_INTER - 1, GRID_W_INTER - 1);
@@ -81,6 +112,12 @@ std::string	Grid::getCurrentBoardState(void)
 	return (this->currentBoardState);
 }
 
+
+std::string	Grid::getCurrentBoardStateOpti(void)
+{
+	return (this->currentBoardStateOpti);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -104,6 +141,7 @@ Grid	&Grid::operator=(const Grid &grid)
 	this->bboxUL = grid.bboxUL;
 	this->bboxDR = grid.bboxDR;
 	this->currentBoardState = grid.currentBoardState;
+	this->currentBoardStateOpti = grid.currentBoardStateOpti;
 
 	return (*this);
 }
@@ -624,11 +662,11 @@ bool	Grid::putStone(
 
 	interId = move->y * GRID_W_INTER + move->x;
 	if (plType == INTER_LEFT)
-		this->currentBoardState[interId] = 'L';
+		this->updateBoardState(interId, 'L');
 	else if (plType == INTER_RIGHT)
-		this->currentBoardState[interId] = 'R';
+		this->updateBoardState(interId, 'R');
 	else
-		this->currentBoardState[interId] = 'E';
+		this->updateBoardState(interId, 'E');
 
 	return (true);
 }
@@ -657,7 +695,7 @@ void	Grid::removeStone(sf::Vector2i *move, Tracker *tracker)
 	inter->type = INTER_EMPTY;
 
 	// Update board state
-	this->currentBoardState[move->x + move->y * GRID_W_INTER] = 'E';
+	this->updateBoardState(move->x + move->y * GRID_W_INTER, 'E');
 
 	// For each axis
 	for (int axis = 0; axis < 8; axis++)
@@ -724,13 +762,13 @@ void	Grid::resetGridByBoardState(std::string boardState, Tracker *tracker)
 			{
 				this->gridState[i].type = INTER_LEFT;
 				// Update board state
-				this->currentBoardState[i] = 'L';
+				this->updateBoardState(i, 'L');
 			}
 			else
 			{
 				this->gridState[i].type = INTER_RIGHT;
 				// Update board state
-				this->currentBoardState[i] = 'R';
+				this->updateBoardState(i, 'R');
 			}
 
 			// Update neighbor
@@ -1127,16 +1165,18 @@ int	Grid::checkCapture(sf::Vector2i *move, inter_type plType, inter_type opType)
 		y = move->y + this->dirs[axis].y;
 		for (int i = 0; i < 8; i++)
 			this->updateNeighbor(x + this->dirs[i].x, y + this->dirs[i].y);
+
 		// Update current board state
-		this->currentBoardState[y * GRID_W_INTER + x] = 'E';
+		this->updateBoardState(y * GRID_W_INTER + x, 'E');
 
 		// Update stone arround second captured stone
 		x += this->dirs[axis].x;
 		y += this->dirs[axis].y;
 		for (int i = 0; i < 8; i++)
 			this->updateNeighbor(x + this->dirs[i].x, y + this->dirs[i].y);
+
 		// Update current board state
-		this->currentBoardState[y * GRID_W_INTER + x] = 'E';
+		this->updateBoardState(y * GRID_W_INTER + x, 'E');
 
 		// Update neighbors in the axis
 		this->updateNeighbor(x + this->dirs[axis].x * 4,
@@ -1311,6 +1351,44 @@ void	Grid::createBoardState(void)
 		else
 			this->currentBoardState += 'E';
 	}
+
+	this->currentBoardStateOpti = createOptiBoardFromBoard(this->currentBoardState);
+}
+
+void	Grid::updateBoardState(int id, char c)
+{
+	int		i, j;
+	char	tmp, newChar;
+
+	// Update currentBoardState
+	this->currentBoardState[id] = c;
+
+	// Update currentBoardStateOpti
+	i = id / 4;
+	j = 3 - (id % 4);
+	tmp = this->currentBoardStateOpti[i];
+	newChar = 0;
+
+	for (int k = 0; k < 4; k++)
+	{
+		if (k == j)
+		{
+			if (c == 'E')
+				newChar += 0b00 << (k * 2);
+			else if (c == 'L')
+				newChar += 0b01 << (k * 2);
+			else if (c == 'R')
+				newChar += 0b10 << (k * 2);
+			else
+				newChar += 0b11 << (k * 2);
+		}
+		else
+		{
+			newChar += tmp & 0b11 << (k * 2);
+		}
+	}
+
+	this->currentBoardStateOpti[i] = newChar;
 }
 
 

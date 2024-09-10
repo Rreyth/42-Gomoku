@@ -26,10 +26,9 @@ public:
 	sf::Vector2i	getNextMove(Grid *grid, Player *player, Player *opponent, Evaluation *evaluator);
 
 private:
-	double			timer;
-	AI_difficulty	difficulty;
-	std::unordered_map<std::string, int>						memoryEvaluation;
-	std::unordered_map<std::string, std::vector<sf::Vector2i>>	memoryMoves;
+	double									timer;
+	AI_difficulty							difficulty;
+	std::unordered_map<std::string, int>	memoryEvaluation;
 
 	sf::Vector2i	getRandomMove(Grid *grid, Player *player, Player *opponent);
 	sf::Vector2i	getBetterRandom(Grid *grid, Player *player, Player *opponent);

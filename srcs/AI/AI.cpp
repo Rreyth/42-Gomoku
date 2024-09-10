@@ -49,7 +49,6 @@ void	AI::setAI(AI_difficulty difficulty)
 	this->difficulty = difficulty;
 	this->timer = 0;
 	this->memoryEvaluation.clear();
-	this->memoryMoves.clear();
 }
 
 sf::Vector2i	AI::getNextMove(
@@ -132,8 +131,8 @@ sf::Vector2i	AI::getNextMove(
 		printf("   - about %'f us per call\n", (float)tracker.reverseStoneCaptureTime / tracker.reverseStoneCaptureNumber);
 		printf("  memory usage\n");
 		long size = this->memoryEvaluation.size();
-		std::string boardState = grid->getCurrentBoardState();
-		long memorySize = size * (sizeof(boardState) + sizeof(int));
+		std::string boardState = grid->getCurrentBoardStateOpti();
+		long memorySize = size * (boardState.capacity() + sizeof(int));
 		printf("   - memory evaluation : %'li elements for %'li octets\n", size, memorySize);
 	}
 	else
@@ -147,7 +146,6 @@ sf::Vector2i	AI::getNextMove(
 void	AI::reset(void)
 {
 	this->memoryEvaluation.clear();
-	this->memoryMoves.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -236,7 +234,6 @@ sf::Vector2i	AI::getEasyMove(
 
 static int	mediumMiniMax(
 				std::unordered_map<std::string, int> *memoryEvaluation,
-				std::unordered_map<std::string, std::vector<sf::Vector2i>> *memoryMoves,
 				Grid *grid, Player *player, Player *opponent,
 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
 				int depth, Tracker *tracker)
@@ -258,10 +255,10 @@ static int	mediumMiniMax(
 	opType = opponent->getInterType();
 	plCapture = player->getCaptured();
 	opCapture = opponent->getCaptured();
-	boardState = grid->getCurrentBoardState();
 
 	if (depth <= 0)
 	{
+		boardState = grid->getCurrentBoardStateOpti();
 		// Check in memory if we already compute the evaluation of this grid
 		try
 		{
@@ -283,25 +280,9 @@ static int	mediumMiniMax(
 		return (tmpEval);
 	}
 
+	boardState = grid->getCurrentBoardState();
+
 	// Get interesting moves
-	// try
-	// {
-	// 	moves = memoryMoves->at(boardState);
-	// }
-	// catch (std::exception e)
-	// {
-	// 	if (maximizingEval)
-	// 		moves = grid->getInterestingMovesSorted(player, opponent, evaluator, true, tracker);
-	// 	else
-	// 		moves = grid->getInterestingMovesSorted(opponent, player, evaluator, false, tracker);
-	// 	memoryMoves->insert(std::pair<std::string, std::vector<sf::Vector2i>>(boardState, moves));
-	// }
-
-	// if (maximizingEval)
-	// 	moves = grid->getInterestingMovesSorted(player, opponent, evaluator, true, tracker);
-	// else
-	// 	moves = grid->getInterestingMovesSorted(opponent, player, evaluator, false, tracker);
-
 	grid->saveInterestingMovesSorted(&movesLeft, &movesRight);
 	if (maximizingEval)
 		moves = grid->getInterestingMovesSortedSaved(plType);
@@ -419,13 +400,14 @@ static int	mediumMiniMax(
 		}
 
 		if (depth > 1)
-			grid->updateInterestingMovesSorted(player, opponent, evaluator, tracker, &moves[i]);
+			grid->updateInterestingMovesSorted(
+					player, opponent, evaluator, tracker, &moves[i]);
 
 		// Get evaluation for this move
-		tmpEval = mediumMiniMax(memoryEvaluation, memoryMoves,
-						grid, player, opponent, evaluator,
-						!maximizingEval, alpha, beta,
-						depth - 1, tracker);
+		tmpEval = mediumMiniMax(memoryEvaluation, grid,
+					player, opponent, evaluator,
+					!maximizingEval, alpha, beta,
+					depth - 1, tracker);
 
 		// For maximizing
 		if (maximizingEval)
@@ -520,7 +502,6 @@ sf::Vector2i	AI::getMediumMove(
 	grid->saveWinPos(&leftWinPos, &rightWinPos);
 
 	// Get interesting move
-	// moves = grid->getInterestingMoves(player, opponent);
 	moves = grid->getInterestingMovesSortedSaved(plType);
 	if (moves.size() == 0)
 	{
@@ -562,8 +543,7 @@ sf::Vector2i	AI::getMediumMove(
 		grid->updateInterestingMovesSorted(player, opponent, evaluator, tracker, &moves[i]);
 
 		// Get evaluation for this move
-		tmpEval = mediumMiniMax(&this->memoryEvaluation, &this->memoryMoves,
-					grid,
+		tmpEval = mediumMiniMax(&this->memoryEvaluation, grid,
 					player, opponent, evaluator, false, -1000000001, 1000000001,
 					DEPTH, tracker);
 

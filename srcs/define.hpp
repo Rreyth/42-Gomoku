@@ -18,6 +18,7 @@
 # define GRID_SIZE 633
 # define GRID_W_INTER 17
 # define GRID_NB_INTER 289 // 289 = 17 * 17
+# define OPTI_BOARD_SIZE 73 // 289 / 4 = 72.25 -> 73
 
 # define AI_MAX_DEPTH 10
 

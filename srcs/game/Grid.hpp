@@ -21,6 +21,7 @@ public:
 	int							getH(void);
 	std::string					getCurrentMove(void);
 	std::string					getCurrentBoardState(void);
+	std::string					getCurrentBoardStateOpti(void);
 	inter_type					getInterState(int x, int y);
 	intersection				*getIntersection(int x, int y);
 
@@ -65,8 +66,7 @@ private:
 	game_rules					rule;
 	std::vector<sf::Vector2i>	leftWinPos, rightWinPos, interestingMovesLeft, interestingMovesRight;
 	std::vector<std::string>	boardStates;
-	std::string					currentBoardState;
-	std::string					currentMove;
+	std::string					currentBoardState, currentBoardStateOpti, currentMove;
 
 	void			setInterState(int x, int y, inter_type interType);
 	bool			checkDoubleFreeThree(int x, int y, inter_type plType, inter_type opType);
@@ -77,6 +77,7 @@ private:
 	bool			checkWinCaptureCase(Player *me, Player *oppenent, sf::Vector2i *move, dir_neighbor dir, dir_neighbor opdir);
 	void			setBoardState(int id);
 	void			createBoardState(void);
+	void			updateBoardState(int id, char c);
 	void			createCurrentMoveText(void);
 	void			insertMoves(std::vector<sf::Vector2i> &moves, sf::Vector2i *move, bool reverse, Evaluation *evaluator, Player *player, Player *opponent);
 };
