@@ -16,9 +16,9 @@
 # define GRID_SQUARE_HALF_SIZE 17
 # define GRID_SQUARE_SIZE 34
 # define GRID_SIZE 633
-# define GRID_W_INTER 17
-# define GRID_NB_INTER 289 // 289 = 17 * 17
-# define OPTI_BOARD_SIZE 73 // 289 / 4 = 72.25 -> 73
+# define GRID_W_INTER 19
+# define GRID_NB_INTER 361 // 361 = 19 * 19
+# define OPTI_BOARD_SIZE 91 // 361 / 4 = 90.25 -> 91
 
 # define AI_MAX_DEPTH 10
 

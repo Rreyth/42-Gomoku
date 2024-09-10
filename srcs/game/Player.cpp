@@ -147,8 +147,8 @@ sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse, Eva
 			int	my = mouse->getY();
 			mx -= grid->getX();
 			my -= grid->getY();
-			int px = (mx - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
-			int py = (my - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+			int px = (mx + GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+			int py = (my + GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 			if (grid->checkLegalMove(px, py, nbMoves, this->interType, opponent->getInterType()))
 			{
 				move.x = px;

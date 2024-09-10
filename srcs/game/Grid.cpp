@@ -6,7 +6,7 @@
 static std::string	createOptiBoardFromBoard(std::string &board)
 {
 	char		tmp;
-	std::string	optiBoard = "                                                                         ";
+	std::string	optiBoard = "                                                                                          ";
 
 	for (int i = 0; i < OPTI_BOARD_SIZE; i++)
 	{
@@ -163,13 +163,13 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	int	my = mouse->getY();
 	mx -= this->x;
 	my -= this->y;
-	int px = (mx - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
-	int py = (my - GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+	int px = (mx + GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
+	int py = (my + GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 
 	// TODO: REMOVE PRINT TEST PART
 	if (mouse->isPressed(MBUT_RIGHT))
 	{
-		std::string	xaxis = "ABCDEFGHIJKLMNOPQ";
+		std::string	xaxis = "ABCDEFGHIJKLMNOPQRS";
 		intersection	*inter = this->getIntersection(px, py);
 		std::cout << "\nPosition " << xaxis[px] << py + 1 << " :" << std::endl;
 		std::cout << "    Evalutation Left  : "
@@ -220,13 +220,13 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 {
 	textureManager->drawTexture(window, SPRITE_GRID, this->x, this->y, TOP_LEFT);
 
-	std::string	xlabels = ".ABCDEFGHIJKLMNOPQR.";
+	std::string	xlabels = "ABCDEFGHIJKLMNOPQRST.";
 	std::string	label;
 	int	interX, interY, drawX, drawY;
 
 	drawY = this->y - 15;
 	//letters top
-	for (int i = 1; i <= GRID_W_INTER; i++)
+	for (int i = 0; i < GRID_W_INTER; i++)
 	{
 		drawX = this->x + i * GRID_SQUARE_SIZE + 10;
 		label = "";
@@ -236,11 +236,11 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 
 	//numbers left
 	drawX = this->x - 10;
-	for (int i = 1; i <= GRID_W_INTER; i++)
+	for (int i = 0; i < GRID_W_INTER; i++)
 	{
 		drawY = this->y + i * GRID_SQUARE_SIZE - 4 + 10;
-		label = std::to_string(i);
-		if (i == 1)
+		label = std::to_string(i + 1);
+		if (i == 0)
 			drawText(window, text, label, drawX - 3, drawY, 20, sf::Color::White, MID_RIGHT);
 		else
 			drawText(window, text, label, drawX, drawY, 20, sf::Color::White, MID_RIGHT);
@@ -255,8 +255,8 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 		interX = i % GRID_W_INTER;
 		interY = i / GRID_W_INTER;
 
-		drawX = this->x + (interX + 1) * GRID_SQUARE_SIZE + 10;
-		drawY = this->y + (interY + 1) * GRID_SQUARE_SIZE + 10;
+		drawX = this->x + interX * GRID_SQUARE_SIZE + 10;
+		drawY = this->y + interY * GRID_SQUARE_SIZE + 10;
 
 		if (this->gridState[i].type == INTER_LEFT)
 			textureManager->drawTexture(window, this->leftStone, drawX, drawY, MID_CENTER);
@@ -267,8 +267,8 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 	//draw stone preview
 	if (this->previewLegal)
 	{
-		drawX = this->x + (this->previewX + 1) * GRID_SQUARE_SIZE + 10;
-		drawY = this->y + (this->previewY + 1) * GRID_SQUARE_SIZE + 10;
+		drawX = this->x + this->previewX * GRID_SQUARE_SIZE + 10;
+		drawY = this->y + this->previewY * GRID_SQUARE_SIZE + 10;
 		textureManager->drawTexture(window, SPRITE_STONE_PREVIEW, drawX, drawY, MID_CENTER);
 	}
 }
