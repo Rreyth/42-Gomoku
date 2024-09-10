@@ -32,6 +32,7 @@ public:
 	void						draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	bool						checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState);
 	bool						putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
+	bool						checkWinCondition(Player *me, Player *opponent, sf::Vector2i move);
 	void						clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
 	void						reset(void);
 	// void						goToFirstMove(void);
@@ -53,7 +54,6 @@ public:
 	// void						loadBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR);
 	// void						saveWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos);
 	// void						loadWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos);
-	// bool						checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move);
 	// void						addBoardState(void);
 	// void						disablePreview(void);
 

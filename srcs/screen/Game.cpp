@@ -120,12 +120,12 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 
 		this->swapTurn(&move);
 		// this->grid.addBoardState();
-		// if (this->grid.checkWinCondition(me, opponent, move))
-		// {
-		// 	this->grid.goToLastMove();
-		// 	*displayState = DISPLAY_END;
-		// 	return ;
-		// }
+		if (this->grid.checkWinCondition(me, opponent, move))
+		{
+			// this->grid.goToLastMove();
+			*displayState = DISPLAY_END;
+			return ;
+		}
 	}
 
 	if (this->mode == BLITZ)

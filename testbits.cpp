@@ -144,15 +144,11 @@ int	main(void)
 
 	printGrid(&grid);
 
-	putStone(&grid, 0, 0, true);
-	putStone(&grid, 1, 0, true);
-	putStone(&grid, 2, 0, true);
 	putStone(&grid, 3, 0, true);
 	putStone(&grid, 4, 0, true);
 	putStone(&grid, 5, 0, true);
 	putStone(&grid, 6, 0, true);
 	putStone(&grid, 7, 0, true);
-	putStone(&grid, 4, 2, true);
 
 	printGrid(&grid);
 
@@ -160,6 +156,14 @@ int	main(void)
 
 	x = 4;
 	y = 2;
+
+	char verify = 0b11111;
+	char tmp = 0b01011111 & 0b00111110;
+
+	if (tmp == verify)
+		printf("tkt %b\n", tmp);
+	else
+		printf("nop %b\n", tmp);
 
 	return (0);
 }

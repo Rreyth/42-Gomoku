@@ -292,6 +292,64 @@ bool	Grid::putStone(
 }
 
 
+bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
+{
+	int	winCase, check;
+
+	// Check if the player capture at least 10 opponent's stones
+	if (me->getCaptured() >= WIN_CAPTURE)
+	{
+		me->setWinState(WIN_STATE_CAPTURE);
+		this->previewLegal = false;
+		return (true);
+	}
+
+	// TODO: DISABLE WIN WHEN CAPTURE
+	// Check win by align
+	winCase = 0b11111;
+
+	if (me->getInterType() == INTER_LEFT)
+	{
+		for (int i = 0; i < GRID_W_INTER; i++)
+		{
+			check = 0b11111;
+			for (int j = 0; j < GRID_W_INTER - 4; j++)
+			{
+				if ((this->bitboardL.bbH[i] & check) >> j == winCase)
+					return (true);
+				if ((this->bitboardL.bbV[i] & check) >> j == winCase)
+					return (true);
+				if ((this->bitboardL.bbD[i] & check) >> j == winCase)
+					return (true);
+				if ((this->bitboardL.bbA[i] & check) >> j == winCase)
+					return (true);
+				check <<= 1;
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < GRID_W_INTER; i++)
+		{
+			check = 0b11111;
+			for (int j = 0; j < GRID_W_INTER - 4; j++)
+			{
+				if ((this->bitboardR.bbH[i] & check) >> j == winCase)
+					return (true);
+				if ((this->bitboardR.bbV[i] & check) >> j == winCase)
+					return (true);
+				if ((this->bitboardR.bbD[i] & check) >> j == winCase)
+					return (true);
+				if ((this->bitboardR.bbA[i] & check) >> j == winCase)
+					return (true);
+				check <<= 1;
+			}
+		}
+	}
+
+	return (false);
+}
+
 void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule)
 {
 	this->leftStone = leftStone;
