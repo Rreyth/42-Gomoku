@@ -55,16 +55,16 @@ void	End::tick(display_state *displayState, float delta, Mouse *mouse, Game *gam
 
 	if (this->back.getPressed())
 		*displayState = DISPLAY_MENU;
-	else if (this->firstMove.getPressed())
-		game->getGrid()->goToFirstMove();
-	else if (this->previousMove.getPressed())
-		game->getGrid()->goToPreviousMove();
-	else if (this->nextMove.getPressed())
-		game->getGrid()->goToNextMove();
-	else if (this->lastMove.getPressed())
-		game->getGrid()->goToLastMove();
-	else if (this->replay.getPressed())
-		game->replay(displayState);
+	// else if (this->firstMove.getPressed())
+	// 	game->getGrid()->goToFirstMove();
+	// else if (this->previousMove.getPressed())
+	// 	game->getGrid()->goToPreviousMove();
+	// else if (this->nextMove.getPressed())
+	// 	game->getGrid()->goToNextMove();
+	// else if (this->lastMove.getPressed())
+	// 	game->getGrid()->goToLastMove();
+	// else if (this->replay.getPressed())
+	// 	game->replay(displayState);
 }
 
 

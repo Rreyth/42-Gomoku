@@ -131,9 +131,9 @@ sf::Vector2i	AI::getNextMove(
 		printf("   - about %'f us per call\n", (float)tracker.reverseStoneCaptureTime / tracker.reverseStoneCaptureNumber);
 		printf("  memory usage\n");
 		long size = this->memoryEvaluation.size();
-		std::string boardState = grid->getCurrentBoardStateOpti();
-		long memorySize = size * (boardState.capacity() + sizeof(int));
-		printf("   - memory evaluation : %'li elements for %'li octets\n", size, memorySize);
+		// std::string boardState = grid->getCurrentBoardStateOpti();
+	// 	long memorySize = size * (boardState.capacity() + sizeof(int));
+	// 	printf("   - memory evaluation : %'li elements for %'li octets\n", size, memorySize);
 	}
 	else
 	{
@@ -154,36 +154,40 @@ void	AI::reset(void)
 
 sf::Vector2i	AI::getRandomMove(Grid *grid, Player *player, Player *opponent)
 {
-	std::vector<sf::Vector2i>	legalMoves;
+	return (sf::Vector2i(-1, -1));
 
-	// Get all legal moves
-	legalMoves = grid->getLegalMoves(player, opponent);
-	if (legalMoves.size() == 0)
-		return (sf::Vector2i(-1, -1));
+	// std::vector<sf::Vector2i>	legalMoves;
 
-	// Choose move to play
-	int index = rand_int(0, legalMoves.size() - 1);
-	return (legalMoves[index]);
+	// // Get all legal moves
+	// legalMoves = grid->getLegalMoves(player, opponent);
+	// if (legalMoves.size() == 0)
+	// 	return (sf::Vector2i(-1, -1));
+
+	// // Choose move to play
+	// int index = rand_int(0, legalMoves.size() - 1);
+	// return (legalMoves[index]);
 }
 
 
 sf::Vector2i	AI::getBetterRandom(Grid *grid, Player *player, Player *opponent)
 {
-	std::vector<sf::Vector2i>	interestingMoves;
+	return (sf::Vector2i(-1, -1));
 
-	// Get interesting move
-	interestingMoves = grid->getInterestingMoves(player, opponent);
-	if (interestingMoves.size() == 0)
-	{
-		if (player->getMoves() + opponent->getMoves() == 0)
-			return(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
-		else
-			return (sf::Vector2i(-1, -1));
-	}
+	// std::vector<sf::Vector2i>	interestingMoves;
 
-	// Find move to play
-	int index = rand_int(0, interestingMoves.size() - 1);
-	return (interestingMoves[index]);
+	// // Get interesting move
+	// interestingMoves = grid->getInterestingMoves(player, opponent);
+	// if (interestingMoves.size() == 0)
+	// {
+	// 	if (player->getMoves() + opponent->getMoves() == 0)
+	// 		return(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
+	// 	else
+	// 		return (sf::Vector2i(-1, -1));
+	// }
+
+	// // Find move to play
+	// int index = rand_int(0, interestingMoves.size() - 1);
+	// return (interestingMoves[index]);
 }
 
 
@@ -191,405 +195,409 @@ sf::Vector2i	AI::getEasyMove(
 						Grid *grid, Player *player, Player *opponent,
 						Evaluation *evaluator)
 {
-	int							maxEval, tmpEval, plCapture, opCapture;
-	sf::Vector2i				move;
-	std::vector<sf::Vector2i>	interestingMoves;
-	inter_type					plType, opType;
+	return (sf::Vector2i(-1, -1));
 
-	// Get interesting move
-	interestingMoves = grid->getInterestingMoves(player, opponent);
-	if (interestingMoves.size() == 0)
-	{
-		if (player->getMoves() + opponent->getMoves() == 0)
-			return(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
-		else
-			return (sf::Vector2i(-1, -1));
-	}
+	// int							maxEval, tmpEval, plCapture, opCapture;
+	// sf::Vector2i				move;
+	// std::vector<sf::Vector2i>	interestingMoves;
+	// inter_type					plType, opType;
 
-	// Compute variables for evaluation
-	plType = player->getInterType();
-	opType = opponent->getInterType();
-	plCapture = player->getCaptured();
-	opCapture = opponent->getCaptured();
+	// // Get interesting move
+	// interestingMoves = grid->getInterestingMoves(player, opponent);
+	// if (interestingMoves.size() == 0)
+	// {
+	// 	if (player->getMoves() + opponent->getMoves() == 0)
+	// 		return(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
+	// 	else
+	// 		return (sf::Vector2i(-1, -1));
+	// }
 
-	// Find move to play
-	move = sf::Vector2i(-1, -1);
-	maxEval = -1;
-	for (int i = 0; i < interestingMoves.size(); i++)
-	{
-		tmpEval = evaluator->evaluationPosition(
-								grid, plType, opType, plCapture, opCapture,
-								interestingMoves[i].x, interestingMoves[i].y);
-		if (tmpEval > maxEval)
-		{
-			maxEval = tmpEval;
-			move = interestingMoves[i];
-		}
-	}
+	// // Compute variables for evaluation
+	// plType = player->getInterType();
+	// opType = opponent->getInterType();
+	// plCapture = player->getCaptured();
+	// opCapture = opponent->getCaptured();
 
-	return (move);
+	// // Find move to play
+	// move = sf::Vector2i(-1, -1);
+	// maxEval = -1;
+	// for (int i = 0; i < interestingMoves.size(); i++)
+	// {
+	// 	tmpEval = evaluator->evaluationPosition(
+	// 							grid, plType, opType, plCapture, opCapture,
+	// 							interestingMoves[i].x, interestingMoves[i].y);
+	// 	if (tmpEval > maxEval)
+	// 	{
+	// 		maxEval = tmpEval;
+	// 		move = interestingMoves[i];
+	// 	}
+	// }
+
+	// return (move);
 }
 
-# define DEPTH 3
+// # define DEPTH 3
 
-static int	mediumMiniMax(
-				std::unordered_map<std::string, int> *memoryEvaluation,
-				Grid *grid, Player *player, Player *opponent,
-				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
-				int depth, Tracker *tracker)
-{
-	int							maxEval, tmpEval, plCapture, opCapture,
-								nbMoves, plMoves, opMoves;
-	bool						someoneWin;
-	std::string					boardState;
-	std::vector<sf::Vector2i>	moves, movesLeft, movesRight;
-	inter_type					plType, opType;
-	sf::Vector2i				bboxUL, bboxDR;
+// static int	mediumMiniMax(
+// 				std::unordered_map<std::string, int> *memoryEvaluation,
+// 				Grid *grid, Player *player, Player *opponent,
+// 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
+// 				int depth, Tracker *tracker)
+// {
+// 	int							maxEval, tmpEval, plCapture, opCapture,
+// 								nbMoves, plMoves, opMoves;
+// 	bool						someoneWin;
+// 	std::string					boardState;
+// 	std::vector<sf::Vector2i>	moves, movesLeft, movesRight;
+// 	inter_type					plType, opType;
+// 	sf::Vector2i				bboxUL, bboxDR;
 
-	// TODO : REMOVE
-	std::clock_t	start;
-	int				diff;
+// 	// TODO : REMOVE
+// 	std::clock_t	start;
+// 	int				diff;
 
-	// Compute variables for evaluation and put stone
-	plType = player->getInterType();
-	opType = opponent->getInterType();
-	plCapture = player->getCaptured();
-	opCapture = opponent->getCaptured();
+// 	// Compute variables for evaluation and put stone
+// 	plType = player->getInterType();
+// 	opType = opponent->getInterType();
+// 	plCapture = player->getCaptured();
+// 	opCapture = opponent->getCaptured();
 
-	if (depth <= 0)
-	{
-		boardState = grid->getCurrentBoardStateOpti();
-		// Check in memory if we already compute the evaluation of this grid
-		try
-		{
-			// If yes, just get it from memory
-			tmpEval = memoryEvaluation->at(boardState);
-			tracker->nbEvaluationsMemory++;
-		}
-		catch (std::exception e)
-		{
-			// If not, compute it and store it in memory
-			tracker->nbEvaluations++;
-			start = std::clock();
-			tmpEval = evaluator->evaluateGrid(
-								grid, plType, opType, plCapture, opCapture);
-			memoryEvaluation->insert(std::pair<std::string, int>(boardState, tmpEval));
-			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-			tracker->evaluationTime += diff;
-		}
-		return (tmpEval);
-	}
+// 	if (depth <= 0)
+// 	{
+// 		boardState = grid->getCurrentBoardStateOpti();
+// 		// Check in memory if we already compute the evaluation of this grid
+// 		try
+// 		{
+// 			// If yes, just get it from memory
+// 			tmpEval = memoryEvaluation->at(boardState);
+// 			tracker->nbEvaluationsMemory++;
+// 		}
+// 		catch (std::exception e)
+// 		{
+// 			// If not, compute it and store it in memory
+// 			tracker->nbEvaluations++;
+// 			start = std::clock();
+// 			tmpEval = evaluator->evaluateGrid(
+// 								grid, plType, opType, plCapture, opCapture);
+// 			memoryEvaluation->insert(std::pair<std::string, int>(boardState, tmpEval));
+// 			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+// 			tracker->evaluationTime += diff;
+// 		}
+// 		return (tmpEval);
+// 	}
 
-	boardState = grid->getCurrentBoardState();
+// 	boardState = grid->getCurrentBoardState();
 
-	// Get interesting moves
-	grid->saveInterestingMovesSorted(&movesLeft, &movesRight);
-	if (maximizingEval)
-		moves = grid->getInterestingMovesSortedSaved(plType);
-	else
-		moves = grid->getInterestingMovesSortedSaved(opType);
+// 	// Get interesting moves
+// 	grid->saveInterestingMovesSorted(&movesLeft, &movesRight);
+// 	if (maximizingEval)
+// 		moves = grid->getInterestingMovesSortedSaved(plType);
+// 	else
+// 		moves = grid->getInterestingMovesSortedSaved(opType);
 
-	if (moves.size() == 0)
-		return (0);
+// 	if (moves.size() == 0)
+// 		return (0);
 
-	// Compute variables put stone and reset players
-	plMoves = player->getMoves();
-	opMoves = opponent->getMoves();
-	nbMoves = plMoves + opMoves;
-	grid->saveBbox(&bboxUL, &bboxDR);
+// 	// Compute variables put stone and reset players
+// 	plMoves = player->getMoves();
+// 	opMoves = opponent->getMoves();
+// 	nbMoves = plMoves + opMoves;
+// 	grid->saveBbox(&bboxUL, &bboxDR);
 
-	std::vector<sf::Vector2i>	leftWinPos, rightWinPos;
-	grid->saveWinPos(&leftWinPos, &rightWinPos);
+// 	std::vector<sf::Vector2i>	leftWinPos, rightWinPos;
+// 	grid->saveWinPos(&leftWinPos, &rightWinPos);
 
-	// Find move
-	if (maximizingEval)
-		maxEval = -1000000001;
-	else
-		maxEval = 1000000001;
+// 	// Find move
+// 	if (maximizingEval)
+// 		maxEval = -1000000001;
+// 	else
+// 		maxEval = 1000000001;
 
-	for (int i = 0; i < moves.size(); i++)
-	{
-		if (i > 0)
-		{
-			// Reset grid
-			grid->loadBbox(&bboxUL, &bboxDR);
-			grid->loadWinPos(&leftWinPos, &rightWinPos);
-			grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
-			grid->removeStone(&moves[i - 1], tracker);
-			if (player->getCaptured() != plCapture
-				|| opponent->getCaptured() != opCapture)
-				grid->resetGridByBoardState(boardState, tracker);
+// 	for (int i = 0; i < moves.size(); i++)
+// 	{
+// 		if (i > 0)
+// 		{
+// 			// Reset grid
+// 			grid->loadBbox(&bboxUL, &bboxDR);
+// 			grid->loadWinPos(&leftWinPos, &rightWinPos);
+// 			grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
+// 			grid->removeStone(&moves[i - 1], tracker);
+// 			if (player->getCaptured() != plCapture
+// 				|| opponent->getCaptured() != opCapture)
+// 				grid->resetGridByBoardState(boardState, tracker);
 
-			// Reset players
-			player->setMoves(plMoves);
-			player->setCaptured(plCapture);
-			opponent->setMoves(opMoves);
-			opponent->setCaptured(opCapture);
-		}
+// 			// Reset players
+// 			player->setMoves(plMoves);
+// 			player->setCaptured(plCapture);
+// 			opponent->setMoves(opMoves);
+// 			opponent->setCaptured(opCapture);
+// 		}
 
-		start = std::clock();
-		// Simulate new move
-		if (maximizingEval)
-		{
-			if (!grid->putStone(&moves[i], nbMoves, player, opponent))
-				continue;
-			player->addMove();
-		}
-		else
-		{
-			if (!grid->putStone(&moves[i], nbMoves, opponent, player))
-				continue;
-			opponent->addMove();
-		}
-		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-		tracker->putStoneTime += diff;
-		tracker->checkStoneNumber++;
+// 		start = std::clock();
+// 		// Simulate new move
+// 		if (maximizingEval)
+// 		{
+// 			if (!grid->putStone(&moves[i], nbMoves, player, opponent))
+// 				continue;
+// 			player->addMove();
+// 		}
+// 		else
+// 		{
+// 			if (!grid->putStone(&moves[i], nbMoves, opponent, player))
+// 				continue;
+// 			opponent->addMove();
+// 		}
+// 		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+// 		tracker->putStoneTime += diff;
+// 		tracker->checkStoneNumber++;
 
-		start = std::clock();
-		// Check victory
-		if (maximizingEval)
-			someoneWin = grid->checkWinCondition(player, opponent, moves[i]);
-		else
-			someoneWin = grid->checkWinCondition(opponent, player, moves[i]);
-		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-		tracker->checkWinTime += diff;
-		if (someoneWin)
-		{
-			// Player wins
-			if (player->getWinState() != WIN_STATE_NONE)
-			{
-				// Reset grid
-				grid->loadBbox(&bboxUL, &bboxDR);
-				grid->loadWinPos(&leftWinPos, &rightWinPos);
-				grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
-				grid->removeStone(&moves[i], tracker);
-				if (player->getCaptured() != plCapture
-					|| opponent->getCaptured() != opCapture)
-					grid->resetGridByBoardState(boardState, tracker);
+// 		start = std::clock();
+// 		// Check victory
+// 		if (maximizingEval)
+// 			someoneWin = grid->checkWinCondition(player, opponent, moves[i]);
+// 		else
+// 			someoneWin = grid->checkWinCondition(opponent, player, moves[i]);
+// 		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+// 		tracker->checkWinTime += diff;
+// 		if (someoneWin)
+// 		{
+// 			// Player wins
+// 			if (player->getWinState() != WIN_STATE_NONE)
+// 			{
+// 				// Reset grid
+// 				grid->loadBbox(&bboxUL, &bboxDR);
+// 				grid->loadWinPos(&leftWinPos, &rightWinPos);
+// 				grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
+// 				grid->removeStone(&moves[i], tracker);
+// 				if (player->getCaptured() != plCapture
+// 					|| opponent->getCaptured() != opCapture)
+// 					grid->resetGridByBoardState(boardState, tracker);
 
-				// Reset players
-				player->setWinState(WIN_STATE_NONE);
-				player->setMoves(plMoves);
-				player->setCaptured(plCapture);
-				opponent->setMoves(opMoves);
-				opponent->setCaptured(opCapture);
+// 				// Reset players
+// 				player->setWinState(WIN_STATE_NONE);
+// 				player->setMoves(plMoves);
+// 				player->setCaptured(plCapture);
+// 				opponent->setMoves(opMoves);
+// 				opponent->setCaptured(opCapture);
 
-				return (1000000000); // Nothing is better than a victory
-			}
-			// Opponent wins
-			else if (opponent->getWinState() != WIN_STATE_NONE)
-			{
-				// Reset grid
-				grid->loadBbox(&bboxUL, &bboxDR);
-				grid->loadWinPos(&leftWinPos, &rightWinPos);
-				grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
-				grid->removeStone(&moves[i], tracker);
-				if (player->getCaptured() != plCapture
-					|| opponent->getCaptured() != opCapture)
-					grid->resetGridByBoardState(boardState, tracker);
+// 				return (1000000000); // Nothing is better than a victory
+// 			}
+// 			// Opponent wins
+// 			else if (opponent->getWinState() != WIN_STATE_NONE)
+// 			{
+// 				// Reset grid
+// 				grid->loadBbox(&bboxUL, &bboxDR);
+// 				grid->loadWinPos(&leftWinPos, &rightWinPos);
+// 				grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
+// 				grid->removeStone(&moves[i], tracker);
+// 				if (player->getCaptured() != plCapture
+// 					|| opponent->getCaptured() != opCapture)
+// 					grid->resetGridByBoardState(boardState, tracker);
 
-				// Reset players
-				opponent->setWinState(WIN_STATE_NONE);
-				player->setMoves(plMoves);
-				player->setCaptured(plCapture);
-				opponent->setMoves(opMoves);
-				opponent->setCaptured(opCapture);
+// 				// Reset players
+// 				opponent->setWinState(WIN_STATE_NONE);
+// 				player->setMoves(plMoves);
+// 				player->setCaptured(plCapture);
+// 				opponent->setMoves(opMoves);
+// 				opponent->setCaptured(opCapture);
 
-				return (-1000000000); // Nothing is worst than a defeat
-			}
-		}
+// 				return (-1000000000); // Nothing is worst than a defeat
+// 			}
+// 		}
 
-		if (depth > 1)
-			grid->updateInterestingMovesSorted(
-					player, opponent, evaluator, tracker, &moves[i]);
+// 		if (depth > 1)
+// 			grid->updateInterestingMovesSorted(
+// 					player, opponent, evaluator, tracker, &moves[i]);
 
-		// Get evaluation for this move
-		tmpEval = mediumMiniMax(memoryEvaluation, grid,
-					player, opponent, evaluator,
-					!maximizingEval, alpha, beta,
-					depth - 1, tracker);
+// 		// Get evaluation for this move
+// 		tmpEval = mediumMiniMax(memoryEvaluation, grid,
+// 					player, opponent, evaluator,
+// 					!maximizingEval, alpha, beta,
+// 					depth - 1, tracker);
 
-		// For maximizing
-		if (maximizingEval)
-		{
-			// Update score
-			if (tmpEval > maxEval)
-				maxEval = tmpEval;
+// 		// For maximizing
+// 		if (maximizingEval)
+// 		{
+// 			// Update score
+// 			if (tmpEval > maxEval)
+// 				maxEval = tmpEval;
 
-			// Update alpha
-			if (tmpEval > alpha)
-				alpha = tmpEval;
-		}
-		// For minimizing
-		else
-		{
-			// Update score
-			if (tmpEval < maxEval)
-				maxEval = tmpEval;
+// 			// Update alpha
+// 			if (tmpEval > alpha)
+// 				alpha = tmpEval;
+// 		}
+// 		// For minimizing
+// 		else
+// 		{
+// 			// Update score
+// 			if (tmpEval < maxEval)
+// 				maxEval = tmpEval;
 
-			// Update beta
-			if (tmpEval < beta)
-				beta = tmpEval;
-		}
+// 			// Update beta
+// 			if (tmpEval < beta)
+// 				beta = tmpEval;
+// 		}
 
-		// If we already have already better move, stop searching by pruning
-		if (beta <= alpha)
-		{
-			// Reset grid
-			grid->loadBbox(&bboxUL, &bboxDR);
-			grid->loadWinPos(&leftWinPos, &rightWinPos);
-			grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
-			grid->removeStone(&moves[i], tracker);
-			if (player->getCaptured() != plCapture
-				|| opponent->getCaptured() != opCapture)
-				grid->resetGridByBoardState(boardState, tracker);
+// 		// If we already have already better move, stop searching by pruning
+// 		if (beta <= alpha)
+// 		{
+// 			// Reset grid
+// 			grid->loadBbox(&bboxUL, &bboxDR);
+// 			grid->loadWinPos(&leftWinPos, &rightWinPos);
+// 			grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
+// 			grid->removeStone(&moves[i], tracker);
+// 			if (player->getCaptured() != plCapture
+// 				|| opponent->getCaptured() != opCapture)
+// 				grid->resetGridByBoardState(boardState, tracker);
 
-			// Reset players
-			player->setMoves(plMoves);
-			player->setCaptured(plCapture);
-			opponent->setMoves(opMoves);
-			opponent->setCaptured(opCapture);
+// 			// Reset players
+// 			player->setMoves(plMoves);
+// 			player->setCaptured(plCapture);
+// 			opponent->setMoves(opMoves);
+// 			opponent->setCaptured(opCapture);
 
-			return (maxEval);
-		}
-	}
+// 			return (maxEval);
+// 		}
+// 	}
 
-	// Reset grid
-	grid->loadBbox(&bboxUL, &bboxDR);
-	grid->loadWinPos(&leftWinPos, &rightWinPos);
-	grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
-	grid->removeStone(&moves[moves.size() - 1], tracker);
-	if (player->getCaptured() != plCapture
-		|| opponent->getCaptured() != opCapture)
-		grid->resetGridByBoardState(boardState, tracker);
+// 	// Reset grid
+// 	grid->loadBbox(&bboxUL, &bboxDR);
+// 	grid->loadWinPos(&leftWinPos, &rightWinPos);
+// 	grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
+// 	grid->removeStone(&moves[moves.size() - 1], tracker);
+// 	if (player->getCaptured() != plCapture
+// 		|| opponent->getCaptured() != opCapture)
+// 		grid->resetGridByBoardState(boardState, tracker);
 
-	// Reset players
-	player->setMoves(plMoves);
-	player->setCaptured(plCapture);
-	opponent->setMoves(opMoves);
-	opponent->setCaptured(opCapture);
+// 	// Reset players
+// 	player->setMoves(plMoves);
+// 	player->setCaptured(plCapture);
+// 	opponent->setMoves(opMoves);
+// 	opponent->setCaptured(opCapture);
 
-	return (maxEval);
-}
+// 	return (maxEval);
+// }
 
 
 sf::Vector2i	AI::getMediumMove(
 						Grid *grid, Player *player, Player *opponent,
 						Evaluation *evaluator, Tracker *tracker)
 {
-	int							maxEval, tmpEval, plCapture, opCapture,
-								nbMoves, plMoves, opMoves;
-	std::vector<sf::Vector2i>	moves, movesLeft, movesRight;
-	sf::Vector2i				move, bboxUL, bboxDR;
-	inter_type					plType, opType;
-	std::string					boardState;
+	return (sf::Vector2i(-1, -1));
 
-	// Compute variables for evaluation and put stone
-	plType = player->getInterType();
-	opType = opponent->getInterType();
-	plCapture = player->getCaptured();
-	opCapture = opponent->getCaptured();
-	plMoves = player->getMoves();
-	opMoves = opponent->getMoves();
-	nbMoves = plMoves + opMoves;
-	grid->saveBbox(&bboxUL, &bboxDR);
-	boardState = grid->getCurrentBoardState();
+	// int							maxEval, tmpEval, plCapture, opCapture,
+	// 							nbMoves, plMoves, opMoves;
+	// std::vector<sf::Vector2i>	moves, movesLeft, movesRight;
+	// sf::Vector2i				move, bboxUL, bboxDR;
+	// inter_type					plType, opType;
+	// std::string					boardState;
 
-	grid->computeInterestingMovesSorted(player, opponent, evaluator, tracker);
-	grid->saveInterestingMovesSorted(&movesLeft, &movesRight);
+	// // Compute variables for evaluation and put stone
+	// plType = player->getInterType();
+	// opType = opponent->getInterType();
+	// plCapture = player->getCaptured();
+	// opCapture = opponent->getCaptured();
+	// plMoves = player->getMoves();
+	// opMoves = opponent->getMoves();
+	// nbMoves = plMoves + opMoves;
+	// grid->saveBbox(&bboxUL, &bboxDR);
+	// boardState = grid->getCurrentBoardState();
 
-	std::vector<sf::Vector2i>	leftWinPos, rightWinPos;
-	grid->saveWinPos(&leftWinPos, &rightWinPos);
+	// grid->computeInterestingMovesSorted(player, opponent, evaluator, tracker);
+	// grid->saveInterestingMovesSorted(&movesLeft, &movesRight);
 
-	// Get interesting move
-	moves = grid->getInterestingMovesSortedSaved(plType);
-	if (moves.size() == 0)
-	{
-		if (player->getMoves() + opponent->getMoves() == 0)
-			return(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
-		else
-			return (sf::Vector2i(-1, -1));
-	}
+	// std::vector<sf::Vector2i>	leftWinPos, rightWinPos;
+	// grid->saveWinPos(&leftWinPos, &rightWinPos);
 
-	// Find move to play
-	move = sf::Vector2i(-1, -1);
-	maxEval = -1000000001;
-	for (int i = 0; i < moves.size(); i++)
-	{
-		if (i > 0)
-		{
-			// Reset grid
-			grid->loadBbox(&bboxUL, &bboxDR);
-			grid->loadWinPos(&leftWinPos, &rightWinPos);
-			grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
-			grid->removeStone(&moves[i - 1], NULL);
-			if (player->getCaptured() != plCapture
-				|| opponent->getCaptured() != opCapture)
-				grid->resetGridByBoardState(boardState, NULL);
+	// // Get interesting move
+	// moves = grid->getInterestingMovesSortedSaved(plType);
+	// if (moves.size() == 0)
+	// {
+	// 	if (player->getMoves() + opponent->getMoves() == 0)
+	// 		return(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
+	// 	else
+	// 		return (sf::Vector2i(-1, -1));
+	// }
 
-			// Reset players
-			player->setMoves(plMoves);
-			player->setCaptured(plCapture);
-			opponent->setMoves(opMoves);
-			opponent->setCaptured(opCapture);
-		}
+	// // Find move to play
+	// move = sf::Vector2i(-1, -1);
+	// maxEval = -1000000001;
+	// for (int i = 0; i < moves.size(); i++)
+	// {
+	// 	if (i > 0)
+	// 	{
+	// 		// Reset grid
+	// 		grid->loadBbox(&bboxUL, &bboxDR);
+	// 		grid->loadWinPos(&leftWinPos, &rightWinPos);
+	// 		grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
+	// 		grid->removeStone(&moves[i - 1], NULL);
+	// 		if (player->getCaptured() != plCapture
+	// 			|| opponent->getCaptured() != opCapture)
+	// 			grid->resetGridByBoardState(boardState, NULL);
 
-		// Simulate new move
-		if (!grid->putStone(&moves[i],
-								nbMoves, player, opponent))
-			continue;
-		player->addMove();
+	// 		// Reset players
+	// 		player->setMoves(plMoves);
+	// 		player->setCaptured(plCapture);
+	// 		opponent->setMoves(opMoves);
+	// 		opponent->setCaptured(opCapture);
+	// 	}
 
-		grid->updateInterestingMovesSorted(player, opponent, evaluator, tracker, &moves[i]);
+	// 	// Simulate new move
+	// 	if (!grid->putStone(&moves[i],
+	// 							nbMoves, player, opponent))
+	// 		continue;
+	// 	player->addMove();
 
-		// Get evaluation for this move
-		tmpEval = mediumMiniMax(&this->memoryEvaluation, grid,
-					player, opponent, evaluator, false, -1000000001, 1000000001,
-					DEPTH, tracker);
+	// 	grid->updateInterestingMovesSorted(player, opponent, evaluator, tracker, &moves[i]);
 
-		// If we detect a victory, stop it
-		if (tmpEval >= 1000000000)
-		{
-			// Reset grid
-			grid->loadBbox(&bboxUL, &bboxDR);
-			grid->loadWinPos(&leftWinPos, &rightWinPos);
-			grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
-			grid->removeStone(&moves[i], NULL);
-			if (player->getCaptured() != plCapture
-				|| opponent->getCaptured() != opCapture)
-				grid->resetGridByBoardState(boardState, NULL);
+	// 	// Get evaluation for this move
+	// 	tmpEval = mediumMiniMax(&this->memoryEvaluation, grid,
+	// 				player, opponent, evaluator, false, -1000000001, 1000000001,
+	// 				DEPTH, tracker);
 
-			// Reset players
-			player->setMoves(plMoves);
-			player->setCaptured(plCapture);
-			opponent->setMoves(opMoves);
-			opponent->setCaptured(opCapture);
+	// 	// If we detect a victory, stop it
+	// 	if (tmpEval >= 1000000000)
+	// 	{
+	// 		// Reset grid
+	// 		grid->loadBbox(&bboxUL, &bboxDR);
+	// 		grid->loadWinPos(&leftWinPos, &rightWinPos);
+	// 		grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
+	// 		grid->removeStone(&moves[i], NULL);
+	// 		if (player->getCaptured() != plCapture
+	// 			|| opponent->getCaptured() != opCapture)
+	// 			grid->resetGridByBoardState(boardState, NULL);
 
-			return (moves[i]);
-		}
+	// 		// Reset players
+	// 		player->setMoves(plMoves);
+	// 		player->setCaptured(plCapture);
+	// 		opponent->setMoves(opMoves);
+	// 		opponent->setCaptured(opCapture);
 
-		// Keep the higher scored move
-		if (tmpEval > maxEval)
-		{
-			maxEval = tmpEval;
-			move = moves[i];
-		}
-	}
+	// 		return (moves[i]);
+	// 	}
 
-	// Reset grid
-	grid->loadBbox(&bboxUL, &bboxDR);
-	grid->loadWinPos(&leftWinPos, &rightWinPos);
-	grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
-	grid->removeStone(&moves[moves.size() - 1], NULL);
-	if (player->getCaptured() != plCapture
-		|| opponent->getCaptured() != opCapture)
-		grid->resetGridByBoardState(boardState, NULL);
+	// 	// Keep the higher scored move
+	// 	if (tmpEval > maxEval)
+	// 	{
+	// 		maxEval = tmpEval;
+	// 		move = moves[i];
+	// 	}
+	// }
 
-	// Reset players
-	player->setMoves(plMoves);
-	player->setCaptured(plCapture);
-	opponent->setMoves(opMoves);
-	opponent->setCaptured(opCapture);
+	// // Reset grid
+	// grid->loadBbox(&bboxUL, &bboxDR);
+	// grid->loadWinPos(&leftWinPos, &rightWinPos);
+	// grid->loadInterestingMovesSorted(&movesLeft, &movesRight);
+	// grid->removeStone(&moves[moves.size() - 1], NULL);
+	// if (player->getCaptured() != plCapture
+	// 	|| opponent->getCaptured() != opCapture)
+	// 	grid->resetGridByBoardState(boardState, NULL);
 
-	return (move);
+	// // Reset players
+	// player->setMoves(plMoves);
+	// player->setCaptured(plCapture);
+	// opponent->setMoves(opMoves);
+	// opponent->setCaptured(opCapture);
+
+	// return (move);
 }

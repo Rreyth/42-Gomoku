@@ -48,100 +48,103 @@ int	Evaluation::evaluationPosition(Grid *grid, inter_type plType,
 									int plCapture, int opCapture,
 									int x, int y)
 {
-	int				result, completeLine, blockLine, invAxis;
-	bool			isCompleteLine, isBlockLine;
-	intersection	*inter;
+	return (0);
+	// int				result, completeLine, blockLine, invAxis;
+	// bool			isCompleteLine, isBlockLine;
+	// intersection	*inter;
 
-	plCapture = plCapture + 1;
-	opCapture = opCapture + 1;
+	// plCapture = plCapture + 1;
+	// opCapture = opCapture + 1;
 
-	// If intersection isn't empty, return 0;
-	if (grid->getInterState(x, y) != INTER_EMPTY)
-		return (0);
+	// // If intersection isn't empty, return 0;
+	// // if (grid->getInterState(x, y) != INTER_EMPTY)
+	// // 	return (0);
 
-	result = 0;
+	// result = 0;
 
-	// Compute completion and block line point for each axis
-	for (int axis = 0; axis < 4; axis++)
-	{
-		completeLine = 0;
-		blockLine = 0;
-		isCompleteLine = false;
-		isBlockLine = false;
-		invAxis = axis + 4;
+	// // Compute completion and block line point for each axis
+	// for (int axis = 0; axis < 4; axis++)
+	// {
+	// 	completeLine = 0;
+	// 	blockLine = 0;
+	// 	isCompleteLine = false;
+	// 	isBlockLine = false;
+	// 	invAxis = axis + 4;
 
-		// Check front of axis
-		this->updateCompleteAndBlockLine(
-				grid, plType, opType,
-				plCapture, opCapture, x, y, axis,
-				&completeLine, &isCompleteLine,
-				&blockLine, &isBlockLine, &result);
+	// 	// Check front of axis
+	// 	this->updateCompleteAndBlockLine(
+	// 			grid, plType, opType,
+	// 			plCapture, opCapture, x, y, axis,
+	// 			&completeLine, &isCompleteLine,
+	// 			&blockLine, &isBlockLine, &result);
 
-		// Check back of axis
-		this->updateCompleteAndBlockLine(
-				grid, plType, opType,
-				plCapture, opCapture, x, y, invAxis,
-				&completeLine, &isCompleteLine,
-				&blockLine, &isBlockLine, &result);
+	// 	// Check back of axis
+	// 	this->updateCompleteAndBlockLine(
+	// 			grid, plType, opType,
+	// 			plCapture, opCapture, x, y, invAxis,
+	// 			&completeLine, &isCompleteLine,
+	// 			&blockLine, &isBlockLine, &result);
 
-		if (isCompleteLine)
-			completeLine++;
-		if (isBlockLine)
-			blockLine++;
+	// 	if (isCompleteLine)
+	// 		completeLine++;
+	// 	if (isBlockLine)
+	// 		blockLine++;
 
-		// Update result for complete line
-		if (completeLine >= 6)
-			completeLine = 5;
-		result += completeLinePoint[completeLine];
+	// 	// Update result for complete line
+	// 	if (completeLine >= 6)
+	// 		completeLine = 5;
+	// 	result += completeLinePoint[completeLine];
 
-		// Update result for block line
-		if (blockLine >= 6)
-			blockLine = 5;
-		result += blockLinePoint[blockLine];
-	}
+	// 	// Update result for block line
+	// 	if (blockLine >= 6)
+	// 		blockLine = 5;
+	// 	result += blockLinePoint[blockLine];
+	// }
 
-	return	(result);
+	// return	(result);
 }
 
 
 int	Evaluation::evaluateGrid(Grid *grid, inter_type plType, inter_type opType,
 								int plCapture, int opCapture)
 {
-	int				value, opValue, tmp;
-	intersection	*inter;
+	return (0);
+	// int				value, opValue, tmp;
+	// intersection	*inter;
 
-	value = 0;
-	for (int y = 0; y < GRID_W_INTER; y++)
-	{
-		for (int x = 0; x < GRID_W_INTER; x++)
-		{
-			inter = grid->getIntersection(x, y);
-			if (inter->type == plType)
-			{
-				for (int i = 0; i < 8; i++)
-				{
-					tmp = inter->neighbor[i] + 1;
-					if (tmp > 5)
-						tmp = 5;
-					value += this->completeLinePoint[tmp];
-				}
-			}
-			else if (inter->type == opType)
-			{
-				for (int i = 0; i < 8; i++)
-				{
-					tmp = inter->neighbor[i] + 1;
-					if (tmp > 5)
-						tmp = 5;
-					value -= this->completeLinePoint[tmp];
-				}
-			}
-			// value += this->evaluationPosition(grid, plType, opType, plCapture, opCapture, x, y) / 2;
-			// value -= this->evaluationPosition(grid, opType, plType, opCapture, plCapture, x, y);
-		}
-	}
+	// value = 0;
+	// for (int y = 0; y < GRID_W_INTER; y++)
+	// {
+	// 	for (int x = 0; x < GRID_W_INTER; x++)
+	// 	{
+	// 		// inter = grid->getIntersection(x, y);
+	// 		// if (inter->type == plType)
+	// 		// {
+	// 		// 	for (int i = 0; i < 8; i++)
+	// 		// 	{
+	// 		// 		tmp = inter->neighbor[i] + 1;
+	// 		// 		if (tmp > 5)
+	// 		// 			tmp = 5;
+	// 		// 		value += this->completeLinePoint[tmp];
+	// 		// 	}
+	// 		// }
+	// 		// else if (inter->type == opType)
+	// 		// {
+	// 		// 	for (int i = 0; i < 8; i++)
+	// 		// 	{
+	// 		// 		tmp = inter->neighbor[i] + 1;
+	// 		// 		if (tmp > 5)
+	// 		// 			tmp = 5;
+	// 		// 		value -= this->completeLinePoint[tmp];
+	// 		// 	}
+	// 		// }
+	// 		// Skip it tkt
+	// 		// value += this->evaluationPosition(grid, plType, opType, plCapture, opCapture, x, y) / 2;
+	// 		// value -= this->evaluationPosition(grid, opType, plType, opCapture, plCapture, x, y);
+	// 	}
+	// }
 
-	return (value);
+	// return (value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -157,50 +160,50 @@ void	Evaluation::updateCompleteAndBlockLine(
 {
 	intersection	*inter, *interTmp;
 
-	inter = grid->getIntersection(x + this->dirs[axis].x,
-								y + this->dirs[axis].y);
-	if (!inter)
-		return ;
+	// inter = grid->getIntersection(x + this->dirs[axis].x,
+	// 							y + this->dirs[axis].y);
+	// if (!inter)
+	// 	return ;
 
-	// Stone of player
-	if (inter->type == plType)
-	{
-		*completeLine += inter->neighbor[axis] + 1;
-		*isCompleteLine = true;
+	// // Stone of player
+	// if (inter->type == plType)
+	// {
+	// 	*completeLine += inter->neighbor[axis] + 1;
+	// 	*isCompleteLine = true;
 
-		// Check if a capture is possible for opponent
-		if (inter->neighbor[axis] != 1)
-			return ;
+	// 	// Check if a capture is possible for opponent
+	// 	if (inter->neighbor[axis] != 1)
+	// 		return ;
 
-		interTmp = grid->getIntersection(x + this->dirs[axis].x * 3,
-										y + this->dirs[axis].y * 3);
-		if (!interTmp || interTmp->type != opType)
-			return ;
+	// 	interTmp = grid->getIntersection(x + this->dirs[axis].x * 3,
+	// 									y + this->dirs[axis].y * 3);
+	// 	if (!interTmp || interTmp->type != opType)
+	// 		return ;
 
-		// Opponent capture possible !
-		*result += this->completeLinePoint[3] * opCapture;
-	}
+	// 	// Opponent capture possible !
+	// 	*result += this->completeLinePoint[3] * opCapture;
+	// }
 
-	// Stone of opponent
-	else if (inter->type == opType)
-	{
-		*blockLine += inter->neighbor[axis] + 1;
-		*isBlockLine = true;
+	// // Stone of opponent
+	// else if (inter->type == opType)
+	// {
+	// 	*blockLine += inter->neighbor[axis] + 1;
+	// 	*isBlockLine = true;
 
-		// Check if a capture is possible
-		if (inter->neighbor[axis] != 1)
-			return ;
+	// 	// Check if a capture is possible
+	// 	if (inter->neighbor[axis] != 1)
+	// 		return ;
 
-		interTmp = grid->getIntersection(x + this->dirs[axis].x * 3,
-										y + this->dirs[axis].y * 3);
-		if (!interTmp || interTmp->type != plType)
-			return ;
+	// 	interTmp = grid->getIntersection(x + this->dirs[axis].x * 3,
+	// 									y + this->dirs[axis].y * 3);
+	// 	if (!interTmp || interTmp->type != plType)
+	// 		return ;
 
-		// Capture possible !
-		if (interTmp->neighbor[axis] > 0)
-			*result += this->blockLinePoint[5] * plCapture;
-		else
-			*result += this->blockLinePoint[4] * plCapture;
+	// 	// Capture possible !
+	// 	if (interTmp->neighbor[axis] > 0)
+	// 		*result += this->blockLinePoint[5] * plCapture;
+	// 	else
+	// 		*result += this->blockLinePoint[4] * plCapture;
 
-	}
+	// }
 }

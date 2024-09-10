@@ -109,23 +109,23 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 
 	int	lCapture = this->playerLeft.getCaptured();
 	int	rCapture = this->playerRight.getCaptured();
-	std::string lastBoardState = this->grid.getCurrentBoardState();
+	// std::string lastBoardState = this->grid.getCurrentBoardState();
 	if (this->grid.putStone(&move, nbMoves, me, opponent))
 	{
 		// TODO : REMOVE
 		lastMoves.push_back(move);
 		lCaptures.push_back(lCapture);
 		rCaptures.push_back(rCapture);
-		lastBoardStates.push_back(lastBoardState);
+		// lastBoardStates.push_back(lastBoardState);
 
 		this->swapTurn(&move);
-		this->grid.addBoardState();
-		if (this->grid.checkWinCondition(me, opponent, move))
-		{
-			this->grid.goToLastMove();
-			*displayState = DISPLAY_END;
-			return ;
-		}
+		// this->grid.addBoardState();
+		// if (this->grid.checkWinCondition(me, opponent, move))
+		// {
+		// 	this->grid.goToLastMove();
+		// 	*displayState = DISPLAY_END;
+		// 	return ;
+		// }
 	}
 
 	if (this->mode == BLITZ)
