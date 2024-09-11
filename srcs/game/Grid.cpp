@@ -299,14 +299,14 @@ bool	Grid::putStone(
 }
 
 
-bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
+bool	Grid::checkWinCondition(Player *player, Player *opponent, sf::Vector2i move)
 {
 	int	winCase, check;
 
 	// Check if the player capture at least 10 opponent's stones
-	if (me->getCaptured() >= WIN_CAPTURE)
+	if (player->getCaptured() >= WIN_CAPTURE)
 	{
-		me->setWinState(WIN_STATE_CAPTURE);
+		player->setWinState(WIN_STATE_CAPTURE);
 		this->previewLegal = false;
 		return (true);
 	}
@@ -315,7 +315,7 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
 	// Check win by align
 	winCase = 0b11111;
 
-	if (me->getInterType() == INTER_LEFT)
+	if (player->getInterType() == INTER_LEFT)
 	{
 		for (int i = 0; i < GRID_W_INTER; i++)
 		{
@@ -323,13 +323,21 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
 			for (int j = 0; j < GRID_W_INTER - 4; j++)
 			{
 				if ((this->bitboardL.bbH[i] & check) >> j == winCase)
-					return (true);
+					return (this->validateWin(
+							player, opponent,
+							&this->bitboardL, &this->bitboardR, 'H', j, i));
 				if ((this->bitboardL.bbV[i] & check) >> j == winCase)
-					return (true);
+					return (this->validateWin(
+							player, opponent,
+							&this->bitboardL, &this->bitboardR, 'V', j, i));
 				if ((this->bitboardL.bbD[i] & check) >> j == winCase)
-					return (true);
+					return (this->validateWin(
+							player, opponent,
+							&this->bitboardL, &this->bitboardR, 'D', j, i));
 				if ((this->bitboardL.bbA[i] & check) >> j == winCase)
-					return (true);
+					return (this->validateWin(
+							player, opponent,
+							&this->bitboardL, &this->bitboardR, 'A', j, i));
 				check <<= 1;
 			}
 		}
@@ -342,13 +350,21 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
 			for (int j = 0; j < GRID_W_INTER - 4; j++)
 			{
 				if ((this->bitboardR.bbH[i] & check) >> j == winCase)
-					return (true);
+					return (this->validateWin(
+							player, opponent,
+							&this->bitboardR, &this->bitboardL, 'H', j, i));
 				if ((this->bitboardR.bbV[i] & check) >> j == winCase)
-					return (true);
+					return (this->validateWin(
+							player, opponent,
+							&this->bitboardR, &this->bitboardL, 'V', j, i));
 				if ((this->bitboardR.bbD[i] & check) >> j == winCase)
-					return (true);
+					return (this->validateWin(
+							player, opponent,
+							&this->bitboardR, &this->bitboardL, 'D', j, i));
 				if ((this->bitboardR.bbA[i] & check) >> j == winCase)
-					return (true);
+					return (this->validateWin(
+							player, opponent,
+							&this->bitboardR, &this->bitboardL, 'A', j, i));
 				check <<= 1;
 			}
 		}
@@ -356,6 +372,7 @@ bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
 
 	return (false);
 }
+
 
 void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule)
 {
@@ -954,11 +971,77 @@ void	Grid::reset(void)
 // }
 
 
-// ////////////////////////////////////////////////////////////////////////////////
-// // Private methods
-// ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// Private methods
+////////////////////////////////////////////////////////////////////////////////
 
-int	Grid::makeCapture(sf::Vector2i *move, BitBoard *plBitBoard, BitBoard *opBitBoard)
+bool	Grid::validateWin(
+				Player *player, Player *opponent,
+				BitBoard *plBitBoard, BitBoard *opBitBoard,
+				char bbType, int x, int y)
+{
+	int	plCheckL, opCheckL,
+		plCheckR, opCheckR,
+		plCheckVL, opCheckVL,
+		plCheckVR, opCheckVR,
+		plVerify, opVerifyL, opVerifyR,
+		shiftL, shiftR,
+		shiftVL, shiftVR,
+		yD, yA;
+
+	y--;
+	plVerify = 0b0110;
+	opVerifyL = 0b0001;
+	opVerifyR = 0b1000;
+	printf("%019b | %019b\n", plBitBoard->bbH[y], opBitBoard->bbH[y]);
+
+	for (int i = 0; i < 5; i++)
+	{
+		shiftR = GRID_W_INTER - x - 1;
+		shiftL = shiftR - 3;
+		plCheckL = 0b0110 << shiftL;
+		opCheckL = 0b0001 << shiftL;
+		plCheckR = 0b0110 << shiftR;
+		opCheckR = 0b1000 << shiftR;
+
+		shiftVR = y;
+		shiftVL = shiftVR - 3;
+		plCheckVL = 0b0110 << shiftVL;
+		opCheckVL = 0b1001 << shiftVL;
+		plCheckVR = 0b0110 << shiftVR;
+		opCheckVR = 0b1001 << shiftVR;
+
+		yD = (y + x) % GRID_W_INTER;
+
+		yA = (y - x) % GRID_W_INTER;
+		if (yA < 0)
+			yA = GRID_W_INTER + yA;
+
+		if (bbType != 'H')
+		{
+			if (((plBitBoard->bbH[y] & plCheckL) >> shiftL == plVerify
+					&& (opBitBoard->bbH[y] & opCheckL) >> shiftL == opVerifyL)
+				|| ((plBitBoard->bbH[y] & plCheckR) >> shiftR == plVerify
+					&& (opBitBoard->bbH[y] & opCheckR) >> shiftR == opVerifyR))
+			{
+				printf("nope\n");
+				return (false);
+			}
+		}
+
+		x++;
+	}
+
+
+	player->setWinState(WIN_STATE_ALIGN);
+	this->previewLegal = false;
+	return (false);
+}
+
+
+int	Grid::makeCapture(
+			sf::Vector2i *move,
+			BitBoard *plBitBoard, BitBoard *opBitBoard)
 {
 	int	plCheckL, opCheckL,
 		plCheckR, opCheckR,

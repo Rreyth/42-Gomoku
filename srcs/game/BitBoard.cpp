@@ -34,7 +34,7 @@ BitBoard::~BitBoard()
 
 bool	BitBoard::get(int x, int y)
 {
-	return (this->bbH[y] & 1 << (GRID_W_INTER - x - 1));
+	return (this->bbH[y] & 1 << x);
 }
 
 
@@ -42,7 +42,7 @@ void	BitBoard::set(int x, int y, bool value)
 {
 	int	check, checkV, yD, yA;
 
-	check = 1 << (GRID_W_INTER - x - 1);
+	check = 1 << x;
 	checkV = 1 << y;
 	yD = (y + x) % GRID_W_INTER;
 	yA = (y - x) % GRID_W_INTER;

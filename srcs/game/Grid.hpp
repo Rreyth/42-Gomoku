@@ -33,7 +33,7 @@ public:
 	void						draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	bool						checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState);
 	bool						putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
-	bool						checkWinCondition(Player *me, Player *opponent, sf::Vector2i move);
+	bool						checkWinCondition(Player *player, Player *opponent, sf::Vector2i move);
 	void						clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
 	void						reset(void);
 	// void						goToFirstMove(void);
@@ -73,6 +73,7 @@ private:
 	// std::string					currentBoardState, currentBoardStateOpti;
 
 
+	bool	validateWin(Player *player, Player *opponent, BitBoard *plBitBoard, BitBoard *opBitBoard, char bbType, int x, int y);
 	int		makeCapture(sf::Vector2i *move, BitBoard *plBitBoard, BitBoard *opBitBoard);
 
 	// void			setInterState(int x, int y, inter_type interType);
