@@ -220,9 +220,9 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 		{
 			drawX = this->x + x * GRID_SQUARE_SIZE + 10;
 			drawY = this->y + y * GRID_SQUARE_SIZE + 10;
-			if (this->getStoneLeft(x, y))
+			if (this->bitboardL.get(x, y))
 				textureManager->drawTexture(window, this->leftStone, drawX, drawY, MID_CENTER);
-			else if (this->getStoneRight(x, y))
+			else if (this->bitboardR.get(x, y))
 				textureManager->drawTexture(window, this->rightStone, drawX, drawY, MID_CENTER);
 		}
 	}
@@ -241,7 +241,7 @@ bool	Grid::checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_t
 	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
 		return (false);
 
-	if (this->getStoneLeft(x, y) || this->getStoneRight(x, y))
+	if (this->bitboardL.get(x, y) || this->bitboardR.get(x, y))
 		return (false);
 
 	// if (this->getInterState(x, y) != INTER_EMPTY)
@@ -272,9 +272,16 @@ bool	Grid::putStone(
 		return (false);
 
 	if (plType == INTER_LEFT)
-		this->setStoneLeft(move->x, move->y, true);
+		this->bitboardL.set(move->x, move->y, true);
 	else
-		this->setStoneRight(move->x, move->y, true);
+		this->bitboardR.set(move->x, move->y, true);
+
+	if (plType == INTER_LEFT)
+		player->addCaptured(this->makeCapture(
+									move, &this->bitboardL, &this->bitboardR));
+	else
+		player->addCaptured(this->makeCapture(
+									move, &this->bitboardR, &this->bitboardL));
 
 	// this->setInterState(move->x, move->y, plType);
 	// player->addCaptured(this->checkCapture(move, plType, opType));
@@ -951,78 +958,109 @@ void	Grid::reset(void)
 // // Private methods
 // ////////////////////////////////////////////////////////////////////////////////
 
-void	Grid::setStoneLeft(int x, int y, bool stone)
+int	Grid::makeCapture(sf::Vector2i *move, BitBoard *plBitBoard, BitBoard *opBitBoard)
 {
-	int	check, checkV, yD, yA;
+	int	plCheckL, opCheckL,
+		plCheckR, opCheckR,
+		plCheckVL, opCheckVL,
+		plCheckVR, opCheckVR,
+		plVerify, opVerify,
+		shiftL, shiftR,
+		shiftVL, shiftVR,
+		yD, yA,
+		nbCapture;
 
-	check = 1 << (GRID_W_INTER - x - 1);
-	checkV = 1 << y;
-	yD = (y + x) % GRID_W_INTER;
-	yA = (y - x) % GRID_W_INTER;
+	nbCapture = 0;
+	plVerify = 0b1001;
+	opVerify = 0b0110;
+
+	shiftR = GRID_W_INTER - move->x - 1;
+	shiftL = shiftR - 3;
+	plCheckL = 0b1001 << shiftL;
+	opCheckL = 0b0110 << shiftL;
+	plCheckR = 0b1001 << shiftR;
+	opCheckR = 0b0110 << shiftR;
+
+	shiftVR = move->y;
+	shiftVL = shiftVR - 3;
+	plCheckVL = 0b1001 << shiftVL;
+	opCheckVL = 0b0110 << shiftVL;
+	plCheckVR = 0b1001 << shiftVR;
+	opCheckVR = 0b0110 << shiftVR;
+
+	yD = (move->y + move->x) % GRID_W_INTER;
+
+	yA = (move->y - move->x) % GRID_W_INTER;
 	if (yA < 0)
 		yA = GRID_W_INTER + yA;
 
-	// Set stone at true if it's not
-	if (stone && !(this->bitboardL.bbH[y] & check))
+	// Check capture in horizontal
+	if ((plBitBoard->bbH[move->y] & plCheckL) >> shiftL == plVerify
+		&& (opBitBoard->bbH[move->y] & opCheckL) >> shiftL == opVerify)
 	{
-		this->bitboardL.bbH[y] += check;
-		this->bitboardL.bbV[x] += checkV;
-		this->bitboardL.bbD[yD] += check;
-		this->bitboardL.bbA[yA] += check;
+		opBitBoard->set(move->x + 1, move->y, false);
+		opBitBoard->set(move->x + 2, move->y, false);
+		nbCapture += 2;
 	}
-	// Set stone at false if it's not
-	else if (!stone && (this->bitboardL.bbH[y] & check))
+	if ((plBitBoard->bbH[move->y] & plCheckR) >> shiftR == plVerify
+		&& (opBitBoard->bbH[move->y] & opCheckR) >> shiftR == opVerify)
 	{
-		this->bitboardL.bbH[y] -= check;
-		this->bitboardL.bbV[x] -= checkV;
-		this->bitboardL.bbD[yD] -= check;
-		this->bitboardL.bbA[yA] -= check;
+		opBitBoard->set(move->x - 1, move->y, false);
+		opBitBoard->set(move->x - 2, move->y, false);
+		nbCapture += 2;
 	}
-}
 
-
-void	Grid::setStoneRight(int x, int y, bool stone)
-{
-	int	check, checkV, yD, yA;
-
-	check = 1 << (GRID_W_INTER - x - 1);
-	checkV = 1 << y;
-	yD = (y + x) % GRID_W_INTER;
-	yA = (y - x) % GRID_W_INTER;
-	if (yA < 0)
-		yA = GRID_W_INTER + yA;
-
-	// Set stone at true if it's not
-	if (stone && !(this->bitboardR.bbH[y] & check))
+	// Check capture in vertical
+	if ((plBitBoard->bbV[move->x] & plCheckVL) >> shiftVL == plVerify
+		&& (opBitBoard->bbV[move->x] & opCheckVL) >> shiftVL == opVerify)
 	{
-		this->bitboardR.bbH[y] += check;
-		this->bitboardR.bbV[x] += checkV;
-		this->bitboardR.bbD[yD] += check;
-		this->bitboardR.bbA[yA] += check;
+		opBitBoard->set(move->x, move->y - 1, false);
+		opBitBoard->set(move->x, move->y - 2, false);
+		nbCapture += 2;
 	}
-	// Set stone at false if it's not
-	else if (!stone && (this->bitboardR.bbH[y] & check))
+	if ((plBitBoard->bbV[move->x] & plCheckVR) >> shiftVR == plVerify
+		&& (opBitBoard->bbV[move->x] & opCheckVR) >> shiftVR == opVerify)
 	{
-		this->bitboardR.bbH[y] -= check;
-		this->bitboardR.bbV[x] -= checkV;
-		this->bitboardR.bbD[yD] -= check;
-		this->bitboardR.bbA[yA] -= check;
+		opBitBoard->set(move->x, move->y + 1, false);
+		opBitBoard->set(move->x, move->y + 2, false);
+		nbCapture += 2;
 	}
+
+	// Check capture in diagonal
+	if ((plBitBoard->bbD[yD] & plCheckL) >> shiftL == plVerify
+		&& (opBitBoard->bbD[yD] & opCheckL) >> shiftL == opVerify)
+	{
+		opBitBoard->set(move->x + 1, move->y - 1, false);
+		opBitBoard->set(move->x + 2, move->y - 2, false);
+		nbCapture += 2;
+	}
+	if ((plBitBoard->bbD[yD] & plCheckR) >> shiftR == plVerify
+		&& (opBitBoard->bbD[yD] & opCheckR) >> shiftR == opVerify)
+	{
+		opBitBoard->set(move->x - 1, move->y + 1, false);
+		opBitBoard->set(move->x - 2, move->y + 2, false);
+		nbCapture += 2;
+	}
+
+
+	// Check capture in anti diagonal
+	if ((plBitBoard->bbA[yA] & plCheckL) >> shiftL == plVerify
+		&& (opBitBoard->bbA[yA] & opCheckL) >> shiftL == opVerify)
+	{
+		opBitBoard->set(move->x + 1, move->y + 1, false);
+		opBitBoard->set(move->x + 2, move->y + 2, false);
+		nbCapture += 2;
+	}
+	if ((plBitBoard->bbA[yA] & plCheckR) >> shiftR == plVerify
+		&& (opBitBoard->bbA[yA] & opCheckR) >> shiftR == opVerify)
+	{
+		opBitBoard->set(move->x - 1, move->y - 1, false);
+		opBitBoard->set(move->x - 2, move->y - 2, false);
+		nbCapture += 2;
+	}
+
+	return (nbCapture);
 }
-
-
-bool	Grid::getStoneLeft(int x, int y)
-{
-	return (this->bitboardL.bbH[y] & 1 << (GRID_W_INTER - x - 1));
-}
-
-
-bool	Grid::getStoneRight(int x, int y)
-{
-	return (this->bitboardR.bbH[y] & 1 << (GRID_W_INTER - x - 1));
-}
-
-
 
 
 

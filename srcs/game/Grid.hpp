@@ -3,6 +3,7 @@
 
 # include <define.hpp>
 # include <ui/Button.hpp>
+# include <game/BitBoard.hpp>
 
 # include <vector>
 
@@ -63,7 +64,7 @@ private:
 	sprite_name	leftStone, rightStone;
 	game_rules	rule;
 	std::string	currentMove;
-	bitboard	bitboardL, bitboardR;
+	BitBoard	bitboardL, bitboardR;
 
 	// intersection				gridState[GRID_NB_INTER];
 	// sf::Vector2i				dirs[8], bboxUL, bboxDR;
@@ -72,14 +73,10 @@ private:
 	// std::string					currentBoardState, currentBoardStateOpti;
 
 
-	void	setStoneLeft(int x, int y, bool stone);
-	void	setStoneRight(int x, int y, bool stone);
-	bool	getStoneLeft(int x, int y);
-	bool	getStoneRight(int x, int y);
+	int		makeCapture(sf::Vector2i *move, BitBoard *plBitBoard, BitBoard *opBitBoard);
 
 	// void			setInterState(int x, int y, inter_type interType);
 	// bool			checkDoubleFreeThree(int x, int y, inter_type plType, inter_type opType);
-	// int				checkCapture(sf::Vector2i *move, inter_type plType, inter_type opType);
 	// bool			checkProRule(int x, int y, inter_type interPlayer, int nbMoves);
 	// void			loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type plType);
 	// void			updateNeighbor(int x, int y);

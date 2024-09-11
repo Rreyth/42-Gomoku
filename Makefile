@@ -30,6 +30,7 @@ SRCS				:=	srcs/main.cpp \
 						srcs/screen/ModeMenu.cpp \
 						srcs/game/Grid.cpp \
 						srcs/game/Player.cpp \
+						srcs/game/BitBoard.cpp \
 						srcs/AI/AI.cpp \
 						srcs/AI/Evaluation.cpp \
 

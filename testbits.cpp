@@ -110,11 +110,11 @@ bool	getBits(char *grid, int x, int y)
 void	putStone(t_bitboard *grid, int x, int y, bool value)
 {
 	char	check, checkV;
-	int		yD, yA;
+	int		yV, yD, yA;
 
-	check = 1 << (GRID_SIZE - x - 1);
-	checkV = 1 << y;
-	yD = (y + x) % GRID_SIZE;
+	check = 1 << x;
+	yV = x;
+	yD = (y + x + 1) % GRID_SIZE;
 	yA = (y - x) % GRID_SIZE;
 	if (yA < 0)
 		yA = GRID_SIZE + yA;
@@ -123,7 +123,7 @@ void	putStone(t_bitboard *grid, int x, int y, bool value)
 	if (value && !(grid->bbH[y] & check))
 	{
 		grid->bbH[y] += check;
-		grid->bbV[x] += checkV;
+		grid->bbV[yV] += check;
 		grid->bbD[yD] += check;
 		grid->bbA[yA] += check;
 	}
@@ -131,9 +131,21 @@ void	putStone(t_bitboard *grid, int x, int y, bool value)
 	else if (!value && (grid->bbH[y] & check))
 	{
 		grid->bbH[y] -= check;
-		grid->bbV[x] -= checkV;
+		grid->bbV[yV] -= check;
 		grid->bbD[yD] -= check;
 		grid->bbA[yA] -= check;
+	}
+}
+
+
+void	clearGrid(t_bitboard *grid)
+{
+	for (int i = 0; i < GRID_SIZE; i++)
+	{
+		grid->bbH[i] = 0;
+		grid->bbV[i] = 0;
+		grid->bbD[i] = 0;
+		grid->bbA[i] = 0;
 	}
 }
 
@@ -142,8 +154,9 @@ int	main(void)
 {
 	t_bitboard	grid = {0};
 
-	printGrid(&grid);
-
+	putStone(&grid, 0, 0, true);
+	putStone(&grid, 1, 0, true);
+	putStone(&grid, 2, 0, true);
 	putStone(&grid, 3, 0, true);
 	putStone(&grid, 4, 0, true);
 	putStone(&grid, 5, 0, true);
@@ -151,19 +164,60 @@ int	main(void)
 	putStone(&grid, 7, 0, true);
 
 	printGrid(&grid);
+	clearGrid(&grid);
 
-	int	x, y;
+	putStone(&grid, 0, 0, true);
+	putStone(&grid, 0, 1, true);
+	putStone(&grid, 0, 2, true);
+	putStone(&grid, 0, 3, true);
+	putStone(&grid, 0, 4, true);
+	putStone(&grid, 0, 5, true);
+	putStone(&grid, 0, 6, true);
+	putStone(&grid, 0, 7, true);
 
-	x = 4;
-	y = 2;
+	printGrid(&grid);
+	clearGrid(&grid);
 
-	char verify = 0b11111;
-	char tmp = 0b01011111 & 0b00111110;
+	putStone(&grid, 7, 0, true);
+	putStone(&grid, 6, 1, true);
+	putStone(&grid, 5, 2, true);
+	putStone(&grid, 4, 3, true);
+	putStone(&grid, 3, 4, true);
+	putStone(&grid, 2, 5, true);
+	putStone(&grid, 1, 6, true);
+	putStone(&grid, 0, 7, true);
 
-	if (tmp == verify)
-		printf("tkt %b\n", tmp);
-	else
-		printf("nop %b\n", tmp);
+	printGrid(&grid);
+	clearGrid(&grid);
+
+	putStone(&grid, 0, 0, true);
+	putStone(&grid, 1, 1, true);
+	putStone(&grid, 2, 2, true);
+	putStone(&grid, 3, 3, true);
+	putStone(&grid, 4, 4, true);
+	putStone(&grid, 5, 5, true);
+	putStone(&grid, 6, 6, true);
+	putStone(&grid, 7, 7, true);
+
+	printGrid(&grid);
+
+	// putStone(&grid, 4, 0, false);
+	// putStone(&grid, 5, 0, false);
+
+	// printGrid(&grid);
+
+	// int	x, y;
+
+	// x = 4;
+	// y = 2;
+
+	// char verify = 0b11111;
+	// char tmp = 0b01011111 & 0b00111110;
+
+	// if (tmp == verify)
+	// 	printf("tkt %b\n", tmp);
+	// else
+	// 	printf("nop %b\n", tmp);
 
 	return (0);
 }
