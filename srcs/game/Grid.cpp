@@ -333,11 +333,11 @@ bool	Grid::checkWinCondition(Player *player, Player *opponent, sf::Vector2i move
 				if ((this->bitboardL.bbD[i] & check) >> j == winCase)
 					return (this->validateWin(
 							player, opponent,
-							&this->bitboardL, &this->bitboardR, 'D', j, i));
+							&this->bitboardL, &this->bitboardR, 'A', j, i));
 				if ((this->bitboardL.bbA[i] & check) >> j == winCase)
 					return (this->validateWin(
 							player, opponent,
-							&this->bitboardL, &this->bitboardR, 'A', j, i));
+							&this->bitboardL, &this->bitboardR, 'D', j, i));
 				check <<= 1;
 			}
 		}
@@ -360,11 +360,11 @@ bool	Grid::checkWinCondition(Player *player, Player *opponent, sf::Vector2i move
 				if ((this->bitboardR.bbD[i] & check) >> j == winCase)
 					return (this->validateWin(
 							player, opponent,
-							&this->bitboardR, &this->bitboardL, 'D', j, i));
+							&this->bitboardR, &this->bitboardL, 'A', j, i));
 				if ((this->bitboardR.bbA[i] & check) >> j == winCase)
 					return (this->validateWin(
 							player, opponent,
-							&this->bitboardR, &this->bitboardL, 'A', j, i));
+							&this->bitboardR, &this->bitboardL, 'D', j, i));
 				check <<= 1;
 			}
 		}
@@ -980,56 +980,159 @@ bool	Grid::validateWin(
 				BitBoard *plBitBoard, BitBoard *opBitBoard,
 				char bbType, int x, int y)
 {
-	int	plCheckL, opCheckL,
-		plCheckR, opCheckR,
-		plCheckVL, opCheckVL,
-		plCheckVR, opCheckVR,
+	int	vx, vy,
+		checkL, checkR,
+		checkVL, checkVR,
 		plVerify, opVerifyL, opVerifyR,
 		shiftL, shiftR,
 		shiftVL, shiftVR,
 		yD, yA;
 
-	y--;
+	printf("check at %i %i\n", x, y);
+
+	if (bbType == 'V')
+	{
+		yD = y;
+		y = x;
+		x = yD;
+	}
+	else if (bbType == 'D')
+	{
+		x = x;
+		y = y - x;
+		if (y < 0)
+			y += GRID_W_INTER;
+	}
+	else if (bbType == 'A')
+	{
+		x = x;
+		y = (y + x) % GRID_W_INTER;
+	}
+
+	vx = x;
+	vy = y;
+
+	// yD = (y + x) % GRID_W_INTER;
+
+	// yA = y - x;
+	// if (yA < 0)
+	// 	yA = GRID_W_INTER + yA;
+
+	printf("pos in bbH %i %i\n", x, y);
+
 	plVerify = 0b0110;
 	opVerifyL = 0b0001;
 	opVerifyR = 0b1000;
-	printf("%019b | %019b\n", plBitBoard->bbH[y], opBitBoard->bbH[y]);
+	for (int i = 0; i < GRID_W_INTER; i++)
+	{
+		for (int j = 0; j < GRID_W_INTER; j++)
+		{
+			if (plBitBoard->bbH[i] & 1 << j)
+				printf("1 ");
+			else
+				printf(". ");
+		}
+		printf("| ");
+		for (int j = 0; j < GRID_W_INTER; j++)
+		{
+			if (opBitBoard->bbH[i] & 1 << j)
+				printf("1 ");
+			else
+				printf(". ");
+		}
+		printf("\n");
+	}
+	printf("\n");
 
 	for (int i = 0; i < 5; i++)
 	{
-		shiftR = GRID_W_INTER - x - 1;
-		shiftL = shiftR - 3;
-		plCheckL = 0b0110 << shiftL;
-		opCheckL = 0b0001 << shiftL;
-		plCheckR = 0b0110 << shiftR;
-		opCheckR = 0b1000 << shiftR;
+		shiftR = x - 1;
+		shiftL = shiftR - 1;
+		checkL = 0b1111 << shiftL;
+		checkR = 0b1111 << shiftR;
 
-		shiftVR = y;
-		shiftVL = shiftVR - 3;
-		plCheckVL = 0b0110 << shiftVL;
-		opCheckVL = 0b1001 << shiftVL;
-		plCheckVR = 0b0110 << shiftVR;
-		opCheckVR = 0b1001 << shiftVR;
+		shiftVR = vy - 1;
+		shiftVL = shiftVR - 1;
+		checkVL = 0b1111 << shiftVL;
+		checkVR = 0b1111 << shiftVR;
 
 		yD = (y + x) % GRID_W_INTER;
 
-		yA = (y - x) % GRID_W_INTER;
+		yA = y - x;
 		if (yA < 0)
 			yA = GRID_W_INTER + yA;
 
-		if (bbType != 'H')
+		// Check if stone is capturable on horizontal axis
+		if (bbType != 'H' && x > 0 && x < GRID_W_INTER - 1)
 		{
-			if (((plBitBoard->bbH[y] & plCheckL) >> shiftL == plVerify
-					&& (opBitBoard->bbH[y] & opCheckL) >> shiftL == opVerifyL)
-				|| ((plBitBoard->bbH[y] & plCheckR) >> shiftR == plVerify
-					&& (opBitBoard->bbH[y] & opCheckR) >> shiftR == opVerifyR))
+			// printf("plline         bbH %019b\n", plBitBoard->bbH[y]);
+			// printf("plline check L bbH %019b\n", checkL);
+			// printf("plline check R bbH %019b\n", checkR);
+			// printf("\n");
+			// printf("opline         bbH %019b\n", opBitBoard->bbH[y]);
+			// printf("opline check L bbH %019b\n", checkL);
+			// printf("opline check R bbH %019b\n", checkR);
+			if (((plBitBoard->bbH[y] & checkL) >> shiftL == plVerify
+					&& ((opBitBoard->bbH[y] & checkL) >> shiftL == opVerifyL
+						|| (opBitBoard->bbH[y] & checkL) >> shiftL == opVerifyR))
+				|| ((plBitBoard->bbH[y] & checkR) >> shiftR == plVerify
+					&& ((opBitBoard->bbH[y] & checkR) >> shiftR == opVerifyL
+						|| (opBitBoard->bbH[y] & checkR) >> shiftR == opVerifyR)))
 			{
-				printf("nope\n");
+				printf("H nope\n");
 				return (false);
 			}
 		}
 
-		x++;
+		// Check if stone is capturable on vertical axis
+		if (bbType != 'V' && vy > 0 && vy < GRID_W_INTER - 1)
+		{
+			// printf("plline         bbV %019b\n", plBitBoard->bbV[vx]);
+			// printf("plline check L bbV %019b\n", checkVL);
+			// printf("plline check R bbV %019b\n", checkVR);
+			// printf("\n");
+			// printf("opline         bbV %019b\n", opBitBoard->bbV[vx]);
+			// printf("opline check L bbV %019b\n", checkVL);
+			// printf("opline check R bbV %019b\n", checkVR);
+
+			if (((plBitBoard->bbV[vx] & checkVL) >> shiftVL == plVerify
+					&& ((opBitBoard->bbV[vx] & checkVL) >> shiftVL == opVerifyL
+						|| (opBitBoard->bbV[vx] & checkVL) >> shiftVL == opVerifyR))
+				|| ((plBitBoard->bbV[vx] & checkVR) >> shiftVR == plVerify
+					&& ((opBitBoard->bbV[vx] & checkVR) >> shiftVR == opVerifyL
+						|| (opBitBoard->bbV[vx] & checkVR) >> shiftVR == opVerifyR)))
+			{
+				printf("V nope\n");
+				return (false);
+			}
+		}
+
+		// TODO: CONTINUE
+		// Check if stone is capturable on diagonal axis
+		if (bbType != 'D' && x > 0 && x < GRID_W_INTER - 1)
+		{
+			printf("plline         bbD %019b\n", plBitBoard->bbD[yD]);
+			printf("plline check L bbD %019b\n", checkL);
+			printf("plline check R bbD %019b\n", checkR);
+			printf("\n");
+			printf("opline         bbD %019b\n", opBitBoard->bbD[yD]);
+			printf("opline check L bbD %019b\n", checkL);
+			printf("opline check R bbD %019b\n", checkR);
+			if (((plBitBoard->bbD[yD] & checkL) >> shiftL == plVerify
+					&& ((opBitBoard->bbD[yD] & checkL) >> shiftL == opVerifyL)
+						|| ((opBitBoard->bbD[yD] & checkL) >> shiftL == opVerifyR))
+				|| ((plBitBoard->bbD[yD] & checkR) >> shiftR == plVerify
+					&& ((opBitBoard->bbD[yD] & checkR) >> shiftR == opVerifyL)
+						|| ((opBitBoard->bbD[yD] & checkR) >> shiftR == opVerifyR)))
+			{
+				printf("D nope\n");
+				return (false);
+			}
+		}
+
+		y++;
+		vx++;
+		printf("\n\n");
 	}
 
 
@@ -1043,10 +1146,9 @@ int	Grid::makeCapture(
 			sf::Vector2i *move,
 			BitBoard *plBitBoard, BitBoard *opBitBoard)
 {
-	int	plCheckL, opCheckL,
-		plCheckR, opCheckR,
-		plCheckVL, opCheckVL,
-		plCheckVR, opCheckVR,
+	int	checkL, checkR,
+		checkVL,
+		checkVR,
 		plVerify, opVerify,
 		shiftL, shiftR,
 		shiftVL, shiftVR,
@@ -1057,52 +1159,48 @@ int	Grid::makeCapture(
 	plVerify = 0b1001;
 	opVerify = 0b0110;
 
-	shiftR = GRID_W_INTER - move->x - 1;
+	shiftR = move->x;
 	shiftL = shiftR - 3;
-	plCheckL = 0b1001 << shiftL;
-	opCheckL = 0b0110 << shiftL;
-	plCheckR = 0b1001 << shiftR;
-	opCheckR = 0b0110 << shiftR;
+	checkL = 0b1111 << shiftL;
+	checkR = 0b1111 << shiftR;
 
 	shiftVR = move->y;
 	shiftVL = shiftVR - 3;
-	plCheckVL = 0b1001 << shiftVL;
-	opCheckVL = 0b0110 << shiftVL;
-	plCheckVR = 0b1001 << shiftVR;
-	opCheckVR = 0b0110 << shiftVR;
+	checkVL = 0b1111 << shiftVL;
+	checkVR = 0b1111 << shiftVR;
 
 	yD = (move->y + move->x) % GRID_W_INTER;
 
-	yA = (move->y - move->x) % GRID_W_INTER;
+	yA = move->y - move->x;
 	if (yA < 0)
 		yA = GRID_W_INTER + yA;
 
 	// Check capture in horizontal
-	if ((plBitBoard->bbH[move->y] & plCheckL) >> shiftL == plVerify
-		&& (opBitBoard->bbH[move->y] & opCheckL) >> shiftL == opVerify)
-	{
-		opBitBoard->set(move->x + 1, move->y, false);
-		opBitBoard->set(move->x + 2, move->y, false);
-		nbCapture += 2;
-	}
-	if ((plBitBoard->bbH[move->y] & plCheckR) >> shiftR == plVerify
-		&& (opBitBoard->bbH[move->y] & opCheckR) >> shiftR == opVerify)
+	if ((plBitBoard->bbH[move->y] & checkL) >> shiftL == plVerify
+		&& (opBitBoard->bbH[move->y] & checkL) >> shiftL == opVerify)
 	{
 		opBitBoard->set(move->x - 1, move->y, false);
 		opBitBoard->set(move->x - 2, move->y, false);
 		nbCapture += 2;
 	}
+	if ((plBitBoard->bbH[move->y] & checkR) >> shiftR == plVerify
+		&& (opBitBoard->bbH[move->y] & checkR) >> shiftR == opVerify)
+	{
+		opBitBoard->set(move->x + 1, move->y, false);
+		opBitBoard->set(move->x + 2, move->y, false);
+		nbCapture += 2;
+	}
 
 	// Check capture in vertical
-	if ((plBitBoard->bbV[move->x] & plCheckVL) >> shiftVL == plVerify
-		&& (opBitBoard->bbV[move->x] & opCheckVL) >> shiftVL == opVerify)
+	if ((plBitBoard->bbV[move->x] & checkVL) >> shiftVL == plVerify
+		&& (opBitBoard->bbV[move->x] & checkVL) >> shiftVL == opVerify)
 	{
 		opBitBoard->set(move->x, move->y - 1, false);
 		opBitBoard->set(move->x, move->y - 2, false);
 		nbCapture += 2;
 	}
-	if ((plBitBoard->bbV[move->x] & plCheckVR) >> shiftVR == plVerify
-		&& (opBitBoard->bbV[move->x] & opCheckVR) >> shiftVR == opVerify)
+	if ((plBitBoard->bbV[move->x] & checkVR) >> shiftVR == plVerify
+		&& (opBitBoard->bbV[move->x] & checkVR) >> shiftVR == opVerify)
 	{
 		opBitBoard->set(move->x, move->y + 1, false);
 		opBitBoard->set(move->x, move->y + 2, false);
@@ -1110,35 +1208,35 @@ int	Grid::makeCapture(
 	}
 
 	// Check capture in diagonal
-	if ((plBitBoard->bbD[yD] & plCheckL) >> shiftL == plVerify
-		&& (opBitBoard->bbD[yD] & opCheckL) >> shiftL == opVerify)
-	{
-		opBitBoard->set(move->x + 1, move->y - 1, false);
-		opBitBoard->set(move->x + 2, move->y - 2, false);
-		nbCapture += 2;
-	}
-	if ((plBitBoard->bbD[yD] & plCheckR) >> shiftR == plVerify
-		&& (opBitBoard->bbD[yD] & opCheckR) >> shiftR == opVerify)
+	if ((plBitBoard->bbD[yD] & checkL) >> shiftL == plVerify
+		&& (opBitBoard->bbD[yD] & checkL) >> shiftL == opVerify)
 	{
 		opBitBoard->set(move->x - 1, move->y + 1, false);
 		opBitBoard->set(move->x - 2, move->y + 2, false);
 		nbCapture += 2;
 	}
+	if ((plBitBoard->bbD[yD] & checkR) >> shiftR == plVerify
+		&& (opBitBoard->bbD[yD] & checkR) >> shiftR == opVerify)
+	{
+		opBitBoard->set(move->x + 1, move->y - 1, false);
+		opBitBoard->set(move->x + 2, move->y - 2, false);
+		nbCapture += 2;
+	}
 
 
 	// Check capture in anti diagonal
-	if ((plBitBoard->bbA[yA] & plCheckL) >> shiftL == plVerify
-		&& (opBitBoard->bbA[yA] & opCheckL) >> shiftL == opVerify)
-	{
-		opBitBoard->set(move->x + 1, move->y + 1, false);
-		opBitBoard->set(move->x + 2, move->y + 2, false);
-		nbCapture += 2;
-	}
-	if ((plBitBoard->bbA[yA] & plCheckR) >> shiftR == plVerify
-		&& (opBitBoard->bbA[yA] & opCheckR) >> shiftR == opVerify)
+	if ((plBitBoard->bbA[yA] & checkL) >> shiftL == plVerify
+		&& (opBitBoard->bbA[yA] & checkL) >> shiftL == opVerify)
 	{
 		opBitBoard->set(move->x - 1, move->y - 1, false);
 		opBitBoard->set(move->x - 2, move->y - 2, false);
+		nbCapture += 2;
+	}
+	if ((plBitBoard->bbA[yA] & checkR) >> shiftR == plVerify
+		&& (opBitBoard->bbA[yA] & checkR) >> shiftR == opVerify)
+	{
+		opBitBoard->set(move->x + 1, move->y + 1, false);
+		opBitBoard->set(move->x + 2, move->y + 2, false);
 		nbCapture += 2;
 	}
 
