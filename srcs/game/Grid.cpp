@@ -117,7 +117,8 @@ Grid	&Grid::operator=(const Grid &grid)
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
-void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer,
+void	Grid::tick(display_state *displayState, Mouse *mouse,
+					Player *leftPlayer, Player *rightPlayer,
 					Evaluation *evaluator)
 {
 	if (!mouse->inRectangle(this->x, this->y, this->w, this->h))
@@ -133,7 +134,8 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	int px = (mx + GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 	int py = (my + GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 
-	if (px == this->previewX && py == this->previewY && !mouse->isPressed(MBUT_LEFT))
+	if (px == this->previewX && py == this->previewY
+			&& !mouse->isPressed(MBUT_LEFT))
 		return ;
 
 	this->previewX = px;
@@ -157,7 +159,8 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 }
 
 
-void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
+void	Grid::draw(sf::RenderWindow *window, sf::Text *text,
+					TextureManager *textureManager)
 {
 	textureManager->drawTexture(window, SPRITE_GRID, this->x, this->y, TOP_LEFT);
 
@@ -172,7 +175,8 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 		drawX = this->x + i * GRID_SQUARE_SIZE + 10;
 		label = "";
 		label += xlabels[i];
-		drawText(window, text, label, drawX, drawY, 20, sf::Color::White, MID_CENTER);
+		drawText(window, text, label, drawX, drawY,
+					20, sf::Color::White, MID_CENTER);
 	}
 
 	//numbers left
@@ -182,9 +186,11 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 		drawY = this->y + i * GRID_SQUARE_SIZE - 4 + 10;
 		label = std::to_string(i + 1);
 		if (i == 0)
-			drawText(window, text, label, drawX - 3, drawY, 20, sf::Color::White, MID_RIGHT);
+			drawText(window, text, label, drawX - 3, drawY,
+						20, sf::Color::White, MID_RIGHT);
 		else
-			drawText(window, text, label, drawX, drawY, 20, sf::Color::White, MID_RIGHT);
+			drawText(window, text, label, drawX, drawY,
+						20, sf::Color::White, MID_RIGHT);
 	}
 
 	//draw stones
@@ -195,9 +201,11 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 			drawX = this->x + x * GRID_SQUARE_SIZE + 10;
 			drawY = this->y + y * GRID_SQUARE_SIZE + 10;
 			if (this->bitboardL.get(x, y))
-				textureManager->drawTexture(window, this->leftStone, drawX, drawY, MID_CENTER);
+				textureManager->drawTexture(window, this->leftStone,
+											drawX, drawY, MID_CENTER);
 			else if (this->bitboardR.get(x, y))
-				textureManager->drawTexture(window, this->rightStone, drawX, drawY, MID_CENTER);
+				textureManager->drawTexture(window, this->rightStone,
+											drawX, drawY, MID_CENTER);
 		}
 	}
 
@@ -206,11 +214,13 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 	{
 		drawX = this->x + this->previewX * GRID_SQUARE_SIZE + 10;
 		drawY = this->y + this->previewY * GRID_SQUARE_SIZE + 10;
-		textureManager->drawTexture(window, SPRITE_STONE_PREVIEW, drawX, drawY, MID_CENTER);
+		textureManager->drawTexture(window, SPRITE_STONE_PREVIEW,
+									drawX, drawY, MID_CENTER);
 	}
 }
 
-bool	Grid::checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState)
+bool	Grid::checkLegalMove(
+				int x, int y, int nbMoves, inter_type plType, inter_type opType)
 {
 	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
 		return (false);
@@ -219,13 +229,23 @@ bool	Grid::checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_t
 		return (false);
 
 	// TODO : CHECK DOUBLE FREE THREE
-	// if (this->checkDoubleFreeThree(x, y, plState, opState))
-	// 	return (false);
+	if (plType == INTER_LEFT)
+	{
+		if (this->checkDoubleFreeThree(
+					x, y, &this->bitboardL, &this->bitboardR))
+			return (false);
+	}
+	else
+	{
+		if (this->checkDoubleFreeThree(
+					x, y, &this->bitboardR, &this->bitboardL))
+			return (false);
+	}
 
 	// TODO : CHECK PRO RULE
 	// // check rule
 	// if (this->rule == PRO && nbMoves <= 2)
-	// 	if (!this->checkProRule(x, y, plState, nbMoves))
+	// 	if (!this->checkProRule(x, y, plType, nbMoves))
 	// 		return (false);
 
 	return (true);
@@ -380,7 +400,8 @@ bool	Grid::checkWinCondition(Player *player, Player *opponent)
 }
 
 
-void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule)
+void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone,
+						game_rules rule)
 {
 	this->leftStone = leftStone;
 	this->rightStone = rightStone;
@@ -1236,6 +1257,32 @@ int	Grid::makeCapture(
 }
 
 
+bool	Grid::checkDoubleFreeThree(
+				int x, int y, BitBoard *plBitBoard, BitBoard *opBitBoard)
+{
+	int	verifyL, verifyM, verifyR,
+		shiftL, shiftR,
+		checkL, checkR;
+
+	// Create vefify
+	verifyL = 0b011;
+	verifyM = 0b101;
+	verifyR = 0b110;
+
+	// TODO : CONTINUE
+
+	// Check for honrizontal
+
+	// Check for vertical
+
+	// Check for diagonal
+
+	// Check for anti diagonal
+
+	return (true);
+}
+
+
 void	Grid::applyHistoryToGrid(void)
 {
 	std::pair<BitBoard, BitBoard>	savedBoard;
@@ -1247,6 +1294,8 @@ void	Grid::applyHistoryToGrid(void)
 	this->historyIdString = std::to_string(this->boardHistoryId + 1) + " / "
 								+ std::to_string(this->boardHistory.size());
 }
+
+
 
 // bool	Grid::checkProRule(int x, int y, inter_type interPlayer, int nbMoves)
 // {

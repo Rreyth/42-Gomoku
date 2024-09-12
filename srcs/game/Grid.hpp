@@ -29,7 +29,7 @@ public:
 	void			tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer,
 							Evaluation *evaluator);
 	void			draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
-	bool			checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState);
+	bool			checkLegalMove(int x, int y, int nbMoves, inter_type plType, inter_type opType);
 	bool			putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
 	bool			checkWinCondition(Player *player, Player *opponent);
 	void			clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
@@ -75,10 +75,10 @@ private:
 
 	bool	validateWin(Player *player, Player *opponent, BitBoard *plBitBoard, BitBoard *opBitBoard, char bbType, int x, int y);
 	int		makeCapture(sf::Vector2i *move, BitBoard *plBitBoard, BitBoard *opBitBoard);
+	bool	checkDoubleFreeThree(int x, int y, BitBoard *plBitBoard, BitBoard *opBitBoard);
 	void	applyHistoryToGrid(void);
 
 	// void			setInterState(int x, int y, inter_type interType);
-	// bool			checkDoubleFreeThree(int x, int y, inter_type plType, inter_type opType);
 	// bool			checkProRule(int x, int y, inter_type interPlayer, int nbMoves);
 	// void			loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type plType);
 	// void			updateNeighbor(int x, int y);
