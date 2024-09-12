@@ -28,7 +28,7 @@ Grid::Grid(void)
 	// this->dirs[DIR_D] = sf::Vector2i(0, 1);
 	// this->dirs[DIR_DL] = sf::Vector2i(-1, 1);
 
-	// this->currentMove = "";
+	this->historyIdString = "";
 	// this->createBoardState();
 
 	// this->bboxUL = sf::Vector2i(GRID_W_INTER - 1, GRID_W_INTER - 1);
@@ -68,9 +68,9 @@ int	Grid::getH(void)
 }
 
 
-std::string	Grid::getCurrentMove(void)
+std::string	Grid::getHistoryIdString(void)
 {
-	return (this->currentMove);
+	return (this->historyIdString);
 }
 
 
@@ -132,32 +132,6 @@ void	Grid::tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, P
 	my -= this->y;
 	int px = (mx + GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 	int py = (my + GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
-
-	// // TODO: REMOVE PRINT TEST PART
-	// if (mouse->isPressed(MBUT_RIGHT))
-	// {
-	// 	std::string	xaxis = "ABCDEFGHIJKLMNOPQRS";
-	// 	intersection	*inter = this->getIntersection(px, py);
-	// 	std::cout << "\nPosition " << xaxis[px] << py + 1 << " :" << std::endl;
-	// 	std::cout << "    Evalutation Left  : "
-	// 				<< evaluator->evaluationPosition(
-	// 								this, INTER_LEFT, INTER_RIGHT,
-	// 								leftPlayer->getCaptured(),
-	// 								rightPlayer->getCaptured(),
-	// 								px, py)
-	// 				<< std::endl;
-	// 	std::cout << "    Evalutation Right : "
-	// 				<< evaluator->evaluationPosition(
-	// 								this, INTER_RIGHT, INTER_LEFT,
-	// 								rightPlayer->getCaptured(),
-	// 								leftPlayer->getCaptured(),
-	// 								px, py)
-	// 				<< std::endl;
-	// 	std::cout << "    Neighbors :" << std::endl;
-	// 	std::cout << "        " << inter->neighbor[DIR_UL] << " " << inter->neighbor[DIR_U] <<  " " << inter->neighbor[DIR_UR] << std::endl;
-	// 	std::cout << "        " << inter->neighbor[DIR_L] << " S " << inter->neighbor[DIR_R] << std::endl;
-	// 	std::cout << "        " << inter->neighbor[DIR_DL] << " " << inter->neighbor[DIR_D] <<  " " << inter->neighbor[DIR_DR] << std::endl;
-	// }
 
 	if (px == this->previewX && py == this->previewY && !mouse->isPressed(MBUT_LEFT))
 		return ;
@@ -244,12 +218,11 @@ bool	Grid::checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_t
 	if (this->bitboardL.get(x, y) || this->bitboardR.get(x, y))
 		return (false);
 
-	// if (this->getInterState(x, y) != INTER_EMPTY)
-	// 	return (false);
-
+	// TODO : CHECK DOUBLE FREE THREE
 	// if (this->checkDoubleFreeThree(x, y, plState, opState))
 	// 	return (false);
 
+	// TODO : CHECK PRO RULE
 	// // check rule
 	// if (this->rule == PRO && nbMoves <= 2)
 	// 	if (!this->checkProRule(x, y, plState, nbMoves))
@@ -299,7 +272,7 @@ bool	Grid::putStone(
 }
 
 
-bool	Grid::checkWinCondition(Player *player, Player *opponent, sf::Vector2i move)
+bool	Grid::checkWinCondition(Player *player, Player *opponent)
 {
 	int		winCase, check;
 	bool	isWin;
@@ -424,13 +397,10 @@ void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules r
 		this->bitboardR.bbD[i] = 0;
 		this->bitboardR.bbA[i] = 0;
 	}
-
-	// this->boardStates.clear();
-	// this->leftWinPos.clear();
-	// this->rightWinPos.clear();
+	this->boardHistoryId = 0;
+	this->boardHistory.clear();
 	// this->interestingMovesLeft.clear();
 	// this->interestingMovesRight.clear();
-	// this->createBoardState();
 }
 
 
@@ -447,50 +417,55 @@ void	Grid::reset(void)
 		this->bitboardR.bbD[i] = 0;
 		this->bitboardR.bbA[i] = 0;
 	}
-	// this->boardStates.clear();
-	// this->leftWinPos.clear();
-	// this->rightWinPos.clear();
+	this->boardHistoryId = 0;
+	this->boardHistory.clear();
 	// this->interestingMovesLeft.clear();
 	// this->interestingMovesRight.clear();
-	// this->createBoardState();
 }
 
-// void	Grid::goToFirstMove(void)
-// {
-// 	// this->idBoardState = 0;
-// 	// this->createCurrentMoveText();
-// 	// this->setBoardState(this->idBoardState);
-// }
+void	Grid::addBoardToHistory(void)
+{
+	this->boardHistory.push_back(
+			std::pair<BitBoard, BitBoard>(this->bitboardL, this->bitboardR));
+}
 
 
-// void	Grid::goToPreviousMove(void)
-// {
-// 	// if (this->idBoardState <= 0)
-// 	// 	return ;
-
-// 	// this->idBoardState -= 1;
-// 	// this->createCurrentMoveText();
-// 	// this->setBoardState(this->idBoardState);
-// }
+void	Grid::goToHistoryStart(void)
+{
+	this->boardHistoryId = 0;
+	this->applyHistoryToGrid();
+}
 
 
-// void	Grid::goToNextMove(void)
-// {
-// 	// if (this->idBoardState >= this->boardStates.size() - 1)
-// 	// 	return ;
-
-// 	// this->idBoardState += 1;
-// 	// this->createCurrentMoveText();
-// 	// this->setBoardState(this->idBoardState);
-// }
+void	Grid::goToHistoryPrevious(void)
+{
+	if (this->boardHistoryId <= 0)
+		return ;
+	this->boardHistoryId--;
+	this->applyHistoryToGrid();
+}
 
 
-// void	Grid::goToLastMove(void)
-// {
-// 	// this->idBoardState = this->boardStates.size() - 1;
-// 	// this->createCurrentMoveText();
-// 	// this->setBoardState(this->idBoardState);
-// }
+void	Grid::goToHistoryNext(void)
+{
+	if (this->boardHistoryId >= this->boardHistory.size() - 1)
+		return ;
+	this->boardHistoryId++;
+	this->applyHistoryToGrid();
+}
+
+
+void	Grid::goToHistoryEnd(void)
+{
+	this->boardHistoryId = this->boardHistory.size() - 1;
+	this->applyHistoryToGrid();
+}
+
+
+void	Grid::disablePreview(void)
+{
+	this->previewLegal = false;
+}
 
 
 // std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *player, Player *opponent)
@@ -992,18 +967,6 @@ void	Grid::reset(void)
 // }
 
 
-void	Grid::addBoardState(void)
-{
-	this->boardStates.push_back(this->currentBoardState);
-}
-
-
-void	Grid::disablePreview(void)
-{
-	this->previewLegal = false;
-}
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -1273,6 +1236,18 @@ int	Grid::makeCapture(
 }
 
 
+void	Grid::applyHistoryToGrid(void)
+{
+	std::pair<BitBoard, BitBoard>	savedBoard;
+
+	savedBoard = this->boardHistory[this->boardHistoryId];
+	this->bitboardL = savedBoard.first;
+	this->bitboardR = savedBoard.second;
+
+	this->historyIdString = std::to_string(this->boardHistoryId + 1) + " / "
+								+ std::to_string(this->boardHistory.size());
+}
+
 // bool	Grid::checkProRule(int x, int y, inter_type interPlayer, int nbMoves)
 // {
 // 	// The first stone must be placed in the center of the board.
@@ -1281,7 +1256,8 @@ int	Grid::makeCapture(
 // 		y != GRID_W_INTER / 2))
 // 		return (false);
 // 	// The second stone may be placed anywhere on the board.
-// 	// The third stone must be placed at least three intersections away from the first stone
+// 	// The third stone must be placed at least three
+// 	// intersections away from the first stone
 // 	else if (nbMoves == 2)
 // 	{
 // 		int	tmp_x, tmp_y;

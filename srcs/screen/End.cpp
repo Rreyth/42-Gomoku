@@ -55,16 +55,16 @@ void	End::tick(display_state *displayState, float delta, Mouse *mouse, Game *gam
 
 	if (this->back.getPressed())
 		*displayState = DISPLAY_MENU;
-	// else if (this->firstMove.getPressed())
-	// 	game->getGrid()->goToFirstMove();
-	// else if (this->previousMove.getPressed())
-	// 	game->getGrid()->goToPreviousMove();
-	// else if (this->nextMove.getPressed())
-	// 	game->getGrid()->goToNextMove();
-	// else if (this->lastMove.getPressed())
-	// 	game->getGrid()->goToLastMove();
-	// else if (this->replay.getPressed())
-	// 	game->replay(displayState);
+	else if (this->firstMove.getPressed())
+		game->getGrid()->goToHistoryStart();
+	else if (this->previousMove.getPressed())
+		game->getGrid()->goToHistoryPrevious();
+	else if (this->nextMove.getPressed())
+		game->getGrid()->goToHistoryNext();
+	else if (this->lastMove.getPressed())
+		game->getGrid()->goToHistoryEnd();
+	else if (this->replay.getPressed())
+		game->replay(displayState);
 }
 
 
@@ -128,7 +128,7 @@ void	End::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *texture
 	drawText(window, text, "MOVES", WIN_W / 2, WIN_H * 0.875, 35, sf::Color::White, MID_CENTER);
 	this->firstMove.draw(window, text, textureManager);
 	this->previousMove.draw(window, text, textureManager);
-	drawText(window, text, grid->getCurrentMove(), WIN_W / 2, WIN_H * 0.93, 35, sf::Color::White, MID_CENTER);
+	drawText(window, text, grid->getHistoryIdString(), WIN_W / 2, WIN_H * 0.93, 35, sf::Color::White, MID_CENTER);
 	this->nextMove.draw(window, text, textureManager);
 	this->lastMove.draw(window, text, textureManager);
 	this->replay.draw(window, text, textureManager);

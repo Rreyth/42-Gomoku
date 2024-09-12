@@ -16,28 +16,31 @@ public:
 	Grid(void);
 	~Grid();
 
-	int							getX(void);
-	int							getY(void);
-	int							getW(void);
-	int							getH(void);
-	std::string					getCurrentMove(void);
-	inter_type					getInterState(int x, int y);
-	intersection				*getIntersection(int x, int y);
+	int				getX(void);
+	int				getY(void);
+	int				getW(void);
+	int				getH(void);
+	std::string		getHistoryIdString(void);
+	inter_type		getInterState(int x, int y);
+	intersection	*getIntersection(int x, int y);
 
-	Grid						&operator=(const Grid &grid);
+	Grid			&operator=(const Grid &grid);
 
-	void						tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer,
-										Evaluation *evaluator);
-	void						draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
-	bool						checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState);
-	bool						putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
-	bool						checkWinCondition(Player *player, Player *opponent, sf::Vector2i move);
-	void						clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
-	void						reset(void);
-	// void						goToFirstMove(void);
-	// void						goToPreviousMove(void);
-	// void						goToNextMove(void);
-	// void						goToLastMove(void);
+	void			tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer,
+							Evaluation *evaluator);
+	void			draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
+	bool			checkLegalMove(int x, int y, int nbMoves, inter_type plState, inter_type opState);
+	bool			putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
+	bool			checkWinCondition(Player *player, Player *opponent);
+	void			clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
+	void			reset(void);
+	void			addBoardToHistory(void);
+	void			goToHistoryStart(void);
+	void			goToHistoryPrevious(void);
+	void			goToHistoryNext(void);
+	void			goToHistoryEnd(void);
+	void			disablePreview(void);
+
 	// std::string					getCurrentBoardState(void);
 	// std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
 	// bool						checkInterestingMove(int x, int y);
@@ -54,16 +57,15 @@ public:
 	// void						loadBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR);
 	// void						saveWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos);
 	// void						loadWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos);
-	void						addBoardState(void);
-	void						disablePreview(void);
 
 private:
-	int			x, y, w, h, previewX, previewY, idBoardState;
-	bool		previewLegal;
-	sprite_name	leftStone, rightStone;
-	game_rules	rule;
-	std::string	currentMove;
-	BitBoard	bitboardL, bitboardR;
+	int											x, y, w, h, previewX, previewY, boardHistoryId;
+	bool										previewLegal;
+	sprite_name									leftStone, rightStone;
+	game_rules									rule;
+	std::string									historyIdString;
+	BitBoard									bitboardL, bitboardR;
+	std::vector<std::pair<BitBoard, BitBoard>>	boardHistory;
 
 	// intersection				gridState[GRID_NB_INTER];
 	// sf::Vector2i				dirs[8], bboxUL, bboxDR;
@@ -71,9 +73,9 @@ private:
 	// std::vector<std::string>	boardStates;
 	// std::string					currentBoardState, currentBoardStateOpti;
 
-
 	bool	validateWin(Player *player, Player *opponent, BitBoard *plBitBoard, BitBoard *opBitBoard, char bbType, int x, int y);
 	int		makeCapture(sf::Vector2i *move, BitBoard *plBitBoard, BitBoard *opBitBoard);
+	void	applyHistoryToGrid(void);
 
 	// void			setInterState(int x, int y, inter_type interType);
 	// bool			checkDoubleFreeThree(int x, int y, inter_type plType, inter_type opType);
