@@ -301,7 +301,8 @@ bool	Grid::putStone(
 
 bool	Grid::checkWinCondition(Player *player, Player *opponent, sf::Vector2i move)
 {
-	int	winCase, check;
+	int		winCase, check;
+	bool	isWin;
 
 	// Check if the player capture at least 10 opponent's stones
 	if (player->getCaptured() >= WIN_CAPTURE)
@@ -323,21 +324,37 @@ bool	Grid::checkWinCondition(Player *player, Player *opponent, sf::Vector2i move
 			for (int j = 0; j < GRID_W_INTER - 4; j++)
 			{
 				if ((this->bitboardL.bbH[i] & check) >> j == winCase)
-					return (this->validateWin(
-							player, opponent,
-							&this->bitboardL, &this->bitboardR, 'H', j, i));
+				{
+					isWin = this->validateWin(
+									player, opponent, &this->bitboardL,
+									&this->bitboardR, 'H', j, i);
+					if (isWin)
+						return (true);
+				}
 				if ((this->bitboardL.bbV[i] & check) >> j == winCase)
-					return (this->validateWin(
-							player, opponent,
-							&this->bitboardL, &this->bitboardR, 'V', j, i));
+				{
+					isWin = this->validateWin(
+									player, opponent, &this->bitboardL,
+									&this->bitboardR, 'V', j, i);
+					if (isWin)
+						return (true);
+				}
 				if ((this->bitboardL.bbD[i] & check) >> j == winCase)
-					return (this->validateWin(
-							player, opponent,
-							&this->bitboardL, &this->bitboardR, 'A', j, i));
+				{
+					isWin = this->validateWin(
+									player, opponent, &this->bitboardL,
+									&this->bitboardR, 'D', j, i);
+					if (isWin)
+						return (true);
+				}
 				if ((this->bitboardL.bbA[i] & check) >> j == winCase)
-					return (this->validateWin(
-							player, opponent,
-							&this->bitboardL, &this->bitboardR, 'D', j, i));
+				{
+					isWin = this->validateWin(
+									player, opponent, &this->bitboardL,
+									&this->bitboardR, 'A', j, i);
+					if (isWin)
+						return (true);
+				}
 				check <<= 1;
 			}
 		}
@@ -350,21 +367,37 @@ bool	Grid::checkWinCondition(Player *player, Player *opponent, sf::Vector2i move
 			for (int j = 0; j < GRID_W_INTER - 4; j++)
 			{
 				if ((this->bitboardR.bbH[i] & check) >> j == winCase)
-					return (this->validateWin(
-							player, opponent,
-							&this->bitboardR, &this->bitboardL, 'H', j, i));
-				if ((this->bitboardR.bbV[i] & check) >> j == winCase)
-					return (this->validateWin(
-							player, opponent,
-							&this->bitboardR, &this->bitboardL, 'V', j, i));
+				{
+					isWin = this->validateWin(
+								player, opponent, &this->bitboardR,
+								&this->bitboardL, 'H', j, i);
+					if (isWin)
+						return (true);
+				}
+ 				if ((this->bitboardR.bbV[i] & check) >> j == winCase)
+				{
+					isWin = this->validateWin(
+								player, opponent, &this->bitboardR,
+								&this->bitboardL, 'V', j, i);
+					if (isWin)
+						return (true);
+				}
 				if ((this->bitboardR.bbD[i] & check) >> j == winCase)
-					return (this->validateWin(
-							player, opponent,
-							&this->bitboardR, &this->bitboardL, 'A', j, i));
+				{
+					isWin = this->validateWin(
+								player, opponent, &this->bitboardR,
+								&this->bitboardL, 'D', j, i);
+					if (isWin)
+						return (true);
+				}
 				if ((this->bitboardR.bbA[i] & check) >> j == winCase)
-					return (this->validateWin(
-							player, opponent,
-							&this->bitboardR, &this->bitboardL, 'D', j, i));
+				{
+					isWin = this->validateWin(
+								player, opponent, &this->bitboardR,
+								&this->bitboardL, 'A', j, i);
+					if (isWin)
+						return (true);
+				}
 				check <<= 1;
 			}
 		}
@@ -959,16 +992,16 @@ void	Grid::reset(void)
 // }
 
 
-// void	Grid::addBoardState(void)
-// {
-// 	this->boardStates.push_back(this->currentBoardState);
-// }
+void	Grid::addBoardState(void)
+{
+	this->boardStates.push_back(this->currentBoardState);
+}
 
 
-// void	Grid::disablePreview(void)
-// {
-// 	this->previewLegal = false;
-// }
+void	Grid::disablePreview(void)
+{
+	this->previewLegal = false;
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -980,15 +1013,12 @@ bool	Grid::validateWin(
 				BitBoard *plBitBoard, BitBoard *opBitBoard,
 				char bbType, int x, int y)
 {
-	int	vx, vy,
-		checkL, checkR,
+	int	checkL, checkR,
 		checkVL, checkVR,
 		plVerify, opVerifyL, opVerifyR,
 		shiftL, shiftR,
 		shiftVL, shiftVR,
 		yD, yA;
-
-	printf("check at %i %i\n", x, y);
 
 	if (bbType == 'V')
 	{
@@ -998,51 +1028,18 @@ bool	Grid::validateWin(
 	}
 	else if (bbType == 'D')
 	{
-		x = x;
 		y = y - x;
 		if (y < 0)
 			y += GRID_W_INTER;
 	}
 	else if (bbType == 'A')
 	{
-		x = x;
 		y = (y + x) % GRID_W_INTER;
 	}
-
-	vx = x;
-	vy = y;
-
-	// yD = (y + x) % GRID_W_INTER;
-
-	// yA = y - x;
-	// if (yA < 0)
-	// 	yA = GRID_W_INTER + yA;
-
-	printf("pos in bbH %i %i\n", x, y);
 
 	plVerify = 0b0110;
 	opVerifyL = 0b0001;
 	opVerifyR = 0b1000;
-	for (int i = 0; i < GRID_W_INTER; i++)
-	{
-		for (int j = 0; j < GRID_W_INTER; j++)
-		{
-			if (plBitBoard->bbH[i] & 1 << j)
-				printf("1 ");
-			else
-				printf(". ");
-		}
-		printf("| ");
-		for (int j = 0; j < GRID_W_INTER; j++)
-		{
-			if (opBitBoard->bbH[i] & 1 << j)
-				printf("1 ");
-			else
-				printf(". ");
-		}
-		printf("\n");
-	}
-	printf("\n");
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -1051,7 +1048,7 @@ bool	Grid::validateWin(
 		checkL = 0b1111 << shiftL;
 		checkR = 0b1111 << shiftR;
 
-		shiftVR = vy - 1;
+		shiftVR = y - 1;
 		shiftVL = shiftVR - 1;
 		checkVL = 0b1111 << shiftVL;
 		checkVR = 0b1111 << shiftVR;
@@ -1065,13 +1062,6 @@ bool	Grid::validateWin(
 		// Check if stone is capturable on horizontal axis
 		if (bbType != 'H' && x > 0 && x < GRID_W_INTER - 1)
 		{
-			// printf("plline         bbH %019b\n", plBitBoard->bbH[y]);
-			// printf("plline check L bbH %019b\n", checkL);
-			// printf("plline check R bbH %019b\n", checkR);
-			// printf("\n");
-			// printf("opline         bbH %019b\n", opBitBoard->bbH[y]);
-			// printf("opline check L bbH %019b\n", checkL);
-			// printf("opline check R bbH %019b\n", checkR);
 			if (((plBitBoard->bbH[y] & checkL) >> shiftL == plVerify
 					&& ((opBitBoard->bbH[y] & checkL) >> shiftL == opVerifyL
 						|| (opBitBoard->bbH[y] & checkL) >> shiftL == opVerifyR))
@@ -1079,45 +1069,41 @@ bool	Grid::validateWin(
 					&& ((opBitBoard->bbH[y] & checkR) >> shiftR == opVerifyL
 						|| (opBitBoard->bbH[y] & checkR) >> shiftR == opVerifyR)))
 			{
-				printf("H nope\n");
+				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
+				{
+					opponent->addCaptured(2);
+					opponent->setWinState(WIN_STATE_CAPTURE);
+					this->previewLegal = false;
+					return (true);
+				}
 				return (false);
 			}
 		}
 
 		// Check if stone is capturable on vertical axis
-		if (bbType != 'V' && vy > 0 && vy < GRID_W_INTER - 1)
+		if (bbType != 'V' && y > 0 && y < GRID_W_INTER - 1)
 		{
-			// printf("plline         bbV %019b\n", plBitBoard->bbV[vx]);
-			// printf("plline check L bbV %019b\n", checkVL);
-			// printf("plline check R bbV %019b\n", checkVR);
-			// printf("\n");
-			// printf("opline         bbV %019b\n", opBitBoard->bbV[vx]);
-			// printf("opline check L bbV %019b\n", checkVL);
-			// printf("opline check R bbV %019b\n", checkVR);
-
-			if (((plBitBoard->bbV[vx] & checkVL) >> shiftVL == plVerify
-					&& ((opBitBoard->bbV[vx] & checkVL) >> shiftVL == opVerifyL
-						|| (opBitBoard->bbV[vx] & checkVL) >> shiftVL == opVerifyR))
-				|| ((plBitBoard->bbV[vx] & checkVR) >> shiftVR == plVerify
-					&& ((opBitBoard->bbV[vx] & checkVR) >> shiftVR == opVerifyL
-						|| (opBitBoard->bbV[vx] & checkVR) >> shiftVR == opVerifyR)))
+			if (((plBitBoard->bbV[x] & checkVL) >> shiftVL == plVerify
+					&& ((opBitBoard->bbV[x] & checkVL) >> shiftVL == opVerifyL
+						|| (opBitBoard->bbV[x] & checkVL) >> shiftVL == opVerifyR))
+				|| ((plBitBoard->bbV[x] & checkVR) >> shiftVR == plVerify
+					&& ((opBitBoard->bbV[x] & checkVR) >> shiftVR == opVerifyL
+						|| (opBitBoard->bbV[x] & checkVR) >> shiftVR == opVerifyR)))
 			{
-				printf("V nope\n");
+				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
+				{
+					opponent->addCaptured(2);
+					opponent->setWinState(WIN_STATE_CAPTURE);
+					this->previewLegal = false;
+					return (true);
+				}
 				return (false);
 			}
 		}
 
-		// TODO: CONTINUE
 		// Check if stone is capturable on diagonal axis
-		if (bbType != 'D' && x > 0 && x < GRID_W_INTER - 1)
+		if (bbType != 'D')
 		{
-			printf("plline         bbD %019b\n", plBitBoard->bbD[yD]);
-			printf("plline check L bbD %019b\n", checkL);
-			printf("plline check R bbD %019b\n", checkR);
-			printf("\n");
-			printf("opline         bbD %019b\n", opBitBoard->bbD[yD]);
-			printf("opline check L bbD %019b\n", checkL);
-			printf("opline check R bbD %019b\n", checkR);
 			if (((plBitBoard->bbD[yD] & checkL) >> shiftL == plVerify
 					&& ((opBitBoard->bbD[yD] & checkL) >> shiftL == opVerifyL)
 						|| ((opBitBoard->bbD[yD] & checkL) >> shiftL == opVerifyR))
@@ -1125,20 +1111,63 @@ bool	Grid::validateWin(
 					&& ((opBitBoard->bbD[yD] & checkR) >> shiftR == opVerifyL)
 						|| ((opBitBoard->bbD[yD] & checkR) >> shiftR == opVerifyR)))
 			{
-				printf("D nope\n");
+				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
+				{
+					opponent->addCaptured(2);
+					opponent->setWinState(WIN_STATE_CAPTURE);
+					this->previewLegal = false;
+					return (true);
+				}
 				return (false);
 			}
 		}
 
-		y++;
-		vx++;
-		printf("\n\n");
-	}
+		// Check if stone is capturable on diagonal axis
+		if (bbType != 'A')
+		{
+			if (((plBitBoard->bbA[yA] & checkL) >> shiftL == plVerify
+					&& ((opBitBoard->bbA[yA] & checkL) >> shiftL == opVerifyL
+						|| (opBitBoard->bbA[yA] & checkL) >> shiftL == opVerifyR))
+				|| ((plBitBoard->bbA[yA] & checkR) >> shiftR == plVerify
+					&& ((opBitBoard->bbA[yA] & checkR) >> shiftR == opVerifyL
+						|| (opBitBoard->bbA[yA] & checkR) >> shiftR == opVerifyR)))
+			{
+				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
+				{
+					opponent->addCaptured(2);
+					opponent->setWinState(WIN_STATE_CAPTURE);
+					this->previewLegal = false;
+					return (true);
+				}
+				return (false);
+			}
+		}
 
+		if (bbType == 'H')
+		{
+			x = (x + 1) % GRID_W_INTER;
+		}
+		else if (bbType == 'V')
+		{
+			y = (y + 1) % GRID_W_INTER;
+		}
+		else if (bbType == 'D')
+		{
+			x = (x + 1) % GRID_W_INTER;
+			y--;
+			if (y < 0)
+				y += GRID_W_INTER;
+		}
+		else
+		{
+			x = (x + 1) % GRID_W_INTER;
+			y = (y + 1) % GRID_W_INTER;
+		}
+	}
 
 	player->setWinState(WIN_STATE_ALIGN);
 	this->previewLegal = false;
-	return (false);
+	return (true);
 }
 
 
@@ -1244,66 +1273,6 @@ int	Grid::makeCapture(
 }
 
 
-
-// intersection	*Grid::getIntersection(int x, int y)
-// {
-// 	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
-// 		return (NULL);
-
-// 	int interId = y * GRID_W_INTER + x;
-// 	return (&this->gridState[interId]);
-// }
-
-
-// inter_type	Grid::getInterState(int x, int y)
-// {
-// 	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
-// 		return (INTER_INVALID);
-
-// 	int interId = y * GRID_W_INTER + x;
-// 	return (this->gridState[interId].type);
-// }
-
-
-// void	Grid::setInterState(int x, int y, inter_type interType)
-// {
-// 	if (x < 0 || x >= GRID_W_INTER || y < 0 || y >= GRID_W_INTER)
-// 		return ;
-
-// 	int interId = y * GRID_W_INTER + x;
-// 	this->gridState[interId].type = interType;
-
-// 	if (interType == INTER_EMPTY)
-// 		return ;
-
-// 	// Update bbox
-// 	if (bboxUL.x >= x)
-// 	{
-// 		bboxUL.x = x - 1;
-// 		if (bboxUL.x < 0)
-// 			bboxUL.x = 0;
-// 	}
-// 	if (bboxUL.y >= y)
-// 	{
-// 		bboxUL.y = y - 1;
-// 		if (bboxUL.y < 0)
-// 			bboxUL.y = 0;
-// 	}
-// 	if (bboxDR.x <= x)
-// 	{
-// 		bboxDR.x = x + 1;
-// 		if (bboxDR.x >= GRID_W_INTER)
-// 			bboxDR.x = GRID_W_INTER - 1;
-// 	}
-// 	if (bboxDR.y <= y)
-// 	{
-// 		bboxDR.y = y + 1;
-// 		if (bboxDR.y >= GRID_W_INTER)
-// 			bboxDR.y = GRID_W_INTER - 1;
-// 	}
-// }
-
-
 // bool	Grid::checkProRule(int x, int y, inter_type interPlayer, int nbMoves)
 // {
 // 	// The first stone must be placed in the center of the board.
@@ -1386,341 +1355,6 @@ int	Grid::makeCapture(
 // 	}
 
 // 	return (nbThreeTree >= 2);
-// }
-
-
-// void	Grid::loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type plType)
-// {
-// 	intersection	*inter;
-// 	int				nb_neighbor, invDir;
-
-// 	nb_neighbor = 0;
-// 	invDir = (dir + 4) % 8;
-
-// 	// Go inverse direction to find start of line
-// 	x += this->dirs[invDir].x;
-// 	y += this->dirs[invDir].y;
-// 	while (this->getInterState(x, y) == plType)
-// 	{
-// 		x += this->dirs[invDir].x;
-// 		y += this->dirs[invDir].y;
-// 	}
-
-// 	// Get first stone of line
-// 	x += this->dirs[dir].x;
-// 	y += this->dirs[dir].y;
-// 	inter = this->getIntersection(x, y);
-
-// 	// Update each stone of line
-// 	while (inter && inter->type == plType)
-// 	{
-// 		inter->neighbor[invDir] = nb_neighbor;
-// 		x += this->dirs[dir].x;
-// 		y += this->dirs[dir].y;
-// 		inter = this->getIntersection(x, y);
-// 		nb_neighbor++;
-// 	}
-// }
-
-
-// void	Grid::updateNeighbor(int x, int y)
-// {
-// 	intersection	*inter;
-// 	inter_type		plType;
-
-// 	// Get current intersection
-// 	inter = this->getIntersection(x, y);
-// 	if (!inter || (inter->type != INTER_LEFT && inter->type != INTER_RIGHT))
-// 		return ;
-
-// 	// Compute neighbors for each direction
-// 	plType = this->getInterState(x, y);
-// 	for (int i = 0; i < 8; i++)
-// 		this->loopUpdateNeighbor(x, y, (dir_neighbor)i, plType);
-// }
-
-
-// int	Grid::checkCapture(sf::Vector2i *move, inter_type plType, inter_type opType)
-// {
-// 	intersection	*inter;
-// 	intersection	*inters[3];
-// 	int				x, y, nbCapture, invAxis, interId;
-
-// 	inter = this->getIntersection(move->x, move->y);
-// 	if (!inter)
-// 		return (0);
-
-// 	plType = inter->type;
-// 	if (plType == INTER_LEFT)
-// 		opType = INTER_RIGHT;
-// 	else if (plType == INTER_RIGHT)
-// 		opType = INTER_LEFT;
-// 	else
-// 		return (0);
-
-// 	nbCapture = 0;
-// 	for (int axis = 0; axis < 8; axis++)
-// 	{
-// 		x = move->x;
-// 		y = move->y;
-
-// 		// Get and check 3 next intersections
-// 		x += this->dirs[axis].x;
-// 		y += this->dirs[axis].y;
-// 		inters[0] = this->getIntersection(x, y);
-// 		if (!inters[0] || inters[0]->type != opType)
-// 			continue;
-
-// 		x += this->dirs[axis].x;
-// 		y += this->dirs[axis].y;
-// 		inters[1] = this->getIntersection(x, y);
-// 		if (!inters[1] || inters[1]->type != opType)
-// 			continue;
-
-// 		x += this->dirs[axis].x;
-// 		y += this->dirs[axis].y;
-// 		inters[2] = this->getIntersection(x, y);
-// 		if (!inters[2] || inters[2]->type != plType)
-// 			continue;
-
-// 		// Remove captured stones from board
-// 		inters[0]->type = INTER_EMPTY;
-// 		inters[1]->type = INTER_EMPTY;
-// 		for (int i = 0; i < 8; i++)
-// 		{
-// 			inters[0]->neighbor[i] = 0;
-// 			inters[1]->neighbor[i] = 0;
-// 		}
-
-// 		// Update stone arround first captured stone
-// 		x = move->x + this->dirs[axis].x;
-// 		y = move->y + this->dirs[axis].y;
-// 		for (int i = 0; i < 8; i++)
-// 			this->updateNeighbor(x + this->dirs[i].x, y + this->dirs[i].y);
-
-// 		// Update current board state
-// 		this->updateBoardState(y * GRID_W_INTER + x, 'E');
-
-// 		// Update stone arround second captured stone
-// 		x += this->dirs[axis].x;
-// 		y += this->dirs[axis].y;
-// 		for (int i = 0; i < 8; i++)
-// 			this->updateNeighbor(x + this->dirs[i].x, y + this->dirs[i].y);
-
-// 		// Update current board state
-// 		this->updateBoardState(y * GRID_W_INTER + x, 'E');
-
-// 		// Update neighbors in the axis
-// 		this->updateNeighbor(x + this->dirs[axis].x * 4,
-// 							y + this->dirs[axis].y * 4);
-
-// 		// Update neighbors in the inverse axis
-// 		invAxis = (axis + 4) % 8;
-// 		this->updateNeighbor(x + this->dirs[invAxis].x * 4,
-// 							y + this->dirs[invAxis].y * 4);
-
-// 		nbCapture += 2;
-// 	}
-
-// 	return (nbCapture);
-// }
-
-
-// bool	Grid::checkWinCaptureCase(Player *me, Player *oppenent, sf::Vector2i *move, dir_neighbor dir, dir_neighbor opdir)
-// {
-// 	intersection	*inter, *tmpInter;
-// 	inter_type		opType, tmpType1, tmpType2;
-// 	sf::Vector2i	tmpWinpos;
-// 	int				x, y, tmpX, tmpY, length;
-// 	bool			canBeCapture;
-
-// 	inter = this->getIntersection(move->x, move->y);
-// 	// Check if me can win
-// 	if (!inter || inter->neighbor[dir] + inter->neighbor[opdir] + 1 < WIN_POINT)
-// 		return (false);
-
-// 	// Get opponent type
-// 	if (inter->type == INTER_LEFT)
-// 		opType = INTER_RIGHT;
-// 	else
-// 		opType = INTER_LEFT;
-
-// 	x = move->x;
-// 	y = move->y;
-
-// 	// Go to the start of the win line
-// 	for (int i = 0; i < inter->neighbor[opdir]; i++)
-// 	{
-// 		x += this->dirs[opdir].x;
-// 		y += this->dirs[opdir].y;
-// 	}
-
-// 	length = 0;
-// 	// For each stone in win line
-// 	for (int i = 0; i < inter->neighbor[dir] + inter->neighbor[opdir] + 1; i++)
-// 	{
-// 		tmpInter = this->getIntersection(x, y);
-// 		canBeCapture = false;
-// 		tmpWinpos = sf::Vector2i(x, y);
-
-// 		// Check if the stone can be capture for each axis
-// 		for (int j = 0; j < 4; j++)
-// 		{
-// 			// If axis is the win line axis, skip
-// 			if (j == dir || j == opdir)
-// 				continue;
-
-// 			// If there isn't 2 stones on axis, stone cannot be capture on this axis
-// 			if (tmpInter->neighbor[j] + tmpInter->neighbor[j + 4] + 1 != 2)
-// 				continue;
-
-// 			// Get stone before my 2 stones
-// 			tmpX = x;
-// 			tmpY = y;
-// 			for (int k = 0; k < tmpInter->neighbor[j] + 1; k++)
-// 			{
-// 				tmpX += this->dirs[j].x;
-// 				tmpY += this->dirs[j].y;
-// 			}
-// 			tmpType1 = this->getInterState(tmpX, tmpY);
-
-// 			if (tmpType1 != INTER_EMPTY && tmpType1 != opType)
-// 				continue;
-
-// 			// Get stone after my 2 stones
-// 			tmpX = x;
-// 			tmpY = y;
-// 			for (int k = 0; k < tmpInter->neighbor[j + 4] + 1; k++)
-// 			{
-// 				tmpX += this->dirs[j + 4].x;
-// 				tmpY += this->dirs[j + 4].y;
-// 			}
-// 			tmpType2 = this->getInterState(tmpX, tmpY);
-
-// 			// In this case, my stone can be capture
-// 			if (tmpType1 == INTER_EMPTY && tmpType2 == opType ||
-// 				tmpType1 == opType && tmpType2 == INTER_EMPTY)
-// 			{
-// 				if (opType == INTER_RIGHT)
-// 				{
-// 					if (std::find(this->leftWinPos.begin(), this->leftWinPos.end(), tmpWinpos)
-// 							== this->leftWinPos.end())
-// 						this->leftWinPos.push_back(tmpWinpos);
-// 				}
-// 				else
-// 				{
-// 					if (std::find(this->rightWinPos.begin(), this->rightWinPos.end(), tmpWinpos)
-// 							== this->rightWinPos.end())
-// 						this->rightWinPos.push_back(tmpWinpos);
-// 				}
-// 				canBeCapture = true;
-// 				break;
-// 			}
-// 		}
-
-// 		// If stone can be capture, reset the length
-// 		if (canBeCapture)
-// 			length = 0;
-// 		else
-// 			length++;
-
-// 		if (length >= WIN_POINT)
-// 		{
-// 			me->setWinState(WIN_STATE_ALIGN);
-// 			this->previewLegal = false;
-// 			return (true);
-// 		}
-
-// 		x += this->dirs[dir].x;
-// 		y += this->dirs[dir].y;
-// 	}
-
-// 	if (length >= WIN_POINT)
-// 	{
-// 		me->setWinState(WIN_STATE_ALIGN);
-// 		this->previewLegal = false;
-// 		return (true);
-// 	}
-
-// 	if (oppenent->getCaptured() >= WIN_CAPTURE - 2)
-// 	{
-// 		oppenent->setWinState(WIN_STATE_CAPTURE);
-// 		oppenent->addCaptured(2);
-// 		this->previewLegal = false;
-// 		return (true);
-// 	}
-
-// 	return (false);
-// }
-
-
-// void	Grid::setBoardState(int id)
-// {
-// 	std::string	boardState = this->boardStates[id];
-
-// 	for (int i = 0; i < GRID_NB_INTER; i++)
-// 	{
-// 		if (boardState[i] == 'L')
-// 			this->gridState[i].type = INTER_LEFT;
-// 		else if (boardState[i] == 'R')
-// 			this->gridState[i].type = INTER_RIGHT;
-// 		else
-// 			this->gridState[i].type = INTER_EMPTY;
-// 	}
-// }
-
-
-// void	Grid::createBoardState(void)
-// {
-// 	this->currentBoardState = "";
-
-// 	for (int i = 0; i < GRID_NB_INTER; i++)
-// 	{
-// 		if (this->gridState[i].type == INTER_LEFT)
-// 			this->currentBoardState += 'L';
-// 		else if (this->gridState[i].type == INTER_RIGHT)
-// 			this->currentBoardState += 'R';
-// 		else
-// 			this->currentBoardState += 'E';
-// 	}
-
-// 	this->currentBoardStateOpti = createOptiBoardFromBoard(this->currentBoardState);
-// }
-
-// void	Grid::updateBoardState(int id, char c)
-// {
-// 	int		i, j;
-// 	char	tmp, newChar;
-
-// 	// Update currentBoardState
-// 	this->currentBoardState[id] = c;
-
-// 	// Update currentBoardStateOpti
-// 	i = id / 4;
-// 	j = 3 - (id % 4);
-// 	tmp = this->currentBoardStateOpti[i];
-// 	newChar = 0;
-
-// 	for (int k = 0; k < 4; k++)
-// 	{
-// 		if (k == j)
-// 		{
-// 			if (c == 'E')
-// 				newChar += 0b00 << (k * 2);
-// 			else if (c == 'L')
-// 				newChar += 0b01 << (k * 2);
-// 			else if (c == 'R')
-// 				newChar += 0b10 << (k * 2);
-// 			else
-// 				newChar += 0b11 << (k * 2);
-// 		}
-// 		else
-// 		{
-// 			newChar += tmp & 0b11 << (k * 2);
-// 		}
-// 	}
-
-// 	this->currentBoardStateOpti[i] = newChar;
 // }
 
 

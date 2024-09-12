@@ -21,8 +21,6 @@ public:
 	int							getW(void);
 	int							getH(void);
 	std::string					getCurrentMove(void);
-	// std::string					getCurrentBoardState(void);
-	// std::string					getCurrentBoardStateOpti(void);
 	inter_type					getInterState(int x, int y);
 	intersection				*getIntersection(int x, int y);
 
@@ -40,6 +38,7 @@ public:
 	// void						goToPreviousMove(void);
 	// void						goToNextMove(void);
 	// void						goToLastMove(void);
+	// std::string					getCurrentBoardState(void);
 	// std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
 	// bool						checkInterestingMove(int x, int y);
 	// std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
@@ -55,8 +54,8 @@ public:
 	// void						loadBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR);
 	// void						saveWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos);
 	// void						loadWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos);
-	// void						addBoardState(void);
-	// void						disablePreview(void);
+	void						addBoardState(void);
+	void						disablePreview(void);
 
 private:
 	int			x, y, w, h, previewX, previewY, idBoardState;
