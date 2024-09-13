@@ -41,9 +41,9 @@ public:
 	void			goToHistoryEnd(void);
 	void			disablePreview(void);
 
-	std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
+	std::vector<sf::Vector2i>	getLegalMoves(Player *player, Player *opponent);
+	std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
 	// bool						checkInterestingMove(int x, int y);
-	// std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
 	// std::vector<sf::Vector2i>	getInterestingMovesSorted(Player *player, Player *opponent, Evaluation *evaluator, bool reverse, Tracker *tracker);
 	// void						computeInterestingMovesSorted(Player *player, Player *opponent, Evaluation *evaluator, Tracker *tracker);
 	// void						updateInterestingMovesSorted(Player *player, Player *opponent, Evaluation *evaluator, Tracker *tracker, sf::Vector2i *move);

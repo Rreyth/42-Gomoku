@@ -85,8 +85,8 @@ sf::Vector2i	AI::getNextMove(
 	// Get move to play
 	if (this->difficulty == RANDOM)
 		move = this->getRandomMove(grid, player, opponent);
-	// else if (this->difficulty == BETTER_RANDOM)
-	// 	move = this->getBetterRandom(grid, player, opponent);
+	else if (this->difficulty == BETTER_RANDOM)
+		move = this->getBetterRandom(grid, player, opponent);
 	// else if (this->difficulty == EASY)
 	// 	move = this->getEasyMove(grid, player, opponent, evaluator);
 	// else if (this->difficulty == MEDIUM)
@@ -154,38 +154,37 @@ void	AI::reset(void)
 
 sf::Vector2i	AI::getRandomMove(Grid *grid, Player *player, Player *opponent)
 {
-	std::vector<sf::Vector2i>	legalMoves;
+	std::vector<sf::Vector2i>	moves;
 
 	// Get all legal moves
-	legalMoves = grid->getLegalMoves(player, opponent);
-	if (legalMoves.size() == 0)
+	moves = grid->getLegalMoves(player, opponent);
+	if (moves.size() == 0)
 		return (sf::Vector2i(-1, -1));
 
 	// Choose move to play
-	int index = rand_int(0, legalMoves.size() - 1);
-	return (legalMoves[index]);
+	int index = rand_int(0, moves.size() - 1);
+	return (moves[index]);
 }
 
 
 sf::Vector2i	AI::getBetterRandom(Grid *grid, Player *player, Player *opponent)
 {
-	return (sf::Vector2i(-1, -1));
+	std::vector<sf::Vector2i>	moves;
 
-	// std::vector<sf::Vector2i>	interestingMoves;
+	// Get interesting move
+	moves = grid->getInterestingMoves(player, opponent);
+	if (moves.size() == 0)
+	{
+		if (player->getMoves() + opponent->getMoves() == 0)
+			return(sf::Vector2i(rand_int(0, GRID_W_INTER - 1),
+								rand_int(0, GRID_W_INTER - 1)));
+		else
+			return (sf::Vector2i(-1, -1));
+	}
 
-	// // Get interesting move
-	// interestingMoves = grid->getInterestingMoves(player, opponent);
-	// if (interestingMoves.size() == 0)
-	// {
-	// 	if (player->getMoves() + opponent->getMoves() == 0)
-	// 		return(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
-	// 	else
-	// 		return (sf::Vector2i(-1, -1));
-	// }
-
-	// // Find move to play
-	// int index = rand_int(0, interestingMoves.size() - 1);
-	// return (interestingMoves[index]);
+	// Find move to play
+	int index = rand_int(0, moves.size() - 1);
+	return (moves[index]);
 }
 
 

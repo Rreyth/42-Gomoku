@@ -381,22 +381,98 @@ void	Grid::disablePreview(void)
 
 std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *player, Player *opponent)
 {
-	std::vector<sf::Vector2i>	legalMoves;
-	int							nbMoves = player->getMoves() + opponent->getMoves();
+	int							nbMoves;
+	inter_type					plState, opState;
+	std::vector<sf::Vector2i>	moves;
 
-	inter_type					plState = player->getInterType();
-	inter_type					opState = opponent->getInterType();
-
+	nbMoves = player->getMoves() + opponent->getMoves();
+	plState = player->getInterType();
+	opState = opponent->getInterType();
 	for (int i = 0; i < GRID_W_INTER; i++)
 	{
 		for (int j = 0; j < GRID_W_INTER; j++)
 		{
 			if (checkLegalMove(i, j, nbMoves, plState, opState))
-				legalMoves.push_back(sf::Vector2i(i, j));
+				moves.push_back(sf::Vector2i(i, j));
 		}
 	}
 
-	return (legalMoves);
+	return (moves);
+}
+
+
+std::vector<sf::Vector2i>	Grid::getInterestingMoves(
+									Player *player, Player *opponent)
+{
+	bool						isStoneAlone;
+	int							nbMoves, check, checkV, yD, yA, maxLimit;
+	inter_type					plState, opState;
+	std::vector<sf::Vector2i>	moves;
+
+	nbMoves = player->getMoves() + opponent->getMoves();
+	plState = player->getInterType();
+	opState = opponent->getInterType();
+	maxLimit = GRID_W_INTER - 1;
+
+	for (int y = 0; y < GRID_W_INTER; y++)
+	{
+		if (y == 0)
+			checkV = 0b10;
+		else
+			checkV = 0b101 << (y - 1);
+
+		for (int x = 0; x < GRID_W_INTER; x++)
+		{
+			if (this->bitboardL.get(x, y) || this->bitboardR.get(x, y))
+				continue;
+
+			if (x == 0)
+				check = 0b10;
+			else
+				check = 0b101 << (x - 1);
+
+			yD = (y + x) % GRID_W_INTER;
+			yA = y - x;
+			if (yA < 0)
+				yA += GRID_W_INTER;
+
+			isStoneAlone = true;
+
+			// Check if stone isn't alone on horizontal axis
+			if (isStoneAlone
+					&& ((this->bitboardL.bbH[y] & check) > 0
+					|| (this->bitboardR.bbH[y] & check) > 0))
+				isStoneAlone = false;
+
+			// Check if stone isn't alone on vertical axis
+			if (isStoneAlone
+				&& ((this->bitboardL.bbV[x] & checkV) > 0
+					|| (this->bitboardR.bbV[x] & checkV) > 0))
+				isStoneAlone = false;
+
+			// Check if stone isn't alone on diagonal axis
+			if (isStoneAlone && x > 1 && x < maxLimit && y > 1 && y < maxLimit
+				&& ((this->bitboardL.bbD[yD] & check) > 0
+					|| ((this->bitboardR.bbD[yD] & check) > 0)))
+				isStoneAlone = false;
+
+			// Check if stone isn't alone on anti diagonal axis
+			if (isStoneAlone && x > 1 && x < maxLimit && y > 1 && y < maxLimit
+				&& ((this->bitboardL.bbA[yA] & check) > 0
+					|| (this->bitboardR.bbA[yA] & check) > 0))
+				isStoneAlone = false;
+
+			if (isStoneAlone)
+				continue;
+
+			// Check if the move is legal
+			if (!checkLegalMove(x, y, nbMoves, plState, opState))
+				continue;
+			moves.push_back(sf::Vector2i(x, y));
+		}
+	}
+
+	return (moves);
 }
 
 
@@ -947,7 +1023,7 @@ bool	Grid::validateWin(
 		plVerify, opVerifyL, opVerifyR,
 		shiftL, shiftR,
 		shiftVL, shiftVR,
-		yD, yA, ySaveD, ySaveA;
+		yD, yA;
 
 	if (bbType == 'V')
 	{
@@ -965,11 +1041,6 @@ bool	Grid::validateWin(
 	{
 		y = (y + x) % GRID_W_INTER;
 	}
-
-	ySaveD = (y + x) % GRID_W_INTER;
-	ySaveA = y - x;
-	if (ySaveA < 0)
-		ySaveA += GRID_W_INTER;
 
 	plVerify = 0b0110;
 	opVerifyL = 0b0001;
