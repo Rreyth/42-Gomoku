@@ -176,14 +176,14 @@ void	Game::setGame(player_type playerLeft, player_type playerRight,
 void	Game::replay(display_state *displayState)
 {
 	// TODO : REPLAY
-	// this->grid.reset();
-	// this->playerLeft.reset(this->mode);
-	// this->playerRight.reset(this->mode);
-	// if (rand_int(1, 2) == 1)
-	// 	this->playerLeft.setPlaying(true);
-	// else
-	// 	this->playerRight.setPlaying(true);
-	// *displayState = DISPLAY_GAME;
+	this->grid.reset();
+	this->playerLeft.reset(this->mode);
+	this->playerRight.reset(this->mode);
+	if (rand_int(1, 2) == 1)
+		this->playerLeft.setPlaying(true);
+	else
+		this->playerRight.setPlaying(true);
+	*displayState = DISPLAY_GAME;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
