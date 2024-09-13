@@ -48,39 +48,42 @@ Grid	*Game::getGrid(void)
 
 void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 {
+	int				nbMoves;
+	sf::Vector2i	move;
+	Player			*player, *opponent;
+
 	this->leave.tick(mouse);
 	this->grid.tick(displayState, mouse, &this->playerLeft, &this->playerRight,
 						&this->evaluator);
 
-	sf::Vector2i	move;
-	int 			nbMoves = this->playerLeft.getMoves() + this->playerRight.getMoves();
-	Player			*me = &this->playerLeft;
-	Player			*opponent = &this->playerRight;
+	nbMoves = this->playerLeft.getMoves() + this->playerRight.getMoves();
 	if (this->playerLeft.isPlaying())
 	{
+		player = &this->playerLeft;
+		opponent = &this->playerRight;
 		move = this->playerLeft.getNextMove(&this->grid, &this->playerRight, mouse, &this->evaluator);
 		this->playerLeft.tick(delta, this->mode);
 	}
 	else
 	{
-		me = &this->playerRight;
+		player = &this->playerRight;
 		opponent = &this->playerLeft;
 		move = this->playerRight.getNextMove(&this->grid, &this->playerLeft, mouse, &this->evaluator);
 		this->playerRight.tick(delta, this->mode);
 	}
 
-	int	lCapture = this->playerLeft.getCaptured();
-	int	rCapture = this->playerRight.getCaptured();
-	if (this->grid.putStone(&move, nbMoves, me, opponent))
+	if (this->grid.putStone(&move, nbMoves, player, opponent))
 	{
 		this->grid.addBoardToHistory();
-		this->swapTurn(&move);
-		if (this->grid.checkWinCondition(me, opponent))
+		player->addMove();
+		// printf("player capture %i\nop capture %i\n", player->getCaptured(), opponent->getCaptured());
+		if (this->grid.checkWinCondition(player, opponent))
 		{
 			this->grid.goToHistoryEnd();
 			*displayState = DISPLAY_END;
 			return ;
 		}
+		this->swapTurn();
 	}
 
 	if (this->mode == BLITZ)
@@ -101,17 +104,15 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 		*displayState = DISPLAY_MENU;
 }
 
-void	Game::swapTurn(sf::Vector2i *move)
+void	Game::swapTurn(void)
 {
 	if (this->playerLeft.isPlaying())
 	{
-		this->playerLeft.addMove();
 		this->playerLeft.setPlaying(false);
 		this->playerRight.setPlaying(true);
 	}
 	else
 	{
-		this->playerRight.addMove();
 		this->playerRight.setPlaying(false);
 		this->playerLeft.setPlaying(true);
 	}
@@ -175,7 +176,6 @@ void	Game::setGame(player_type playerLeft, player_type playerRight,
 
 void	Game::replay(display_state *displayState)
 {
-	// TODO : REPLAY
 	this->grid.reset();
 	this->playerLeft.reset(this->mode);
 	this->playerRight.reset(this->mode);

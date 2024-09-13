@@ -41,7 +41,7 @@ public:
 	void			goToHistoryEnd(void);
 	void			disablePreview(void);
 
-	// std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
+	std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
 	// bool						checkInterestingMove(int x, int y);
 	// std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
 	// std::vector<sf::Vector2i>	getInterestingMovesSorted(Player *player, Player *opponent, Evaluation *evaluator, bool reverse, Tracker *tracker);
@@ -72,6 +72,7 @@ private:
 	// std::vector<std::string>	boardStates;
 	// std::string					currentBoardState, currentBoardStateOpti;
 
+	bool	checkWinByAlign(Player *player, Player *opponent, BitBoard *plBitboard, BitBoard *opBitboard);
 	bool	validateWin(Player *player, Player *opponent, BitBoard *plBitBoard, BitBoard *opBitBoard, char bbType, int x, int y);
 	int		makeCapture(sf::Vector2i *move, BitBoard *plBitBoard, BitBoard *opBitBoard);
 	bool	checkDoubleFreeThree(int x, int y, BitBoard *plBitBoard, BitBoard *opBitBoard);

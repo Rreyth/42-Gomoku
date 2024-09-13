@@ -158,7 +158,7 @@ sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse, Eva
 	}
 	else
 	{
-		// grid->disablePreview();
+		grid->disablePreview();
 		move = this->ai.getNextMove(grid, this, opponent, evaluator);
 	}
 	return (move);

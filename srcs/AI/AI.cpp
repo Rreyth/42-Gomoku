@@ -85,60 +85,60 @@ sf::Vector2i	AI::getNextMove(
 	// Get move to play
 	if (this->difficulty == RANDOM)
 		move = this->getRandomMove(grid, player, opponent);
-	else if (this->difficulty == BETTER_RANDOM)
-		move = this->getBetterRandom(grid, player, opponent);
-	else if (this->difficulty == EASY)
-		move = this->getEasyMove(grid, player, opponent, evaluator);
-	else if (this->difficulty == MEDIUM)
-		move = this->getMediumMove(grid, player, opponent, evaluator, &tracker);
+	// else if (this->difficulty == BETTER_RANDOM)
+	// 	move = this->getBetterRandom(grid, player, opponent);
+	// else if (this->difficulty == EASY)
+	// 	move = this->getEasyMove(grid, player, opponent, evaluator);
+	// else if (this->difficulty == MEDIUM)
+	// 	move = this->getMediumMove(grid, player, opponent, evaluator, &tracker);
 	//TODO: Implement other difficulties
 
 	// Compute time taken to choose ai
 	diff = std::clock() - start;
 	this->timer = ((double)diff / CLOCKS_PER_SEC) * 1000000;
 
-	if (this->difficulty == MEDIUM)
-	{
-		setlocale(LC_NUMERIC, "");
-		printf("\n\nGet move in %'i us\n", (int)this->timer);
-		printf("  evaluate position\n");
-		printf("   - number of call : %'i\n", tracker.nbEvaluations);
-		printf("   - number of memory call : %'i\n", tracker.nbEvaluationsMemory);
-		printf("   - memory call usage : %'f\n", (float)tracker.nbEvaluationsMemory / (tracker.nbEvaluations + tracker.nbEvaluationsMemory));
-		printf("   - TIME %'i us\n", tracker.evaluationTime);
-		printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
-		printf("  get sort moves\n");
-		printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
-		printf("   - get moves TIME %'i us\n", tracker.getMoveTime);
-		printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
-		printf("   - sort moves took %'i us\n", tracker.sortMoveTime);
-		printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
-		printf("  update moves\n");
-		printf("   - number of call : %'i\n", tracker.updateMoveNumber);
-		printf("   - TIME %'i us\n", tracker.updateMoveTime);
-		printf("   - about %'f us per call\n", (float)tracker.updateMoveTime / tracker.updateMoveNumber);
-		printf("  check stone\n");
-		printf("   - number of call : %'i\n", tracker.checkStoneNumber);
-		printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
-		printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
-		printf("   - remove stone took %'i us\n", tracker.removeStoneTime);
-		printf("   - about %'f us per call\n", (float)tracker.removeStoneTime / tracker.checkStoneNumber);
-		printf("   - check win took %'i us\n", tracker.checkWinTime);
-		printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkStoneNumber);
-		printf("  reverse capture\n");
-		printf("   - number of call : %'i\n", tracker.reverseStoneCaptureNumber);
-		printf("   - TIME %'i us\n", tracker.reverseStoneCaptureTime);
-		printf("   - about %'f us per call\n", (float)tracker.reverseStoneCaptureTime / tracker.reverseStoneCaptureNumber);
-		printf("  memory usage\n");
-		long size = this->memoryEvaluation.size();
-		// std::string boardState = grid->getCurrentBoardStateOpti();
-	// 	long memorySize = size * (boardState.capacity() + sizeof(int));
-	// 	printf("   - memory evaluation : %'li elements for %'li octets\n", size, memorySize);
-	}
-	else
-	{
-		printf("Compute move in %'i us\n", (int)this->timer);
-	}
+	// if (this->difficulty == MEDIUM)
+	// {
+	// 	setlocale(LC_NUMERIC, "");
+	// 	printf("\n\nGet move in %'i us\n", (int)this->timer);
+	// 	printf("  evaluate position\n");
+	// 	printf("   - number of call : %'i\n", tracker.nbEvaluations);
+	// 	printf("   - number of memory call : %'i\n", tracker.nbEvaluationsMemory);
+	// 	printf("   - memory call usage : %'f\n", (float)tracker.nbEvaluationsMemory / (tracker.nbEvaluations + tracker.nbEvaluationsMemory));
+	// 	printf("   - TIME %'i us\n", tracker.evaluationTime);
+	// 	printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
+	// 	printf("  get sort moves\n");
+	// 	printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
+	// 	printf("   - get moves TIME %'i us\n", tracker.getMoveTime);
+	// 	printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
+	// 	printf("   - sort moves took %'i us\n", tracker.sortMoveTime);
+	// 	printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
+	// 	printf("  update moves\n");
+	// 	printf("   - number of call : %'i\n", tracker.updateMoveNumber);
+	// 	printf("   - TIME %'i us\n", tracker.updateMoveTime);
+	// 	printf("   - about %'f us per call\n", (float)tracker.updateMoveTime / tracker.updateMoveNumber);
+	// 	printf("  check stone\n");
+	// 	printf("   - number of call : %'i\n", tracker.checkStoneNumber);
+	// 	printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
+	// 	printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
+	// 	printf("   - remove stone took %'i us\n", tracker.removeStoneTime);
+	// 	printf("   - about %'f us per call\n", (float)tracker.removeStoneTime / tracker.checkStoneNumber);
+	// 	printf("   - check win took %'i us\n", tracker.checkWinTime);
+	// 	printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkStoneNumber);
+	// 	printf("  reverse capture\n");
+	// 	printf("   - number of call : %'i\n", tracker.reverseStoneCaptureNumber);
+	// 	printf("   - TIME %'i us\n", tracker.reverseStoneCaptureTime);
+	// 	printf("   - about %'f us per call\n", (float)tracker.reverseStoneCaptureTime / tracker.reverseStoneCaptureNumber);
+	// 	printf("  memory usage\n");
+	// 	long size = this->memoryEvaluation.size();
+	// 	// std::string boardState = grid->getCurrentBoardStateOpti();
+	// // 	long memorySize = size * (boardState.capacity() + sizeof(int));
+	// // 	printf("   - memory evaluation : %'li elements for %'li octets\n", size, memorySize);
+	// }
+	// else
+	// {
+	printf("Compute move in %'i us\n", (int)this->timer);
+	// }
 	return (move);
 }
 
@@ -154,18 +154,16 @@ void	AI::reset(void)
 
 sf::Vector2i	AI::getRandomMove(Grid *grid, Player *player, Player *opponent)
 {
-	return (sf::Vector2i(-1, -1));
+	std::vector<sf::Vector2i>	legalMoves;
 
-	// std::vector<sf::Vector2i>	legalMoves;
+	// Get all legal moves
+	legalMoves = grid->getLegalMoves(player, opponent);
+	if (legalMoves.size() == 0)
+		return (sf::Vector2i(-1, -1));
 
-	// // Get all legal moves
-	// legalMoves = grid->getLegalMoves(player, opponent);
-	// if (legalMoves.size() == 0)
-	// 	return (sf::Vector2i(-1, -1));
-
-	// // Choose move to play
-	// int index = rand_int(0, legalMoves.size() - 1);
-	// return (legalMoves[index]);
+	// Choose move to play
+	int index = rand_int(0, legalMoves.size() - 1);
+	return (legalMoves[index]);
 }
 
 

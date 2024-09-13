@@ -203,7 +203,7 @@ bool	Grid::checkLegalMove(
 	if (this->bitboardL.get(x, y) || this->bitboardR.get(x, y))
 		return (false);
 
-	// TODO : CHECK DOUBLE FREE THREE
+	// Check double free three
 	if (plType == INTER_LEFT)
 	{
 		if (this->checkDoubleFreeThree(
@@ -230,7 +230,6 @@ bool	Grid::putStone(
 				sf::Vector2i *move, int nbMoves, Player *player, Player *opponent)
 {
 	inter_type	plType, opType;
-	// int			interId;
 
 	plType = player->getInterType();
 	opType = opponent->getInterType();
@@ -239,28 +238,17 @@ bool	Grid::putStone(
 		return (false);
 
 	if (plType == INTER_LEFT)
+	{
 		this->bitboardL.set(move->x, move->y, true);
-	else
-		this->bitboardR.set(move->x, move->y, true);
-
-	if (plType == INTER_LEFT)
 		player->addCaptured(this->makeCapture(
 									move, &this->bitboardL, &this->bitboardR));
+	}
 	else
+	{
+		this->bitboardR.set(move->x, move->y, true);
 		player->addCaptured(this->makeCapture(
 									move, &this->bitboardR, &this->bitboardL));
-
-	// this->setInterState(move->x, move->y, plType);
-	// player->addCaptured(this->checkCapture(move, plType, opType));
-	// this->updateNeighbor(move->x, move->y);
-
-	// interId = move->y * GRID_W_INTER + move->x;
-	// if (plType == INTER_LEFT)
-	// 	this->updateBoardState(interId, 'L');
-	// else if (plType == INTER_RIGHT)
-	// 	this->updateBoardState(interId, 'R');
-	// else
-	// 	this->updateBoardState(interId, 'E');
+	}
 
 	return (true);
 }
@@ -268,9 +256,6 @@ bool	Grid::putStone(
 
 bool	Grid::checkWinCondition(Player *player, Player *opponent)
 {
-	int		winCase, check;
-	bool	isWin;
-
 	// Check if the player capture at least 10 opponent's stones
 	if (player->getCaptured() >= WIN_CAPTURE)
 	{
@@ -278,99 +263,30 @@ bool	Grid::checkWinCondition(Player *player, Player *opponent)
 		this->previewLegal = false;
 		return (true);
 	}
-
-	// TODO: DISABLE WIN WHEN CAPTURE
-	// Check win by align
-	winCase = 0b11111;
+	else if (player->getCaptured() == 8)
+	{
+		if (player->getInterType() == INTER_LEFT)
+		{
+			if (this->checkWinByAlign(
+							opponent, player, &this->bitboardR, &this->bitboardL))
+				return (true);
+		}
+		else
+		{
+			if (this->checkWinByAlign(
+							opponent, player, &this->bitboardL, &this->bitboardR))
+				return (true);
+		}
+	}
 
 	if (player->getInterType() == INTER_LEFT)
 	{
-		for (int i = 0; i < GRID_W_INTER; i++)
-		{
-			check = 0b11111;
-			for (int j = 0; j < GRID_W_INTER - 4; j++)
-			{
-				if ((this->bitboardL.bbH[i] & check) >> j == winCase)
-				{
-					isWin = this->validateWin(
-									player, opponent, &this->bitboardL,
-									&this->bitboardR, 'H', j, i);
-					if (isWin)
-						return (true);
-				}
-				if ((this->bitboardL.bbV[i] & check) >> j == winCase)
-				{
-					isWin = this->validateWin(
-									player, opponent, &this->bitboardL,
-									&this->bitboardR, 'V', j, i);
-					if (isWin)
-						return (true);
-				}
-				if ((this->bitboardL.bbD[i] & check) >> j == winCase)
-				{
-					isWin = this->validateWin(
-									player, opponent, &this->bitboardL,
-									&this->bitboardR, 'D', j, i);
-					if (isWin)
-						return (true);
-				}
-				if ((this->bitboardL.bbA[i] & check) >> j == winCase)
-				{
-					isWin = this->validateWin(
-									player, opponent, &this->bitboardL,
-									&this->bitboardR, 'A', j, i);
-					if (isWin)
-						return (true);
-				}
-				check <<= 1;
-			}
-		}
-	}
-	else
-	{
-		for (int i = 0; i < GRID_W_INTER; i++)
-		{
-			check = 0b11111;
-			for (int j = 0; j < GRID_W_INTER - 4; j++)
-			{
-				if ((this->bitboardR.bbH[i] & check) >> j == winCase)
-				{
-					isWin = this->validateWin(
-								player, opponent, &this->bitboardR,
-								&this->bitboardL, 'H', j, i);
-					if (isWin)
-						return (true);
-				}
- 				if ((this->bitboardR.bbV[i] & check) >> j == winCase)
-				{
-					isWin = this->validateWin(
-								player, opponent, &this->bitboardR,
-								&this->bitboardL, 'V', j, i);
-					if (isWin)
-						return (true);
-				}
-				if ((this->bitboardR.bbD[i] & check) >> j == winCase)
-				{
-					isWin = this->validateWin(
-								player, opponent, &this->bitboardR,
-								&this->bitboardL, 'D', j, i);
-					if (isWin)
-						return (true);
-				}
-				if ((this->bitboardR.bbA[i] & check) >> j == winCase)
-				{
-					isWin = this->validateWin(
-								player, opponent, &this->bitboardR,
-								&this->bitboardL, 'A', j, i);
-					if (isWin)
-						return (true);
-				}
-				check <<= 1;
-			}
-		}
+		return (this->checkWinByAlign(
+						player, opponent, &this->bitboardL, &this->bitboardR));
 	}
 
-	return (false);
+	return (this->checkWinByAlign(
+					player, opponent, &this->bitboardR, &this->bitboardL));
 }
 
 
@@ -463,25 +379,25 @@ void	Grid::disablePreview(void)
 }
 
 
-// std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *player, Player *opponent)
-// {
-// 	std::vector<sf::Vector2i>	legalMoves;
-// 	int							nbMoves = player->getMoves() + opponent->getMoves();
+std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *player, Player *opponent)
+{
+	std::vector<sf::Vector2i>	legalMoves;
+	int							nbMoves = player->getMoves() + opponent->getMoves();
 
-// 	inter_type					plState = player->getInterType();
-// 	inter_type					opState = opponent->getInterType();
+	inter_type					plState = player->getInterType();
+	inter_type					opState = opponent->getInterType();
 
-// 	for (int i = 0; i < GRID_W_INTER; i++)
-// 	{
-// 		for (int j = 0; j < GRID_W_INTER; j++)
-// 		{
-// 			if (checkLegalMove(i, j, nbMoves, plState, opState))
-// 				legalMoves.push_back(sf::Vector2i(i, j));
-// 		}
-// 	}
+	for (int i = 0; i < GRID_W_INTER; i++)
+	{
+		for (int j = 0; j < GRID_W_INTER; j++)
+		{
+			if (checkLegalMove(i, j, nbMoves, plState, opState))
+				legalMoves.push_back(sf::Vector2i(i, j));
+		}
+	}
 
-// 	return (legalMoves);
-// }
+	return (legalMoves);
+}
 
 
 // bool	Grid::checkInterestingMove(int x, int y)
@@ -966,6 +882,61 @@ void	Grid::disablePreview(void)
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////
 
+bool	Grid::checkWinByAlign(
+				Player *player, Player *opponent,
+				BitBoard *plBitboard, BitBoard *opBitboard)
+{
+	int		winCase, check;
+	bool	isWin;
+
+	// Check win by align
+	winCase = 0b11111;
+
+	for (int i = 0; i < GRID_W_INTER; i++)
+	{
+		check = 0b11111;
+		for (int j = 0; j < GRID_W_INTER - 4; j++)
+		{
+			if ((plBitboard->bbH[i] & check) >> j == winCase)
+			{
+				isWin = this->validateWin(
+								player, opponent, plBitboard,
+								opBitboard, 'H', j, i);
+				if (isWin)
+					return (true);
+			}
+			if ((plBitboard->bbV[i] & check) >> j == winCase)
+			{
+				isWin = this->validateWin(
+								player, opponent, plBitboard,
+								opBitboard, 'V', j, i);
+				if (isWin)
+					return (true);
+			}
+			if ((plBitboard->bbD[i] & check) >> j == winCase)
+			{
+				isWin = this->validateWin(
+								player, opponent, plBitboard,
+								opBitboard, 'D', j, i);
+				if (isWin)
+					return (true);
+			}
+			if ((plBitboard->bbA[i] & check) >> j == winCase)
+			{
+				isWin = this->validateWin(
+								player, opponent, plBitboard,
+								opBitboard, 'A', j, i);
+				if (isWin)
+					return (true);
+			}
+			check <<= 1;
+		}
+	}
+
+	return (false);
+}
+
+
 bool	Grid::validateWin(
 				Player *player, Player *opponent,
 				BitBoard *plBitBoard, BitBoard *opBitBoard,
@@ -976,7 +947,7 @@ bool	Grid::validateWin(
 		plVerify, opVerifyL, opVerifyR,
 		shiftL, shiftR,
 		shiftVL, shiftVR,
-		yD, yA;
+		yD, yA, ySaveD, ySaveA;
 
 	if (bbType == 'V')
 	{
@@ -994,6 +965,11 @@ bool	Grid::validateWin(
 	{
 		y = (y + x) % GRID_W_INTER;
 	}
+
+	ySaveD = (y + x) % GRID_W_INTER;
+	ySaveA = y - x;
+	if (ySaveA < 0)
+		ySaveA += GRID_W_INTER;
 
 	plVerify = 0b0110;
 	opVerifyL = 0b0001;
@@ -1015,7 +991,7 @@ bool	Grid::validateWin(
 
 		yA = y - x;
 		if (yA < 0)
-			yA = GRID_W_INTER + yA;
+			yA += GRID_W_INTER;
 
 		// Check if stone is capturable on horizontal axis
 		if (bbType != 'H' && x > 0 && x < GRID_W_INTER - 1)
@@ -1029,8 +1005,7 @@ bool	Grid::validateWin(
 			{
 				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
 				{
-					opponent->addCaptured(2);
-					opponent->setWinState(WIN_STATE_CAPTURE);
+					opponent->setWinState(WIN_STATE_AUTO_CAPTURE);
 					this->previewLegal = false;
 					return (true);
 				}
@@ -1050,8 +1025,7 @@ bool	Grid::validateWin(
 			{
 				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
 				{
-					opponent->addCaptured(2);
-					opponent->setWinState(WIN_STATE_CAPTURE);
+					opponent->setWinState(WIN_STATE_AUTO_CAPTURE);
 					this->previewLegal = false;
 					return (true);
 				}
@@ -1060,7 +1034,9 @@ bool	Grid::validateWin(
 		}
 
 		// Check if stone is capturable on diagonal axis
-		if (bbType != 'D')
+		if (bbType != 'D'
+			&& x > 3 && x < GRID_W_INTER - 4
+			&& y > 3 && y < GRID_W_INTER - 4)
 		{
 			if (((plBitBoard->bbD[yD] & checkL) >> shiftL == plVerify
 					&& ((opBitBoard->bbD[yD] & checkL) >> shiftL == opVerifyL)
@@ -1071,8 +1047,7 @@ bool	Grid::validateWin(
 			{
 				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
 				{
-					opponent->addCaptured(2);
-					opponent->setWinState(WIN_STATE_CAPTURE);
+					opponent->setWinState(WIN_STATE_AUTO_CAPTURE);
 					this->previewLegal = false;
 					return (true);
 				}
@@ -1081,7 +1056,9 @@ bool	Grid::validateWin(
 		}
 
 		// Check if stone is capturable on diagonal axis
-		if (bbType != 'A')
+		if (bbType != 'A'
+			&& x > 3 && x < GRID_W_INTER - 4
+			&& y > 3 && y < GRID_W_INTER - 4)
 		{
 			if (((plBitBoard->bbA[yA] & checkL) >> shiftL == plVerify
 					&& ((opBitBoard->bbA[yA] & checkL) >> shiftL == opVerifyL
@@ -1092,8 +1069,7 @@ bool	Grid::validateWin(
 			{
 				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
 				{
-					opponent->addCaptured(2);
-					opponent->setWinState(WIN_STATE_CAPTURE);
+					opponent->setWinState(WIN_STATE_AUTO_CAPTURE);
 					this->previewLegal = false;
 					return (true);
 				}
@@ -1195,14 +1171,16 @@ int	Grid::makeCapture(
 	}
 
 	// Check capture in diagonal
-	if ((plBitBoard->bbD[yD] & checkL) >> shiftL == plVerify
+	if (move->x > 1 && move->y < GRID_W_INTER - 3
+		&& (plBitBoard->bbD[yD] & checkL) >> shiftL == plVerify
 		&& (opBitBoard->bbD[yD] & checkL) >> shiftL == opVerify)
 	{
 		opBitBoard->set(move->x - 1, move->y + 1, false);
 		opBitBoard->set(move->x - 2, move->y + 2, false);
 		nbCapture += 2;
 	}
-	if ((plBitBoard->bbD[yD] & checkR) >> shiftR == plVerify
+	if (move->x < GRID_W_INTER - 3 && move->y > 1
+		&& (plBitBoard->bbD[yD] & checkR) >> shiftR == plVerify
 		&& (opBitBoard->bbD[yD] & checkR) >> shiftR == opVerify)
 	{
 		opBitBoard->set(move->x + 1, move->y - 1, false);
@@ -1212,14 +1190,16 @@ int	Grid::makeCapture(
 
 
 	// Check capture in anti diagonal
-	if ((plBitBoard->bbA[yA] & checkL) >> shiftL == plVerify
+	if (move->x > 1 && move->y > 1
+		&& (plBitBoard->bbA[yA] & checkL) >> shiftL == plVerify
 		&& (opBitBoard->bbA[yA] & checkL) >> shiftL == opVerify)
 	{
 		opBitBoard->set(move->x - 1, move->y - 1, false);
 		opBitBoard->set(move->x - 2, move->y - 2, false);
 		nbCapture += 2;
 	}
-	if ((plBitBoard->bbA[yA] & checkR) >> shiftR == plVerify
+	if (move->x < GRID_W_INTER - 3 && move->y < GRID_W_INTER - 3
+		&& (plBitBoard->bbA[yA] & checkR) >> shiftR == plVerify
 		&& (opBitBoard->bbA[yA] & checkR) >> shiftR == opVerify)
 	{
 		opBitBoard->set(move->x + 1, move->y + 1, false);

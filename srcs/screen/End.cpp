@@ -91,7 +91,7 @@ void	End::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *texture
 	{
 		drawText(window, text, "WIN BY", WIN_W * 0.92, 40, 70, sf::Color::White, MID_CENTER);
 
-		std::string winStates[] = {"NONE", "ALIGN", "CAPTURE", "TIMEOUT"};
+		std::string winStates[] = {"NONE", "ALIGN", "CAPTURE", "AUTO CAPTURE", "TIMEOUT"};
 
 		if (leftPlayer->getWinState() != WIN_STATE_NONE)
 			drawText(window, text, winStates[leftPlayer->getWinState()], WIN_W * 0.92, 110, 70, sf::Color::White, MID_CENTER);
