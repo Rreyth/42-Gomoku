@@ -19,17 +19,8 @@ Grid::Grid(void)
 	this->previewLegal = false;
 
 	this->clearGrid(SPRITE_STONE_BLUE, SPRITE_STONE_RED, STANDARD);
-	// this->dirs[DIR_L] = sf::Vector2i(-1, 0);
-	// this->dirs[DIR_UL] = sf::Vector2i(-1, -1);
-	// this->dirs[DIR_U] = sf::Vector2i(0, -1);
-	// this->dirs[DIR_UR] = sf::Vector2i(1, -1);
-	// this->dirs[DIR_R] = sf::Vector2i(1, 0);
-	// this->dirs[DIR_DR] = sf::Vector2i(1, 1);
-	// this->dirs[DIR_D] = sf::Vector2i(0, 1);
-	// this->dirs[DIR_DL] = sf::Vector2i(-1, 1);
 
 	this->historyIdString = "";
-	// this->createBoardState();
 
 	// this->bboxUL = sf::Vector2i(GRID_W_INTER - 1, GRID_W_INTER - 1);
 	// this->bboxDR = sf::Vector2i(0, 0);
@@ -73,18 +64,6 @@ std::string	Grid::getHistoryIdString(void)
 	return (this->historyIdString);
 }
 
-
-// std::string	Grid::getCurrentBoardState(void)
-// {
-// 	return (this->currentBoardState);
-// }
-
-
-// std::string	Grid::getCurrentBoardStateOpti(void)
-// {
-// 	return (this->currentBoardStateOpti);
-// }
-
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -98,12 +77,8 @@ Grid	&Grid::operator=(const Grid &grid)
 	this->rule = grid.rule;
 
 	// Copy board
-	// for (int i = 0; i < GRID_NB_INTER; i++)
-	// {
-	// 	this->gridState[i].type = grid.gridState[i].type;
-	// 	for (int j = 0; j < 8; j++)
-	// 		this->gridState[i].neighbor[j] = grid.gridState[i].neighbor[j];
-	// }
+	this->bitboardL = grid.bitboardL;
+	this->bitboardR = grid.bitboardR;
 
 	// this->bboxUL = grid.bboxUL;
 	// this->bboxDR = grid.bboxDR;
@@ -242,11 +217,10 @@ bool	Grid::checkLegalMove(
 			return (false);
 	}
 
-	// TODO : CHECK PRO RULE
-	// // check rule
-	// if (this->rule == PRO && nbMoves <= 2)
-	// 	if (!this->checkProRule(x, y, plType, nbMoves))
-	// 		return (false);
+	// check rule
+	if (this->rule == PRO && nbMoves <= 2)
+		if (!this->checkProRule(x, y, plType, nbMoves))
+			return (false);
 
 	return (true);
 }
@@ -1339,6 +1313,30 @@ bool	Grid::checkDoubleFreeThree(
 }
 
 
+bool	Grid::checkProRule(int x, int y, inter_type interPlayer, int nbMoves)
+{
+	int	center, tmpX, tmpY, tmp;
+
+	center = GRID_W_INTER / 2;
+	// The first stone must be placed in the center of the board.
+	if (nbMoves == 0 && (x != center || y != center))
+		return (false);
+	// The second stone may be placed anywhere on the board.
+	// The third stone must be placed at least three
+	// intersections away from the first stone
+	else if (nbMoves == 2)
+	{
+		tmpX = center - x;
+		tmpY = center - y;
+		tmp = tmpX * tmpX + tmpY * tmpY;
+		if (tmp <= 4 || tmp == 8)
+			return (false);
+	}
+
+	return (true);
+}
+
+
 void	Grid::applyHistoryToGrid(void)
 {
 	std::pair<BitBoard, BitBoard>	savedBoard;
@@ -1350,102 +1348,6 @@ void	Grid::applyHistoryToGrid(void)
 	this->historyIdString = std::to_string(this->boardHistoryId + 1) + " / "
 								+ std::to_string(this->boardHistory.size());
 }
-
-
-
-// bool	Grid::checkProRule(int x, int y, inter_type interPlayer, int nbMoves)
-// {
-// 	// The first stone must be placed in the center of the board.
-// 	if (nbMoves == 0 &&
-// 		(x != GRID_W_INTER / 2 ||
-// 		y != GRID_W_INTER / 2))
-// 		return (false);
-// 	// The second stone may be placed anywhere on the board.
-// 	// The third stone must be placed at least three
-// 	// intersections away from the first stone
-// 	else if (nbMoves == 2)
-// 	{
-// 		int	tmp_x, tmp_y;
-
-// 		for (int i = 0; i < 8; i++)
-// 		{
-// 			tmp_x = x;
-// 			tmp_y = y;
-// 			for (int j = 0; j < 2; j++)
-// 			{
-// 				tmp_x += this->dirs[i].x;
-// 				tmp_y += this->dirs[i].y;
-// 				if (this->getInterState(tmp_x, tmp_y) == interPlayer)
-// 					return (false);
-// 			}
-// 		}
-// 	}
-
-// 	return (true);
-// }
-
-
-// bool	Grid::checkDoubleFreeThree(int x, int y, inter_type plState, inter_type opState)
-// {
-// 	int	tmp_x, tmp_y, nbThreeTree, nbInterMe, nbInterEmpty;
-// 	inter_type	tmpState;
-
-// 	nbThreeTree = 0;
-// 	for (int i = 0; i < 8; i++)
-// 	{
-// 		tmp_x = x;
-// 		tmp_y = y;
-
-// 		// Check 3 next intersections in dir
-// 		nbInterMe = 0;
-// 		nbInterEmpty = 0;
-// 		for (int j = 0; j < 3; j++)
-// 		{
-// 			tmp_x += this->dirs[i].x;
-// 			tmp_y += this->dirs[i].y;
-// 			tmpState = this->getInterState(tmp_x, tmp_y);
-// 			if (tmpState == INTER_EMPTY)
-// 				nbInterEmpty++;
-// 			else if (tmpState == plState)
-// 				nbInterMe++;
-// 			else
-// 				break;
-// 		}
-
-// 		// If there is 2 me and one empty, it can be a free three
-// 		if (nbInterEmpty != 1 || nbInterMe != 2)
-// 			continue;
-
-// 		// Check opponenent obstruction after possible free three
-// 		tmp_x += this->dirs[i].x;
-// 		tmp_y += this->dirs[i].y;
-// 		tmpState = this->getInterState(tmp_x, tmp_y);
-// 		if (tmpState == opState)
-// 			continue;
-
-// 		// Check opponenent obstruction before possible free three
-// 		tmp_x = x - this->dirs[i].x;
-// 		tmp_y = y - this->dirs[i].y;
-// 		tmpState = this->getInterState(tmp_x, tmp_y);
-// 		if (tmpState == opState)
-// 			continue;
-
-// 		nbThreeTree++;
-// 		if (nbThreeTree > 1)
-// 			break;
-// 	}
-
-// 	return (nbThreeTree >= 2);
-// }
-
-
-// void	Grid::createCurrentMoveText(void)
-// {
-// 	this->currentMove = std::to_string(this->idBoardState + 1);
-// 	this->currentMove += " / ";
-// 	this->currentMove += std::to_string(this->boardStates.size());
-// }
-
 
 // void	Grid::insertMoves(
 // 				std::vector<sf::Vector2i> &moves, sf::Vector2i *move,

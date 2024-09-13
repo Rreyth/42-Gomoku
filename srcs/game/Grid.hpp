@@ -41,7 +41,6 @@ public:
 	void			goToHistoryEnd(void);
 	void			disablePreview(void);
 
-	// std::string					getCurrentBoardState(void);
 	// std::vector<sf::Vector2i>	getLegalMoves(Player *leftPlayer, Player *rightPlayer);
 	// bool						checkInterestingMove(int x, int y);
 	// std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
@@ -76,17 +75,9 @@ private:
 	bool	validateWin(Player *player, Player *opponent, BitBoard *plBitBoard, BitBoard *opBitBoard, char bbType, int x, int y);
 	int		makeCapture(sf::Vector2i *move, BitBoard *plBitBoard, BitBoard *opBitBoard);
 	bool	checkDoubleFreeThree(int x, int y, BitBoard *plBitBoard, BitBoard *opBitBoard);
+	bool	checkProRule(int x, int y, inter_type interPlayer, int nbMoves);
 	void	applyHistoryToGrid(void);
 
-	// void			setInterState(int x, int y, inter_type interType);
-	// bool			checkProRule(int x, int y, inter_type interPlayer, int nbMoves);
-	// void			loopUpdateNeighbor(int x, int y, dir_neighbor dir, inter_type plType);
-	// void			updateNeighbor(int x, int y);
-	// bool			checkWinCaptureCase(Player *me, Player *oppenent, sf::Vector2i *move, dir_neighbor dir, dir_neighbor opdir);
-	// void			setBoardState(int id);
-	// void			createBoardState(void);
-	// void			updateBoardState(int id, char c);
-	// void			createCurrentMoveText(void);
 	// void			insertMoves(std::vector<sf::Vector2i> &moves, sf::Vector2i *move, bool reverse, Evaluation *evaluator, Player *player, Player *opponent);
 };
 
