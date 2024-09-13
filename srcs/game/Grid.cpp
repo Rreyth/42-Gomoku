@@ -1260,26 +1260,82 @@ int	Grid::makeCapture(
 bool	Grid::checkDoubleFreeThree(
 				int x, int y, BitBoard *plBitBoard, BitBoard *opBitBoard)
 {
-	int	verifyL, verifyM, verifyR,
-		shiftL, shiftR,
-		checkL, checkR;
+	int	plVerifyL, plVerifyM, plVerifyR,
+		shiftL, shiftR, shiftVL, shiftVR,
+		checkL, checkR, checkVL, checkVR,
+		opCheckL, opCheckR, opCheckVL, opCheckVR,
+		tmpL, tmpR, yD, yA,
+		nbThreeTree;
+
+	nbThreeTree = 0;
 
 	// Create vefify
-	verifyL = 0b011;
-	verifyM = 0b101;
-	verifyR = 0b110;
+	plVerifyL = 0b011;
+	plVerifyM = 0b101;
+	plVerifyR = 0b110;
 
-	// TODO : CONTINUE
+	// Create shift and check
+	shiftR = x + 1;
+	shiftL = shiftR - 4;
+	checkL = 0b111 << shiftL;
+	checkR = 0b111 << shiftR;
+	shiftVR = y + 1;
+	shiftVL = shiftVR - 4;
+	checkVL = 0b111 << shiftVL;
+	checkVR = 0b111 << shiftVR;
+
+	opCheckL = 0b111111 << (x - 4);
+	opCheckR = 0b111111 << (x - 1);
+	opCheckVL = 0b111111 << (y - 4);
+	opCheckVR = 0b111111 << (y - 1);
+
+	yD = (y + x) % GRID_W_INTER;
+	yA = y - x;
+	if (yA < 0)
+		yA = GRID_W_INTER + yA;
 
 	// Check for honrizontal
+	tmpL = (plBitBoard->bbH[y] & checkL) >> shiftL;
+	tmpR = (plBitBoard->bbH[y] & checkR) >> shiftR;
+
+	if ((tmpL == plVerifyL || tmpL == plVerifyM || tmpL == plVerifyR)
+			&& (opBitBoard->bbH[y] & opCheckL) == 0)
+		nbThreeTree++;
+	if ((tmpR == plVerifyL || tmpR == plVerifyM || tmpR == plVerifyR)
+			&& (opBitBoard->bbH[y] & opCheckR) == 0)
+		nbThreeTree++;
 
 	// Check for vertical
+	tmpL = (plBitBoard->bbV[x] & checkVL) >> shiftVL;
+	tmpR = (plBitBoard->bbV[x] & checkVR) >> shiftVR;
+	if ((tmpL == plVerifyL || tmpL == plVerifyM || tmpL == plVerifyR)
+			&& (opBitBoard->bbV[x] & opCheckVL) == 0)
+		nbThreeTree++;
+	if ((tmpR == plVerifyL || tmpR == plVerifyM || tmpR == plVerifyR)
+			&& (opBitBoard->bbV[x] & opCheckVR) == 0)
+		nbThreeTree++;
 
 	// Check for diagonal
+	tmpL = (plBitBoard->bbD[yD] & checkL) >> shiftL;
+	tmpR = (plBitBoard->bbD[yD] & checkR) >> shiftR;
+	if ((tmpL == plVerifyL || tmpL == plVerifyM || tmpL == plVerifyR)
+			&& (opBitBoard->bbD[yD] & opCheckL) == 0)
+		nbThreeTree++;
+	if ((tmpR == plVerifyL || tmpR == plVerifyM || tmpR == plVerifyR)
+			&& (opBitBoard->bbD[yD] & opCheckR) == 0)
+		nbThreeTree++;
 
 	// Check for anti diagonal
+	tmpL = (plBitBoard->bbA[yA] & checkL) >> shiftL;
+	tmpR = (plBitBoard->bbA[yA] & checkR) >> shiftR;
+	if ((tmpL == plVerifyL || tmpL == plVerifyM || tmpL == plVerifyR)
+			&& (opBitBoard->bbA[yA] & opCheckL) == 0)
+		nbThreeTree++;
+	if ((tmpR == plVerifyL || tmpR == plVerifyM || tmpR == plVerifyR)
+			&& (opBitBoard->bbA[yA] & opCheckR) == 0)
+		nbThreeTree++;
 
-	return (true);
+	return (nbThreeTree >= 2);
 }
 
 
