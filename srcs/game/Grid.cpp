@@ -109,6 +109,26 @@ void	Grid::tick(display_state *displayState, Mouse *mouse,
 	int px = (mx + GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 	int py = (my + GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 
+	if (mouse->isPressed(MBUT_RIGHT))
+	{
+		int	evalL, evalR, captureL, captureR;
+		std::string	xaxis;
+
+		captureL = leftPlayer->getCaptured();
+		captureR = rightPlayer->getCaptured();
+
+		evalL = evaluator->evaluationPosition(
+							&this->bitboardL, &this->bitboardR,
+							captureL, captureR, px, py);
+		evalR = evaluator->evaluationPosition(
+							&this->bitboardR, &this->bitboardL,
+							captureR, captureL, px, py);
+
+		xaxis = "ABCDEFGHIJKLMNOPQRSTUVW";
+		printf("\nEvaluation of %c%i : %i | %i\n",
+				xaxis[px], py + 1, evalL, evalR);
+	}
+
 	if (px == this->previewX && py == this->previewY
 			&& !mouse->isPressed(MBUT_LEFT))
 		return ;
@@ -1285,7 +1305,8 @@ int	Grid::makeCapture(
 bool	Grid::checkDoubleFreeThree(
 				int x, int y, BitBoard *plBitBoard, BitBoard *opBitBoard)
 {
-	int	plVerifyL, plVerifyM, plVerifyR,
+	int	plLVerifyL, plLVerifyM, plLVerifyR,
+		plRVerifyL, plRVerifyM, plRVerifyR,
 		shiftL, shiftR, shiftVL, shiftVR,
 		checkL, checkR, checkVL, checkVR,
 		opCheckL, opCheckR, opCheckVL, opCheckVR,
@@ -1295,19 +1316,22 @@ bool	Grid::checkDoubleFreeThree(
 	nbThreeTree = 0;
 
 	// Create vefify
-	plVerifyL = 0b011;
-	plVerifyM = 0b101;
-	plVerifyR = 0b110;
+	plLVerifyL = 0b00011;
+	plLVerifyM = 0b00101;
+	plLVerifyR = 0b00110;
+	plRVerifyL = 0b01100;
+	plRVerifyM = 0b10100;
+	plRVerifyR = 0b11000;
 
 	// Create shift and check
-	shiftR = x + 1;
-	shiftL = shiftR - 4;
-	checkL = 0b111 << shiftL;
-	checkR = 0b111 << shiftR;
-	shiftVR = y + 1;
-	shiftVL = shiftVR - 4;
-	checkVL = 0b111 << shiftVL;
-	checkVR = 0b111 << shiftVR;
+	shiftR = x - 1;
+	shiftL = shiftR - 2;
+	checkL = 0b11111 << shiftL;
+	checkR = 0b11111 << shiftR;
+	shiftVR = y - 1;
+	shiftVL = shiftVR - 2;
+	checkVL = 0b11111 << shiftVL;
+	checkVR = 0b11111 << shiftVR;
 
 	opCheckL = 0b111111 << (x - 4);
 	opCheckR = 0b111111 << (x - 1);
@@ -1319,44 +1343,45 @@ bool	Grid::checkDoubleFreeThree(
 	if (yA < 0)
 		yA = GRID_W_INTER + yA;
 
+
 	// Check for honrizontal
 	tmpL = (plBitBoard->bbH[y] & checkL) >> shiftL;
 	tmpR = (plBitBoard->bbH[y] & checkR) >> shiftR;
 
-	if ((tmpL == plVerifyL || tmpL == plVerifyM || tmpL == plVerifyR)
+	if ((tmpL == plLVerifyL || tmpL == plLVerifyM || tmpL == plLVerifyR)
 			&& (opBitBoard->bbH[y] & opCheckL) == 0)
 		nbThreeTree++;
-	if ((tmpR == plVerifyL || tmpR == plVerifyM || tmpR == plVerifyR)
+	if ((tmpR == plRVerifyL || tmpR == plRVerifyM || tmpR == plRVerifyR)
 			&& (opBitBoard->bbH[y] & opCheckR) == 0)
 		nbThreeTree++;
 
 	// Check for vertical
 	tmpL = (plBitBoard->bbV[x] & checkVL) >> shiftVL;
 	tmpR = (plBitBoard->bbV[x] & checkVR) >> shiftVR;
-	if ((tmpL == plVerifyL || tmpL == plVerifyM || tmpL == plVerifyR)
+	if ((tmpL == plLVerifyL || tmpL == plLVerifyM || tmpL == plLVerifyR)
 			&& (opBitBoard->bbV[x] & opCheckVL) == 0)
 		nbThreeTree++;
-	if ((tmpR == plVerifyL || tmpR == plVerifyM || tmpR == plVerifyR)
+	if ((tmpR == plRVerifyL || tmpR == plRVerifyM || tmpR == plRVerifyR)
 			&& (opBitBoard->bbV[x] & opCheckVR) == 0)
 		nbThreeTree++;
 
 	// Check for diagonal
 	tmpL = (plBitBoard->bbD[yD] & checkL) >> shiftL;
 	tmpR = (plBitBoard->bbD[yD] & checkR) >> shiftR;
-	if ((tmpL == plVerifyL || tmpL == plVerifyM || tmpL == plVerifyR)
+	if ((tmpL == plLVerifyL || tmpL == plLVerifyM || tmpL == plLVerifyR)
 			&& (opBitBoard->bbD[yD] & opCheckL) == 0)
 		nbThreeTree++;
-	if ((tmpR == plVerifyL || tmpR == plVerifyM || tmpR == plVerifyR)
+	if ((tmpR == plRVerifyL || tmpR == plRVerifyM || tmpR == plRVerifyR)
 			&& (opBitBoard->bbD[yD] & opCheckR) == 0)
 		nbThreeTree++;
 
 	// Check for anti diagonal
 	tmpL = (plBitBoard->bbA[yA] & checkL) >> shiftL;
 	tmpR = (plBitBoard->bbA[yA] & checkR) >> shiftR;
-	if ((tmpL == plVerifyL || tmpL == plVerifyM || tmpL == plVerifyR)
+	if ((tmpL == plLVerifyL || tmpL == plLVerifyM || tmpL == plLVerifyR)
 			&& (opBitBoard->bbA[yA] & opCheckL) == 0)
 		nbThreeTree++;
-	if ((tmpR == plVerifyL || tmpR == plVerifyM || tmpR == plVerifyR)
+	if ((tmpR == plRVerifyL || tmpR == plRVerifyM || tmpR == plRVerifyR)
 			&& (opBitBoard->bbA[yA] & opCheckR) == 0)
 		nbThreeTree++;
 
