@@ -5,7 +5,7 @@
 
 typedef enum e_bitboardAxis
 {
-	BBH,
+	BBH = 0,
 	BBV,
 	BBD,
 	BBA

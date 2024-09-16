@@ -119,36 +119,39 @@ void	BitBoard::clear(void)
 
 int	BitBoard::getLine(bitboardAxis bbAxis, int x, int y)
 {
-	int	tmp;
+	int	yTmp, tmp;
 
+	// Get line horizontal
 	if (bbAxis == BBH)
 		return (this->bbH[y]);
 
+	// Get line vertical
 	if (bbAxis == BBV)
-		return (this->bbV[y]);
+		return (this->bbV[x]);
 
-	tmp = GRID_W_INTER - y;
-
+	// Get line diagonal
 	if (bbAxis == BBD)
 	{
-		if (y == 0)
-			return (this->bbD[y]);
+		yTmp = (y + x) % GRID_W_INTER;
 
-		if (x < tmp)
-			return (this->bbD[y] & (0b1111111111111111111 >> tmp));
+		tmp = GRID_W_INTER - yTmp - 1; // @brenaudo validate this line
+		if (x <= yTmp)
+			return (this->bbD[yTmp] & (0b1111111111111111111 >> tmp));
 		else
-			return (this->bbD[y] & !(0b1111111111111111111 >> tmp));
+			return (this->bbD[yTmp] & ~(0b1111111111111111111 >> tmp));
 	}
 
-	if (y == 0)
-		return (this->bbA[y]);
+	// Get line anti diagonal
+	yTmp = y - x;
+	if (yTmp < 0)
+		yTmp += GRID_W_INTER;
+	tmp = GRID_W_INTER - yTmp;
 
-	if (x < y)
-		return (this->bbA[y] & (0b1111111111111111111 << tmp));
+	if (x >= tmp)
+		return (this->bbA[yTmp] & (0b1111111111111111111 << tmp));
 	else
-		return (this->bbA[y] & !(0b1111111111111111111 << tmp));
+		return (this->bbA[yTmp] & ~(0b1111111111111111111 << tmp));
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
