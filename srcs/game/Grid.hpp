@@ -21,8 +21,7 @@ public:
 	int				getW(void);
 	int				getH(void);
 	std::string		getHistoryIdString(void);
-	inter_type		getInterState(int x, int y);
-	intersection	*getIntersection(int x, int y);
+	BitBoard		*getBitBoard(inter_type type);
 
 	Grid			&operator=(const Grid &grid);
 

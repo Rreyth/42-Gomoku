@@ -87,8 +87,8 @@ sf::Vector2i	AI::getNextMove(
 		move = this->getRandomMove(grid, player, opponent);
 	else if (this->difficulty == BETTER_RANDOM)
 		move = this->getBetterRandom(grid, player, opponent);
-	// else if (this->difficulty == EASY)
-	// 	move = this->getEasyMove(grid, player, opponent, evaluator);
+	else if (this->difficulty == EASY)
+		move = this->getEasyMove(grid, player, opponent, evaluator);
 	// else if (this->difficulty == MEDIUM)
 	// 	move = this->getMediumMove(grid, player, opponent, evaluator, &tracker);
 	//TODO: Implement other difficulties
@@ -192,45 +192,43 @@ sf::Vector2i	AI::getEasyMove(
 						Grid *grid, Player *player, Player *opponent,
 						Evaluation *evaluator)
 {
-	return (sf::Vector2i(-1, -1));
+	int							bestEval, tmpEval, plCapture, opCapture;
+	sf::Vector2i				move;
+	std::vector<sf::Vector2i>	interestingMoves;
+	BitBoard					*plBitBoard, *opBitBoard;
 
-	// int							maxEval, tmpEval, plCapture, opCapture;
-	// sf::Vector2i				move;
-	// std::vector<sf::Vector2i>	interestingMoves;
-	// inter_type					plType, opType;
+	// Get interesting move
+	interestingMoves = grid->getInterestingMoves(player, opponent);
+	if (interestingMoves.size() == 0)
+	{
+		if (player->getMoves() + opponent->getMoves() == 0)
+			return(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
+		else
+			return (sf::Vector2i(-1, -1));
+	}
 
-	// // Get interesting move
-	// interestingMoves = grid->getInterestingMoves(player, opponent);
-	// if (interestingMoves.size() == 0)
-	// {
-	// 	if (player->getMoves() + opponent->getMoves() == 0)
-	// 		return(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
-	// 	else
-	// 		return (sf::Vector2i(-1, -1));
-	// }
+	// Compute variables for evaluation
+	plCapture = player->getCaptured();
+	opCapture = opponent->getCaptured();
+	plBitBoard = grid->getBitBoard(player->getInterType());
+	opBitBoard = grid->getBitBoard(opponent->getInterType());
 
-	// // Compute variables for evaluation
-	// plType = player->getInterType();
-	// opType = opponent->getInterType();
-	// plCapture = player->getCaptured();
-	// opCapture = opponent->getCaptured();
+	// Find move to play
+	move = sf::Vector2i(-1, -1);
+	bestEval = -1;
+	for (int i = 0; i < interestingMoves.size(); i++)
+	{
+		tmpEval = evaluator->evaluationPosition(
+								plBitBoard, opBitBoard, plCapture, opCapture,
+								interestingMoves[i].x, interestingMoves[i].y);
+		if (tmpEval > bestEval)
+		{
+			bestEval = tmpEval;
+			move = interestingMoves[i];
+		}
+	}
 
-	// // Find move to play
-	// move = sf::Vector2i(-1, -1);
-	// maxEval = -1;
-	// for (int i = 0; i < interestingMoves.size(); i++)
-	// {
-	// 	tmpEval = evaluator->evaluationPosition(
-	// 							grid, plType, opType, plCapture, opCapture,
-	// 							interestingMoves[i].x, interestingMoves[i].y);
-	// 	if (tmpEval > maxEval)
-	// 	{
-	// 		maxEval = tmpEval;
-	// 		move = interestingMoves[i];
-	// 	}
-	// }
-
-	// return (move);
+	return (move);
 }
 
 // # define DEPTH 3

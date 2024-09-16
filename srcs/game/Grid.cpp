@@ -64,6 +64,14 @@ std::string	Grid::getHistoryIdString(void)
 	return (this->historyIdString);
 }
 
+
+BitBoard	*Grid::getBitBoard(inter_type type)
+{
+	if (type == INTER_LEFT)
+		return (&this->bitboardL);
+	return (&this->bitboardR);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////

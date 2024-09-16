@@ -312,9 +312,9 @@ int	Evaluation::evaluatePositionOnAxis(
 		// If this capture will make player win, make it an insane good move
 		if (plCapture == 8)
 			return (CASE_WIN_POINT);
-		// Else count it like complete a 4 stone line
+		// Else count it like complete a 2 stone line
 		// Multiply the point for increase reward as long as number of capture
-		evalutation += this->completeLinePoint[4] * plCaptureMult;
+		evalutation += this->completeLinePoint[2] * plCaptureMult;
 	}
 
 	// Block opponent's capture
@@ -324,9 +324,9 @@ int	Evaluation::evaluatePositionOnAxis(
 		// If this capture will make oppennent win, block it at if we cannot win !
 		if (opCapture == 8)
 			return (this->completeLinePoint[5] - 1);
-		// Else count it like block a 4 stone line
+		// Else count it like block a 2 stone line
 		// Multiply the point for increase reward as long as number of capture
-		evalutation += this->blockLinePoint[4] * opCaptureMult;
+		evalutation += this->blockLinePoint[2] * opCaptureMult;
 	}
 
 	return (evalutation);
