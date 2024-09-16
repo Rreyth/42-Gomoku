@@ -16,10 +16,8 @@ public:
 
 	int	evaluationPosition(BitBoard *plBitBoard, BitBoard *opBitBoard,
 							int plCapture, int opCapture, int x, int y);
-	// int	evaluationPosition(Grid *grid, inter_type plType, inter_type opType,
-	// 						int plCapture, int opCapture, int x, int y);
-	int	evaluateGrid(Grid *grid, inter_type plType, inter_type opType,
-							int plCapture, int opCapture);
+	int	evaluateGrid(BitBoard *plBitBoard, BitBoard *opBitBoard,
+						int plCapture, int opCapture);
 
 private:
 	int				completeLinePoint[6], blockLinePoint[6],
@@ -28,6 +26,12 @@ private:
 					verifyInCaptureR, verifyOutCaptureR;
 
 	int	evaluatePositionOnAxis(
+			int *plBb, int *opBb, int y,
+			int checkL, int checkR, int shiftL, int shiftR,
+			int plCapture, int plCaptureMult,
+			int opCapture, int opCaptureMult);
+
+	int	evaluateGridOnAxis(
 			int *plBb, int *opBb, int y,
 			int checkL, int checkR, int shiftL, int shiftR,
 			int plCapture, int plCaptureMult,

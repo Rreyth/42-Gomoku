@@ -504,68 +504,6 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(
 }
 
 
-// bool	Grid::checkInterestingMove(int x, int y)
-// {
-// 	int			new_x, new_y;
-// 	inter_type	state;
-
-// 	if (this->getInterState(x, y) != INTER_EMPTY)
-// 		return (false);
-
-// 	for (int i = 0; i < 8; i++)
-// 	{
-// 		// Check for intersection next to stone
-// 		new_x = x + this->dirs[i].x;
-// 		new_y = y + this->dirs[i].y;
-// 		state = this->getInterState(new_x, new_y);
-// 		if (state && state != INTER_INVALID)
-// 			return (true);
-// 	}
-
-// 	return (false);
-// }
-
-
-// std::vector<sf::Vector2i>	Grid::getInterestingMoves(Player *player, Player *opponent)
-// {
-// 	std::vector<sf::Vector2i>	InterestingMoves;
-// 	inter_type					plType, opType;
-// 	int							nbMoves;
-
-// 	nbMoves = player->getMoves() + opponent->getMoves();
-// 	plType = player->getInterType();
-// 	opType = opponent->getInterType();
-// 	// Case of no bbox set (0 stone on grid)
-// 	if (this->bboxUL.x > this->bboxDR.x)
-// 	{
-// 		for (int i = 0; i < GRID_W_INTER; i++)
-// 		{
-// 			for (int j = 0; j < GRID_W_INTER; j++)
-// 			{
-// 				if(checkInterestingMove(i, j))
-// 					if (checkLegalMove(i, j, nbMoves, plType, opType))
-// 						InterestingMoves.push_back(sf::Vector2i(i, j));
-// 			}
-// 		}
-// 	}
-// 	// Check only tile in bbox to know if there are interesting
-// 	else
-// 	{
-// 		for (int i = this->bboxUL.x; i <= this->bboxDR.x; i++)
-// 		{
-// 			for (int j = this->bboxUL.y; j <= this->bboxDR.y; j++)
-// 			{
-// 				if(checkInterestingMove(i, j))
-// 					if (checkLegalMove(i, j, nbMoves, plType, opType))
-// 						InterestingMoves.push_back(sf::Vector2i(i, j));
-// 			}
-// 		}
-// 	}
-
-// 	return (InterestingMoves);
-// }
-
-
 // std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
 // 									Player *player, Player *opponent,
 // 									Evaluation *evaluator, bool reverse,
@@ -900,88 +838,6 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(
 // }
 
 
-// void	Grid::saveWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos)
-// {
-// 	*leftWinPos = this->leftWinPos;
-// 	*rightWinPos = this->rightWinPos;
-// }
-
-
-// void	Grid::loadWinPos(std::vector<sf::Vector2i> *leftWinPos, std::vector<sf::Vector2i> *rightWinPos)
-// {
-// 	this->leftWinPos = *leftWinPos;
-// 	this->rightWinPos = *rightWinPos;
-// }
-
-
-// bool	Grid::checkWinCondition(Player *me, Player *oppenent, sf::Vector2i move)
-// {
-// 	// Check if the player capture at least 10 opponent's stones
-// 	if (me->getCaptured() >= WIN_CAPTURE)
-// 	{
-// 		me->setWinState(WIN_STATE_CAPTURE);
-// 		this->previewLegal = false;
-// 		return (true);
-// 	}
-
-// 	// Check if there at least 5 align stones
-// 	if (this->checkWinCaptureCase(me, oppenent, &move, DIR_L, DIR_R))
-// 		return (true);
-// 	if (this->checkWinCaptureCase(me, oppenent, &move, DIR_UL, DIR_DR))
-// 		return (true);
-// 	if (this->checkWinCaptureCase(me, oppenent, &move, DIR_U, DIR_D))
-// 		return (true);
-// 	if (this->checkWinCaptureCase(me, oppenent, &move, DIR_UR, DIR_DL))
-// 		return (true);
-
-// 	// Check if any valid 5 stones line
-// 	if (this->getInterState(move.x, move.y) == INTER_LEFT)
-// 	{
-// 		for (std::size_t i = 0; i < this->leftWinPos.size(); i++)
-// 		{
-// 			move.x = this->leftWinPos[i].x;
-// 			move.y = this->leftWinPos[i].y;
-// 			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_L, DIR_R))
-// 				return (true);
-// 			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_UL, DIR_DR))
-// 				return (true);
-// 			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_U, DIR_D))
-// 				return (true);
-// 			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_UR, DIR_DL))
-// 				return (true);
-// 		}
-// 	}
-// 	else
-// 	{
-// 		for (std::size_t i = 0; i < this->rightWinPos.size(); i++)
-// 		{
-// 			move.x = this->rightWinPos[i].x;
-// 			move.y = this->rightWinPos[i].y;
-// 			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_L, DIR_R))
-// 				return (true);
-// 			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_UL, DIR_DR))
-// 				return (true);
-// 			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_U, DIR_D))
-// 				return (true);
-// 			if (this->checkWinCaptureCase(me, oppenent, &move, DIR_UR, DIR_DL))
-// 				return (true);
-// 		}
-// 	}
-
-// 	// Check for draw
-// 	// Opti by find a 'E' into currentBoardState
-// 	if (this->currentBoardState.find('E') == this->currentBoardState.npos)
-// 	{
-// 		me->setWinState(WIN_STATE_NONE);
-// 		oppenent->setWinState(WIN_STATE_NONE);
-// 		this->previewLegal = false;
-// 		return (true);
-// 	}
-
-// 	return (false);
-// }
-
-
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -992,6 +848,8 @@ bool	Grid::checkWinByAlign(
 {
 	int		winCase, check;
 	bool	isWin;
+
+	// TODO: PATCH ANTI DIAGONAL CAPTURE CHECK
 
 	// Check win by align
 	winCase = 0b11111;

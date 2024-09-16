@@ -154,50 +154,56 @@ int	main(void)
 {
 	t_bitboard	grid = {0};
 
-	putStone(&grid, 0, 0, true);
-	putStone(&grid, 1, 0, true);
-	putStone(&grid, 2, 0, true);
+	// putStone(&grid, 0, 0, true);
+	// putStone(&grid, 1, 0, true);
+	// putStone(&grid, 2, 0, true);
+	// putStone(&grid, 3, 0, true);
+	// putStone(&grid, 4, 0, true);
+	// putStone(&grid, 5, 0, true);
+	// putStone(&grid, 6, 0, true);
+	// putStone(&grid, 7, 0, true);
+
+	// printGrid(&grid);
+	// clearGrid(&grid);
+
+	// putStone(&grid, 0, 0, true);
+	// putStone(&grid, 0, 1, true);
+	// putStone(&grid, 0, 2, true);
+	// putStone(&grid, 0, 3, true);
+	// putStone(&grid, 0, 4, true);
+	// putStone(&grid, 0, 5, true);
+	// putStone(&grid, 0, 6, true);
+	// putStone(&grid, 0, 7, true);
+
+	// printGrid(&grid);
+	// clearGrid(&grid);
+
+	// putStone(&grid, 7, 0, true);
+	// putStone(&grid, 6, 1, true);
+	// putStone(&grid, 5, 2, true);
+	// putStone(&grid, 4, 3, true);
+	// putStone(&grid, 3, 4, true);
+	// putStone(&grid, 2, 5, true);
+	// putStone(&grid, 1, 6, true);
+	// putStone(&grid, 0, 7, true);
+
+	// printGrid(&grid);
+	clearGrid(&grid);
+
+	// putStone(&grid, 0, 0, true);
+	// putStone(&grid, 1, 1, true);
+	// putStone(&grid, 2, 2, true);
+	// putStone(&grid, 3, 3, true);
+	// putStone(&grid, 4, 4, true);
+	// putStone(&grid, 5, 5, true);
+	// putStone(&grid, 6, 6, true);
+	// putStone(&grid, 7, 7, true);
+
 	putStone(&grid, 3, 0, true);
-	putStone(&grid, 4, 0, true);
-	putStone(&grid, 5, 0, true);
-	putStone(&grid, 6, 0, true);
-	putStone(&grid, 7, 0, true);
-
-	printGrid(&grid);
-	clearGrid(&grid);
-
-	putStone(&grid, 0, 0, true);
-	putStone(&grid, 0, 1, true);
-	putStone(&grid, 0, 2, true);
-	putStone(&grid, 0, 3, true);
-	putStone(&grid, 0, 4, true);
-	putStone(&grid, 0, 5, true);
-	putStone(&grid, 0, 6, true);
-	putStone(&grid, 0, 7, true);
-
-	printGrid(&grid);
-	clearGrid(&grid);
-
-	putStone(&grid, 7, 0, true);
-	putStone(&grid, 6, 1, true);
+	putStone(&grid, 4, 1, true);
 	putStone(&grid, 5, 2, true);
-	putStone(&grid, 4, 3, true);
-	putStone(&grid, 3, 4, true);
-	putStone(&grid, 2, 5, true);
-	putStone(&grid, 1, 6, true);
-	putStone(&grid, 0, 7, true);
-
-	printGrid(&grid);
-	clearGrid(&grid);
-
-	putStone(&grid, 0, 0, true);
-	putStone(&grid, 1, 1, true);
-	putStone(&grid, 2, 2, true);
-	putStone(&grid, 3, 3, true);
-	putStone(&grid, 4, 4, true);
-	putStone(&grid, 5, 5, true);
-	putStone(&grid, 6, 6, true);
-	putStone(&grid, 7, 7, true);
+	putStone(&grid, 6, 3, true);
+	putStone(&grid, 7, 4, true);
 
 	printGrid(&grid);
 

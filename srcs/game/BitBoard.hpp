@@ -3,6 +3,14 @@
 
 # include <define.hpp>
 
+typedef enum e_bitboardAxis
+{
+	BBH,
+	BBV,
+	BBD,
+	BBA
+}	bitboardAxis;
+
 class BitBoard
 {
 public:
@@ -20,10 +28,12 @@ public:
 	bool		get(int x, int y);
 	void		set(int x, int y, bool value);
 
+
 	BitBoard	&operator=(const BitBoard &obj);
 	bool		operator==(const BitBoard &obj);
 
 	void		clear(void);
+	int			getLine(bitboardAxis bbAxis, int x, int y);
 
 private:
 };

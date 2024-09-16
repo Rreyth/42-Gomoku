@@ -116,6 +116,40 @@ void	BitBoard::clear(void)
 	}
 }
 
+
+int	BitBoard::getLine(bitboardAxis bbAxis, int x, int y)
+{
+	int	tmp;
+
+	if (bbAxis == BBH)
+		return (this->bbH[y]);
+
+	if (bbAxis == BBV)
+		return (this->bbV[y]);
+
+	tmp = GRID_W_INTER - y;
+
+	if (bbAxis == BBD)
+	{
+		if (y == 0)
+			return (this->bbD[y]);
+
+		if (x < tmp)
+			return (this->bbD[y] & (0b1111111111111111111 >> tmp));
+		else
+			return (this->bbD[y] & !(0b1111111111111111111 >> tmp));
+	}
+
+	if (y == 0)
+		return (this->bbA[y]);
+
+	if (x < y)
+		return (this->bbA[y] & (0b1111111111111111111 << tmp));
+	else
+		return (this->bbA[y] & !(0b1111111111111111111 << tmp));
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////

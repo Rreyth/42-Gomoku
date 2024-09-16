@@ -123,70 +123,10 @@ int	Evaluation::evaluationPosition(BitBoard *plBitBoard, BitBoard *opBitBoard,
 	return (evalutation);
 }
 
-// int	Evaluation::evaluationPosition(Grid *grid, inter_type plType,
-// 									inter_type opType,
-// 									int plCapture, int opCapture,
-// 									int x, int y)
-// {
-// 	return (0);
-	// int				result, completeLine, blockLine, invAxis;
-	// bool			isCompleteLine, isBlockLine;
-	// intersection	*inter;
 
-	// plCapture = plCapture + 1;
-	// opCapture = opCapture + 1;
-
-	// // If intersection isn't empty, return 0;
-	// // if (grid->getInterState(x, y) != INTER_EMPTY)
-	// // 	return (0);
-
-	// result = 0;
-
-	// // Compute completion and block line point for each axis
-	// for (int axis = 0; axis < 4; axis++)
-	// {
-	// 	completeLine = 0;
-	// 	blockLine = 0;
-	// 	isCompleteLine = false;
-	// 	isBlockLine = false;
-	// 	invAxis = axis + 4;
-
-	// 	// Check front of axis
-	// 	this->updateCompleteAndBlockLine(
-	// 			grid, plType, opType,
-	// 			plCapture, opCapture, x, y, axis,
-	// 			&completeLine, &isCompleteLine,
-	// 			&blockLine, &isBlockLine, &result);
-
-	// 	// Check back of axis
-	// 	this->updateCompleteAndBlockLine(
-	// 			grid, plType, opType,
-	// 			plCapture, opCapture, x, y, invAxis,
-	// 			&completeLine, &isCompleteLine,
-	// 			&blockLine, &isBlockLine, &result);
-
-	// 	if (isCompleteLine)
-	// 		completeLine++;
-	// 	if (isBlockLine)
-	// 		blockLine++;
-
-	// 	// Update result for complete line
-	// 	if (completeLine >= 6)
-	// 		completeLine = 5;
-	// 	result += completeLinePoint[completeLine];
-
-	// 	// Update result for block line
-	// 	if (blockLine >= 6)
-	// 		blockLine = 5;
-	// 	result += blockLinePoint[blockLine];
-	// }
-
-	// return	(result);
-// }
-
-
-int	Evaluation::evaluateGrid(Grid *grid, inter_type plType, inter_type opType,
-								int plCapture, int opCapture)
+int	Evaluation::evaluateGrid(
+					BitBoard *plBitBoard, BitBoard *opBitBoard,
+					int plCapture, int opCapture)
 {
 	return (0);
 	// int				value, opValue, tmp;
@@ -328,6 +268,108 @@ int	Evaluation::evaluatePositionOnAxis(
 		// Multiply the point for increase reward as long as number of capture
 		evalutation += this->blockLinePoint[2] * opCaptureMult;
 	}
+
+	return (evalutation);
+}
+
+
+int	Evaluation::evaluateGridOnAxis(
+					int *plBb, int *opBb, int y,
+					int checkL, int checkR, int shiftL, int shiftR,
+					int plCapture, int plCaptureMult,
+					int opCapture, int opCaptureMult)
+{
+	int	plTmpL, opTmpL, plTmpR, opTmpR,
+		plIsEvalL, opIsEvalL, plIsEvalR, opIsEvalR,
+		plTmpCompleteLine, opTmpCompleteLine,
+		evalutation;
+
+	evalutation = 0;
+
+	// Check for horizontal
+	plTmpL = (plBb[y] & checkL) >> shiftL;
+	opTmpL = (opBb[y] & checkL) >> shiftL;
+	plTmpR = (plBb[y] & checkR) >> shiftR;
+	opTmpR = (opBb[y] & checkR) >> shiftR;
+
+	plIsEvalL = false;
+	opIsEvalL = false;
+	plIsEvalR = false;
+	opIsEvalR = false;
+	plTmpCompleteLine = 0;
+	opTmpCompleteLine = 0;
+	for (int i = 0; i < 5; i++)
+	{
+		// Check for line complete on left
+		if (plTmpL == this->verifyAlignL[i])
+		{
+			plIsEvalL = true;
+			plTmpCompleteLine += i;
+		}
+
+		// Check for line complete on right
+		if (plTmpR == this->verifyAlignR[i])
+		{
+			plIsEvalR = true;
+			plTmpCompleteLine += i;
+		}
+
+		// Check for line block on left
+		if (opTmpL == this->verifyAlignL[i])
+		{
+			opIsEvalL = true;
+			opTmpCompleteLine += i;
+		}
+
+		// Check for line block on right
+		if (opTmpR == this->verifyAlignR[i])
+		{
+			opIsEvalR = true;
+			opTmpCompleteLine += i;
+		}
+
+		// If all case are already count, break
+		if (plIsEvalL && opIsEvalL && plIsEvalR && opIsEvalR)
+			break;
+	}
+
+	if (plTmpCompleteLine > 4)
+		plTmpCompleteLine = 4;
+	if (opTmpCompleteLine > 4)
+		plTmpCompleteLine = 4;
+
+	evalutation += this->completeLinePoint[plTmpCompleteLine + 1];
+	evalutation -= this->completeLinePoint[opTmpCompleteLine + 1];
+
+	// // Check capture
+	// plTmpL = (plTmpL & 0b1110) >> 1;
+	// opTmpL = (opTmpL & 0b1110) >> 1;
+	// plTmpR = (plTmpR & 0b0111);
+	// opTmpR = (opTmpR & 0b0111);
+
+	// // Capture opponent's stone
+	// if ((plTmpL == this->verifyOutCaptureL && opTmpL == this->verifyInCaptureL)
+	// 	|| (plTmpR == this->verifyOutCaptureR && opTmpR == this->verifyInCaptureR))
+	// {
+	// 	// If this capture will make player win, make it an insane good move
+	// 	if (plCapture == 8)
+	// 		return (CASE_WIN_POINT);
+	// 	// Else count it like complete a 2 stone line
+	// 	// Multiply the point for increase reward as long as number of capture
+	// 	evalutation += this->completeLinePoint[2] * plCaptureMult;
+	// }
+
+	// // Block opponent's capture
+	// if ((plTmpL == this->verifyInCaptureL && opTmpL == this->verifyOutCaptureL)
+	// 	|| (plTmpR == this->verifyInCaptureR && opTmpR == this->verifyOutCaptureR))
+	// {
+	// 	// If this capture will make oppennent win, block it at if we cannot win !
+	// 	if (opCapture == 8)
+	// 		return (this->completeLinePoint[5] - 1);
+	// 	// Else count it like block a 2 stone line
+	// 	// Multiply the point for increase reward as long as number of capture
+	// 	evalutation -= this->completeLinePoint[2] * opCaptureMult;
+	// }
 
 	return (evalutation);
 }

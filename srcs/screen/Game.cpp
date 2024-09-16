@@ -288,16 +288,25 @@ void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *
 
 	sf::Vector2f size = this->rect.getSize();
 	sf::Vector2f pos = this->rect.getPosition();
-	drawText(window, text, "AI PREDICT", pos.x + (size.x / 2), pos.y + 5, 20, sf::Color::White, MID_CENTER);
-	drawText(window, text, "AI SPRITE", pos.x + 10, pos.y + (size.y / 2), 15, sf::Color::White, MID_LEFT);
+	drawText(window, text, "AI PREDICT", pos.x + (size.x / 2), pos.y + 5,
+				20, sf::Color::White, MID_CENTER);
+	drawText(window, text, "AI SPRITE", pos.x + 10, pos.y + (size.y / 2),
+				15, sf::Color::White, MID_LEFT);
 	// drawText(window, text, "PREDICTED POS", pos.x + (size.x / 2), pos.y + (size.y / 2), 15, sf::Color::White, MID_CENTER);
 
-	long	leftEval = this->evaluator.evaluateGrid(&this->grid, INTER_LEFT, INTER_RIGHT,
-												this->playerLeft.getCaptured(), this->playerRight.getCaptured());
-	long	rightEval = this->evaluator.evaluateGrid(&this->grid, INTER_RIGHT, INTER_LEFT,
-												this->playerRight.getCaptured(), this->playerLeft.getCaptured());
+	int	leftEval = this->evaluator.evaluateGrid(
+									this->grid.getBitBoard(INTER_LEFT),
+									this->grid.getBitBoard(INTER_RIGHT),
+									this->playerLeft.getCaptured(),
+									this->playerRight.getCaptured());
+	int	rightEval = this->evaluator.evaluateGrid(
+									this->grid.getBitBoard(INTER_RIGHT),
+									this->grid.getBitBoard(INTER_LEFT),
+									this->playerRight.getCaptured(),
+									this->playerLeft.getCaptured());
 	std::string tkt = std::to_string(leftEval) + " | " + std::to_string(rightEval);
-	drawText(window, text, tkt, pos.x + (size.x / 2), pos.y + (size.y / 2), 15, sf::Color::White, MID_CENTER);
+	drawText(window, text, tkt, pos.x + (size.x / 2), pos.y + (size.y / 2),
+				15, sf::Color::White, MID_CENTER);
 
 	this->rect.setSize(sf::Vector2f(WIN_W * 0.15, this->grid.getH()));
 
