@@ -307,14 +307,26 @@ bool	Grid::checkWinCondition(Player *player, Player *opponent)
 		}
 	}
 
-	if (player->getInterType() == INTER_LEFT) //TODO: call for both sides to fix capture bug line
+	// TODO: FIX OPPONENT CAPTURE FREEING A LINE
+	// check both sides win to fix
+	if (player->getInterType() == INTER_LEFT)
 	{
 		return (this->checkWinByAlign(
 						player, opponent, &this->bitboardL, &this->bitboardR));
+		// if (this->checkWinByAlign(
+		// 			player, opponent, &this->bitboardL, &this->bitboardR))
+		// 	return (true);
+		// return (this->checkWinByAlign(
+		// 				opponent, player, &this->bitboardR, &this->bitboardL));
 	}
 
 	return (this->checkWinByAlign(
 					player, opponent, &this->bitboardR, &this->bitboardL));
+	// if (this->checkWinByAlign(
+	// 			player, opponent, &this->bitboardR, &this->bitboardL))
+	// 	return (true);
+	// return (this->checkWinByAlign(
+	// 				opponent, player, &this->bitboardL, &this->bitboardR));
 }
 
 
@@ -849,8 +861,6 @@ bool	Grid::checkWinByAlign(
 	int		winCase, check, plLine;
 	bool	isWin;
 
-	// TODO: FIX OPPONENT CAPTURE FREEING A LINE
-
 	// Check win by a(bitboardAxis)lign
 	winCase = 0b11111;
 
@@ -893,6 +903,9 @@ bool	Grid::validateWin(
 		tmp;
 
 	int plLine, opLine;
+
+	// TODO: DIAGONAL CHECK AND ANTI DIAGONAL CHECK ARE NOT WORKING
+	// when D or A line
 
 	if (bbAxis == BBV)
 	{
