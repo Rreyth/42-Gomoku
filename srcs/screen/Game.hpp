@@ -18,7 +18,7 @@ public:
 	void				setGame(player_type playerLeft, player_type playerRight,
 								game_mode mode, game_rules rule,
 								AI_difficulty aiLeft, AI_difficulty aiRight,
-								stone_sprite *sprite);
+								starter startingPlayer, stone_sprite *sprite);
 	void				replay(display_state *displayState);
 
 	Player				*getLeftPlayer(void);
@@ -31,6 +31,7 @@ private:
 	Grid				grid;
 	Player 				playerLeft, playerRight;
 	game_mode			mode;
+	starter				startingPlayer;
 	Evaluation			evaluator;
 
 	void				swapTurn(void);

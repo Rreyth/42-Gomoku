@@ -18,7 +18,10 @@ public:
 private:
 	std::string	title;
 	Button		back, play;
-	Select		playerLeft, playerRight, gamemode, gamerules, aiLeft, aiRight;
+	Select		playerLeft, playerRight,
+					gamemode, gamerules,
+					aiLeft, aiRight,
+					starting;
 };
 
 #endif

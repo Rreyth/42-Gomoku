@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <random>
+#include <ctime>
 
 void	drawText(sf::RenderWindow *window, sf::Text *text, std::string str,
 					int x, int y, int fontSize, sf::Color color, draw_pos pos)
@@ -37,5 +38,6 @@ void	drawText(sf::RenderWindow *window, sf::Text *text, std::string str,
 
 int		rand_int(int start, int end)
 {
-	return (rand() % (end - start) + start);
+	srand(time(NULL));
+	return (rand() % end + start);
 }

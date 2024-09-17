@@ -90,7 +90,6 @@ typedef enum e_dir_neighbor
 	DIR_DL,
 }	dir_neighbor;
 
-
 typedef enum e_inter_type
 {
 	INTER_EMPTY = 0,
@@ -107,6 +106,13 @@ typedef enum e_AI_difficulty
 	MEDIUM,
 	HARD
 }	AI_difficulty;
+
+typedef enum e_starter
+{
+	RANDOM_START,
+	PLAYER1,
+	PLAYER2
+}	starter;
 
 typedef struct s_intersection
 {

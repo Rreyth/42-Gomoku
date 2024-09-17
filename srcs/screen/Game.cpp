@@ -139,7 +139,7 @@ void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 void	Game::setGame(player_type playerLeft, player_type playerRight,
 						game_mode mode, game_rules rule,
 						AI_difficulty aiLeft, AI_difficulty aiRight,
-						stone_sprite *sprite)
+						starter startingPlayer, stone_sprite *sprite)
 {
 	this->mode = mode;
 
@@ -163,13 +163,18 @@ void	Game::setGame(player_type playerLeft, player_type playerRight,
 	this->playerLeft.setPlayer(playerLeft, mode, 1, leftStone, solo, aiLeft);
 	this->playerRight.setPlayer(playerRight, mode, 2, rightStone, solo, aiRight);
 
-	// TODO: RE SET RANDOM
-	this->playerRight.setPlaying(true);
-	// if (rand_int(1, 2) == 1)
-	// 	this->playerLeft.setPlaying(true);
-	// else
-	// 	this->playerRight.setPlaying(true);
-
+	this->startingPlayer = startingPlayer;
+	if (startingPlayer == PLAYER1)
+		this->playerLeft.setPlaying(true);
+	else if (startingPlayer == PLAYER2)
+		this->playerRight.setPlaying(true);
+	else
+	{
+		if (rand_int(1, 2) == 1)
+			this->playerLeft.setPlaying(true);
+		else
+			this->playerRight.setPlaying(true);
+	}
 	this->grid.clearGrid(leftStone, rightStone, rule);
 }
 
@@ -179,10 +184,18 @@ void	Game::replay(display_state *displayState)
 	this->grid.reset();
 	this->playerLeft.reset(this->mode);
 	this->playerRight.reset(this->mode);
-	if (rand_int(1, 2) == 1)
+
+	if (this->startingPlayer == PLAYER1)
 		this->playerLeft.setPlaying(true);
-	else
+	else if (this->startingPlayer == PLAYER2)
 		this->playerRight.setPlaying(true);
+	else
+	{
+		if (rand_int(1, 2) == 1)
+			this->playerLeft.setPlaying(true);
+		else
+			this->playerRight.setPlaying(true);
+	}
 	*displayState = DISPLAY_GAME;
 }
 
