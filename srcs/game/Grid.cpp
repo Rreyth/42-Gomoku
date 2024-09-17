@@ -307,7 +307,7 @@ bool	Grid::checkWinCondition(Player *player, Player *opponent)
 		}
 	}
 
-	if (player->getInterType() == INTER_LEFT)
+	if (player->getInterType() == INTER_LEFT) //TODO: call for both sides to fix capture bug line
 	{
 		return (this->checkWinByAlign(
 						player, opponent, &this->bitboardL, &this->bitboardR));
@@ -846,12 +846,12 @@ bool	Grid::checkWinByAlign(
 				Player *player, Player *opponent,
 				BitBoard *plBitboard, BitBoard *opBitboard)
 {
-	int		winCase, check;
+	int		winCase, check, plLine;
 	bool	isWin;
 
-	// TODO: PATCH ANTI DIAGONAL CAPTURE CHECK
+	// TODO: FIX OPPONENT CAPTURE FREEING A LINE
 
-	// Check win by align
+	// Check win by a(bitboardAxis)lign
 	winCase = 0b11111;
 
 	for (int i = 0; i < GRID_W_INTER; i++)
@@ -859,37 +859,20 @@ bool	Grid::checkWinByAlign(
 		check = 0b11111;
 		for (int j = 0; j < GRID_W_INTER - 4; j++)
 		{
-			if ((plBitboard->bbH[i] & check) >> j == winCase)
+			for (int axis = 0; axis < 4; axis++)
 			{
-				isWin = this->validateWin(
-								player, opponent, plBitboard,
-								opBitboard, 'H', j, i);
-				if (isWin)
-					return (true);
-			}
-			if ((plBitboard->bbV[i] & check) >> j == winCase)
-			{
-				isWin = this->validateWin(
-								player, opponent, plBitboard,
-								opBitboard, 'V', j, i);
-				if (isWin)
-					return (true);
-			}
-			if ((plBitboard->bbD[i] & check) >> j == winCase)
-			{
-				isWin = this->validateWin(
-								player, opponent, plBitboard,
-								opBitboard, 'D', j, i);
-				if (isWin)
-					return (true);
-			}
-			if ((plBitboard->bbA[i] & check) >> j == winCase)
-			{
-				isWin = this->validateWin(
-								player, opponent, plBitboard,
-								opBitboard, 'A', j, i);
-				if (isWin)
-					return (true);
+				if (axis == 1)
+					plLine = plBitboard->getLine((bitboardAxis)axis, i, j);
+				else
+					plLine = plBitboard->getLine((bitboardAxis)axis, j, i);
+				if ((plLine & check) >> j == winCase)
+				{
+					isWin = this->validateWin(
+									player, opponent, plBitboard,
+									opBitboard, (bitboardAxis)axis, j, i);
+					if (isWin)
+						return (true);
+				}
 			}
 			check <<= 1;
 		}
@@ -902,31 +885,29 @@ bool	Grid::checkWinByAlign(
 bool	Grid::validateWin(
 				Player *player, Player *opponent,
 				BitBoard *plBitBoard, BitBoard *opBitBoard,
-				char bbType, int x, int y)
+				bitboardAxis bbAxis, int x, int y)
 {
-	int	checkL, checkR,
-		checkVL, checkVR,
+	int	checkL, checkR, checkVL, checkVR,
 		plVerify, opVerifyL, opVerifyR,
-		shiftL, shiftR,
-		shiftVL, shiftVR,
-		yD, yA;
+		shiftL, shiftR, shiftVL, shiftVR,
+		tmp;
 
-	if (bbType == 'V')
+	int plLine, opLine;
+
+	if (bbAxis == BBV)
 	{
-		yD = y;
+		tmp = y;
 		y = x;
-		x = yD;
+		x = tmp;
 	}
-	else if (bbType == 'D')
+	else if (bbAxis == BBD)
 	{
 		y = y - x;
 		if (y < 0)
 			y += GRID_W_INTER;
 	}
-	else if (bbType == 'A')
-	{
+	else if (bbAxis == BBA)
 		y = (y + x) % GRID_W_INTER;
-	}
 
 	plVerify = 0b0110;
 	opVerifyL = 0b0001;
@@ -944,21 +925,17 @@ bool	Grid::validateWin(
 		checkVL = 0b1111 << shiftVL;
 		checkVR = 0b1111 << shiftVR;
 
-		yD = (y + x) % GRID_W_INTER;
-
-		yA = y - x;
-		if (yA < 0)
-			yA += GRID_W_INTER;
-
 		// Check if stone is capturable on horizontal axis
-		if (bbType != 'H' && x > 0 && x < GRID_W_INTER - 1)
+		if (bbAxis != BBH && x > 0 && x < GRID_W_INTER - 1)
 		{
-			if (((plBitBoard->bbH[y] & checkL) >> shiftL == plVerify
-					&& ((opBitBoard->bbH[y] & checkL) >> shiftL == opVerifyL
-						|| (opBitBoard->bbH[y] & checkL) >> shiftL == opVerifyR))
-				|| ((plBitBoard->bbH[y] & checkR) >> shiftR == plVerify
-					&& ((opBitBoard->bbH[y] & checkR) >> shiftR == opVerifyL
-						|| (opBitBoard->bbH[y] & checkR) >> shiftR == opVerifyR)))
+			plLine = plBitBoard->getLine(BBH, x, y);
+			opLine = opBitBoard->getLine(BBH, x, y);
+			if (((plLine & checkL) >> shiftL == plVerify
+					&& ((opLine & checkL) >> shiftL == opVerifyL
+						|| (opLine & checkL) >> shiftL == opVerifyR))
+				|| ((plLine & checkR) >> shiftR == plVerify
+					&& ((opLine & checkR) >> shiftR == opVerifyL
+						|| (opLine & checkR) >> shiftR == opVerifyR)))
 			{
 				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
 				{
@@ -971,14 +948,16 @@ bool	Grid::validateWin(
 		}
 
 		// Check if stone is capturable on vertical axis
-		if (bbType != 'V' && y > 0 && y < GRID_W_INTER - 1)
+		if (bbAxis != BBV && y > 0 && y < GRID_W_INTER - 1)
 		{
-			if (((plBitBoard->bbV[x] & checkVL) >> shiftVL == plVerify
-					&& ((opBitBoard->bbV[x] & checkVL) >> shiftVL == opVerifyL
-						|| (opBitBoard->bbV[x] & checkVL) >> shiftVL == opVerifyR))
-				|| ((plBitBoard->bbV[x] & checkVR) >> shiftVR == plVerify
-					&& ((opBitBoard->bbV[x] & checkVR) >> shiftVR == opVerifyL
-						|| (opBitBoard->bbV[x] & checkVR) >> shiftVR == opVerifyR)))
+			plLine = plBitBoard->getLine(BBV, x, y);
+			opLine = opBitBoard->getLine(BBV, x, y);
+			if (((plLine & checkVL) >> shiftVL == plVerify
+					&& ((opLine & checkVL) >> shiftVL == opVerifyL
+						|| (opLine & checkVL) >> shiftVL == opVerifyR))
+				|| ((plLine & checkVR) >> shiftVR == plVerify
+					&& ((opLine & checkVR) >> shiftVR == opVerifyL
+						|| (opLine & checkVR) >> shiftVR == opVerifyR)))
 			{
 				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
 				{
@@ -991,16 +970,18 @@ bool	Grid::validateWin(
 		}
 
 		// Check if stone is capturable on diagonal axis
-		if (bbType != 'D'
+		if (bbAxis != BBD
 			&& x > 3 && x < GRID_W_INTER - 4
 			&& y > 3 && y < GRID_W_INTER - 4)
 		{
-			if (((plBitBoard->bbD[yD] & checkL) >> shiftL == plVerify
-					&& ((opBitBoard->bbD[yD] & checkL) >> shiftL == opVerifyL)
-						|| ((opBitBoard->bbD[yD] & checkL) >> shiftL == opVerifyR))
-				|| ((plBitBoard->bbD[yD] & checkR) >> shiftR == plVerify
-					&& ((opBitBoard->bbD[yD] & checkR) >> shiftR == opVerifyL)
-						|| ((opBitBoard->bbD[yD] & checkR) >> shiftR == opVerifyR)))
+			plLine = plBitBoard->getLine(BBD, x, y);
+			opLine = opBitBoard->getLine(BBD, x, y);
+			if (((plLine & checkL) >> shiftL == plVerify
+					&& ((opLine & checkL) >> shiftL == opVerifyL
+						|| (opLine & checkL) >> shiftL == opVerifyR))
+				|| ((plLine & checkR) >> shiftR == plVerify
+					&& ((opLine & checkR) >> shiftR == opVerifyL
+						|| (opLine & checkR) >> shiftR == opVerifyR)))
 			{
 				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
 				{
@@ -1012,17 +993,19 @@ bool	Grid::validateWin(
 			}
 		}
 
-		// Check if stone is capturable on diagonal axis
-		if (bbType != 'A'
+		// Check if stone is capturable on anti diagonal axis
+		if (bbAxis != BBA
 			&& x > 3 && x < GRID_W_INTER - 4
 			&& y > 3 && y < GRID_W_INTER - 4)
 		{
-			if (((plBitBoard->bbA[yA] & checkL) >> shiftL == plVerify
-					&& ((opBitBoard->bbA[yA] & checkL) >> shiftL == opVerifyL
-						|| (opBitBoard->bbA[yA] & checkL) >> shiftL == opVerifyR))
-				|| ((plBitBoard->bbA[yA] & checkR) >> shiftR == plVerify
-					&& ((opBitBoard->bbA[yA] & checkR) >> shiftR == opVerifyL
-						|| (opBitBoard->bbA[yA] & checkR) >> shiftR == opVerifyR)))
+			plLine = plBitBoard->getLine(BBA, x, y);
+			opLine = opBitBoard->getLine(BBA, x, y);
+			if (((plLine & checkL) >> shiftL == plVerify
+					&& ((opLine & checkL) >> shiftL == opVerifyL
+						|| (opLine & checkL) >> shiftL == opVerifyR))
+				|| ((plLine & checkR) >> shiftR == plVerify
+					&& ((opLine & checkR) >> shiftR == opVerifyL
+						|| (opLine & checkR) >> shiftR == opVerifyR)))
 			{
 				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
 				{
@@ -1034,15 +1017,15 @@ bool	Grid::validateWin(
 			}
 		}
 
-		if (bbType == 'H')
+		if (bbAxis == BBH)
 		{
 			x = (x + 1) % GRID_W_INTER;
 		}
-		else if (bbType == 'V')
+		else if (bbAxis == BBV)
 		{
 			y = (y + 1) % GRID_W_INTER;
 		}
-		else if (bbType == 'D')
+		else if (bbAxis == BBD)
 		{
 			x = (x + 1) % GRID_W_INTER;
 			y--;

@@ -72,7 +72,7 @@ private:
 	// std::string					currentBoardState, currentBoardStateOpti;
 
 	bool	checkWinByAlign(Player *player, Player *opponent, BitBoard *plBitboard, BitBoard *opBitboard);
-	bool	validateWin(Player *player, Player *opponent, BitBoard *plBitBoard, BitBoard *opBitBoard, char bbType, int x, int y);
+	bool	validateWin(Player *player, Player *opponent, BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis bbAxis, int x, int y);
 	int		makeCapture(sf::Vector2i *move, BitBoard *plBitBoard, BitBoard *opBitBoard);
 	bool	checkDoubleFreeThree(int x, int y, BitBoard *plBitBoard, BitBoard *opBitBoard);
 	bool	checkProRule(int x, int y, inter_type interPlayer, int nbMoves);
