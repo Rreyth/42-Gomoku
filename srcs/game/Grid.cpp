@@ -1066,14 +1066,14 @@ int	Grid::makeCapture(
 			sf::Vector2i *move,
 			BitBoard *plBitBoard, BitBoard *opBitBoard)
 {
-	int	checkL, checkR,
-		checkVL,
-		checkVR,
+	int	checkL, checkR, checkVL, checkVR,
+		shiftL, shiftR, shiftVL, shiftVR,
 		plVerify, opVerify,
-		shiftL, shiftR,
-		shiftVL, shiftVR,
-		yD, yA,
+		plLine, opLine,
 		nbCapture;
+
+	int	dirx[4] = {1 , 0, 1, 1};
+	int diry[4] = {0, 1, -1, 1};
 
 	nbCapture = 0;
 	plVerify = 0b1001;
@@ -1089,79 +1089,46 @@ int	Grid::makeCapture(
 	checkVL = 0b1111 << shiftVL;
 	checkVR = 0b1111 << shiftVR;
 
-	yD = (move->y + move->x) % GRID_W_INTER;
+	// for each axis make capture
+	for (int axis = 0; axis < 4; axis++)
+	{
+		plLine = plBitBoard->getLine((bitboardAxis)axis, move->x, move->y);
+		opLine = opBitBoard->getLine((bitboardAxis)axis, move->x, move->y);
 
-	yA = move->y - move->x;
-	if (yA < 0)
-		yA = GRID_W_INTER + yA;
-
-	// Check capture in horizontal
-	if ((plBitBoard->bbH[move->y] & checkL) >> shiftL == plVerify
-		&& (opBitBoard->bbH[move->y] & checkL) >> shiftL == opVerify)
-	{
-		opBitBoard->set(move->x - 1, move->y, false);
-		opBitBoard->set(move->x - 2, move->y, false);
-		nbCapture += 2;
-	}
-	if ((plBitBoard->bbH[move->y] & checkR) >> shiftR == plVerify
-		&& (opBitBoard->bbH[move->y] & checkR) >> shiftR == opVerify)
-	{
-		opBitBoard->set(move->x + 1, move->y, false);
-		opBitBoard->set(move->x + 2, move->y, false);
-		nbCapture += 2;
-	}
-
-	// Check capture in vertical
-	if ((plBitBoard->bbV[move->x] & checkVL) >> shiftVL == plVerify
-		&& (opBitBoard->bbV[move->x] & checkVL) >> shiftVL == opVerify)
-	{
-		opBitBoard->set(move->x, move->y - 1, false);
-		opBitBoard->set(move->x, move->y - 2, false);
-		nbCapture += 2;
-	}
-	if ((plBitBoard->bbV[move->x] & checkVR) >> shiftVR == plVerify
-		&& (opBitBoard->bbV[move->x] & checkVR) >> shiftVR == opVerify)
-	{
-		opBitBoard->set(move->x, move->y + 1, false);
-		opBitBoard->set(move->x, move->y + 2, false);
-		nbCapture += 2;
-	}
-
-	// Check capture in diagonal
-	if (move->x > 1 && move->y < GRID_W_INTER - 3
-		&& (plBitBoard->bbD[yD] & checkL) >> shiftL == plVerify
-		&& (opBitBoard->bbD[yD] & checkL) >> shiftL == opVerify)
-	{
-		opBitBoard->set(move->x - 1, move->y + 1, false);
-		opBitBoard->set(move->x - 2, move->y + 2, false);
-		nbCapture += 2;
-	}
-	if (move->x < GRID_W_INTER - 3 && move->y > 1
-		&& (plBitBoard->bbD[yD] & checkR) >> shiftR == plVerify
-		&& (opBitBoard->bbD[yD] & checkR) >> shiftR == opVerify)
-	{
-		opBitBoard->set(move->x + 1, move->y - 1, false);
-		opBitBoard->set(move->x + 2, move->y - 2, false);
-		nbCapture += 2;
-	}
-
-
-	// Check capture in anti diagonal
-	if (move->x > 1 && move->y > 1
-		&& (plBitBoard->bbA[yA] & checkL) >> shiftL == plVerify
-		&& (opBitBoard->bbA[yA] & checkL) >> shiftL == opVerify)
-	{
-		opBitBoard->set(move->x - 1, move->y - 1, false);
-		opBitBoard->set(move->x - 2, move->y - 2, false);
-		nbCapture += 2;
-	}
-	if (move->x < GRID_W_INTER - 3 && move->y < GRID_W_INTER - 3
-		&& (plBitBoard->bbA[yA] & checkR) >> shiftR == plVerify
-		&& (opBitBoard->bbA[yA] & checkR) >> shiftR == opVerify)
-	{
-		opBitBoard->set(move->x + 1, move->y + 1, false);
-		opBitBoard->set(move->x + 2, move->y + 2, false);
-		nbCapture += 2;
+		if (axis == 1)
+		{
+			if ((plLine & checkVL) >> shiftVL == plVerify
+				&& (opLine & checkVL) >> shiftVL == opVerify)
+			{
+				opBitBoard->set(move->x, move->y - 1, false);
+				opBitBoard->set(move->x, move->y - 2, false);
+				nbCapture += 2;
+			}
+			if ((plLine & checkVR) >> shiftVR == plVerify
+				&& (opLine & checkVR) >> shiftVR == opVerify)
+			{
+				opBitBoard->set(move->x, move->y + 1, false);
+				opBitBoard->set(move->x, move->y + 2, false);
+				nbCapture += 2;
+			}
+		}
+		else
+		{
+			if ((plLine & checkL) >> shiftL == plVerify
+				&& (opLine & checkL) >> shiftL == opVerify)
+			{
+				opBitBoard->set(move->x - dirx[axis], move->y - diry[axis], false);
+				opBitBoard->set(move->x - (2 * dirx[axis]), move->y - (2 * diry[axis]), false);
+				nbCapture += 2;
+			}
+			if ((plLine & checkR) >> shiftR == plVerify
+				&& (opLine & checkR) >> shiftR == opVerify)
+			{
+				opBitBoard->set(move->x + dirx[axis], move->y + diry[axis], false);
+				opBitBoard->set(move->x + (2 * dirx[axis]), move->y + (2 * diry[axis]), false);
+				nbCapture += 2;
+			}
+		}
 	}
 
 	return (nbCapture);
