@@ -64,6 +64,10 @@ int	Evaluation::evaluationPosition(BitBoard *plBitBoard, BitBoard *opBitBoard,
 		plLine, opLine,
 		evalutation;
 
+	// If interstion is already taken, return 0
+	if (plBitBoard->get(x, y) || opBitBoard->get(x, y))
+		return (0);
+
 	// Create shitf and check for horizontal, diagonal and anti diagonal
 	shiftR = x + 1;
 	shiftL = shiftR - 5;
@@ -128,43 +132,84 @@ int	Evaluation::evaluateGrid(
 					BitBoard *plBitBoard, BitBoard *opBitBoard,
 					int plCapture, int opCapture)
 {
-	return (0);
-	// int				value, opValue, tmp;
-	// intersection	*inter;
+	int	shiftL, shiftR, checkL, checkR,
+		shiftVL, shiftVR, checkVL, checkVR,
+		plCaptureMult, opCaptureMult,
+		plLineH, opLineH,
+		plLineV, opLineV,
+		plLineD, opLineD,
+		plLineA, opLineA,
+		evalutation;
 
-	// value = 0;
-	// for (int y = 0; y < GRID_W_INTER; y++)
-	// {
-	// 	for (int x = 0; x < GRID_W_INTER; x++)
-	// 	{
-	// 		// inter = grid->getIntersection(x, y);
-	// 		// if (inter->type == plType)
-	// 		// {
-	// 		// 	for (int i = 0; i < 8; i++)
-	// 		// 	{
-	// 		// 		tmp = inter->neighbor[i] + 1;
-	// 		// 		if (tmp > 5)
-	// 		// 			tmp = 5;
-	// 		// 		value += this->completeLinePoint[tmp];
-	// 		// 	}
-	// 		// }
-	// 		// else if (inter->type == opType)
-	// 		// {
-	// 		// 	for (int i = 0; i < 8; i++)
-	// 		// 	{
-	// 		// 		tmp = inter->neighbor[i] + 1;
-	// 		// 		if (tmp > 5)
-	// 		// 			tmp = 5;
-	// 		// 		value -= this->completeLinePoint[tmp];
-	// 		// 	}
-	// 		// }
-	// 		// Skip it tkt
-	// 		// value += this->evaluationPosition(grid, plType, opType, plCapture, opCapture, x, y) / 2;
-	// 		// value -= this->evaluationPosition(grid, opType, plType, opCapture, plCapture, x, y);
-	// 	}
-	// }
+	evalutation = 0;
 
-	// return (value);
+	// Create multiplier for capture
+	plCaptureMult = plCapture / 2 + 1;
+	opCaptureMult = opCapture / 2 + 1;
+
+	// For each intersection
+	for (int y = 0; y < GRID_W_INTER - 1; y++)
+	{
+		// Create shitf and check for vertical
+		shiftVR = y + 1;
+		shiftVL = shiftVR - 5;
+		checkVL = 0b1111 << shiftVL;
+		checkVR = 0b1111 << shiftVR;
+
+		plLineH = plBitBoard->getLine(BBH, 0, y);
+		opLineH = opBitBoard->getLine(BBH, 0, y);
+		plLineV = plBitBoard->getLine(BBV, y, 0);
+		opLineV = opBitBoard->getLine(BBV, y, 0);
+
+		for (int x = 0; x < GRID_W_INTER - 1; x++)
+		{
+			// If it's empty, skip it
+			if (!plBitBoard->get(x, y) && !opBitBoard->get(x, y))
+				continue;
+
+			// Create shitf and check for horizontal, diagonal and anti diagonal
+			shiftR = x + 1;
+			shiftL = shiftR - 5;
+			checkL = 0b1111 << shiftL;
+			checkR = 0b1111 << shiftR;
+
+			// Else, evaluate it's position
+			plLineD = plBitBoard->getLine(BBD, x, y);
+			opLineD = opBitBoard->getLine(BBD, x, y);
+			plLineA = plBitBoard->getLine(BBA, x, y);
+			opLineA = opBitBoard->getLine(BBA, x, y);
+
+			// Evaluate position for horizontal axis
+			evalutation += this->evaluateGridOnAxis(
+									plLineH, opLineH,
+									checkL, checkR, shiftL, shiftR,
+									plCapture, plCaptureMult,
+									opCapture, opCaptureMult);
+
+			// Evaluate position for vertical axis
+			evalutation += this->evaluateGridOnAxis(
+									plLineV, opLineV,
+									checkVL, checkVR, shiftVL, shiftVR,
+									plCapture, plCaptureMult,
+									opCapture, opCaptureMult);
+
+			// Evaluate position for diagonal axis
+			evalutation += this->evaluateGridOnAxis(
+									plLineD, opLineD,
+									checkL, checkR, shiftL, shiftR,
+									plCapture, plCaptureMult,
+									opCapture, opCaptureMult);
+
+			// Evaluate position for anti diagonal axis
+			evalutation += this->evaluateGridOnAxis(
+									plLineA, opLineA,
+									checkL, checkR, shiftL, shiftR,
+									plCapture, plCaptureMult,
+									opCapture, opCaptureMult);
+		}
+	}
+
+	return (evalutation);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -274,10 +319,102 @@ int	Evaluation::evaluatePositionOnAxis(
 
 
 int	Evaluation::evaluateGridOnAxis(
-					int *plBb, int *opBb, int y,
+					int plLine, int opLine,
 					int checkL, int checkR, int shiftL, int shiftR,
 					int plCapture, int plCaptureMult,
 					int opCapture, int opCaptureMult)
 {
-	return (0);
+	int	plTmpL, opTmpL, plTmpR, opTmpR,
+		plIsEvalL, opIsEvalL, plIsEvalR, opIsEvalR,
+		plTmpCompleteLine, opTmpCompleteLine,
+		evalutation;
+
+	evalutation = 0;
+
+	// Check for horizontal
+	plTmpL = (plLine & checkL) >> shiftL;
+	opTmpL = (opLine & checkL) >> shiftL;
+	plTmpR = (plLine & checkR) >> shiftR;
+	opTmpR = (opLine & checkR) >> shiftR;
+
+	plIsEvalL = false;
+	opIsEvalL = false;
+	plIsEvalR = false;
+	opIsEvalR = false;
+	plTmpCompleteLine = 0;
+	opTmpCompleteLine = 0;
+	for (int i = 0; i < 5; i++)
+	{
+		// Check for line complete on left
+		if (plTmpL == this->verifyAlignL[i])
+		{
+			plIsEvalL = true;
+			plTmpCompleteLine += i;
+		}
+
+		// Check for line complete on right
+		if (plTmpR == this->verifyAlignR[i])
+		{
+			plIsEvalR = true;
+			plTmpCompleteLine += i;
+		}
+
+		// Check for line block on left
+		if (opTmpL == this->verifyAlignL[i])
+		{
+			opIsEvalL = true;
+			opTmpCompleteLine += i;
+		}
+
+		// Check for line block on right
+		if (opTmpR == this->verifyAlignR[i])
+		{
+			opIsEvalR = true;
+			opTmpCompleteLine += i;
+		}
+
+		// If all case are already count, break
+		if (plIsEvalL && opIsEvalL && plIsEvalR && opIsEvalR)
+			break;
+	}
+
+	if (plTmpCompleteLine > 4)
+		plTmpCompleteLine = 4;
+	if (opTmpCompleteLine > 4)
+		plTmpCompleteLine = 4;
+
+	evalutation += this->completeLinePoint[plTmpCompleteLine + 1];
+	evalutation -= this->completeLinePoint[opTmpCompleteLine + 1];
+
+	// // Check capture
+	// plTmpL = (plTmpL & 0b1110) >> 1;
+	// opTmpL = (opTmpL & 0b1110) >> 1;
+	// plTmpR = (plTmpR & 0b0111);
+	// opTmpR = (opTmpR & 0b0111);
+
+	// // Capture opponent's stone
+	// if ((plTmpL == this->verifyOutCaptureL && opTmpL == this->verifyInCaptureL)
+	// 	|| (plTmpR == this->verifyOutCaptureR && opTmpR == this->verifyInCaptureR))
+	// {
+	// 	// If this capture will make player win, make it an insane good move
+	// 	if (plCapture == 8)
+	// 		return (CASE_WIN_POINT);
+	// 	// Else count it like complete a 2 stone line
+	// 	// Multiply the point for increase reward as long as number of capture
+	// 	evalutation += this->completeLinePoint[2] * plCaptureMult;
+	// }
+
+	// // Block opponent's capture
+	// if ((plTmpL == this->verifyInCaptureL && opTmpL == this->verifyOutCaptureL)
+	// 	|| (plTmpR == this->verifyInCaptureR && opTmpR == this->verifyOutCaptureR))
+	// {
+	// 	// If this capture will make oppennent win, block it at if we cannot win !
+	// 	if (opCapture == 8)
+	// 		return (this->completeLinePoint[5] - 1);
+	// 	// Else count it like block a 2 stone line
+	// 	// Multiply the point for increase reward as long as number of capture
+	// 	evalutation += this->blockLinePoint[2] * opCaptureMult;
+	// }
+
+	return (evalutation);
 }

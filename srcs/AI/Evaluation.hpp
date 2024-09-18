@@ -32,7 +32,7 @@ private:
 			int opCapture, int opCaptureMult);
 
 	int	evaluateGridOnAxis(
-			int *plBb, int *opBb, int y,
+			int plLine, int opLine,
 			int checkL, int checkR, int shiftL, int shiftR,
 			int plCapture, int plCaptureMult,
 			int opCapture, int opCaptureMult);
