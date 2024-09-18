@@ -308,26 +308,12 @@ bool	Grid::checkWinCondition(Player *player, Player *opponent)
 		}
 	}
 
-	// TODO: FIX OPPONENT CAPTURE FREEING A LINE
-	// check both sides win to fix
 	if (player->getInterType() == INTER_LEFT)
-	{
 		return (this->checkWinByAlign(
 						player, opponent, &this->bitboardL, &this->bitboardR));
-		// if (this->checkWinByAlign(
-		// 			player, opponent, &this->bitboardL, &this->bitboardR))
-		// 	return (true);
-		// return (this->checkWinByAlign(
-		// 				opponent, player, &this->bitboardR, &this->bitboardL));
-	}
 
 	return (this->checkWinByAlign(
 					player, opponent, &this->bitboardR, &this->bitboardL));
-	// if (this->checkWinByAlign(
-	// 			player, opponent, &this->bitboardR, &this->bitboardL))
-	// 	return (true);
-	// return (this->checkWinByAlign(
-	// 				opponent, player, &this->bitboardL, &this->bitboardR));
 }
 
 

@@ -26,7 +26,7 @@ private:
 					verifyInCaptureR, verifyOutCaptureR;
 
 	int	evaluatePositionOnAxis(
-			int *plBb, int *opBb, int y,
+			int plLine, int opLine,
 			int checkL, int checkR, int shiftL, int shiftR,
 			int plCapture, int plCaptureMult,
 			int opCapture, int opCaptureMult);

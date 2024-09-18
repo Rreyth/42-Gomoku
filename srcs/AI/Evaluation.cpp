@@ -60,8 +60,8 @@ int	Evaluation::evaluationPosition(BitBoard *plBitBoard, BitBoard *opBitBoard,
 {
 	int	shiftL, shiftR, checkL, checkR,
 		shiftVL, shiftVR, checkVL, checkVR,
-		yD, yA,
 		plCaptureMult, opCaptureMult,
+		plLine, opLine,
 		evalutation;
 
 	// Create shitf and check for horizontal, diagonal and anti diagonal
@@ -76,14 +76,6 @@ int	Evaluation::evaluationPosition(BitBoard *plBitBoard, BitBoard *opBitBoard,
 	checkVL = 0b1111 << shiftVL;
 	checkVR = 0b1111 << shiftVR;
 
-	// Create y for diagonal
-	yD = (y + x) % GRID_W_INTER;
-
-	// Create y for anti diagonal
-	yA = y - x;
-	if (yA < 0)
-		yA = GRID_W_INTER + yA;
-
 	// Create multiplier for capture
 	plCaptureMult = plCapture / 2 + 1;
 	opCaptureMult = opCapture / 2 + 1;
@@ -91,32 +83,40 @@ int	Evaluation::evaluationPosition(BitBoard *plBitBoard, BitBoard *opBitBoard,
 	evalutation = 0;
 
 	// Check for horizontal
+	plLine = plBitBoard->getLine(BBH, x, y);
+	opLine = opBitBoard->getLine(BBH, x, y);
 	evalutation += this->evaluatePositionOnAxis(
-					plBitBoard->bbH, opBitBoard->bbH, y,
+					plLine, opLine,
 					checkL, checkR, shiftL, shiftR,
 					plCapture, plCaptureMult, opCapture, opCaptureMult);
 	if (evalutation >= CASE_WIN_POINT)
 		return (evalutation);
 
 	// Check for vertical
+	plLine = plBitBoard->getLine(BBV, x, y);
+	opLine = opBitBoard->getLine(BBV, x, y);
 	evalutation += this->evaluatePositionOnAxis(
-					plBitBoard->bbV, opBitBoard->bbV, x,
+					plLine, opLine,
 					checkVL, checkVR, shiftVL, shiftVR,
 					plCapture, plCaptureMult, opCapture, opCaptureMult);
 	if (evalutation >= CASE_WIN_POINT)
 		return (evalutation);
 
 	// Check for diagonal
+	plLine = plBitBoard->getLine(BBD, x, y);
+	opLine = opBitBoard->getLine(BBD, x, y);
 	evalutation += this->evaluatePositionOnAxis(
-					plBitBoard->bbD, opBitBoard->bbD, yD,
+					plLine, opLine,
 					checkL, checkR, shiftL, shiftR,
 					plCapture, plCaptureMult, opCapture, opCaptureMult);
 	if (evalutation >= CASE_WIN_POINT)
 		return (evalutation);
 
 	// Check for anti diagonal
+	plLine = plBitBoard->getLine(BBA, x, y);
+	opLine = opBitBoard->getLine(BBA, x, y);
 	evalutation += this->evaluatePositionOnAxis(
-					plBitBoard->bbA, opBitBoard->bbA, yA,
+					plLine, opLine,
 					checkL, checkR, shiftL, shiftR,
 					plCapture, plCaptureMult, opCapture, opCaptureMult);
 
@@ -172,7 +172,7 @@ int	Evaluation::evaluateGrid(
 ////////////////////////////////////////////////////////////////////////////////
 
 int	Evaluation::evaluatePositionOnAxis(
-					int *plBb, int *opBb, int y,
+					int plLine, int opLine,
 					int checkL, int checkR, int shiftL, int shiftR,
 					int plCapture, int plCaptureMult,
 					int opCapture, int opCaptureMult)
@@ -185,10 +185,10 @@ int	Evaluation::evaluatePositionOnAxis(
 	evalutation = 0;
 
 	// Check for horizontal
-	plTmpL = (plBb[y] & checkL) >> shiftL;
-	opTmpL = (opBb[y] & checkL) >> shiftL;
-	plTmpR = (plBb[y] & checkR) >> shiftR;
-	opTmpR = (opBb[y] & checkR) >> shiftR;
+	plTmpL = (plLine & checkL) >> shiftL;
+	opTmpL = (opLine & checkL) >> shiftL;
+	plTmpR = (plLine & checkR) >> shiftR;
+	opTmpR = (opLine & checkR) >> shiftR;
 
 	plIsEvalL = false;
 	opIsEvalL = false;
@@ -279,97 +279,5 @@ int	Evaluation::evaluateGridOnAxis(
 					int plCapture, int plCaptureMult,
 					int opCapture, int opCaptureMult)
 {
-	int	plTmpL, opTmpL, plTmpR, opTmpR,
-		plIsEvalL, opIsEvalL, plIsEvalR, opIsEvalR,
-		plTmpCompleteLine, opTmpCompleteLine,
-		evalutation;
-
-	evalutation = 0;
-
-	// Check for horizontal
-	plTmpL = (plBb[y] & checkL) >> shiftL;
-	opTmpL = (opBb[y] & checkL) >> shiftL;
-	plTmpR = (plBb[y] & checkR) >> shiftR;
-	opTmpR = (opBb[y] & checkR) >> shiftR;
-
-	plIsEvalL = false;
-	opIsEvalL = false;
-	plIsEvalR = false;
-	opIsEvalR = false;
-	plTmpCompleteLine = 0;
-	opTmpCompleteLine = 0;
-	for (int i = 0; i < 5; i++)
-	{
-		// Check for line complete on left
-		if (plTmpL == this->verifyAlignL[i])
-		{
-			plIsEvalL = true;
-			plTmpCompleteLine += i;
-		}
-
-		// Check for line complete on right
-		if (plTmpR == this->verifyAlignR[i])
-		{
-			plIsEvalR = true;
-			plTmpCompleteLine += i;
-		}
-
-		// Check for line block on left
-		if (opTmpL == this->verifyAlignL[i])
-		{
-			opIsEvalL = true;
-			opTmpCompleteLine += i;
-		}
-
-		// Check for line block on right
-		if (opTmpR == this->verifyAlignR[i])
-		{
-			opIsEvalR = true;
-			opTmpCompleteLine += i;
-		}
-
-		// If all case are already count, break
-		if (plIsEvalL && opIsEvalL && plIsEvalR && opIsEvalR)
-			break;
-	}
-
-	if (plTmpCompleteLine > 4)
-		plTmpCompleteLine = 4;
-	if (opTmpCompleteLine > 4)
-		plTmpCompleteLine = 4;
-
-	evalutation += this->completeLinePoint[plTmpCompleteLine + 1];
-	evalutation -= this->completeLinePoint[opTmpCompleteLine + 1];
-
-	// // Check capture
-	// plTmpL = (plTmpL & 0b1110) >> 1;
-	// opTmpL = (opTmpL & 0b1110) >> 1;
-	// plTmpR = (plTmpR & 0b0111);
-	// opTmpR = (opTmpR & 0b0111);
-
-	// // Capture opponent's stone
-	// if ((plTmpL == this->verifyOutCaptureL && opTmpL == this->verifyInCaptureL)
-	// 	|| (plTmpR == this->verifyOutCaptureR && opTmpR == this->verifyInCaptureR))
-	// {
-	// 	// If this capture will make player win, make it an insane good move
-	// 	if (plCapture == 8)
-	// 		return (CASE_WIN_POINT);
-	// 	// Else count it like complete a 2 stone line
-	// 	// Multiply the point for increase reward as long as number of capture
-	// 	evalutation += this->completeLinePoint[2] * plCaptureMult;
-	// }
-
-	// // Block opponent's capture
-	// if ((plTmpL == this->verifyInCaptureL && opTmpL == this->verifyOutCaptureL)
-	// 	|| (plTmpR == this->verifyInCaptureR && opTmpR == this->verifyOutCaptureR))
-	// {
-	// 	// If this capture will make oppennent win, block it at if we cannot win !
-	// 	if (opCapture == 8)
-	// 		return (this->completeLinePoint[5] - 1);
-	// 	// Else count it like block a 2 stone line
-	// 	// Multiply the point for increase reward as long as number of capture
-	// 	evalutation -= this->completeLinePoint[2] * opCaptureMult;
-	// }
-
-	return (evalutation);
+	return (0);
 }
