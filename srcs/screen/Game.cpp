@@ -290,6 +290,11 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 
 void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager) //TODO: not for actual ai player
 {
+	// TODO: REMOVE
+	static int	nbTurn = -1;
+	static int	leftEval = 0;
+	static int	rightEval = 0;
+
 	// if (this->playerLeft.getType() != AI_PLAYER && this->playerRight.getType() != AI_PLAYER) //not a player but just a predict
 
 	int gridX = this->grid.getX();
@@ -307,16 +312,23 @@ void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *
 				15, sf::Color::White, MID_LEFT);
 	// drawText(window, text, "PREDICTED POS", pos.x + (size.x / 2), pos.y + (size.y / 2), 15, sf::Color::White, MID_CENTER);
 
-	int	leftEval = this->evaluator.evaluateGrid(
+		// TODO: REMOVE
+	if (nbTurn != this->playerLeft.getMoves() + this->playerRight.getMoves())
+	{
+		nbTurn = this->playerLeft.getMoves() + this->playerRight.getMoves();
+
+		leftEval = this->evaluator.evaluateGrid(
 									this->grid.getBitBoard(INTER_LEFT),
 									this->grid.getBitBoard(INTER_RIGHT),
 									this->playerLeft.getCaptured(),
 									this->playerRight.getCaptured());
-	int	rightEval = this->evaluator.evaluateGrid(
+		rightEval = this->evaluator.evaluateGrid(
 									this->grid.getBitBoard(INTER_RIGHT),
 									this->grid.getBitBoard(INTER_LEFT),
 									this->playerRight.getCaptured(),
 									this->playerLeft.getCaptured());
+	}
+
 	std::string tkt = std::to_string(leftEval) + " | " + std::to_string(rightEval);
 	drawText(window, text, tkt, pos.x + (size.x / 2), pos.y + (size.y / 2),
 				15, sf::Color::White, MID_CENTER);

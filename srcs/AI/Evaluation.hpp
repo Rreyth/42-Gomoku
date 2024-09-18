@@ -22,6 +22,7 @@ public:
 private:
 	int				completeLinePoint[6], blockLinePoint[6],
 					verifyAlignL[5], verifyAlignR[5],
+					verifyAlignFullL[6], verifyAlignFullR[6],
 					verifyInCaptureL, verifyOutCaptureL,
 					verifyInCaptureR, verifyOutCaptureR;
 
