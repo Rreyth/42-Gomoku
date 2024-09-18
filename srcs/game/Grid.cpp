@@ -291,6 +291,7 @@ bool	Grid::checkWinCondition(Player *player, Player *opponent)
 		this->previewLegal = false;
 		return (true);
 	}
+	// Check capture for auto win
 	else if (player->getCaptured() == 8)
 	{
 		if (player->getInterType() == INTER_LEFT)
@@ -861,7 +862,7 @@ bool	Grid::checkWinByAlign(
 	int		winCase, check, plLine;
 	bool	isWin;
 
-	// Check win by a(bitboardAxis)lign
+	// Check win by axis
 	winCase = 0b11111;
 
 	for (int i = 0; i < GRID_W_INTER; i++)
@@ -904,23 +905,12 @@ bool	Grid::validateWin(
 
 	int plLine, opLine;
 
-	// TODO: DIAGONAL CHECK AND ANTI DIAGONAL CHECK ARE NOT WORKING
-	// when D or A line
-
 	if (bbAxis == BBV)
 	{
 		tmp = y;
 		y = x;
 		x = tmp;
 	}
-	else if (bbAxis == BBD)
-	{
-		y = y - x;
-		if (y < 0)
-			y += GRID_W_INTER;
-	}
-	else if (bbAxis == BBA)
-		y = (y + x) % GRID_W_INTER;
 
 	plVerify = 0b0110;
 	opVerifyL = 0b0001;
@@ -939,7 +929,7 @@ bool	Grid::validateWin(
 		checkVR = 0b1111 << shiftVR;
 
 		// Check if stone is capturable on horizontal axis
-		if (bbAxis != BBH && x > 0 && x < GRID_W_INTER - 1)
+		if (bbAxis != BBH && x >= 0 && x < GRID_W_INTER - 1)
 		{
 			plLine = plBitBoard->getLine(BBH, x, y);
 			opLine = opBitBoard->getLine(BBH, x, y);
@@ -961,7 +951,7 @@ bool	Grid::validateWin(
 		}
 
 		// Check if stone is capturable on vertical axis
-		if (bbAxis != BBV && y > 0 && y < GRID_W_INTER - 1)
+		if (bbAxis != BBV && y >= 0 && y < GRID_W_INTER - 1)
 		{
 			plLine = plBitBoard->getLine(BBV, x, y);
 			opLine = opBitBoard->getLine(BBV, x, y);
@@ -984,8 +974,8 @@ bool	Grid::validateWin(
 
 		// Check if stone is capturable on diagonal axis
 		if (bbAxis != BBD
-			&& x > 3 && x < GRID_W_INTER - 4
-			&& y > 3 && y < GRID_W_INTER - 4)
+			&& x >= 0 && x < GRID_W_INTER - 1
+			&& y >= 0 && y < GRID_W_INTER - 1)
 		{
 			plLine = plBitBoard->getLine(BBD, x, y);
 			opLine = opBitBoard->getLine(BBD, x, y);
@@ -1008,8 +998,8 @@ bool	Grid::validateWin(
 
 		// Check if stone is capturable on anti diagonal axis
 		if (bbAxis != BBA
-			&& x > 3 && x < GRID_W_INTER - 4
-			&& y > 3 && y < GRID_W_INTER - 4)
+			&& x >= 0 && x < GRID_W_INTER - 1
+			&& y >= 0 && y < GRID_W_INTER - 1)
 		{
 			plLine = plBitBoard->getLine(BBA, x, y);
 			opLine = opBitBoard->getLine(BBA, x, y);
