@@ -48,7 +48,7 @@ void	AI::setAI(AI_difficulty difficulty)
 {
 	this->difficulty = difficulty;
 	this->timer = 0;
-	this->memoryEvaluation.clear();
+	// this->memoryEvaluation.clear();
 }
 
 sf::Vector2i	AI::getNextMove(
@@ -145,7 +145,7 @@ sf::Vector2i	AI::getNextMove(
 
 void	AI::reset(void)
 {
-	this->memoryEvaluation.clear();
+	// this->memoryEvaluation.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -234,7 +234,6 @@ sf::Vector2i	AI::getEasyMove(
 # define DEPTH 3
 
 static int	mediumMiniMax(
-				std::unordered_map<std::string, int> *memoryEvaluation,
 				Grid *grid, Player *player, Player *opponent,
 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
 				int depth, Tracker *tracker)
@@ -244,7 +243,7 @@ static int	mediumMiniMax(
 								plMoves, opMoves, nbMoves;
 	inter_type					plType, opType;
 	std::vector<sf::Vector2i>	moves;
-	Grid						gridCopy;
+	BitBoard					plBitBoard, opBitBoard;
 
 	// TODO : REMOVE
 	std::clock_t	start;
@@ -261,10 +260,12 @@ static int	mediumMiniMax(
 	{
 		tracker->nbEvaluations++;
 		start = std::clock();
+
 		tmpEval = evaluator->evaluateGrid(
 								grid->getBitBoard(plType),
 								grid->getBitBoard(opType),
 								plCapture, opCapture);
+
 		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 		tracker->evaluationTime += diff;
 
@@ -284,6 +285,8 @@ static int	mediumMiniMax(
 	plMoves = player->getMoves();
 	opMoves = opponent->getMoves();
 	nbMoves = plMoves + opMoves;
+	plBitBoard = *grid->getBitBoard(plType);
+	opBitBoard = *grid->getBitBoard(opType);
 
 	// Find move
 	if (maximizingEval)
@@ -293,25 +296,22 @@ static int	mediumMiniMax(
 
 	for (int i = 0; i < moves.size(); i++)
 	{
-		// Copy grid
-		gridCopy = *grid;
-
 		// Simulate move
 		if (maximizingEval)
 		{
-			if (!gridCopy.putStone(&moves[i], nbMoves, player, opponent))
+			if (!grid->putStone(&moves[i], nbMoves, player, opponent))
 				continue;
 			player->addMove();
 		}
 		else
 		{
-			if (!gridCopy.putStone(&moves[i], nbMoves, opponent, player))
+			if (!grid->putStone(&moves[i], nbMoves, opponent, player))
 				continue;
 			opponent->addMove();
 		}
 
 		// Get evaluation for this move
-		tmpEval = mediumMiniMax(memoryEvaluation, &gridCopy,
+		tmpEval = mediumMiniMax(grid,
 					player, opponent, evaluator,
 					!maximizingEval, alpha, beta,
 					depth - 1, tracker);
@@ -323,9 +323,9 @@ static int	mediumMiniMax(
 			if (tmpEval > bestEval)
 				bestEval = tmpEval;
 
-			// // Update alpha
-			// if (tmpEval > alpha)
-			// 	alpha = tmpEval;
+			// Update alpha
+			if (tmpEval > alpha)
+				alpha = tmpEval;
 		}
 		// For minimizing
 		else
@@ -334,9 +334,24 @@ static int	mediumMiniMax(
 			if (tmpEval < bestEval)
 				bestEval = tmpEval;
 
-			// // Update beta
-			// if (tmpEval < beta)
-			// 	beta = tmpEval;
+			// Update beta
+			if (tmpEval < beta)
+				beta = tmpEval;
+		}
+
+		// Reset grid
+		if (player->getCaptured() != plCapture
+			|| opponent->getCaptured() != opCapture)
+		{
+			grid->setBitBoard(&plBitBoard, plType);
+			grid->setBitBoard(&opBitBoard, opType);
+		}
+		else
+		{
+			if (maximizingEval)
+				grid->removeStone(&moves[i], plType);
+			else
+				grid->removeStone(&moves[i], opType);
 		}
 
 		// Reset player
@@ -344,6 +359,10 @@ static int	mediumMiniMax(
 		player->setCaptured(plCapture);
 		opponent->setMoves(opMoves);
 		opponent->setCaptured(opCapture);
+
+		// If we already have already better move, stop searching by pruning
+		if (beta <= alpha)
+			return (bestEval);
 	}
 
 	return (bestEval);
@@ -594,7 +613,7 @@ sf::Vector2i	AI::getMediumMove(
 	inter_type					plType, opType;
 	std::vector<sf::Vector2i>	moves;
 	sf::Vector2i				bestMove;
-	Grid						gridCopy;
+	BitBoard					plBitBoard, opBitBoard;
 
 	// TODO : REMOVE
 	std::clock_t	start;
@@ -608,6 +627,8 @@ sf::Vector2i	AI::getMediumMove(
 	plMoves = player->getMoves();
 	opMoves = opponent->getMoves();
 	nbMoves = plMoves + opMoves;
+	plBitBoard = *grid->getBitBoard(plType);
+	opBitBoard = *grid->getBitBoard(opType);
 
 	// Get interesting moves
 	moves = grid->getInterestingMoves(player, opponent);
@@ -623,16 +644,13 @@ sf::Vector2i	AI::getMediumMove(
 	bestMove = sf::Vector2i(-1, -1);
 	for (int i = 0; i < moves.size(); i++)
 	{
-		// Copy grid
-		gridCopy = *grid;
-
 		// Simulate move
-		if (!gridCopy.putStone(&moves[i], nbMoves, player, opponent))
+		if (!grid->putStone(&moves[i], nbMoves, player, opponent))
 			continue;
 		player->addMove();
 
 		// Get evaluation for this move
-		tmpEval = mediumMiniMax(&this->memoryEvaluation, &gridCopy,
+		tmpEval = mediumMiniMax(grid,
 					player, opponent, evaluator,
 					false, -1000000001, 1000000001,
 					DEPTH, tracker);
@@ -643,6 +661,16 @@ sf::Vector2i	AI::getMediumMove(
 			bestEval = tmpEval;
 			bestMove = moves[i];
 		}
+
+		// Reset grid
+		if (player->getCaptured() != plCapture
+			|| opponent->getCaptured() != opCapture)
+		{
+			grid->setBitBoard(&plBitBoard, plType);
+			grid->setBitBoard(&opBitBoard, opType);
+		}
+		else
+			grid->removeStone(&moves[i], plType);
 
 		// Reset player
 		player->setMoves(plMoves);

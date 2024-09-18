@@ -72,6 +72,15 @@ BitBoard	*Grid::getBitBoard(inter_type type)
 	return (&this->bitboardR);
 }
 
+
+void	Grid::setBitBoard(BitBoard *bitBoard, inter_type type)
+{
+	if (type == INTER_LEFT)
+		this->bitboardL = *bitBoard;
+	else
+		this->bitboardR = *bitBoard;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -282,17 +291,12 @@ bool	Grid::putStone(
 }
 
 
-void	Grid::removeStone(sf::Vector2i *move, Player *player, Player *opponent)
+void	Grid::removeStone(sf::Vector2i *move, inter_type plType)
 {
-	inter_type	plType, opType;
-
-	plType = player->getInterType();
-	opType = opponent->getInterType();
 	if (plType == INTER_LEFT)
-		this->bitboardL.set(move->x, move->y, true);
+		this->bitboardL.set(move->x, move->y, false);
 	else
-		this->bitboardR.set(move->x, move->y, true);
-
+		this->bitboardR.set(move->x, move->y, false);
 }
 
 

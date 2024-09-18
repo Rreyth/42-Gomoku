@@ -2,6 +2,7 @@
 # define BITBOARD_HPP
 
 # include <define.hpp>
+// # include <functional>
 
 typedef enum e_bitboardAxis
 {
@@ -25,15 +26,14 @@ public:
 	BitBoard(const BitBoard &obj);
 	~BitBoard();
 
-	bool		get(int x, int y);
+	bool		get(int x, int y) const;
 	void		set(int x, int y, bool value);
 
-
 	BitBoard	&operator=(const BitBoard &obj);
-	bool		operator==(const BitBoard &obj);
+	bool		operator==(const BitBoard &obj) const;
 
 	void		clear(void);
-	int			getLine(bitboardAxis bbAxis, int x, int y);
+	int			getLine(bitboardAxis bbAxis, int x, int y) const;
 
 private:
 };

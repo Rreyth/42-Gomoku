@@ -32,7 +32,7 @@ BitBoard::~BitBoard()
 // Getters and setters
 ////////////////////////////////////////////////////////////////////////////////
 
-bool	BitBoard::get(int x, int y)
+bool	BitBoard::get(int x, int y) const
 {
 	return (this->bbH[y] & 1 << x);
 }
@@ -88,7 +88,7 @@ BitBoard	&BitBoard::operator=(const BitBoard &obj)
 }
 
 
-bool	BitBoard::operator==(const BitBoard &obj)
+bool	BitBoard::operator==(const BitBoard &obj) const
 {
 	if (this == &obj)
 		return (true);
@@ -117,7 +117,7 @@ void	BitBoard::clear(void)
 }
 
 
-int	BitBoard::getLine(bitboardAxis bbAxis, int x, int y)
+int	BitBoard::getLine(bitboardAxis bbAxis, int x, int y) const
 {
 	int	yTmp, tmp;
 
