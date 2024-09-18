@@ -282,6 +282,20 @@ bool	Grid::putStone(
 }
 
 
+void	Grid::removeStone(sf::Vector2i *move, Player *player, Player *opponent)
+{
+	inter_type	plType, opType;
+
+	plType = player->getInterType();
+	opType = opponent->getInterType();
+	if (plType == INTER_LEFT)
+		this->bitboardL.set(move->x, move->y, true);
+	else
+		this->bitboardR.set(move->x, move->y, true);
+
+}
+
+
 bool	Grid::checkWinCondition(Player *player, Player *opponent)
 {
 	// Check if the player capture at least 10 opponent's stones

@@ -89,56 +89,56 @@ sf::Vector2i	AI::getNextMove(
 		move = this->getBetterRandom(grid, player, opponent);
 	else if (this->difficulty == EASY)
 		move = this->getEasyMove(grid, player, opponent, evaluator);
-	// else if (this->difficulty == MEDIUM)
-	// 	move = this->getMediumMove(grid, player, opponent, evaluator, &tracker);
+	else if (this->difficulty == MEDIUM)
+		move = this->getMediumMove(grid, player, opponent, evaluator, &tracker);
 	//TODO: Implement other difficulties
 
 	// Compute time taken to choose ai
 	diff = std::clock() - start;
 	this->timer = ((double)diff / CLOCKS_PER_SEC) * 1000000;
 
-	// if (this->difficulty == MEDIUM)
-	// {
-	// 	setlocale(LC_NUMERIC, "");
-	// 	printf("\n\nGet move in %'i us\n", (int)this->timer);
-	// 	printf("  evaluate position\n");
-	// 	printf("   - number of call : %'i\n", tracker.nbEvaluations);
-	// 	printf("   - number of memory call : %'i\n", tracker.nbEvaluationsMemory);
-	// 	printf("   - memory call usage : %'f\n", (float)tracker.nbEvaluationsMemory / (tracker.nbEvaluations + tracker.nbEvaluationsMemory));
-	// 	printf("   - TIME %'i us\n", tracker.evaluationTime);
-	// 	printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
-	// 	printf("  get sort moves\n");
-	// 	printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
-	// 	printf("   - get moves TIME %'i us\n", tracker.getMoveTime);
-	// 	printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
-	// 	printf("   - sort moves took %'i us\n", tracker.sortMoveTime);
-	// 	printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
-	// 	printf("  update moves\n");
-	// 	printf("   - number of call : %'i\n", tracker.updateMoveNumber);
-	// 	printf("   - TIME %'i us\n", tracker.updateMoveTime);
-	// 	printf("   - about %'f us per call\n", (float)tracker.updateMoveTime / tracker.updateMoveNumber);
-	// 	printf("  check stone\n");
-	// 	printf("   - number of call : %'i\n", tracker.checkStoneNumber);
-	// 	printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
-	// 	printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
-	// 	printf("   - remove stone took %'i us\n", tracker.removeStoneTime);
-	// 	printf("   - about %'f us per call\n", (float)tracker.removeStoneTime / tracker.checkStoneNumber);
-	// 	printf("   - check win took %'i us\n", tracker.checkWinTime);
-	// 	printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkStoneNumber);
-	// 	printf("  reverse capture\n");
-	// 	printf("   - number of call : %'i\n", tracker.reverseStoneCaptureNumber);
-	// 	printf("   - TIME %'i us\n", tracker.reverseStoneCaptureTime);
-	// 	printf("   - about %'f us per call\n", (float)tracker.reverseStoneCaptureTime / tracker.reverseStoneCaptureNumber);
-	// 	printf("  memory usage\n");
-	// 	long size = this->memoryEvaluation.size();
-	// 	// std::string boardState = grid->getCurrentBoardStateOpti();
-	// // 	long memorySize = size * (boardState.capacity() + sizeof(int));
-	// // 	printf("   - memory evaluation : %'li elements for %'li octets\n", size, memorySize);
-	// }
-	// else
-	// {
-	printf("Compute move in %'i us\n", (int)this->timer);
-	// }
+	if (this->difficulty == MEDIUM)
+	{
+		setlocale(LC_NUMERIC, "");
+		printf("\n\nGet move in %'i us\n", (int)this->timer);
+		printf("  evaluate position\n");
+		printf("   - number of call : %'i\n", tracker.nbEvaluations);
+		// printf("   - number of memory call : %'i\n", tracker.nbEvaluationsMemory);
+		// printf("   - memory call usage : %'f\n", (float)tracker.nbEvaluationsMemory / (tracker.nbEvaluations + tracker.nbEvaluationsMemory));
+		printf("   - TIME %'i us\n", tracker.evaluationTime);
+		printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
+		// printf("  get sort moves\n");
+		// printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
+		// printf("   - get moves TIME %'i us\n", tracker.getMoveTime);
+		// printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
+		// printf("   - sort moves TIME %'i us\n", tracker.sortMoveTime);
+		// printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
+		// printf("  update moves\n");
+		// printf("   - number of call : %'i\n", tracker.updateMoveNumber);
+		// printf("   - TIME %'i us\n", tracker.updateMoveTime);
+		// printf("   - about %'f us per call\n", (float)tracker.updateMoveTime / tracker.updateMoveNumber);
+		// printf("  check stone\n");
+		// printf("   - number of call : %'i\n", tracker.checkStoneNumber);
+		// printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
+		// printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
+		// printf("   - remove stone TIME %'i us\n", tracker.removeStoneTime);
+		// printf("   - about %'f us per call\n", (float)tracker.removeStoneTime / tracker.checkStoneNumber);
+		// printf("   - check win TIME %'i us\n", tracker.checkWinTime);
+		// printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkStoneNumber);
+		// printf("  reverse capture\n");
+		// printf("   - number of call : %'i\n", tracker.reverseStoneCaptureNumber);
+		// printf("   - TIME %'i us\n", tracker.reverseStoneCaptureTime);
+		// printf("   - about %'f us per call\n", (float)tracker.reverseStoneCaptureTime / tracker.reverseStoneCaptureNumber);
+		// printf("  memory usage\n");
+		// long size = this->memoryEvaluation.size();
+		// std::string boardState = grid->getCurrentBoardStateOpti();
+	// 	long memorySize = size * (boardState.capacity() + sizeof(int));
+	// 	printf("   - memory evaluation : %'li elements for %'li octets\n", size, memorySize);
+	}
+	else
+	{
+		printf("Compute move in %'i us\n", (int)this->timer);
+	}
 	return (move);
 }
 
@@ -231,14 +231,124 @@ sf::Vector2i	AI::getEasyMove(
 	return (move);
 }
 
-// # define DEPTH 3
+# define DEPTH 3
 
-// static int	mediumMiniMax(
-// 				std::unordered_map<std::string, int> *memoryEvaluation,
-// 				Grid *grid, Player *player, Player *opponent,
-// 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
-// 				int depth, Tracker *tracker)
-// {
+static int	mediumMiniMax(
+				std::unordered_map<std::string, int> *memoryEvaluation,
+				Grid *grid, Player *player, Player *opponent,
+				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
+				int depth, Tracker *tracker)
+{
+	int							bestEval, tmpEval,
+								plCapture, opCapture,
+								plMoves, opMoves, nbMoves;
+	inter_type					plType, opType;
+	std::vector<sf::Vector2i>	moves;
+	Grid						gridCopy;
+
+	// TODO : REMOVE
+	std::clock_t	start;
+	int				diff;
+
+	// Compute variables for evaluation and put stone
+	plType = player->getInterType();
+	opType = opponent->getInterType();
+	plCapture = player->getCaptured();
+	opCapture = opponent->getCaptured();
+
+	// Stop recursion and return the grid evaluation
+	if (depth <= 0)
+	{
+		tracker->nbEvaluations++;
+		start = std::clock();
+		tmpEval = evaluator->evaluateGrid(
+								grid->getBitBoard(plType),
+								grid->getBitBoard(opType),
+								plCapture, opCapture);
+		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+		tracker->evaluationTime += diff;
+
+		return (tmpEval);
+	}
+
+	// Get interesting moves
+	if (maximizingEval)
+		moves = grid->getInterestingMoves(player, opponent);
+	else
+		moves = grid->getInterestingMoves(opponent, player);
+
+	if (moves.size() == 0)
+		return (0);
+
+	// Compute variables put stone and reset players
+	plMoves = player->getMoves();
+	opMoves = opponent->getMoves();
+	nbMoves = plMoves + opMoves;
+
+	// Find move
+	if (maximizingEval)
+		bestEval = -1000000001;
+	else
+		bestEval = 1000000001;
+
+	for (int i = 0; i < moves.size(); i++)
+	{
+		// Copy grid
+		gridCopy = *grid;
+
+		// Simulate move
+		if (maximizingEval)
+		{
+			if (!gridCopy.putStone(&moves[i], nbMoves, player, opponent))
+				continue;
+			player->addMove();
+		}
+		else
+		{
+			if (!gridCopy.putStone(&moves[i], nbMoves, opponent, player))
+				continue;
+			opponent->addMove();
+		}
+
+		// Get evaluation for this move
+		tmpEval = mediumMiniMax(memoryEvaluation, &gridCopy,
+					player, opponent, evaluator,
+					!maximizingEval, alpha, beta,
+					depth - 1, tracker);
+
+		// For maximizing
+		if (maximizingEval)
+		{
+			// Update score
+			if (tmpEval > bestEval)
+				bestEval = tmpEval;
+
+			// // Update alpha
+			// if (tmpEval > alpha)
+			// 	alpha = tmpEval;
+		}
+		// For minimizing
+		else
+		{
+			// Update score
+			if (tmpEval < bestEval)
+				bestEval = tmpEval;
+
+			// // Update beta
+			// if (tmpEval < beta)
+			// 	beta = tmpEval;
+		}
+
+		// Reset player
+		player->setMoves(plMoves);
+		player->setCaptured(plCapture);
+		opponent->setMoves(opMoves);
+		opponent->setCaptured(opCapture);
+	}
+
+	return (bestEval);
+
+
 // 	int							maxEval, tmpEval, plCapture, opCapture,
 // 								nbMoves, plMoves, opMoves;
 // 	bool						someoneWin;
@@ -471,14 +581,77 @@ sf::Vector2i	AI::getEasyMove(
 // 	opponent->setCaptured(opCapture);
 
 // 	return (maxEval);
-// }
+}
 
 
 sf::Vector2i	AI::getMediumMove(
 						Grid *grid, Player *player, Player *opponent,
 						Evaluation *evaluator, Tracker *tracker)
 {
-	return (sf::Vector2i(-1, -1));
+	int							bestEval, tmpEval,
+								plCapture, opCapture,
+								plMoves, opMoves, nbMoves;
+	inter_type					plType, opType;
+	std::vector<sf::Vector2i>	moves;
+	sf::Vector2i				bestMove;
+	Grid						gridCopy;
+
+	// TODO : REMOVE
+	std::clock_t	start;
+	int				diff;
+
+	// Compute variables
+	plType = player->getInterType();
+	opType = opponent->getInterType();
+	plCapture = player->getCaptured();
+	opCapture = opponent->getCaptured();
+	plMoves = player->getMoves();
+	opMoves = opponent->getMoves();
+	nbMoves = plMoves + opMoves;
+
+	// Get interesting moves
+	moves = grid->getInterestingMoves(player, opponent);
+	if (moves.size() == 0)
+	{
+		if (nbMoves == 0)
+			return (sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
+		return (sf::Vector2i(-1, -1));
+	}
+
+	// Find move
+	bestEval = -1000000001;
+	bestMove = sf::Vector2i(-1, -1);
+	for (int i = 0; i < moves.size(); i++)
+	{
+		// Copy grid
+		gridCopy = *grid;
+
+		// Simulate move
+		if (!gridCopy.putStone(&moves[i], nbMoves, player, opponent))
+			continue;
+		player->addMove();
+
+		// Get evaluation for this move
+		tmpEval = mediumMiniMax(&this->memoryEvaluation, &gridCopy,
+					player, opponent, evaluator,
+					false, -1000000001, 1000000001,
+					DEPTH, tracker);
+
+		// Update score
+		if (tmpEval > bestEval)
+		{
+			bestEval = tmpEval;
+			bestMove = moves[i];
+		}
+
+		// Reset player
+		player->setMoves(plMoves);
+		player->setCaptured(plCapture);
+		opponent->setMoves(opMoves);
+		opponent->setCaptured(opCapture);
+	}
+
+	return (bestMove);
 
 	// int							maxEval, tmpEval, plCapture, opCapture,
 	// 							nbMoves, plMoves, opMoves;

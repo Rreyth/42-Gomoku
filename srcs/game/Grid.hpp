@@ -30,6 +30,7 @@ public:
 	void			draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	bool			checkLegalMove(int x, int y, int nbMoves, inter_type plType, inter_type opType);
 	bool			putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
+	void			removeStone(sf::Vector2i *move, Player *player, Player *opponent);
 	bool			checkWinCondition(Player *player, Player *opponent);
 	void			clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
 	void			reset(void);
@@ -49,7 +50,6 @@ public:
 	// std::vector<sf::Vector2i>	getInterestingMovesSortedSaved(inter_type plType);
 	// void						saveInterestingMovesSorted(std::vector<sf::Vector2i> *movesLeft, std::vector<sf::Vector2i> *movesRight);
 	// void						loadInterestingMovesSorted(std::vector<sf::Vector2i> *movesLeft, std::vector<sf::Vector2i> *movesRight);
-	// void						removeStone(sf::Vector2i *move, Tracker *tracker);
 	// void						resetGridByBoardState(std::string boardState, Tracker *tracker);
 	// void						saveBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR);
 	// void						loadBbox(sf::Vector2i *bboxUL, sf::Vector2i *bboxDR);
