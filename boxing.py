@@ -18,6 +18,20 @@ GRID_H = GRID_SIZE * TILE_SIZE
 OFFSET = (SCREEN_SIZE[0] / 2 - GRID_W / 2,
 			SCREEN_SIZE[1] / 2 - GRID_H / 2)
 
+COLORS_PANELS = [
+	((100, 0, 0), (200, 0, 0)),
+	((0, 100, 0), (0, 200, 0)),
+	((0, 0, 100), (0, 0, 200)),
+	((100, 100, 0), (200, 200, 0)),
+	((0, 100, 100), (0, 200, 200)),
+	((100, 0, 100), (200, 0, 200)),
+	((100, 50, 0), (200, 150, 0)),
+	((0, 100, 50), (0, 200, 150)),
+	((50, 0, 100), (150, 0, 200)),
+]
+COLORS_PANELS_NB = len(COLORS_PANELS)
+
+
 
 class Bbox:
 	def __init__(self, x, y, colors):
@@ -52,11 +66,97 @@ class Bbox:
 		return x >= self.x and x <= self.Rx and y >= self.y and y <= self.Ry
 
 
+	def isInPerimeter(self, x, y):
+		return x >= self.x - 1 and x <= self.Rx + 1\
+				and y >= self.y - 1 and y <= self.Ry + 1
+
+
+	def collideBbox(self, bbox: 'Bbox'):
+		return bbox.Rx >= self.x and bbox.x <= self.Rx\
+				and bbox.Ry >= self.y and bbox.y <= self.Ry
+
+
+	def merge(self, bbox: 'Bbox'):
+		if bbox.x <= self.x:
+			self.x = bbox.x
+
+		if bbox.Rx >= self.Rx:
+			self.Rx = bbox.Rx
+
+		if bbox.y <= self.y:
+			self.y = bbox.y
+
+		if bbox.Ry >= self.Ry:
+			self.Ry = bbox.Ry
+
+
 	def copy(self):
 		bbox = Bbox(self.x, self.y, self.colors)
 		bbox.Rx = self.Rx
 		bbox.Ry = self.Ry
 		return bbox
+
+
+
+class BboxManager:
+	def __init__(self):
+		self.bboxes : list[Bbox] = []
+		self.nbBoxes = 0
+
+
+	def update(self, x, y):
+		for i in range(self.nbBoxes):
+			bbox = self.bboxes[i]
+			if bbox.isInPerimeter(x, y):
+				bbox.update(x, y)
+
+				j = 0
+				while j < self.nbBoxes:
+					if i != j and bbox.collideBbox(self.bboxes[j]):
+						bbox.merge(self.bboxes[j])
+						self.bboxes.pop(j)
+						self.nbBoxes -= 1
+						if i > j:
+							i -= 1
+						j = 0
+					else:
+						j += 1
+				return
+
+		bbox = Bbox(-1, -1, COLORS_PANELS[self.nbBoxes % COLORS_PANELS_NB])
+		bbox.update(x, y)
+
+		# j = 0
+		# while j < self.nbBoxes:
+		# 	if bbox.collideBbox(self.bboxes[j]):
+		# 		bbox.merge(self.bboxes.pop(j))
+		# 		self.nbBoxes -= 1
+		# 		j = 0
+		# 	else:
+		# 		j += 1
+
+		self.bboxes.append(bbox)
+		self.nbBoxes += 1
+
+
+	def getColors(self, x, y):
+		for bbox in self.bboxes:
+			if bbox.isInside(x, y):
+				return bbox.colors
+
+		return TILE_COLORS
+
+
+	def clear(self):
+		self.bboxes.clear()
+		self.nbBoxes = 0
+
+
+	def copy(self):
+		bboxManager = BboxManager()
+		for bbox in self.bboxes:
+			bboxManager.bboxes.append(bbox.copy())
+		return bboxManager
 
 
 
@@ -86,7 +186,8 @@ class Game:
 
 		self.tileTarget = None
 
-		self.bbox = Bbox(-1, -1, [(100, 0, 0), (200, 0, 0)])
+		self.bboxManager = BboxManager()
+		# self.bbox = Bbox(-1, -1, [(100, 0, 0), (200, 0, 0)])
 
 
 	def run(self):
@@ -136,33 +237,33 @@ class Game:
 		mouse_y = self.mousePos[1]
 
 		# Over
-		if (mouse_x >= grid_x_left and mouse_x <= grid_x_right
-			and mouse_y >= grid_y_left and mouse_y <= grid_y_right):
+		if mouse_x >= grid_x_left and mouse_x <= grid_x_right\
+			and mouse_y >= grid_y_left and mouse_y <= grid_y_right:
 			tile_x = int(mouse_x - grid_x_left) // TILE_SIZE
 			tile_y = int(mouse_y - grid_y_left) // TILE_SIZE
 
 			# Place tile
-			if (self.mouseState[0] and self.grid[tile_y][tile_x] == TILE_EMPTY):
+			if self.mouseState[0] and self.grid[tile_y][tile_x] == TILE_EMPTY:
 				self.grid[tile_y][tile_x] = TILE_FULL
-				self.bbox.update(tile_x, tile_y)
+				self.bboxManager.update(tile_x, tile_y)
 
 			# Remove tile
-			if (self.mouseState[2] and self.grid[tile_y][tile_x] == TILE_FULL):
+			if self.mouseState[2] and self.grid[tile_y][tile_x] == TILE_FULL:
 				self.grid[tile_y][tile_x] = TILE_EMPTY
 
-				self.bbox = Bbox(-1, -1, [(100, 0, 0), (200, 0, 0)])
+				self.bboxManager.clear()
 				for y in range(GRID_SIZE):
 					for x in range(GRID_SIZE):
 						if (self.grid[y][x]):
-							self.bbox.update(x, y)
+							self.bboxManager.update(x, y)
 
 		# Clear grid
-		if (self.keyboardState[pg.K_SPACE]):
+		if self.keyboardState[pg.K_SPACE]:
 			self.grid = []
 			for _ in range(GRID_SIZE):
 				self.grid.append([TILE_EMPTY] * GRID_SIZE)
 
-			self.bbox = Bbox(-1, -1, [(100, 0, 0), (200, 0, 0)])
+			self.bboxManager.clear()
 
 		pg.display.set_caption(str(self.clock.get_fps()))
 
@@ -176,11 +277,7 @@ class Game:
 
 		for y in range(GRID_SIZE):
 			for x in range(GRID_SIZE):
-				if (self.bbox.isInside(x, y)):
-					colors = self.bbox.colors
-				else:
-					colors = TILE_COLORS
-
+				colors = self.bboxManager.getColors(x, y)
 				pg.draw.rect(self.win, colors[self.grid[y][x]],
 								(x * TILE_SIZE + OFFSET[0],
 								y * TILE_SIZE + OFFSET[1],
