@@ -44,8 +44,10 @@ void	BitBoard::set(int x, int y, bool value)
 
 	check = 1 << x;
 	checkV = 1 << y;
-	yD = (y + x) % GRID_W_INTER;
-	yA = (y - x) % GRID_W_INTER;
+	yD = y + x;
+	if (yD >= GRID_W_INTER)
+		yD -= GRID_W_INTER;
+	yA = y - x;
 	if (yA < 0)
 		yA = GRID_W_INTER + yA;
 
@@ -132,7 +134,9 @@ int	BitBoard::getLine(bitboardAxis bbAxis, int x, int y) const
 	// Get line diagonal
 	if (bbAxis == BBD)
 	{
-		yTmp = (y + x) % GRID_W_INTER;
+		yTmp = y + x;
+		if (yTmp >= GRID_W_INTER)
+			yTmp -= GRID_W_INTER;
 
 		tmp = GRID_W_INTER - yTmp - 1; // @brenaudo validate this line
 		if (x <= yTmp)

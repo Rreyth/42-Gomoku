@@ -45,7 +45,7 @@ public:
 
 	std::vector<sf::Vector2i>	getLegalMoves(Player *player, Player *opponent);
 	std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
-	std::vector<sf::Vector2i>	getInterestingMovesSorted(Evaluation *evaluator, Player *player, Player *opponent, bool reverse, Tracker *tracker);
+	std::vector<Move>			getInterestingMovesSorted(Evaluation *evaluator, Player *player, Player *opponent, bool reverse, Tracker *tracker);
 	// bool						checkInterestingMove(int x, int y);
 	// std::vector<sf::Vector2i>	getInterestingMovesSorted(Player *player, Player *opponent, Evaluation *evaluator, bool reverse, Tracker *tracker);
 	// void						computeInterestingMovesSorted(Player *player, Player *opponent, Evaluation *evaluator, Tracker *tracker);

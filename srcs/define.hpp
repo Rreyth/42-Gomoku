@@ -1,6 +1,8 @@
 #ifndef DEFINE_HPP
 # define DEFINE_HPP
 
+# include <SFML/Graphics.hpp>
+
 // WINDOW DEFINE
 # define WIN_W 1600
 # define WIN_H 900
@@ -28,6 +30,7 @@ typedef enum e_font {
 	FONT_SANKOFA
 }	t_font;
 
+
 typedef enum e_draw_pos {
 	TOP_LEFT,
 	TOP_CENTER,
@@ -40,6 +43,7 @@ typedef enum e_draw_pos {
 	BOT_RIGHT
 }	draw_pos;
 
+
 typedef enum e_display_state {
 	DISPLAY_MENU,
 	DISPLAY_SETTINGS,
@@ -49,10 +53,12 @@ typedef enum e_display_state {
 	DISPLAY_QUIT
 }	display_state;
 
+
 typedef enum e_player_type {
 	PLAYER,
 	AI_PLAYER
 }	player_type;
+
 
 typedef enum e_stone_sprite {
 	DEFAULT,
@@ -60,15 +66,18 @@ typedef enum e_stone_sprite {
 	COINS
 }	stone_sprite;
 
+
 typedef enum e_game_mode {
 	NORMAL,
 	BLITZ
 }	game_mode;
 
+
 typedef enum e_game_rules {
 	STANDARD,
 	PRO
 }	game_rules;
+
 
 typedef enum e_win_state {
 	WIN_STATE_NONE,
@@ -77,6 +86,7 @@ typedef enum e_win_state {
 	WIN_STATE_AUTO_CAPTURE,
 	WIN_STATE_TIME
 }	win_state;
+
 
 typedef enum e_dir_neighbor
 {
@@ -90,6 +100,7 @@ typedef enum e_dir_neighbor
 	DIR_DL,
 }	dir_neighbor;
 
+
 typedef enum e_inter_type
 {
 	INTER_EMPTY = 0,
@@ -97,6 +108,7 @@ typedef enum e_inter_type
 	INTER_RIGHT,
 	INTER_INVALID,
 }	inter_type;
+
 
 typedef enum e_AI_difficulty
 {
@@ -107,6 +119,7 @@ typedef enum e_AI_difficulty
 	HARD
 }	AI_difficulty;
 
+
 typedef enum e_starter
 {
 	RANDOM_START,
@@ -114,11 +127,25 @@ typedef enum e_starter
 	PLAYER2
 }	starter;
 
-typedef struct s_intersection
+
+typedef struct s_move
 {
-	inter_type	type;
-	int			neighbor[8];
-}	intersection;
+	sf::Vector2i	pos;
+	int				eval;
+
+	struct s_move	&operator=(const struct s_move &move)
+	{
+		if (this == &move)
+			return (*this);
+
+		this->pos = move.pos;
+		this->eval = move.eval;
+
+		return (*this);
+	}
+
+}	Move;
+
 
 // TODO : REMOVE
 typedef struct s_tracker
@@ -135,11 +162,9 @@ typedef struct s_tracker
 
 	int	checkStoneNumber;
 	int	putStoneTime;
-	int	removeStoneTime;
-	int	checkWinTime;
 
-	int	reverseStoneCaptureNumber;
-	int	reverseStoneCaptureTime;
+	int	checkWinNumber;
+	int	checkWinTime;
 }	Tracker;
 
 #endif

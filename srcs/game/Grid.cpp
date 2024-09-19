@@ -521,15 +521,15 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(
 }
 
 
-std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
-									Evaluation *evaluator,
-									Player *player, Player *opponent,
-									bool reverse, Tracker *tracker)
+std::vector<Move>	Grid::getInterestingMovesSorted(
+							Evaluation *evaluator,
+							Player *player, Player *opponent,
+							bool reverse, Tracker *tracker)
 {
 	int							size, eval, j, plCapture, opCapture;
-	sf::Vector2i				tmp;
-	std::vector<int>			evaluations;
-	std::vector<sf::Vector2i>	moves;
+	Move						tmp;
+	std::vector<Move>			moves;
+	std::vector<sf::Vector2i>	movesPosition;
 	BitBoard					*plBitboard, *opBitboard;
 
 	// TODO : REMOVE
@@ -537,13 +537,13 @@ std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
 	int				diff;
 	start = std::clock();
 
-	moves = this->getInterestingMoves(player, opponent);
+	movesPosition = this->getInterestingMoves(player, opponent);
 
 	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 	tracker->getMoveTime += diff;
 	tracker->getSortMoveNumber++;
 
-	size = moves.size();
+	size = movesPosition.size();
 
 	tracker->sortSizeTotal += size;
 	if (size < tracker->sortSizeMin)
@@ -570,10 +570,15 @@ std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
 		opBitboard = &this->bitboardL;
 	}
 	for (int i = 0; i < size; i++)
-		evaluations.push_back(evaluator->evaluationPosition(
+	{
+		Move	move;
+		move.pos = movesPosition[i];
+		move.eval = evaluator->evaluationPosition(
 											plBitboard, opBitboard,
 											plCapture, opCapture,
-											moves[i].x, moves[i].y));
+											move.pos.x, move.pos.y);
+		moves.push_back(move);
+	}
 
 	if (!reverse)
 	{
@@ -582,16 +587,13 @@ std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
 			for (int i = gap; i < size; i++)
 			{
 				tmp = moves[i];
-				eval = evaluations[i];
 
-				for (j = i; j >= gap && evaluations[j - gap] > eval; j -= gap)
+				for (j = i; j >= gap && moves[j - gap].eval > tmp.eval; j -= gap)
 				{
 					moves[j] = moves[j - gap];
-					evaluations[j] = evaluations[j - gap];
 				}
 
 				moves[j] = tmp;
-				evaluations[j] = eval;
 			}
 		}
 	}
@@ -602,20 +604,16 @@ std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
 			for (int i = gap; i < size; i++)
 			{
 				tmp = moves[i];
-				eval = evaluations[i];
 
-				for (j = i; j >= gap && evaluations[j - gap] < eval; j -= gap)
+				for (j = i; j >= gap && moves[j - gap].eval < tmp.eval; j -= gap)
 				{
 					moves[j] = moves[j - gap];
-					evaluations[j] = evaluations[j - gap];
 				}
 
 				moves[j] = tmp;
-				evaluations[j] = eval;
 			}
 		}
 	}
-
 
 	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 	tracker->sortMoveTime += diff;
@@ -966,28 +964,28 @@ bool	Grid::checkWinByAlign(
 				Player *player, Player *opponent,
 				BitBoard *plBitboard, BitBoard *opBitboard)
 {
-	int		winCase, check, plLine;
+	int		winCase, check, lines[4];
 	bool	isWin;
 
 	// Check win by axis
 	winCase = 0b11111;
 
-	for (int i = 0; i < GRID_W_INTER; i++)
+	for (int y = 0; y < GRID_W_INTER; y++)
 	{
 		check = 0b11111;
-		for (int j = 0; j < GRID_W_INTER - 4; j++)
+		lines[0] = plBitboard->getLine(BBH, 0, y);
+		lines[1] = plBitboard->getLine(BBV, y, 0);
+		for (int x = 0; x < GRID_W_INTER - 4; x++)
 		{
+			lines[2] = plBitboard->getLine(BBD, x, y);
+			lines[3] = plBitboard->getLine(BBA, x, y);
 			for (int axis = 0; axis < 4; axis++)
 			{
-				if (axis == 1)
-					plLine = plBitboard->getLine((bitboardAxis)axis, i, j);
-				else
-					plLine = plBitboard->getLine((bitboardAxis)axis, j, i);
-				if ((plLine & check) >> j == winCase)
+				if ((lines[axis] & check) >> x == winCase)
 				{
 					isWin = this->validateWin(
 									player, opponent, plBitboard,
-									opBitboard, (bitboardAxis)axis, j, i);
+									opBitboard, (bitboardAxis)axis, x, y);
 					if (isWin)
 						return (true);
 				}

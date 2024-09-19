@@ -72,11 +72,9 @@ sf::Vector2i	AI::getNextMove(
 
 	tracker.checkStoneNumber = 0;
 	tracker.putStoneTime = 0;
-	tracker.removeStoneTime = 0;
-	tracker.checkWinTime = 0;
 
-	tracker.reverseStoneCaptureNumber = 0;
-	tracker.reverseStoneCaptureTime = 0;
+	tracker.checkWinNumber = 0;
+	tracker.checkWinTime = 0;
 
 	// Start timer
 	start = std::clock();
@@ -117,14 +115,10 @@ sf::Vector2i	AI::getNextMove(
 		printf("   - number of call : %'i\n", tracker.checkStoneNumber);
 		printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
 		printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
-		printf("   - remove stone TIME %'i us\n", tracker.removeStoneTime);
-		printf("   - about %'f us per call\n", (float)tracker.removeStoneTime / tracker.checkStoneNumber);
-		// printf("   - check win TIME %'i us\n", tracker.checkWinTime);
-		// printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkStoneNumber);
-		printf("  reverse capture\n");
-		printf("   - number of call : %'i\n", tracker.reverseStoneCaptureNumber);
-		printf("   - TIME %'i us\n", tracker.reverseStoneCaptureTime);
-		printf("   - about %'f us per call\n", (float)tracker.reverseStoneCaptureTime / tracker.reverseStoneCaptureNumber);
+		printf("  check win\n");
+		printf("   - number of call : %'i\n", tracker.checkWinNumber);
+		printf("   - check win TIME %'i us\n", tracker.checkWinTime);
+		printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkWinNumber);
 	}
 	else
 	{
@@ -229,12 +223,13 @@ static int	mediumMiniMax(
 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
 				int depth, Tracker *tracker)
 {
-	int							bestEval, tmpEval,
-								plCapture, opCapture,
-								plMoves, opMoves, nbMoves;
-	inter_type					plType, opType;
-	std::vector<sf::Vector2i>	moves;
-	BitBoard					plBitBoard, opBitBoard;
+	int					bestEval, tmpEval,
+						plCapture, opCapture,
+						plMoves, opMoves, nbMoves;
+	bool				killerMove;
+	inter_type			plType, opType;
+	std::vector<Move>	moves;
+	BitBoard			plBitBoard, opBitBoard;
 
 	// TODO : REMOVE
 	std::clock_t	start;
@@ -295,13 +290,13 @@ static int	mediumMiniMax(
 		// Simulate move
 		if (maximizingEval)
 		{
-			if (!grid->putStone(&moves[i], nbMoves, player, opponent))
+			if (!grid->putStone(&moves[i].pos, nbMoves, player, opponent))
 				continue;
 			player->addMove();
 		}
 		else
 		{
-			if (!grid->putStone(&moves[i], nbMoves, opponent, player))
+			if (!grid->putStone(&moves[i].pos, nbMoves, opponent, player))
 				continue;
 			opponent->addMove();
 		}
@@ -310,11 +305,65 @@ static int	mediumMiniMax(
 		tracker->putStoneTime += diff;
 		tracker->checkStoneNumber++;
 
-		// Get evaluation for this move
-		tmpEval = mediumMiniMax(grid,
-					player, opponent, evaluator,
-					!maximizingEval, alpha, beta,
-					depth - 1, tracker);
+		// If move have an high score, check win case
+		if (moves[i].eval >= 10000000)
+		{
+			start = std::clock();
+
+			if (maximizingEval)
+				killerMove = grid->checkWinCondition(player, opponent);
+			else
+				killerMove = grid->checkWinCondition(opponent, player);
+
+			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+			tracker->checkWinTime += diff;
+			tracker->checkWinNumber++;
+		}
+		else
+			killerMove = false;
+
+		if (killerMove)
+		{
+			if (player->getWinState() != WIN_STATE_NONE)
+			{
+				player->setWinState(WIN_STATE_NONE);
+				tmpEval = CASE_WIN_POINT; // Nothing is better than a victory
+			}
+			else
+			{
+				opponent->setWinState(WIN_STATE_NONE);
+				tmpEval = CASE_LOOSE_POINT; // Nothing is worst than a defeat
+			}
+		}
+		else
+		{
+			// Get evaluation for this move
+			tmpEval = mediumMiniMax(grid,
+						player, opponent, evaluator,
+						!maximizingEval, alpha, beta,
+						depth - 1, tracker);
+		}
+
+		// Reset grid
+		if (player->getCaptured() != plCapture
+			|| opponent->getCaptured() != opCapture)
+		{
+			grid->setBitBoard(&plBitBoard, plType);
+			grid->setBitBoard(&opBitBoard, opType);
+		}
+		else
+		{
+			if (maximizingEval)
+				grid->removeStone(&moves[i].pos, plType);
+			else
+				grid->removeStone(&moves[i].pos, opType);
+		}
+
+		// Reset player
+		player->setMoves(plMoves);
+		player->setCaptured(plCapture);
+		opponent->setMoves(opMoves);
+		opponent->setCaptured(opCapture);
 
 		// For maximizing
 		if (maximizingEval)
@@ -338,38 +387,6 @@ static int	mediumMiniMax(
 			if (tmpEval < beta)
 				beta = tmpEval;
 		}
-
-		// Reset grid
-		if (player->getCaptured() != plCapture
-			|| opponent->getCaptured() != opCapture)
-		{
-			tracker->nbEvaluations++;
-			start = std::clock();
-
-			grid->setBitBoard(&plBitBoard, plType);
-			grid->setBitBoard(&opBitBoard, opType);
-
-			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-			tracker->reverseStoneCaptureTime += diff;
-			tracker->reverseStoneCaptureNumber++;
-		}
-		else
-		{
-			tracker->nbEvaluations++;
-			start = std::clock();
-			if (maximizingEval)
-				grid->removeStone(&moves[i], plType);
-			else
-				grid->removeStone(&moves[i], opType);
-			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-			tracker->removeStoneTime += diff;
-		}
-
-		// Reset player
-		player->setMoves(plMoves);
-		player->setCaptured(plCapture);
-		opponent->setMoves(opMoves);
-		opponent->setCaptured(opCapture);
 
 		// If we already have already better move, stop searching by pruning
 		if (beta <= alpha)
@@ -618,13 +635,13 @@ sf::Vector2i	AI::getMediumMove(
 						Grid *grid, Player *player, Player *opponent,
 						Evaluation *evaluator, Tracker *tracker)
 {
-	int							bestEval, tmpEval,
-								plCapture, opCapture,
-								plMoves, opMoves, nbMoves;
-	inter_type					plType, opType;
-	std::vector<sf::Vector2i>	moves;
-	sf::Vector2i				bestMove;
-	BitBoard					plBitBoard, opBitBoard;
+	int					bestEval, tmpEval,
+						plCapture, opCapture,
+						plMoves, opMoves, nbMoves;
+	inter_type			plType, opType;
+	std::vector<Move>	moves;
+	sf::Vector2i		bestMove;
+	BitBoard			plBitBoard, opBitBoard;
 
 	// TODO : REMOVE
 	std::clock_t	start;
@@ -657,21 +674,52 @@ sf::Vector2i	AI::getMediumMove(
 	for (int i = 0; i < moves.size(); i++)
 	{
 		// Simulate move
-		if (!grid->putStone(&moves[i], nbMoves, player, opponent))
+		if (!grid->putStone(&moves[i].pos, nbMoves, player, opponent))
 			continue;
 		player->addMove();
 
-		// Get evaluation for this move
-		tmpEval = mediumMiniMax(grid,
-					player, opponent, evaluator,
-					false, -1000000001, 1000000001,
-					DEPTH, tracker);
+		// Check win condition
+		if (grid->checkWinCondition(player, opponent))
+		{
+			if (player->getWinState() != WIN_STATE_NONE)
+			{
+				// Reset grid
+				if (player->getCaptured() != plCapture
+					|| opponent->getCaptured() != opCapture)
+				{
+					grid->setBitBoard(&plBitBoard, plType);
+					grid->setBitBoard(&opBitBoard, opType);
+				}
+				else
+					grid->removeStone(&moves[i].pos, plType);
+
+				// Reset player
+				player->setMoves(plMoves);
+				player->setCaptured(plCapture);
+				opponent->setMoves(opMoves);
+				opponent->setCaptured(opCapture);
+				player->setWinState(WIN_STATE_NONE);
+
+				return (moves[i].pos);
+			}
+
+			opponent->setWinState(WIN_STATE_NONE);
+			tmpEval = CASE_LOOSE_POINT;
+		}
+		else
+		{
+			// Get evaluation for this move
+			tmpEval = mediumMiniMax(grid,
+						player, opponent, evaluator,
+						false, -1000000001, 1000000001,
+						DEPTH, tracker);
+		}
 
 		// Update score
 		if (tmpEval > bestEval)
 		{
 			bestEval = tmpEval;
-			bestMove = moves[i];
+			bestMove = moves[i].pos;
 		}
 
 		// Reset grid
@@ -682,13 +730,16 @@ sf::Vector2i	AI::getMediumMove(
 			grid->setBitBoard(&opBitBoard, opType);
 		}
 		else
-			grid->removeStone(&moves[i], plType);
+			grid->removeStone(&moves[i].pos, plType);
 
 		// Reset player
 		player->setMoves(plMoves);
 		player->setCaptured(plCapture);
 		opponent->setMoves(opMoves);
 		opponent->setCaptured(opCapture);
+
+		if (bestEval >= CASE_WIN_POINT)
+			return(bestMove);
 	}
 
 	return (bestMove);
