@@ -124,15 +124,14 @@ typedef struct s_intersection
 typedef struct s_tracker
 {
 	int	nbEvaluations;
-	int	nbEvaluationsMemory;
 	int	evaluationTime;
 
 	int	getSortMoveNumber;
 	int	getMoveTime;
 	int	sortMoveTime;
-
-	int	updateMoveNumber;
-	int	updateMoveTime;
+	int	sortSizeTotal;
+	int	sortSizeMin;
+	int	sortSizeMax;
 
 	int	checkStoneNumber;
 	int	putStoneTime;

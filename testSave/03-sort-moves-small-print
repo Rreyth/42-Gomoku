@@ -1,0 +1,158 @@
+Get move in 7 us
+  evaluate position
+   - number of call : 0
+   - TIME 0 us
+   - about -nan us per call
+Compute move in 9 us
+
+
+Get move in 46,233 us
+  evaluate position
+   - number of call : 10,822
+   - TIME 27,156 us
+   - about 2.509333 us per call
+Compute move in 11 us
+
+
+Get move in 94,299 us
+  evaluate position
+   - number of call : 21,739
+   - TIME 58,861 us
+   - about 2.707622 us per call
+Compute move in 13 us
+
+
+Get move in 228,057 us
+  evaluate position
+   - number of call : 52,801
+   - TIME 156,091 us
+   - about 2.956213 us per call
+Compute move in 15 us
+
+
+Get move in 571,271 us
+  evaluate position
+   - number of call : 126,720
+   - TIME 403,696 us
+   - about 3.185732 us per call
+Compute move in 17 us
+
+
+Get move in 851,395 us
+  evaluate position
+   - number of call : 182,404
+   - TIME 611,880 us
+   - about 3.354532 us per call
+Compute move in 17 us
+
+
+Get move in 893,065 us
+  evaluate position
+   - number of call : 176,173
+   - TIME 628,448 us
+   - about 3.567221 us per call
+Compute move in 17 us
+
+
+Get move in 930,842 us
+  evaluate position
+   - number of call : 178,039
+   - TIME 629,161 us
+   - about 3.533838 us per call
+Compute move in 18 us
+
+
+Get move in 2,001,166 us
+  evaluate position
+   - number of call : 415,105
+   - TIME 1,472,836 us
+   - about 3.548105 us per call
+Compute move in 18 us
+
+
+Get move in 2,293,984 us
+  evaluate position
+   - number of call : 442,075
+   - TIME 1,675,160 us
+   - about 3.789312 us per call
+Compute move in 21 us
+
+
+Get move in 1,289,818 us
+  evaluate position
+   - number of call : 174,865
+   - TIME 726,445 us
+   - about 4.154319 us per call
+Compute move in 22 us
+
+
+Get move in 5,217,317 us
+  evaluate position
+   - number of call : 912,851
+   - TIME 3,917,489 us
+   - about 4.291488 us per call
+Compute move in 23 us
+
+
+Get move in 4,310,397 us
+  evaluate position
+   - number of call : 722,208
+   - TIME 3,297,780 us
+   - about 4.566247 us per call
+Compute move in 25 us
+
+
+Get move in 4,663,514 us
+  evaluate position
+   - number of call : 678,282
+   - TIME 3,206,772 us
+   - about 4.727786 us per call
+Compute move in 26 us
+
+
+Get move in 6,723,267 us
+  evaluate position
+   - number of call : 1,095,259
+   - TIME 5,185,716 us
+   - about 4.734694 us per call
+Compute move in 26 us
+
+
+Get move in 2,954,969 us
+  evaluate position
+   - number of call : 419,999
+   - TIME 2,125,239 us
+   - about 5.060105 us per call
+Compute move in 26 us
+
+
+Get move in 5,369,358 us
+  evaluate position
+   - number of call : 803,537
+   - TIME 4,217,436 us
+   - about 5.248590 us per call
+Compute move in 35 us
+
+
+Get move in 6,281,981 us
+  evaluate position
+   - number of call : 921,577
+   - TIME 4,959,007 us
+   - about 5.381001 us per call
+Compute move in 44 us
+
+
+Get move in 6,444,197 us
+  evaluate position
+   - number of call : 898,963
+   - TIME 5,054,002 us
+   - about 5.622036 us per call
+Compute move in 28 us
+
+
+Get move in 4,475,763 us
+  evaluate position
+   - number of call : 561,346
+   - TIME 3,272,756 us
+   - about 5.830194 us per call
+Have a nice day :)

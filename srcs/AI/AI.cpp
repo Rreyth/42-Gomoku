@@ -61,15 +61,14 @@ sf::Vector2i	AI::getNextMove(
 	// TODO : REMOVE TRACKER
 	Tracker	tracker;
 	tracker.nbEvaluations = 0;
-	tracker.nbEvaluationsMemory = 0;
 	tracker.evaluationTime = 0;
 
 	tracker.getSortMoveNumber = 0;
 	tracker.getMoveTime = 0;
 	tracker.sortMoveTime = 0;
-
-	tracker.updateMoveNumber = 0;
-	tracker.updateMoveTime = 0;
+	tracker.sortSizeTotal = 0;
+	tracker.sortSizeMin = GRID_NB_INTER + 1;
+	tracker.sortSizeMax = -1;
 
 	tracker.checkStoneNumber = 0;
 	tracker.putStoneTime = 0;
@@ -103,37 +102,29 @@ sf::Vector2i	AI::getNextMove(
 		printf("\n\nGet move in %'i us\n", (int)this->timer);
 		printf("  evaluate position\n");
 		printf("   - number of call : %'i\n", tracker.nbEvaluations);
-		// printf("   - number of memory call : %'i\n", tracker.nbEvaluationsMemory);
-		// printf("   - memory call usage : %'f\n", (float)tracker.nbEvaluationsMemory / (tracker.nbEvaluations + tracker.nbEvaluationsMemory));
 		printf("   - TIME %'i us\n", tracker.evaluationTime);
 		printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
-		// printf("  get sort moves\n");
-		// printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
-		// printf("   - get moves TIME %'i us\n", tracker.getMoveTime);
-		// printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
-		// printf("   - sort moves TIME %'i us\n", tracker.sortMoveTime);
-		// printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
-		// printf("  update moves\n");
-		// printf("   - number of call : %'i\n", tracker.updateMoveNumber);
-		// printf("   - TIME %'i us\n", tracker.updateMoveTime);
-		// printf("   - about %'f us per call\n", (float)tracker.updateMoveTime / tracker.updateMoveNumber);
-		// printf("  check stone\n");
-		// printf("   - number of call : %'i\n", tracker.checkStoneNumber);
-		// printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
-		// printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
-		// printf("   - remove stone TIME %'i us\n", tracker.removeStoneTime);
-		// printf("   - about %'f us per call\n", (float)tracker.removeStoneTime / tracker.checkStoneNumber);
+		printf("  get sort moves\n");
+		printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
+		printf("   - get moves TIME %'i us\n", tracker.getMoveTime);
+		printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
+		printf("   - sort moves TIME %'i us\n", tracker.sortMoveTime);
+		printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
+		printf("   - sort moves min size %'i\n", tracker.sortSizeMin);
+		printf("   - sort moves max size %'i\n", tracker.sortSizeMax);
+		printf("   - sort moves avg size %'f\n", (float)tracker.sortSizeTotal / tracker.getSortMoveNumber);
+		printf("  check stone\n");
+		printf("   - number of call : %'i\n", tracker.checkStoneNumber);
+		printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
+		printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
+		printf("   - remove stone TIME %'i us\n", tracker.removeStoneTime);
+		printf("   - about %'f us per call\n", (float)tracker.removeStoneTime / tracker.checkStoneNumber);
 		// printf("   - check win TIME %'i us\n", tracker.checkWinTime);
 		// printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkStoneNumber);
-		// printf("  reverse capture\n");
-		// printf("   - number of call : %'i\n", tracker.reverseStoneCaptureNumber);
-		// printf("   - TIME %'i us\n", tracker.reverseStoneCaptureTime);
-		// printf("   - about %'f us per call\n", (float)tracker.reverseStoneCaptureTime / tracker.reverseStoneCaptureNumber);
-		// printf("  memory usage\n");
-		// long size = this->memoryEvaluation.size();
-		// std::string boardState = grid->getCurrentBoardStateOpti();
-	// 	long memorySize = size * (boardState.capacity() + sizeof(int));
-	// 	printf("   - memory evaluation : %'li elements for %'li octets\n", size, memorySize);
+		printf("  reverse capture\n");
+		printf("   - number of call : %'i\n", tracker.reverseStoneCaptureNumber);
+		printf("   - TIME %'i us\n", tracker.reverseStoneCaptureTime);
+		printf("   - about %'f us per call\n", (float)tracker.reverseStoneCaptureTime / tracker.reverseStoneCaptureNumber);
 	}
 	else
 	{
@@ -274,9 +265,11 @@ static int	mediumMiniMax(
 
 	// Get interesting moves
 	if (maximizingEval)
-		moves = grid->getInterestingMoves(player, opponent);
+		moves = grid->getInterestingMovesSorted(
+						evaluator, player, opponent, true, tracker);
 	else
-		moves = grid->getInterestingMoves(opponent, player);
+		moves = grid->getInterestingMovesSorted(
+						evaluator, opponent, player, false, tracker);
 
 	if (moves.size() == 0)
 		return (0);
@@ -296,6 +289,9 @@ static int	mediumMiniMax(
 
 	for (int i = 0; i < moves.size(); i++)
 	{
+		tracker->nbEvaluations++;
+		start = std::clock();
+
 		// Simulate move
 		if (maximizingEval)
 		{
@@ -309,6 +305,10 @@ static int	mediumMiniMax(
 				continue;
 			opponent->addMove();
 		}
+
+		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+		tracker->putStoneTime += diff;
+		tracker->checkStoneNumber++;
 
 		// Get evaluation for this move
 		tmpEval = mediumMiniMax(grid,
@@ -343,15 +343,26 @@ static int	mediumMiniMax(
 		if (player->getCaptured() != plCapture
 			|| opponent->getCaptured() != opCapture)
 		{
+			tracker->nbEvaluations++;
+			start = std::clock();
+
 			grid->setBitBoard(&plBitBoard, plType);
 			grid->setBitBoard(&opBitBoard, opType);
+
+			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+			tracker->reverseStoneCaptureTime += diff;
+			tracker->reverseStoneCaptureNumber++;
 		}
 		else
 		{
+			tracker->nbEvaluations++;
+			start = std::clock();
 			if (maximizingEval)
 				grid->removeStone(&moves[i], plType);
 			else
 				grid->removeStone(&moves[i], opType);
+			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+			tracker->removeStoneTime += diff;
 		}
 
 		// Reset player
@@ -631,7 +642,8 @@ sf::Vector2i	AI::getMediumMove(
 	opBitBoard = *grid->getBitBoard(opType);
 
 	// Get interesting moves
-	moves = grid->getInterestingMoves(player, opponent);
+	moves = grid->getInterestingMovesSorted(
+					evaluator, player, opponent, true, tracker);
 	if (moves.size() == 0)
 	{
 		if (nbMoves == 0)

@@ -521,6 +521,109 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(
 }
 
 
+std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
+									Evaluation *evaluator,
+									Player *player, Player *opponent,
+									bool reverse, Tracker *tracker)
+{
+	int							size, eval, j, plCapture, opCapture;
+	sf::Vector2i				tmp;
+	std::vector<int>			evaluations;
+	std::vector<sf::Vector2i>	moves;
+	BitBoard					*plBitboard, *opBitboard;
+
+	// TODO : REMOVE
+	std::clock_t	start;
+	int				diff;
+	start = std::clock();
+
+	moves = this->getInterestingMoves(player, opponent);
+
+	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+	tracker->getMoveTime += diff;
+	tracker->getSortMoveNumber++;
+
+	size = moves.size();
+
+	tracker->sortSizeTotal += size;
+	if (size < tracker->sortSizeMin)
+		tracker->sortSizeMin = size;
+	if (size > tracker->sortSizeMax)
+		tracker->sortSizeMax = size;
+
+	if (size < 2)
+		return (moves);
+
+	start = std::clock();
+
+	plCapture = player->getCaptured();
+	opCapture = opponent->getCaptured();
+
+	if (player->getInterType() == INTER_LEFT)
+	{
+		plBitboard = &this->bitboardL;
+		opBitboard = &this->bitboardR;
+	}
+	else
+	{
+		plBitboard = &this->bitboardR;
+		opBitboard = &this->bitboardL;
+	}
+	for (int i = 0; i < size; i++)
+		evaluations.push_back(evaluator->evaluationPosition(
+											plBitboard, opBitboard,
+											plCapture, opCapture,
+											moves[i].x, moves[i].y));
+
+	if (!reverse)
+	{
+		for (int gap = size / 2; gap > 0; gap /= 2)
+		{
+			for (int i = gap; i < size; i++)
+			{
+				tmp = moves[i];
+				eval = evaluations[i];
+
+				for (j = i; j >= gap && evaluations[j - gap] > eval; j -= gap)
+				{
+					moves[j] = moves[j - gap];
+					evaluations[j] = evaluations[j - gap];
+				}
+
+				moves[j] = tmp;
+				evaluations[j] = eval;
+			}
+		}
+	}
+	else
+	{
+		for (int gap = size / 2; gap > 0; gap /= 2)
+		{
+			for (int i = gap; i < size; i++)
+			{
+				tmp = moves[i];
+				eval = evaluations[i];
+
+				for (j = i; j >= gap && evaluations[j - gap] < eval; j -= gap)
+				{
+					moves[j] = moves[j - gap];
+					evaluations[j] = evaluations[j - gap];
+				}
+
+				moves[j] = tmp;
+				evaluations[j] = eval;
+			}
+		}
+	}
+
+
+	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+	tracker->sortMoveTime += diff;
+
+	return (moves);
+}
+
+
 // std::vector<sf::Vector2i>	Grid::getInterestingMovesSorted(
 // 									Player *player, Player *opponent,
 // 									Evaluation *evaluator, bool reverse,
