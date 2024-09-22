@@ -2,3 +2,4 @@ Gomoku
 build
 .vscode
 a.out
+__pycache__

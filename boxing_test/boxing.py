@@ -6,8 +6,8 @@ import sys
 from define import	SCREEN_SIZE, OFFSET, GRID_SIZE, GRID_W, GRID_H,\
 					TILE_SIZE, TILE_BG_SIZE, TILE_EMPTY, TILE_FULL
 # from bboxManager1 import BboxManager
-# from bboxManager2 import BboxManager
-from bboxManager3 import BboxManager
+from bboxManager2 import BboxManager
+# from bboxManager3 import BboxManager
 
 
 def drawText(surface, text, pos, color=(0, 0, 0), size=24, font=None, align="left"):
