@@ -7,10 +7,13 @@ class Bbox:
 		self.Rx = x
 		self.Ry = y
 		self.colors = colors
+		colorId = COLORS_PANELS.index(colors)
+		colorsLetters = "RGBYCP"
+		self.colorsLetter = colorsLetters[colorId]
 
 
 	def __str__(self) -> str:
-		return f"({self.x}-{self.Rx}, {self.y}-{self.Ry})"
+		return f"({self.x}-{self.Rx}, {self.y}-{self.Ry}, {self.colorsLetter})"
 
 
 	def __repr__(self) -> str:
@@ -78,6 +81,71 @@ class BboxManager:
 		self.bboxes : list[Bbox] = []
 		self.nbBoxes = 0
 
+
+	def cutOverlap(self, bbox: Bbox, newBbox: Bbox) -> bool:
+		expandBbox = False
+
+		# Get the bbox dir. s = square, x = x axis, y = y axis
+		bboxDir = 's'
+		if bbox.Rx - bbox.x > bbox.Ry - bbox.y:
+			bboxDir = 'x'
+		elif bbox.Rx - bbox.x < bbox.Ry - bbox.y:
+			bboxDir = 'y'
+
+		# If new bbox is on the top left corner
+		if bbox.x > newBbox.x and bbox.y > newBbox.y:
+			# If bbox dir isn't y axis, we can expand it to x axis
+			if bboxDir != 'y':
+				bbox.x -= bbox.x - newBbox.x
+			else:
+				bbox.y -= bbox.y - newBbox.y
+			expandBbox = True
+
+		elif bbox.x > newBbox.x and bbox.Ry < newBbox.Ry:
+			# If bbox dir isn't y axis, we can expand it to x axis
+			if bboxDir != 'y':
+				bbox.x -= bbox.x - newBbox.x
+			else:
+				bbox.Ry += newBbox.Ry - bbox.Ry
+			expandBbox = True
+
+		elif bbox.Rx < newBbox.Rx and bbox.y > newBbox.y:
+			# If bbox dir isn't y axis, we can expand it to x axis
+			if bboxDir != 'y':
+				bbox.Rx += newBbox.Rx - bbox.Rx
+			else:
+				bbox.y -= bbox.y - newBbox.y
+			expandBbox = True
+
+		elif bbox.Rx < newBbox.Rx and bbox.Ry < newBbox.Ry:
+			# If bbox dir isn't y axis, we can expand it to x axis
+			if bboxDir != 'y':
+				bbox.Rx += newBbox.Rx - bbox.Rx
+			else:
+				bbox.Ry += newBbox.Ry - bbox.Ry
+			expandBbox = True
+
+		# If new bbox is on the x side of bbox
+		if bbox.y <= newBbox.y and bbox.Ry >= newBbox.Ry:
+			# new bbox on the left of bbox
+			if newBbox.x < bbox.x:
+				newBbox.Rx = bbox.x - 1
+			# new bbox on the right of bbox
+			else:
+				newBbox.x = bbox.Rx + 1
+
+		# If new bbox is on the y side of bbox
+		elif bbox.x <= newBbox.x and bbox.Rx >= newBbox.Rx:
+			# new bbox on the top of bbox
+			if newBbox.y < bbox.y:
+				newBbox.Ry = bbox.y - 1
+			# new bbox on the bottom of bbox
+			else:
+				newBbox.y = bbox.Ry + 1
+
+		return expandBbox
+
+
 	def updateBbox(self, bbox: Bbox, idBbox, newBbox: Bbox, x, y):
 		# Check if we can merge in x or y axis
 		if (bbox.y == newBbox.y and bbox.Ry == newBbox.Ry) or\
@@ -85,60 +153,7 @@ class BboxManager:
 			bbox.update(x, y)
 			return idBbox
 		else:
-			# Get the bbox dir. s = square, x = x axis, y = y axis
-			bboxDir = 's'
-			if bbox.Rx - bbox.x > bbox.Ry - bbox.y:
-				bboxDir = 'x'
-			elif bbox.Rx - bbox.x < bbox.Ry - bbox.y:
-				bboxDir = 'y'
-
-			# If new bbox is on the top left corner
-			if bbox.x > newBbox.x and bbox.y > newBbox.y:
-				# If bbox dir isn't y axis, we can expand it to x axis
-				if bboxDir != 'y':
-					bbox.x -= bbox.x - newBbox.x
-				else:
-					bbox.y -= bbox.y - newBbox.y
-
-			elif bbox.x > newBbox.x and bbox.Ry < newBbox.Ry:
-				# If bbox dir isn't y axis, we can expand it to x axis
-				if bboxDir != 'y':
-					bbox.x -= bbox.x - newBbox.x
-				else:
-					bbox.Ry += newBbox.Ry - bbox.Ry
-
-			elif bbox.Rx < newBbox.Rx and bbox.y > newBbox.y:
-				# If bbox dir isn't y axis, we can expand it to x axis
-				if bboxDir != 'y':
-					bbox.Rx += newBbox.Rx - bbox.Rx
-				else:
-					bbox.y -= bbox.y - newBbox.y
-
-			elif bbox.Rx < newBbox.Rx and bbox.Ry < newBbox.Ry:
-				# If bbox dir isn't y axis, we can expand it to x axis
-				if bboxDir != 'y':
-					bbox.Rx += newBbox.Rx - bbox.Rx
-				else:
-					bbox.Ry += newBbox.Ry - bbox.Ry
-
-
-			# If new bbox is on the x side of bbox
-			if bbox.y <= newBbox.y and bbox.Ry >= newBbox.Ry:
-				# new bbox on the left of bbox
-				if newBbox.x < bbox.x:
-					newBbox.Rx = bbox.x - 1
-				# new bbox on the right of bbox
-				else:
-					newBbox.x = bbox.Rx + 1
-
-			# If new bbox is on the y side of bbox
-			elif bbox.x <= newBbox.x and bbox.Rx >= newBbox.Rx:
-				# new bbox on the top of bbox
-				if newBbox.y < bbox.y:
-					newBbox.Ry = bbox.y - 1
-				# new bbox on the bottom of bbox
-				else:
-					newBbox.y = bbox.Ry + 1
+			self.cutOverlap(bbox, newBbox)
 
 		return -1
 
@@ -196,11 +211,12 @@ class BboxManager:
 
 		# New stone is alone
 		else:
-			print(" new bbox")
+			print(f" new bbox append {newBbox}")
 			self.bboxes.append(newBbox)
 			newBboxId = self.nbBoxes
 			self.nbBoxes += 1
 
+		print(f" nbBbox {self.nbBoxes}")
 		newBbox = self.bboxes[newBboxId]
 		# Check for merge bbox if possible
 		i = 0
@@ -212,39 +228,57 @@ class BboxManager:
 
 			bbox = self.bboxes[i]
 
-			# TODO : continue
+			print(f"  bbox {bbox}, newBbox {newBbox}")
 			# Check if bbox can merge on x axis
 			if bbox.y == newBbox.y and bbox.Ry == newBbox.Ry and\
-				bbox.x <= newBbox.Rx + 1 and bbox.Rx >= newBbox.x - 1:
+					bbox.x <= newBbox.Rx + 1 and bbox.Rx >= newBbox.x - 1:
+				print("   merge x")
+				# Merge bbox
 				bbox.x = min(bbox.x, newBbox.x)
 				bbox.Rx = max(bbox.Rx, newBbox.Rx)
+				print(f"   bbox merged {bbox}")
+
+				# Remove newBbox de boxes
 				self.bboxes.pop(newBboxId)
 				self.nbBoxes -= 1
+
+				# Get new bbox
+				if newBboxId < i:
+					i -= 1
 				newBboxId = i
 				newBbox = self.bboxes[newBboxId]
-				i = 0
+				i = -1
 
 			# Check if bbox can merge on y axis
 			elif bbox.x == newBbox.x and bbox.Rx == newBbox.Rx and\
-				bbox.y <= newBbox.Ry + 1 and bbox.Ry >= newBbox.y - 1:
+					bbox.y <= newBbox.Ry + 1 and bbox.Ry >= newBbox.y - 1:
+				print("   merge y")
+				# Merge bbox
 				bbox.y = min(bbox.y, newBbox.y)
 				bbox.Ry = max(bbox.Ry, newBbox.Ry)
+				print(f"   bbox merged {bbox}")
+
+				# Remove newBbox de boxes
 				self.bboxes.pop(newBboxId)
 				self.nbBoxes -= 1
+
+				# Get new bbox
+				if newBboxId < i:
+					i -= 1
 				newBboxId = i
 				newBbox = self.bboxes[newBboxId]
-				i = 0
+				i = -1
 
-			# # Delete overlap
-			# if bbox.collideBbox(newBbox):
-			# 	print(" overlap detected")
-			# 	# new bbox on the left
-			# 	if newBbox.x <= bbox.x and bbox.y <= newBbox.y and bbox.Ry >= newBbox.Ry:
-			# 		print(" overlap of right")
-			# 	elif newBbox.Rx >= bbox.Rx and bbox.y <= newBbox.y and bbox.Ry >= newBbox.Ry:
-			# 		print(" overlap of left")
+			# Delete overlap
+			elif bbox.collideBbox(newBbox):
+				print("overlap")
+				self.cutOverlap(bbox, newBbox)
+				print(f"   bbox overlaped {newBbox}")
+
+			print()
 
 			i += 1
+
 
 
 	def countBboxCover(self, x, y):
