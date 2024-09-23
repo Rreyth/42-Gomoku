@@ -60,6 +60,8 @@ class Game:
 		self.currentIdHistory = 0
 		self.history.append((copyGrid(self.grid), self.bboxManager.copy()))
 
+		self.displayBorder = False
+
 
 	def run(self):
 		"""
@@ -125,16 +127,6 @@ class Game:
 				self.history.append((copyGrid(self.grid), self.bboxManager.copy()))
 				self.currentIdHistory += 1
 
-			# # Remove tile
-			# if self.mouseState[2] and self.grid[tile_y][tile_x] == TILE_FULL:
-			# 	self.grid[tile_y][tile_x] = TILE_EMPTY
-
-			# 	self.bboxManager.clear()
-			# 	for y in range(GRID_SIZE):
-			# 		for x in range(GRID_SIZE):
-			# 			if (self.grid[y][x]):
-			# 				self.bboxManager.update(x, y)
-
 		# Clear grid
 		if self.keyboardState[pg.K_SPACE]:
 			self.grid = []
@@ -165,6 +157,13 @@ class Game:
 			self.bboxManager = savedData[1].copy()
 			self.waitInput = 0.1
 
+		if self.keyboardState[pg.K_UP] and self.waitInput == 0:
+			self.displayBorder = not self.displayBorder
+			self.waitInput = 0.2
+
+		if self.keyboardState[pg.K_DOWN]:
+			print()
+
 		pg.display.set_caption(str(self.clock.get_fps()))
 
 
@@ -193,6 +192,9 @@ class Game:
 		  					(y + 0.5) * TILE_SIZE + OFFSET[1]),
 							(250, 250, 250),
 							24, None, "center")
+
+		if self.displayBorder:
+			self.bboxManager.draw(self.win)
 
 		# We update the drawing.
 		# Before the function call, any changes will be not visible

@@ -1,4 +1,6 @@
-from define import GRID_SIZE, COLORS_PANELS, COLORS_PANELS_NB, TILE_COLORS
+from define import GRID_SIZE, COLORS_PANELS, COLORS_PANELS_NB, TILE_COLORS, TILE_SIZE, OFFSET
+
+import pygame as pg
 
 class Bbox:
 	def __init__(self, x, y, colors):
@@ -60,6 +62,11 @@ class Bbox:
 				and bbox.Ry >= self.y and bbox.y <= self.Ry
 
 
+	def containBbox(self, bbox: 'Bbox'):
+		return self.x <= bbox.x and self.Rx >= bbox.Rx and\
+				self.y <= bbox.y and self.Ry >= bbox.Ry
+
+
 	def merge(self, bbox: 'Bbox'):
 		if bbox.x <= self.x:
 			self.x = bbox.x
@@ -88,7 +95,7 @@ class BboxManager:
 		self.nbBoxes = 0
 
 
-	def cutOverlap(self, bbox: Bbox, newBbox: Bbox):
+	def cutOverlap(self, idBbox, bbox: Bbox, newBbox: Bbox):
 		expandBbox = False
 
 		# Get the bbox dir. s = square, x = x axis, y = y axis
@@ -152,11 +159,29 @@ class BboxManager:
 		if not expandBbox:
 			return
 
-		for bb in self.bboxes:
+		i = 0
+		while i < self.nbBoxes:
+			bb = self.bboxes[i]
 			if bb == bbox or bb == newBbox:
+				i += 1
 				continue
+
+			if bb.containBbox(bbox):
+				self.bboxes.pop(idBbox)
+				self.nbBoxes -= 1
+				break
+
+			if bbox.containBbox(bb):
+				self.bboxes.pop(i)
+				self.nbBoxes -= 1
+				if idBbox > i:
+					idBbox -= 1
+				i = 0
+				continue
+
 			if bb.collideBbox(bbox):
-				self.cutOverlap(bb, bbox)
+				self.cutOverlap(i, bb, bbox)
+			i += 1
 
 
 	def updateBbox(self, bbox: Bbox, idBbox, newBbox: Bbox, x, y):
@@ -196,6 +221,7 @@ class BboxManager:
 
 			newBboxId = self.updateBbox(bbox, inBbox, newBbox, x, y)
 			if newBboxId == -1:
+				self.cutOverlap(inBbox, bbox, newBbox)
 				self.bboxes.append(newBbox)
 				newBboxId = self.nbBoxes
 				self.nbBoxes += 1
@@ -213,18 +239,34 @@ class BboxManager:
 					break
 
 			if not bboxUpdate:
+				newBboxUseless = True
+				for bby in range(newBbox.y, newBbox.Ry + 1):
+					for bbx in range(newBbox.x, newBbox.Rx + 1):
+						if not self.countBboxCover(bbx, bby) > 0:
+							newBboxUseless = False
+							break
+				if newBboxUseless:
+					return
 				self.bboxes.append(newBbox)
 				newBboxId = self.nbBoxes
 				self.nbBoxes += 1
 
 		# New stone is alone
 		else:
+			newBboxUseless = True
+			for bby in range(newBbox.y, newBbox.Ry + 1):
+				for bbx in range(newBbox.x, newBbox.Rx + 1):
+					if not self.countBboxCover(bbx, bby) > 0:
+						newBboxUseless = False
+						break
+			if newBboxUseless:
+				return
 			self.bboxes.append(newBbox)
 			newBboxId = self.nbBoxes
 			self.nbBoxes += 1
 
-		print(f" nbBbox {self.nbBoxes}")
 		newBbox = self.bboxes[newBboxId]
+		print(f"Newbox : {newBbox}\n")
 		# Check for merge bbox if possible
 		i = 0
 		while i < self.nbBoxes:
@@ -235,15 +277,44 @@ class BboxManager:
 
 			bbox = self.bboxes[i]
 
-			print(f"  bbox {bbox}, newBbox {newBbox}")
+			print(f" bbox {bbox}, newBbox {newBbox}")
+
+			# If bbox contain new bbox
+			if bbox.containBbox(newBbox):
+				print(f"  bbox contrain newBbox")
+				# Remove newBbox
+				self.bboxes.pop(newBboxId)
+				self.nbBoxes -= 1
+
+				# Get new bbox
+				if newBboxId < i:
+					i -= 1
+				newBboxId = i
+				newBbox = self.bboxes[newBboxId]
+				print(f"  newbox : {newBbox}")
+				i = 0
+				continue
+
+			if newBbox.containBbox(bbox):
+				print(f"  newBbox contrain bbox")
+				# Remove bbox
+				self.bboxes.pop(i)
+				self.nbBoxes -= 1
+
+				# Update newbbox id
+				if newBboxId > i:
+					newBboxId -= 1
+				i = 0
+				continue
+
 			# Check if bbox can merge on x axis
 			if bbox.y == newBbox.y and bbox.Ry == newBbox.Ry and\
 					bbox.x <= newBbox.Rx + 1 and bbox.Rx >= newBbox.x - 1:
-				print("   merge x")
+				print("  merge x")
 				# Merge bbox
 				bbox.x = min(bbox.x, newBbox.x)
 				bbox.Rx = max(bbox.Rx, newBbox.Rx)
-				print(f"   bbox merged {bbox}")
+				print(f"  bbox merged {bbox}, newid")
 
 				# Remove newBbox de boxes
 				self.bboxes.pop(newBboxId)
@@ -254,16 +325,18 @@ class BboxManager:
 					i -= 1
 				newBboxId = i
 				newBbox = self.bboxes[newBboxId]
-				i = -1
+				print(f" newbox : {newBbox}")
+				i = 0
+				continue
 
 			# Check if bbox can merge on y axis
-			elif bbox.x == newBbox.x and bbox.Rx == newBbox.Rx and\
+			if bbox.x == newBbox.x and bbox.Rx == newBbox.Rx and\
 					bbox.y <= newBbox.Ry + 1 and bbox.Ry >= newBbox.y - 1:
-				print("   merge y")
+				print("  merge y")
 				# Merge bbox
 				bbox.y = min(bbox.y, newBbox.y)
 				bbox.Ry = max(bbox.Ry, newBbox.Ry)
-				print(f"   bbox merged {bbox}")
+				print(f"  bbox merged {bbox}, newid")
 
 				# Remove newBbox de boxes
 				self.bboxes.pop(newBboxId)
@@ -274,22 +347,42 @@ class BboxManager:
 					i -= 1
 				newBboxId = i
 				newBbox = self.bboxes[newBboxId]
-				i = -1
+				print(f" newbox : {newBbox}")
+				i = 0
+				continue
 
 			# Delete overlap
-			elif bbox.collideBbox(newBbox):
-				print("   overlap")
-				self.cutOverlap(bbox, newBbox)
-				print(f"   bbox overlaped {newBbox}")
+			if bbox.collideBbox(newBbox):
+				print("  overlap")
+				self.cutOverlap(i, bbox, newBbox)
+				print(f"  bbox overlaped {newBbox}")
 
 				if newBbox.Rx - newBbox.x < 0 or newBbox.Ry - newBbox.y < 0:
-					print("   bbox empty, delete it")
+					print(f"  bbox empty, delete it, newid{newBboxId}")
 					self.bboxes.pop(newBboxId)
 					self.nbBoxes -= 1
-					break
+
+					# Get new bbox
+					if newBboxId < i:
+						i -= 1
+					newBboxId = i
+					newBbox = self.bboxes[newBboxId]
+					print(f" newbox : {newBbox}")
+
+				try:
+					newBboxId = self.bboxes.index(newBbox)
+				except:
+					# Get new bbox
+					if newBboxId < i:
+						i -= 1
+					newBboxId = i
+					newBbox = self.bboxes[newBboxId]
+					print(f"  newbox : {newBbox}")
+
+				i = 0
+				continue
 
 			print()
-
 			i += 1
 
 
@@ -307,6 +400,15 @@ class BboxManager:
 				return bbox.colors
 
 		return TILE_COLORS
+
+
+	def draw(self, win):
+		for bbox in self.bboxes:
+			x = (bbox.x) * TILE_SIZE + OFFSET[0] - 1
+			y = (bbox.y) * TILE_SIZE + OFFSET[1] - 1
+			w = (bbox.Rx - bbox.x + 1) * TILE_SIZE + 1
+			h = (bbox.Ry - bbox.y + 1) * TILE_SIZE + 1
+			pg.draw.rect(win, (255, 255, 255), (x, y, w, h), 1)
 
 
 	def clear(self):
