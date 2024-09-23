@@ -7,9 +7,7 @@ class Bbox:
 		self.Rx = x
 		self.Ry = y
 		self.colors = colors
-		colorId = COLORS_PANELS.index(colors)
-		colorsLetters = "RGBYCP"
-		self.colorsLetter = colorsLetters[colorId]
+		self.colorsLetter = colors[2]
 
 
 	def __str__(self) -> str:
@@ -18,6 +16,14 @@ class Bbox:
 
 	def __repr__(self) -> str:
 		return self.__str__()
+
+
+	def __eq__(self, value: object) -> bool:
+		if type(value) != Bbox:
+			return False
+
+		return self.x == value.x and self.Rx == value.Rx and\
+				self.y == value.y and self.Ry == value.Ry
 
 
 	def update(self, x, y):
@@ -82,7 +88,7 @@ class BboxManager:
 		self.nbBoxes = 0
 
 
-	def cutOverlap(self, bbox: Bbox, newBbox: Bbox) -> bool:
+	def cutOverlap(self, bbox: Bbox, newBbox: Bbox):
 		expandBbox = False
 
 		# Get the bbox dir. s = square, x = x axis, y = y axis
@@ -143,7 +149,14 @@ class BboxManager:
 			else:
 				newBbox.y = bbox.Ry + 1
 
-		return expandBbox
+		if not expandBbox:
+			return
+
+		for bb in self.bboxes:
+			if bb == bbox or bb == newBbox:
+				continue
+			if bb.collideBbox(bbox):
+				self.cutOverlap(bb, bbox)
 
 
 	def updateBbox(self, bbox: Bbox, idBbox, newBbox: Bbox, x, y):
@@ -152,9 +165,6 @@ class BboxManager:
 				(bbox.x == newBbox.x and bbox.Rx == newBbox.Rx):
 			bbox.update(x, y)
 			return idBbox
-		else:
-			self.cutOverlap(bbox, newBbox)
-
 		return -1
 
 
@@ -162,7 +172,7 @@ class BboxManager:
 		# Create bbox
 		newBbox = Bbox(-1, -1, COLORS_PANELS[self.nbBoxes % COLORS_PANELS_NB])
 		newBbox.update(x, y)
-		print(f"\nNew stone at {x} {y}")
+		print(f"\n\n==========================\nNew stone at {x} {y}")
 
 		inBbox = -1
 		borderBbox = []
@@ -182,7 +192,6 @@ class BboxManager:
 
 		# New stone in bbox, update it
 		if inBbox != -1:
-			print(" update bbox")
 			bbox = self.bboxes[inBbox]
 
 			newBboxId = self.updateBbox(bbox, inBbox, newBbox, x, y)
@@ -193,7 +202,6 @@ class BboxManager:
 
 		# New stone border some other bbox
 		elif len(borderBbox) != 0:
-			print(" border bbox")
 			bboxUpdate = False
 
 			for i in borderBbox:
@@ -211,7 +219,6 @@ class BboxManager:
 
 		# New stone is alone
 		else:
-			print(f" new bbox append {newBbox}")
 			self.bboxes.append(newBbox)
 			newBboxId = self.nbBoxes
 			self.nbBoxes += 1
@@ -271,14 +278,19 @@ class BboxManager:
 
 			# Delete overlap
 			elif bbox.collideBbox(newBbox):
-				print("overlap")
+				print("   overlap")
 				self.cutOverlap(bbox, newBbox)
 				print(f"   bbox overlaped {newBbox}")
+
+				if newBbox.Rx - newBbox.x < 0 or newBbox.Ry - newBbox.y < 0:
+					print("   bbox empty, delete it")
+					self.bboxes.pop(newBboxId)
+					self.nbBoxes -= 1
+					break
 
 			print()
 
 			i += 1
-
 
 
 	def countBboxCover(self, x, y):
@@ -306,4 +318,5 @@ class BboxManager:
 		bboxManager = BboxManager()
 		for bbox in self.bboxes:
 			bboxManager.bboxes.append(bbox.copy())
+		bboxManager.nbBoxes = self.nbBoxes
 		return bboxManager

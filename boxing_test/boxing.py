@@ -20,6 +20,14 @@ def drawText(surface, text, pos, color=(0, 0, 0), size=24, font=None, align="lef
 		surface.blit(img, pos)
 
 
+def copyGrid(grid: list[list[int]]) -> list[list[int]]:
+	newGrid = []
+	for line in grid:
+		newGrid.append(line.copy())
+
+	return newGrid
+
+
 class Game:
 	def __init__(self):
 		"""
@@ -47,6 +55,10 @@ class Game:
 		self.tileTarget = None
 
 		self.bboxManager = BboxManager()
+		self.history = []
+		self.waitInput = 0
+		self.currentIdHistory = 0
+		self.history.append((copyGrid(self.grid), self.bboxManager.copy()))
 
 
 	def run(self):
@@ -88,6 +100,9 @@ class Game:
 		delta = tmp - self.last
 		self.last = tmp
 
+		if self.waitInput > 0:
+			self.waitInput = max(0, self.waitInput - delta)
+
 		grid_x_left = OFFSET[0]
 		grid_y_left = OFFSET[1]
 		grid_x_right = grid_x_left + GRID_W
@@ -105,16 +120,20 @@ class Game:
 			if self.mouseState[0] and self.grid[tile_y][tile_x] == TILE_EMPTY:
 				self.grid[tile_y][tile_x] = TILE_FULL
 				self.bboxManager.update(tile_x, tile_y)
+				while len(self.history) > self.currentIdHistory + 1:
+					self.history.pop()
+				self.history.append((copyGrid(self.grid), self.bboxManager.copy()))
+				self.currentIdHistory += 1
 
-			# Remove tile
-			if self.mouseState[2] and self.grid[tile_y][tile_x] == TILE_FULL:
-				self.grid[tile_y][tile_x] = TILE_EMPTY
+			# # Remove tile
+			# if self.mouseState[2] and self.grid[tile_y][tile_x] == TILE_FULL:
+			# 	self.grid[tile_y][tile_x] = TILE_EMPTY
 
-				self.bboxManager.clear()
-				for y in range(GRID_SIZE):
-					for x in range(GRID_SIZE):
-						if (self.grid[y][x]):
-							self.bboxManager.update(x, y)
+			# 	self.bboxManager.clear()
+			# 	for y in range(GRID_SIZE):
+			# 		for x in range(GRID_SIZE):
+			# 			if (self.grid[y][x]):
+			# 				self.bboxManager.update(x, y)
 
 		# Clear grid
 		if self.keyboardState[pg.K_SPACE]:
@@ -123,6 +142,28 @@ class Game:
 				self.grid.append([TILE_EMPTY] * GRID_SIZE)
 
 			self.bboxManager.clear()
+			self.history.clear()
+			self.currentIdHistory = 0
+			self.history.append((copyGrid(self.grid), self.bboxManager.copy()))
+			print("\n\n\n")
+
+		# Go back in history
+		if self.keyboardState[pg.K_LEFT] and self.waitInput == 0\
+				and self.currentIdHistory > 0:
+			self.currentIdHistory -= 1
+			savedData = self.history[self.currentIdHistory]
+			self.grid = copyGrid(savedData[0])
+			self.bboxManager = savedData[1].copy()
+			self.waitInput = 0.1
+
+		# Go forward in history
+		elif self.keyboardState[pg.K_RIGHT] and self.waitInput == 0\
+				and self.currentIdHistory < len(self.history) - 1:
+			self.currentIdHistory += 1
+			savedData = self.history[self.currentIdHistory]
+			self.grid = copyGrid(savedData[0])
+			self.bboxManager = savedData[1].copy()
+			self.waitInput = 0.1
 
 		pg.display.set_caption(str(self.clock.get_fps()))
 
@@ -133,6 +174,9 @@ class Game:
 		"""
 		# We clean our screen with one color
 		self.win.fill((0, 0, 0))
+
+		drawText(self.win, f"Nb bboxes : {self.bboxManager.nbBoxes}",
+					(10, 10), (255, 255, 255))
 
 		for y in range(GRID_SIZE):
 			for x in range(GRID_SIZE):
