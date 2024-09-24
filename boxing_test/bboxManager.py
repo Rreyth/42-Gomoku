@@ -53,11 +53,6 @@ class Bbox:
 		return x >= self.x and x <= self.Rx and y >= self.y and y <= self.Ry
 
 
-	def isInPerimeter(self, x, y):
-		return x >= self.x - 1 and x <= self.Rx + 1\
-				and y >= self.y - 1 and y <= self.Ry + 1
-
-
 	def collideBbox(self, bbox: 'Bbox'):
 		return bbox.Rx >= self.x and bbox.x <= self.Rx\
 				and bbox.Ry >= self.y and bbox.y <= self.Ry
@@ -175,11 +170,9 @@ class BboxManager:
 							newBbox.Ry = bbox.y - 1
 							# print(f"   newBbox corner cut {newBbox}")
 							# print(f"   new tmp bbox {tmp}")
-							i = 0
-							continue
 
 						# If new bbox is on the bot left corner
-						if bbox.x > newBbox.x and bbox.Ry < newBbox.Ry:
+						elif bbox.x > newBbox.x and bbox.Ry < newBbox.Ry:
 							# print("  collide with bbox bot left corner")
 							# Create a new bbox to fill empty space left by cutting newBbox
 							tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
@@ -193,11 +186,9 @@ class BboxManager:
 							newBbox.y = bbox.Ry + 1
 							# print(f"   newBbox corner cut {newBbox}")
 							# print(f"   new tmp bbox {tmp}")
-							i = 0
-							continue
 
 						# If new bbox is on the top right corner
-						if bbox.Rx < newBbox.Rx and bbox.y > newBbox.y:
+						elif bbox.Rx < newBbox.Rx and bbox.y > newBbox.y:
 							# print("  collide with bbox top right corner")
 							# Create a new bbox to fill empty space left by cutting newBbox
 							tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
@@ -211,11 +202,9 @@ class BboxManager:
 							newBbox.Ry = bbox.y - 1
 							# print(f"   newBbox corner cut {newBbox}")
 							# print(f"   new tmp bbox {tmp}")
-							i = 0
-							continue
 
 						# If new bbox is on the bot right corner
-						if bbox.Rx < newBbox.Rx and bbox.Ry < newBbox.Ry:
+						else:
 							# print("  collide with bbox bot right corner")
 							# Create a new bbox to fill empty space left by cutting newBbox
 							tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
@@ -229,8 +218,6 @@ class BboxManager:
 							newBbox.y = bbox.Ry + 1
 							# print(f"   newBbox corner cut {newBbox}")
 							# print(f"   new tmp bbox {tmp}")
-							i = 0
-							continue
 
 					# print(f"  newBbox cut {newBbox}")
 
@@ -316,3 +303,14 @@ class BboxManager:
 			bboxManager.bboxes.append(bbox.copy())
 		bboxManager.nbBoxes = self.nbBoxes
 		return bboxManager
+
+
+	def getListPosition(self):
+		lst = []
+
+		for bbox in self.bboxes:
+			for y in range(bbox.y, bbox.Ry + 1):
+				for x in range(bbox.x, bbox.Rx + 1):
+					lst.append((x, y))
+
+		return lst

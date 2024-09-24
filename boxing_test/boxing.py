@@ -4,7 +4,7 @@ import time
 import sys
 
 from define import	SCREEN_SIZE, OFFSET, GRID_SIZE, GRID_W, GRID_H,\
-					TILE_SIZE, TILE_BG_SIZE, TILE_EMPTY, TILE_FULL
+					TILE_SIZE, TILE_BG_SIZE, TILE_EMPTY, TILE_FULL, TILE_COLORS, TILE_COLORS_IN_BBOX
 from bboxManager import BboxManager
 
 
@@ -74,6 +74,7 @@ class Game:
 		self.perfHistory = []
 
 		self.displayBorder = False
+		self.displayMixedBbox = False
 		self.runTestSequence = False
 		self.testSequenceId = 0
 
@@ -190,6 +191,10 @@ class Game:
 			self.displayBorder = not self.displayBorder
 			self.waitInput = 0.2
 
+		if self.keyboardState[pg.K_d] and self.waitInput == 0:
+			self.displayMixedBbox = not self.displayMixedBbox
+			self.waitInput = 0.2
+
 		if self.keyboardState[pg.K_DOWN]:
 			print()
 
@@ -239,9 +244,18 @@ class Game:
 		drawText(self.win, f"Nb bboxes : {self.bboxManager.nbBoxes}",
 					(10, 10), (255, 255, 255))
 
+		lst = self.bboxManager.getListPosition()
+
 		for y in range(GRID_SIZE):
 			for x in range(GRID_SIZE):
-				colors = self.bboxManager.getColors(x, y)
+
+				if self.displayMixedBbox:
+					if (x, y) in lst:
+						colors = TILE_COLORS_IN_BBOX
+					else:
+						colors = TILE_COLORS
+				else:
+					colors = self.bboxManager.getColors(x, y)
 				pg.draw.rect(self.win, colors[self.grid[y][x]],
 								(x * TILE_SIZE + OFFSET[0],
 								y * TILE_SIZE + OFFSET[1],

@@ -29,8 +29,10 @@ SRCS				:=	srcs/main.cpp \
 						srcs/screen/Settings.cpp \
 						srcs/screen/ModeMenu.cpp \
 						srcs/game/Grid.cpp \
+						srcs/game/Bbox.cpp \
 						srcs/game/Player.cpp \
 						srcs/game/BitBoard.cpp \
+						srcs/game/BboxManager.cpp \
 						srcs/AI/AI.cpp \
 						srcs/AI/Evaluation.cpp \
 

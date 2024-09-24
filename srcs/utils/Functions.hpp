@@ -11,4 +11,7 @@ void	drawText(sf::RenderWindow *window, sf::Text *text, std::string str,
 
 int		rand_int(int start, int end);
 
+int		min(int a, int b);
+int		max(int a, int b);
+
 #endif

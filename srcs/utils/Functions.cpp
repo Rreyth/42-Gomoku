@@ -36,8 +36,25 @@ void	drawText(sf::RenderWindow *window, sf::Text *text, std::string str,
 	window->draw(*text);
 }
 
+
 int		rand_int(int start, int end)
 {
 	srand(time(NULL));
 	return (rand() % end + start);
+}
+
+
+int	min(int a, int b)
+{
+	if (a > b)
+		return (b);
+	return (a);
+}
+
+
+int	max(int a, int b)
+{
+	if (a < b)
+		return (b);
+	return (a);
 }
