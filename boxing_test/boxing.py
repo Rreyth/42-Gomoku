@@ -5,9 +5,7 @@ import sys
 
 from define import	SCREEN_SIZE, OFFSET, GRID_SIZE, GRID_W, GRID_H,\
 					TILE_SIZE, TILE_BG_SIZE, TILE_EMPTY, TILE_FULL
-# from bboxManager1 import BboxManager
-from bboxManager2 import BboxManager
-# from bboxManager3 import BboxManager
+from bboxManager import BboxManager
 
 
 def drawText(surface, text, pos, color=(0, 0, 0), size=24, font=None, align="left"):
@@ -27,6 +25,19 @@ def copyGrid(grid: list[list[int]]) -> list[list[int]]:
 
 	return newGrid
 
+
+def generateNewTestSequence(lenght):
+	import random
+	lst = []
+	for _ in range(lenght):
+		tmp = (random.randint(0, GRID_SIZE - 1), random.randint(0, GRID_SIZE - 1))
+		if tmp not in lst:
+			lst.append(tmp)
+
+	print(lst)
+
+# testSequence = [(1, 4), (1, 17), (8, 5), (12, 16), (16, 18), (11, 3), (11, 9), (14, 5), (14, 17), (5, 4), (9, 18), (9, 0), (4, 4), (6, 13), (1, 0), (5, 10), (12, 3), (17, 3), (12, 13), (14, 9), (18, 15), (6, 5), (13, 2), (2, 18), (12, 9), (17, 4), (11, 14), (5, 8), (6, 11), (4, 7), (9, 9), (15, 1), (4, 18), (16, 7), (5, 9), (14, 1), (8, 3), (10, 13), (3, 7), (9, 11), (18, 8), (16, 0), (7, 18), (15, 14), (11, 12), (11, 5)]
+testSequence = [(2, 6), (16, 0), (3, 8), (3, 16), (13, 4), (9, 3), (4, 7), (0, 11), (7, 16), (18, 5), (14, 2), (6, 16), (3, 7), (11, 7), (3, 6), (9, 4), (16, 7), (10, 11), (16, 8), (17, 5), (14, 12), (10, 17), (0, 5), (11, 4), (11, 16), (9, 5), (1, 7), (12, 13), (9, 2), (0, 3), (13, 14), (5, 17), (13, 11), (6, 6), (3, 17), (13, 17), (8, 13), (1, 18), (2, 13), (2, 8), (15, 13), (14, 16), (2, 12), (13, 8), (7, 14), (8, 6), (12, 15), (1, 3), (10, 0), (3, 14), (0, 9), (11, 11), (13, 12), (14, 10), (17, 3), (13, 9), (13, 5), (8, 10), (13, 10), (4, 15), (18, 17), (15, 16), (9, 1), (15, 10), (5, 6), (2, 1), (10, 5), (10, 1), (2, 17), (6, 5), (15, 12), (12, 8), (5, 2), (2, 10), (6, 0), (7, 9), (16, 3), (11, 2), (18, 15), (2, 7), (11, 18), (14, 13), (2, 0), (12, 3), (11, 0), (8, 9), (0, 8), (0, 12), (10, 15), (15, 1), (14, 9), (6, 3), (4, 4), (14, 8), (17, 15), (12, 1), (16, 13), (10, 6), (18, 13), (8, 2), (10, 9), (13, 15), (14, 15), (6, 10), (3, 15), (6, 9), (17, 10), (1, 2), (1, 0), (0, 7), (8, 15), (11, 14), (16, 11), (8, 3), (16, 15), (13, 0), (9, 0), (0, 18), (9, 7), (9, 9), (4, 9), (10, 18), (3, 0), (9, 10), (7, 5), (17, 13), (0, 2)]
 
 class Game:
 	def __init__(self):
@@ -60,7 +71,11 @@ class Game:
 		self.currentIdHistory = 0
 		self.history.append((copyGrid(self.grid), self.bboxManager.copy()))
 
+		self.perfHistory = []
+
 		self.displayBorder = False
+		self.runTestSequence = False
+		self.testSequenceId = 0
 
 
 	def run(self):
@@ -121,11 +136,25 @@ class Game:
 			# Place tile
 			if self.mouseState[0] and self.grid[tile_y][tile_x] == TILE_EMPTY:
 				self.grid[tile_y][tile_x] = TILE_FULL
-				self.bboxManager.update(tile_x, tile_y)
+				perf = self.bboxManager.update(tile_x, tile_y)
 				while len(self.history) > self.currentIdHistory + 1:
 					self.history.pop()
 				self.history.append((copyGrid(self.grid), self.bboxManager.copy()))
 				self.currentIdHistory += 1
+
+				if perf[1] == 0:
+					timePerBbox = perf[0]
+				else:
+					timePerBbox = perf[0] / perf[1]
+
+				typeMove = '='
+				if perf[1] < perf[2]:
+					typeMove = '+'
+				elif perf[1] > perf[2]:
+					typeMove = '-'
+
+				print(f"took {perf[0]:6.2f} us for {perf[1]:02}->{perf[2]:02} bbox ({timePerBbox:3.2f} us per bbox)")
+				self.perfHistory.append((perf[0], timePerBbox, typeMove))
 
 		# Clear grid
 		if self.keyboardState[pg.K_SPACE]:
@@ -163,6 +192,39 @@ class Game:
 
 		if self.keyboardState[pg.K_DOWN]:
 			print()
+
+		if self.keyboardState[pg.K_t] and self.waitInput == 0:
+			self.runTestSequence = not self.runTestSequence
+			self.displayBorder = self.runTestSequence
+			self.waitInput = 0.2
+
+		if self.runTestSequence and self.waitInput == 0:
+			if self.testSequenceId < len(testSequence):
+				x, y = testSequence[self.testSequenceId]
+				self.testSequenceId += 1
+				self.grid[y][x] = TILE_FULL
+				perf = self.bboxManager.update(x, y)
+				self.waitInput = 0.02
+				while len(self.history) > self.currentIdHistory + 1:
+					self.history.pop()
+				self.history.append((copyGrid(self.grid), self.bboxManager.copy()))
+				self.currentIdHistory += 1
+
+				if perf[1] == 0:
+					timePerBbox = perf[0]
+				else:
+					timePerBbox = perf[0] / perf[1]
+
+				typeMove = '='
+				if perf[1] < perf[2]:
+					typeMove = '+'
+				elif perf[1] > perf[2]:
+					typeMove = '-'
+
+				# print(f"took {perf[0]:6.2f} us for {perf[1]:02}->{perf[2]:02} bbox ({timePerBbox:3.2f} us per bbox)")
+				self.perfHistory.append((perf[0], timePerBbox, typeMove))
+			else:
+				self.runTestSequence = False
 
 		pg.display.set_caption(str(self.clock.get_fps()))
 
@@ -205,9 +267,35 @@ class Game:
 		"""
 		This is the quit method
 		"""
+		sumTime = 0
+		sumTimePerAddBbox = 0
+		nbAddBbox = 0
+		sumTimePerRemoveBbox = 0
+		nbRemoveBbox = 0
+		sumTimePerBbox = 0
+
+		for perf in self.perfHistory:
+			sumTime += perf[0]
+			sumTimePerBbox += perf[1]
+
+			if perf[2] == '+':
+				sumTimePerAddBbox += perf[0]
+				nbAddBbox += 1
+			if perf[2] == '-':
+				sumTimePerRemoveBbox += perf[0]
+				nbRemoveBbox += 1
+
+		nbMove = len(self.perfHistory)
+		print(f"\n\nTime on average of {nbMove} moves :")
+		print(f" - general : {sumTime / nbMove:.2f} us")
+		print(f" - per bbox : {sumTimePerBbox / nbMove:.2f} us")
+		print(f" - per add bbox : {sumTimePerAddBbox / nbAddBbox:.2f} us")
+		print(f" - per remove bbox : {sumTimePerRemoveBbox / nbRemoveBbox:.2f} us")
+
 		# Pygame quit
 		pg.quit()
 		sys.exit()
 
+# generateNewTestSequence(150)
 
 Game().run() # Start game
