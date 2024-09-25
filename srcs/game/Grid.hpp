@@ -4,6 +4,7 @@
 # include <define.hpp>
 # include <ui/Button.hpp>
 # include <game/BitBoard.hpp>
+# include <game/BboxManager.hpp>
 
 # include <vector>
 
@@ -22,8 +23,10 @@ public:
 	int				getH(void);
 	std::string		getHistoryIdString(void);
 	BitBoard		*getBitBoard(inter_type type);
+	BboxManager		*getBboxManager(void);
 
 	void			setBitBoard(BitBoard *bitBoard, inter_type type);
+	void			setBboxManager(BboxManager *bboxManager);
 
 	Grid			&operator=(const Grid &grid);
 
@@ -32,8 +35,10 @@ public:
 	void			draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	bool			checkLegalMove(int x, int y, int nbMoves, inter_type plType, inter_type opType);
 	bool			putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
+	bool			putStoneAI(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
 	void			removeStone(sf::Vector2i *move, inter_type plType);
 	bool			checkWinCondition(Player *player, Player *opponent);
+	void			updateBboxManager(sf::Vector2i *move);
 	void			clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
 	void			reset(void);
 	void			addBoardToHistory(void);
@@ -54,6 +59,7 @@ private:
 	game_rules									rule;
 	std::string									historyIdString;
 	BitBoard									bitboardL, bitboardR;
+	BboxManager									bboxManager;
 	std::vector<std::pair<BitBoard, BitBoard>>	boardHistory;
 
 	bool	checkWinByAlign(Player *player, Player *opponent, BitBoard *plBitboard, BitBoard *opBitboard);

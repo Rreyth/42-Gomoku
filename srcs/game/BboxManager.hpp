@@ -13,10 +13,10 @@ public:
 	BboxManager(const BboxManager &obj);
 	~BboxManager();
 
+	std::vector<Bbox>	*getBboxes(void);
+
 	BboxManager	&operator=(const BboxManager &obj);
 
-	void						saveBboxes(std::vector<Bbox> *bboxes);
-	void						loadBboxes(std::vector<Bbox> *bboxes);
 	void						update(int x, int y);
 	std::vector<sf::Vector2i>	getListPosition(void) const;
 	void						clear(void);

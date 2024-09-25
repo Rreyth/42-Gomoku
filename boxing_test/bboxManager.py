@@ -103,40 +103,40 @@ class BboxManager:
 		nbSave = self.nbBoxes
 
 		newBboxes = [tmp]
-		# print(f"\n\n============================================================\nNew stone at {x} {y}")
+		print(f"\n\n============================================================\nNew stone at {x} {y}")
 
 		idNewBbox = 0
 		while idNewBbox < len(newBboxes):
 			addNewBbox = True
 			newBbox = newBboxes[idNewBbox]
-			# print(f"\nnewBbox {newBbox}-----------------------------------\n")
+			print(f"\nnewBbox {newBbox}-----------------------------------")
 
-			# print("\ncontains and cut part")
+			print("\ncontains and cut part")
 			i = 0
 			while i < self.nbBoxes:
 				bbox = self.bboxes[i]
-				# print(f"newBbox {newBbox}, bbox {bbox}")
+				print(f"newBbox {newBbox}, bbox {bbox}")
 
 				# If newBbox is contain by another bbox, quit here
 				if bbox.containBbox(newBbox):
-					# print(" newBbox is in bbox, stop here")
+					print(" newBbox is in bbox, stop here")
 					addNewBbox = False
 					break
 
 				# If newBbox conain bbox, remove bbox
 				if newBbox.containBbox(bbox):
-					# print(" newBbox is canibal, eating bbox")
+					print(" newBbox is canibal, eating bbox")
 					self.bboxes.pop(i)
 					self.nbBoxes -= 1
 					continue
 
 				# Check collide
 				if newBbox.collideBbox(bbox):
-					# print(" newBbox collid bbox")
+					print(" newBbox collid bbox")
 
 					# If new bbox is on the x side of bbox
 					if bbox.y <= newBbox.y and bbox.Ry >= newBbox.Ry:
-						# print("  collide with bbox on x axis")
+						print("  collide with bbox on x axis")
 						# new bbox on the left of bbox
 						if newBbox.x < bbox.x:
 							newBbox.Rx = bbox.x - 1
@@ -146,7 +146,7 @@ class BboxManager:
 
 					# If new bbox is on the y side of bbox
 					elif bbox.x <= newBbox.x and bbox.Rx >= newBbox.Rx:
-						# print("  collide with bbox on y axis")
+						print("  collide with bbox on y axis")
 						# new bbox on the top of bbox
 						if newBbox.y < bbox.y:
 							newBbox.Ry = bbox.y - 1
@@ -154,10 +154,30 @@ class BboxManager:
 						else:
 							newBbox.y = bbox.Ry + 1
 
+					# If bbox is on the x side of new bbox
+					elif newBbox.y <= bbox.y and newBbox.Ry >= bbox.Ry:
+						print("  collide with bbox on x axis")
+						# new bbox on the left of bbox
+						if bbox.x < newBbox.x:
+							bbox.Rx = newBbox.x - 1
+						# new bbox on the right of bbox
+						else:
+							bbox.x = newBbox.Rx + 1
+
+					# If bbox is on the y side of new bbox
+					elif newBbox.x <= bbox.x and newBbox.Rx >= bbox.Rx:
+						print("  collide with bbox on x axis")
+						# new bbox on the left of bbox
+						if bbox.y < newBbox.y:
+							bbox.Ry = newBbox.y - 1
+						# new bbox on the right of bbox
+						else:
+							bbox.y = newBbox.Ry + 1
+
 					else:
 						# If new bbox is on the top left corner
 						if bbox.x > newBbox.x and bbox.y > newBbox.y:
-							# print("  collide with bbox top left corner")
+							print("  collide with bbox top left corner")
 							# Create a new bbox to fill empty space left by cutting newBbox
 							tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
 																% COLORS_PANELS_NB])
@@ -168,12 +188,12 @@ class BboxManager:
 							newBboxes.append(tmp)
 							# Cut newBbox
 							newBbox.Ry = bbox.y - 1
-							# print(f"   newBbox corner cut {newBbox}")
-							# print(f"   new tmp bbox {tmp}")
+							print(f"   newBbox corner cut {newBbox}")
+							print(f"   new tmp bbox {tmp}")
 
 						# If new bbox is on the bot left corner
 						elif bbox.x > newBbox.x and bbox.Ry < newBbox.Ry:
-							# print("  collide with bbox bot left corner")
+							print("  collide with bbox bot left corner")
 							# Create a new bbox to fill empty space left by cutting newBbox
 							tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
 																% COLORS_PANELS_NB])
@@ -184,12 +204,12 @@ class BboxManager:
 							newBboxes.append(tmp)
 							# Cut newBbox
 							newBbox.y = bbox.Ry + 1
-							# print(f"   newBbox corner cut {newBbox}")
-							# print(f"   new tmp bbox {tmp}")
+							print(f"   newBbox corner cut {newBbox}")
+							print(f"   new tmp bbox {tmp}")
 
 						# If new bbox is on the top right corner
 						elif bbox.Rx < newBbox.Rx and bbox.y > newBbox.y:
-							# print("  collide with bbox top right corner")
+							print("  collide with bbox top right corner")
 							# Create a new bbox to fill empty space left by cutting newBbox
 							tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
 																% COLORS_PANELS_NB])
@@ -200,12 +220,12 @@ class BboxManager:
 							newBboxes.append(tmp)
 							# Cut newBbox
 							newBbox.Ry = bbox.y - 1
-							# print(f"   newBbox corner cut {newBbox}")
-							# print(f"   new tmp bbox {tmp}")
+							print(f"   newBbox corner cut {newBbox}")
+							print(f"   new tmp bbox {tmp}")
 
 						# If new bbox is on the bot right corner
 						else:
-							# print("  collide with bbox bot right corner")
+							print("  collide with bbox bot right corner")
 							# Create a new bbox to fill empty space left by cutting newBbox
 							tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
 																% COLORS_PANELS_NB])
@@ -216,10 +236,10 @@ class BboxManager:
 							newBboxes.append(tmp)
 							# Cut newBbox
 							newBbox.y = bbox.Ry + 1
-							# print(f"   newBbox corner cut {newBbox}")
-							# print(f"   new tmp bbox {tmp}")
+							print(f"   newBbox corner cut {newBbox}")
+							print(f"   new tmp bbox {tmp}")
 
-					# print(f"  newBbox cut {newBbox}")
+					print(f"  newBbox cut {newBbox}")
 
 				i += 1
 
@@ -227,29 +247,20 @@ class BboxManager:
 				idNewBbox += 1
 				continue
 
-			# print("\nmerge part")
+			print("\nmerge part")
 			i = 0
 			while i < self.nbBoxes:
 				bbox = self.bboxes[i]
 
-				# print(f"newBbox {newBbox}, bbox {bbox}")
-				# Check merging of x
-				if newBbox.y == bbox.y and newBbox.Ry == bbox.Ry and\
-					newBbox.x <= bbox.Rx + 1 and newBbox.Rx >= bbox.x - 1:
-					# print(" merge on x axis")
+				print(f"newBbox {newBbox}, bbox {bbox}")
+				# Check merging of x or y
+				if (newBbox.y == bbox.y and newBbox.Ry == bbox.Ry and\
+						newBbox.x <= bbox.Rx + 1 and newBbox.Rx >= bbox.x - 1) or\
+					(newBbox.x == bbox.x and newBbox.Rx == bbox.Rx and\
+						newBbox.y <= bbox.Ry + 1 and newBbox.Ry >= bbox.y - 1):
+					print(" merge on x axis")
 					newBbox.merge(bbox)
-					# print(f"  newBbox merged {newBbox}\n")
-					self.bboxes.pop(i)
-					self.nbBoxes -= 1
-					i = 0
-					continue
-
-				# Check merging of y
-				if newBbox.x == bbox.x and newBbox.Rx == bbox.Rx and\
-					newBbox.y <= bbox.Ry + 1 and newBbox.Ry >= bbox.y - 1:
-					# print(" merge on y axis")
-					newBbox.merge(bbox)
-					# print(f"  newBbox merged {newBbox}\n")
+					print(f"  newBbox merged {newBbox}\n")
 					self.bboxes.pop(i)
 					self.nbBoxes -= 1
 					i = 0

@@ -230,6 +230,7 @@ static int	mediumMiniMax(
 	inter_type			plType, opType;
 	std::vector<Move>	moves;
 	BitBoard			plBitBoard, opBitBoard;
+	BboxManager			bboxManagerSave;
 
 	// TODO : REMOVE
 	std::clock_t	start;
@@ -275,6 +276,7 @@ static int	mediumMiniMax(
 	nbMoves = plMoves + opMoves;
 	plBitBoard = *grid->getBitBoard(plType);
 	opBitBoard = *grid->getBitBoard(opType);
+	bboxManagerSave = *grid->getBboxManager();
 
 	// Find move
 	if (maximizingEval)
@@ -290,14 +292,18 @@ static int	mediumMiniMax(
 		// Simulate move
 		if (maximizingEval)
 		{
-			if (!grid->putStone(&moves[i].pos, nbMoves, player, opponent))
+			if (!grid->putStoneAI(&moves[i].pos, nbMoves, player, opponent))
 				continue;
+			if (depth > 1)
+				grid->updateBboxManager(&moves[i].pos);
 			player->addMove();
 		}
 		else
 		{
-			if (!grid->putStone(&moves[i].pos, nbMoves, opponent, player))
+			if (!grid->putStoneAI(&moves[i].pos, nbMoves, opponent, player))
 				continue;
+			if (depth > 1)
+				grid->updateBboxManager(&moves[i].pos);
 			opponent->addMove();
 		}
 
@@ -358,6 +364,8 @@ static int	mediumMiniMax(
 			else
 				grid->removeStone(&moves[i].pos, opType);
 		}
+		if (depth > 1)
+			grid->setBboxManager(&bboxManagerSave);
 
 		// Reset player
 		player->setMoves(plMoves);
@@ -408,6 +416,7 @@ sf::Vector2i	AI::getMediumMove(
 	std::vector<Move>	moves;
 	sf::Vector2i		bestMove;
 	BitBoard			plBitBoard, opBitBoard;
+	BboxManager			bboxManagerSave;
 
 	// TODO : REMOVE
 	std::clock_t	start;
@@ -423,6 +432,7 @@ sf::Vector2i	AI::getMediumMove(
 	nbMoves = plMoves + opMoves;
 	plBitBoard = *grid->getBitBoard(plType);
 	opBitBoard = *grid->getBitBoard(opType);
+	bboxManagerSave = *grid->getBboxManager();
 
 	// Get interesting moves
 	moves = grid->getInterestingMovesSorted(
@@ -497,6 +507,7 @@ sf::Vector2i	AI::getMediumMove(
 		}
 		else
 			grid->removeStone(&moves[i].pos, plType);
+		grid->setBboxManager(&bboxManagerSave);
 
 		// Reset player
 		player->setMoves(plMoves);

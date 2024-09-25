@@ -27,6 +27,11 @@ BboxManager::~BboxManager( void )
 //**** ACCESSORS ***************************************************************
 //---- Getters -----------------------------------------------------------------
 
+std::vector<Bbox>	*BboxManager::getBboxes(void)
+{
+	return (&this->bboxes);
+}
+
 //---- Setters -----------------------------------------------------------------
 
 //---- Operators ---------------------------------------------------------------
@@ -36,6 +41,7 @@ BboxManager	&BboxManager::operator=(const BboxManager &obj)
 	if (this == &obj)
 		return (*this);
 
+	this->bboxes.clear();
 	for (int i = 0; i < obj.nbBbox; i++)
 		this->bboxes.push_back(obj.bboxes[i]);
 	this->nbBbox = obj.nbBbox;
@@ -45,23 +51,6 @@ BboxManager	&BboxManager::operator=(const BboxManager &obj)
 
 //**** PUBLIC METHODS **********************************************************
 
-void	BboxManager::saveBboxes(std::vector<Bbox> *bboxes)
-{
-	bboxes->clear();
-	for (int i = 0; i < this->nbBbox; i++)
-		bboxes->push_back(this->bboxes[i]);
-}
-
-
-void	BboxManager::loadBboxes(std::vector<Bbox> *bboxes)
-{
-	this->bboxes.clear();
-	for (int i = 0; i < this->nbBbox; i++)
-		this->bboxes.push_back(bboxes->at(i));
-	this->nbBbox = this->bboxes.size();
-}
-
-
 void	BboxManager::update(int x, int y)
 {
 	bool				skipNewBbox;
@@ -69,6 +58,7 @@ void	BboxManager::update(int x, int y)
 	Bbox				tmp, *newBbox, *bbox;
 	std::vector<Bbox>	newBboxes;
 
+	tmp = Bbox();
 	tmp.update(x, y);
 	newBboxes.push_back(tmp);
 
@@ -101,10 +91,9 @@ void	BboxManager::update(int x, int y)
 			}
 
 			// Check if newBbox collide another bbox
-
 			if (newBbox->collideBbox(bbox))
 			{
-				// If newBBox collide with bbox on the x axis side
+				// If newBbox collide with bbox on the x axis side
 				if (bbox->Ly <= newBbox->Ly && bbox->Ry >= newBbox->Ry)
 				{
 					// If newBbox is on the left of bbox
@@ -115,7 +104,7 @@ void	BboxManager::update(int x, int y)
 						newBbox->Lx = bbox->Rx + 1;
 				}
 
-				// If newBBox collide with bbox on the y axis side
+				// If newBbox collide with bbox on the y axis side
 				else if (bbox->Lx <= newBbox->Lx && bbox->Rx >= newBbox->Rx)
 				{
 					// If newBbox is on the top of bbox
@@ -124,6 +113,28 @@ void	BboxManager::update(int x, int y)
 					// If newBbox is on the bot of bbox
 					else
 						newBbox->Ly = bbox->Ry + 1;
+				}
+
+				// If bbox collide with newBbox on the x axis side
+				else if (newBbox->Ly <= bbox->Ly && newBbox->Ry >= bbox->Ry)
+				{
+					// If newBbox is on the left of bbox
+					if (bbox->Lx < newBbox->Lx)
+						bbox->Rx = newBbox->Lx - 1;
+					// If newBbox is on the right of bbox
+					else
+						bbox->Lx = newBbox->Rx + 1;
+				}
+
+				// If bbox collide with newBbox on the y axis side
+				else if (newBbox->Lx <= bbox->Lx && newBbox->Rx >= bbox->Rx)
+				{
+					// If newBbox is on the top of bbox
+					if (bbox->Ly < newBbox->Ly)
+						bbox->Ry = newBbox->Ly - 1;
+					// If newBbox is on the bot of bbox
+					else
+						bbox->Ly = newBbox->Ry + 1;
 				}
 
 				// Else the bbox is in a corner
@@ -139,6 +150,7 @@ void	BboxManager::update(int x, int y)
 						tmp.Ly = bbox->Ly;
 						tmp.Ry = newBbox->Ry;
 						newBboxes.push_back(tmp);
+						newBbox = &newBboxes[idNewBbox];
 						// Cut newBbox to avoid overlap with bbox
 						newBbox->Ry = bbox->Ly - 1;
 					}
@@ -153,6 +165,7 @@ void	BboxManager::update(int x, int y)
 						tmp.Ly = newBbox->Ly;
 						tmp.Ry = bbox->Ry;
 						newBboxes.push_back(tmp);
+						newBbox = &newBboxes[idNewBbox];
 						// Cut newBbox to avoid overlap with bbox
 						newBbox->Ly = bbox->Ry + 1;
 					}
@@ -167,6 +180,7 @@ void	BboxManager::update(int x, int y)
 						tmp.Ly = bbox->Ly;
 						tmp.Ry = newBbox->Ry;
 						newBboxes.push_back(tmp);
+						newBbox = &newBboxes[idNewBbox];
 						// Cut newBbox to avoid overlap with bbox
 						newBbox->Ry = bbox->Ly - 1;
 					}
@@ -181,6 +195,7 @@ void	BboxManager::update(int x, int y)
 						tmp.Ly = newBbox->Ly;
 						tmp.Ry = bbox->Ry;
 						newBboxes.push_back(tmp);
+						newBbox = &newBboxes[idNewBbox];
 						// Cut newBbox to avoid overlap with bbox
 						newBbox->Ly = bbox->Ry + 1;
 					}
@@ -201,15 +216,17 @@ void	BboxManager::update(int x, int y)
 		idBbox = 0;
 		while (idBbox < this->nbBbox)
 		{
+			bbox = &this->bboxes[idBbox];
+
 			// Check if newBbox can merge with bbox on x or y axis
-			if ((newBbox->Ly == bbox->Ly and newBbox->Ry == bbox->Ry
-					&& newBbox->Lx <= bbox->Ry + 1 && newBbox->Rx >= bbox->Lx - 1)
+			if ((newBbox->Ly == bbox->Ly && newBbox->Ry == bbox->Ry
+					&& newBbox->Lx <= bbox->Rx + 1 && newBbox->Rx >= bbox->Lx - 1)
 				|| (newBbox->Lx == bbox->Lx && newBbox->Rx == bbox->Rx
-					&& newBbox->Ly <= bbox->Ry && newBbox->Ry >= bbox->Ly))
+					&& newBbox->Ly <= bbox->Ry + 1 && newBbox->Ry >= bbox->Ly - 1))
 			{
 				newBbox->merge(bbox);
 				this->bboxes.erase(this->bboxes.begin() + idBbox);
-				this->nbBbox -= 1;
+				this->nbBbox--;
 				idBbox = 0;
 				continue;
 			}
@@ -229,8 +246,8 @@ std::vector<sf::Vector2i>	BboxManager::getListPosition(void) const
 	std::vector<sf::Vector2i>	positions;
 
 	for (int i = 0; i < this->nbBbox; i++)
-		for (int y = this->bboxes[i].Ly ; y <= this->bboxes[i].Ry; y++)
-			for (int x = this->bboxes[i].Lx ; x <= this->bboxes[i].Rx; x++)
+		for (int y = this->bboxes[i].Ly; y <= this->bboxes[i].Ry; y++)
+			for (int x = this->bboxes[i].Lx; x <= this->bboxes[i].Rx; x++)
 				positions.push_back(sf::Vector2i(x, y));
 
 	return (positions);

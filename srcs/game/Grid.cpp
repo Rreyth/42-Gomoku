@@ -21,9 +21,6 @@ Grid::Grid(void)
 	this->clearGrid(SPRITE_STONE_BLUE, SPRITE_STONE_RED, STANDARD);
 
 	this->historyIdString = "";
-
-	// this->bboxUL = sf::Vector2i(GRID_W_INTER - 1, GRID_W_INTER - 1);
-	// this->bboxDR = sf::Vector2i(0, 0);
 }
 
 
@@ -73,12 +70,24 @@ BitBoard	*Grid::getBitBoard(inter_type type)
 }
 
 
+BboxManager	*Grid::getBboxManager(void)
+{
+	return (&this->bboxManager);
+}
+
+
 void	Grid::setBitBoard(BitBoard *bitBoard, inter_type type)
 {
 	if (type == INTER_LEFT)
 		this->bitboardL = *bitBoard;
 	else
 		this->bitboardR = *bitBoard;
+}
+
+
+void	Grid::setBboxManager(BboxManager *bboxManager)
+{
+	this->bboxManager = *bboxManager;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -96,11 +105,6 @@ Grid	&Grid::operator=(const Grid &grid)
 	// Copy board
 	this->bitboardL = grid.bitboardL;
 	this->bitboardR = grid.bitboardR;
-
-	// this->bboxUL = grid.bboxUL;
-	// this->bboxDR = grid.bboxDR;
-	// this->currentBoardState = grid.currentBoardState;
-	// this->currentBoardStateOpti = grid.currentBoardStateOpti;
 
 	return (*this);
 }
@@ -229,7 +233,25 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text,
 		textureManager->drawTexture(window, SPRITE_STONE_PREVIEW,
 									drawX, drawY, MID_CENTER);
 	}
+
+	// TODO: REMOVE
+	// std::vector<sf::Vector2i>	positions = this->bboxManager.getListPosition();
+	// int	x, y;
+
+	// for (int i = 0; i < positions.size(); i++)
+	// {
+	// 	x = positions[i].x;
+	// 	y = positions[i].y;
+	// 	if (this->bitboardL.get(x, y) || this->bitboardR.get(x, y))
+	// 		continue;
+
+	// 	drawX = this->x + x * GRID_SQUARE_SIZE + 10;
+	// 	drawY = this->y + y * GRID_SQUARE_SIZE + 10;
+	// 	textureManager->drawTexture(window, SPRITE_STONE_PREVIEW,
+	// 								drawX, drawY, MID_CENTER);
+	// }
 }
+
 
 bool	Grid::checkLegalMove(
 				int x, int y, int nbMoves, inter_type plType, inter_type opType)
@@ -266,6 +288,17 @@ bool	Grid::checkLegalMove(
 bool	Grid::putStone(
 				sf::Vector2i *move, int nbMoves, Player *player, Player *opponent)
 {
+	if (!this->putStoneAI(move, nbMoves, player, opponent))
+		return (false);
+
+	this->bboxManager.update(move->x, move->y);
+
+	return (true);
+}
+
+
+bool	Grid::putStoneAI(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent)
+{
 	inter_type	plType, opType;
 
 	plType = player->getInterType();
@@ -289,6 +322,7 @@ bool	Grid::putStone(
 
 	return (true);
 }
+
 
 
 void	Grid::removeStone(sf::Vector2i *move, inter_type plType)
@@ -335,6 +369,12 @@ bool	Grid::checkWinCondition(Player *player, Player *opponent)
 }
 
 
+void	Grid::updateBboxManager(sf::Vector2i *move)
+{
+	this->bboxManager.update(move->x, move->y);
+}
+
+
 void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone,
 						game_rules rule)
 {
@@ -355,8 +395,7 @@ void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone,
 	}
 	this->boardHistoryId = 0;
 	this->boardHistory.clear();
-	// this->interestingMovesLeft.clear();
-	// this->interestingMovesRight.clear();
+	this->bboxManager.clear();
 }
 
 
@@ -375,8 +414,7 @@ void	Grid::reset(void)
 	}
 	this->boardHistoryId = 0;
 	this->boardHistory.clear();
-	// this->interestingMovesLeft.clear();
-	// this->interestingMovesRight.clear();
+	this->bboxManager.clear();
 }
 
 void	Grid::addBoardToHistory(void)
@@ -450,70 +488,32 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(
 									Player *player, Player *opponent)
 {
 	bool						isStoneAlone;
-	int							nbMoves, check, checkV, yD, yA, maxLimit;
+	int							nbMoves, check, checkV, yD, yA, maxLimit, nbBbox;
 	inter_type					plState, opState;
 	std::vector<sf::Vector2i>	moves;
+	std::vector<Bbox>			*bboxes;
 
 	nbMoves = player->getMoves() + opponent->getMoves();
 	plState = player->getInterType();
 	opState = opponent->getInterType();
 	maxLimit = GRID_W_INTER - 1;
 
-	for (int y = 0; y < GRID_W_INTER; y++)
+	bboxes = this->bboxManager.getBboxes();
+	nbBbox = bboxes->size();
+
+	// Get moves close to stone with bboxManager
+	for (int i = 0; i < nbBbox; i++)
 	{
-		if (y == 0)
-			checkV = 0b10;
-		else
-			checkV = 0b101 << (y - 1);
-
-		for (int x = 0; x < GRID_W_INTER; x++)
+		for (int y = bboxes->at(i).Ly; y <= bboxes->at(i).Ry; y++)
 		{
-			if (this->bitboardL.get(x, y) || this->bitboardR.get(x, y))
-				continue;
+			for (int x = bboxes->at(i).Lx; x <= bboxes->at(i).Rx; x++)
+			{
+				// Remove the move if it's illegal
+				if (!checkLegalMove(x, y, nbMoves, plState, opState))
+					continue;
 
-			if (x == 0)
-				check = 0b10;
-			else
-				check = 0b101 << (x - 1);
-
-			yD = (y + x) % GRID_W_INTER;
-			yA = y - x;
-			if (yA < 0)
-				yA += GRID_W_INTER;
-
-			isStoneAlone = true;
-
-			// Check if stone isn't alone on horizontal axis
-			if (isStoneAlone
-					&& ((this->bitboardL.bbH[y] & check) > 0
-					|| (this->bitboardR.bbH[y] & check) > 0))
-				isStoneAlone = false;
-
-			// Check if stone isn't alone on vertical axis
-			if (isStoneAlone
-				&& ((this->bitboardL.bbV[x] & checkV) > 0
-					|| (this->bitboardR.bbV[x] & checkV) > 0))
-				isStoneAlone = false;
-
-			// Check if stone isn't alone on diagonal axis
-			if (isStoneAlone && x > 1 && x < maxLimit && y > 1 && y < maxLimit
-				&& ((this->bitboardL.bbD[yD] & check) > 0
-					|| ((this->bitboardR.bbD[yD] & check) > 0)))
-				isStoneAlone = false;
-
-			// Check if stone isn't alone on anti diagonal axis
-			if (isStoneAlone && x > 1 && x < maxLimit && y > 1 && y < maxLimit
-				&& ((this->bitboardL.bbA[yA] & check) > 0
-					|| (this->bitboardR.bbA[yA] & check) > 0))
-				isStoneAlone = false;
-
-			if (isStoneAlone)
-				continue;
-
-			// Check if the move is legal
-			if (!checkLegalMove(x, y, nbMoves, plState, opState))
-				continue;
-			moves.push_back(sf::Vector2i(x, y));
+				moves.push_back(sf::Vector2i(x, y));
+			}
 		}
 	}
 
@@ -621,112 +621,6 @@ std::vector<Move>	Grid::getInterestingMovesSorted(
 	return (moves);
 }
 
-
-// void	Grid::computeInterestingMovesSorted(
-// 				Player *player, Player *opponent, Evaluation *evaluator,
-// 				Tracker *tracker)
-// {
-// 	if (player->getInterType() == INTER_LEFT)
-// 	{
-// 		this->interestingMovesLeft = this->getInterestingMovesSorted(
-// 											player, opponent, evaluator,
-// 											true, tracker);
-// 		this->interestingMovesRight = this->getInterestingMovesSorted(
-// 											opponent, player, evaluator,
-// 											false, tracker);
-// 	}
-// 	else
-// 	{
-// 		this->interestingMovesRight = this->getInterestingMovesSorted(
-// 											player, opponent, evaluator,
-// 											true, tracker);
-// 		this->interestingMovesLeft = this->getInterestingMovesSorted(
-// 											opponent, player, evaluator,
-// 											false, tracker);
-// 	}
-// }
-
-
-// void	Grid::updateInterestingMovesSorted(
-// 				Player *player, Player *opponent, Evaluation *evaluator,
-// 				Tracker *tracker, sf::Vector2i *move)
-// {
-// 	int									nbMoves;
-// 	inter_type							type, plType, opType;
-// 	sf::Vector2i						tmpMove;
-// 	std::vector<sf::Vector2i>::iterator	it;
-
-// 	// TODO : REMOVE
-// 	std::clock_t	start;
-// 	int				diff;
-// 	start = std::clock();
-
-// 	nbMoves = player->getMoves() + opponent->getMoves();
-// 	plType = player->getInterType();
-// 	opType = opponent->getInterType();
-
-// 	// Remove new placed stone from left interesting moves
-// 	it = std::find(this->interestingMovesLeft.begin(), this->interestingMovesLeft.end(), *move);
-// 	if (it != this->interestingMovesLeft.end())
-// 		this->interestingMovesLeft.erase(it);
-
-// 	// Remove new placed stone from right interesting moves
-// 	it = std::find(this->interestingMovesRight.begin(), this->interestingMovesRight.end(), *move);
-// 	if (it != this->interestingMovesRight.end())
-// 		this->interestingMovesRight.erase(it);
-
-// 	// For each stone arround the new placed stone
-// 	for (int i = 0; i < 8; i++)
-// 	{
-// 		tmpMove = *move + this->dirs[i];
-
-// 		// Check if the intersection is empty
-// 		type = this->getInterState(tmpMove.x, tmpMove.y);
-// 		if (type != INTER_EMPTY)
-// 			continue;
-
-// 		// Check if the move is already in the left moves
-// 		it = std::find(this->interestingMovesLeft.begin(),
-// 						this->interestingMovesLeft.end(), tmpMove);
-
-// 		// Check if the move is legal for player
-// 		if (it == this->interestingMovesLeft.end()
-// 			&& checkLegalMove(tmpMove.x, tmpMove.y, nbMoves, plType, opType))
-// 		{
-// 			if (plType == INTER_LEFT)
-// 				this->insertMoves(
-// 						this->interestingMovesLeft, &tmpMove, true,
-// 						evaluator, player, opponent);
-// 			else
-// 				this->insertMoves(
-// 						this->interestingMovesRight, &tmpMove, false,
-// 						evaluator, player, opponent);
-// 		}
-
-// 		// Check if the move is already in the right moves
-// 		it = std::find(this->interestingMovesRight.begin(),
-// 						this->interestingMovesRight.end(), tmpMove);
-
-// 		// Check if the move is legal for opponent
-// 		if (it == this->interestingMovesRight.end()
-// 			&& checkLegalMove(tmpMove.x, tmpMove.y, nbMoves, opType, plType))
-// 		{
-// 			if (opType == INTER_LEFT)
-// 				this->insertMoves(
-// 						this->interestingMovesLeft, &tmpMove, true,
-// 						evaluator, player, opponent);
-// 			else
-// 				this->insertMoves(
-// 						this->interestingMovesRight, &tmpMove, false,
-// 						evaluator, player, opponent);
-// 		}
-// 	}
-
-// 	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-// 	tracker->updateMoveNumber++;
-// 	tracker->updateMoveTime += diff;
-// }
-
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -740,30 +634,58 @@ bool	Grid::checkWinByAlign(
 
 	// Check win by axis
 	winCase = 0b11111;
+	std::vector<Bbox> *bboxes = this->bboxManager.getBboxes();
+	int	nbBoxes = bboxes->size();
 
-	for (int y = 0; y < GRID_W_INTER; y++)
+	for (int i = 0; i < nbBoxes; i++)
 	{
-		check = 0b11111;
-		lines[0] = plBitboard->getLine(BBH, 0, y);
-		lines[1] = plBitboard->getLine(BBV, y, 0);
-		for (int x = 0; x < GRID_W_INTER - 4; x++)
+		for (int y = bboxes->at(i).Ly; y <= bboxes->at(i).Ry; y++)
 		{
-			lines[2] = plBitboard->getLine(BBD, x, y);
-			lines[3] = plBitboard->getLine(BBA, x, y);
-			for (int axis = 0; axis < 4; axis++)
+			lines[0] = plBitboard->getLine(BBH, 0, y);
+			lines[1] = plBitboard->getLine(BBV, y, 0);
+			for (int x = bboxes->at(i).Lx; x <= bboxes->at(i).Rx; x++)
 			{
-				if ((lines[axis] & check) >> x == winCase)
+				check = 0b11111 << x;
+				lines[2] = plBitboard->getLine(BBD, x, y);
+				lines[3] = plBitboard->getLine(BBA, x, y);
+				for (int axis = 0; axis < 4; axis++)
 				{
-					isWin = this->validateWin(
-									player, opponent, plBitboard,
-									opBitboard, (bitboardAxis)axis, x, y);
-					if (isWin)
-						return (true);
+					if ((lines[axis] & check) >> x == winCase)
+					{
+						isWin = this->validateWin(
+										player, opponent, plBitboard,
+										opBitboard, (bitboardAxis)axis, x, y);
+						if (isWin)
+							return (true);
+					}
 				}
 			}
-			check <<= 1;
 		}
 	}
+
+	// for (int y = 0; y < GRID_W_INTER; y++)
+	// {
+	// 	check = 0b11111;
+	// 	lines[0] = plBitboard->getLine(BBH, 0, y);
+	// 	lines[1] = plBitboard->getLine(BBV, y, 0);
+	// 	for (int x = 0; x < GRID_W_INTER - 4; x++)
+	// 	{
+	// 		lines[2] = plBitboard->getLine(BBD, x, y);
+	// 		lines[3] = plBitboard->getLine(BBA, x, y);
+	// 		for (int axis = 0; axis < 4; axis++)
+	// 		{
+	// 			if ((lines[axis] & check) >> x == winCase)
+	// 			{
+	// 				isWin = this->validateWin(
+	// 								player, opponent, plBitboard,
+	// 								opBitboard, (bitboardAxis)axis, x, y);
+	// 				if (isWin)
+	// 					return (true);
+	// 			}
+	// 		}
+	// 		check <<= 1;
+	// 	}
+	// }
 
 	return (false);
 }

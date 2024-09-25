@@ -63,9 +63,9 @@ void	Bbox::update(int x, int y)
 	if (this->Lx == -1)
 	{
 		this->Lx = max(x - 1, 0);
+		this->Ly = max(y - 1, 0);
 		this->Rx = min(x + 1, GRID_W_INTER - 1);
-		this->Lx = max(x - 1, 0);
-		this->Rx = min(x + 1, GRID_W_INTER - 1);
+		this->Ry = min(y + 1, GRID_W_INTER - 1);
 		return ;
 	}
 
@@ -73,7 +73,7 @@ void	Bbox::update(int x, int y)
 		this->Lx = max(x - 1, 0);
 
 	else if (x >= this->Rx)
-		this->Rx = min(x - 1, GRID_W_INTER - 1);
+		this->Rx = min(x + 1, GRID_W_INTER - 1);
 
 	if (y <= this->Ly)
 		this->Ly = max(y - 1, 0);
@@ -107,7 +107,7 @@ bool	Bbox::isInside(int x, int y) const
 
 bool	Bbox::collideBbox(const Bbox *bbox) const
 {
-	return (bbox->Rx >= this->Lx && bbox->Lx >= this->Rx
+	return (bbox->Rx >= this->Lx && bbox->Lx <= this->Rx
 				&& bbox->Ry >= this->Ly && bbox->Ly <= this->Ry);
 }
 
