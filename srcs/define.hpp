@@ -22,7 +22,7 @@
 # define GRID_NB_INTER 361 // 361 = 19 * 19
 # define OPTI_BOARD_SIZE 91 // 361 / 4 = 90.25 -> 91
 
-# define AI_MAX_DEPTH 10
+# define AI_MEDIUM_DEPTH 4
 
 typedef enum e_font {
 	FONT_SQUADA,
@@ -142,6 +142,16 @@ typedef struct s_move
 		this->eval = move.eval;
 
 		return (*this);
+	}
+
+	bool	operator<(const struct s_move &move) const
+	{
+		return (this->eval < move.eval);
+	}
+
+	bool	operator>(const struct s_move &move) const
+	{
+		return (this->eval > move.eval);
 	}
 
 }	Move;

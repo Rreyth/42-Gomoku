@@ -13,6 +13,7 @@ AI::AI(void)
 
 AI::~AI()
 {
+	this->memory.clear();
 }
 
 
@@ -48,7 +49,7 @@ void	AI::setAI(AI_difficulty difficulty)
 {
 	this->difficulty = difficulty;
 	this->timer = 0;
-	// this->memoryEvaluation.clear();
+	this->memory.clear();
 }
 
 sf::Vector2i	AI::getNextMove(
@@ -119,6 +120,8 @@ sf::Vector2i	AI::getNextMove(
 		printf("   - number of call : %'i\n", tracker.checkWinNumber);
 		printf("   - check win TIME %'i us\n", tracker.checkWinTime);
 		printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkWinNumber);
+		// printf("  memory\n");
+		// printf("   - nb evaluation : %'lu\n", this->memory.size());
 	}
 	else
 	{
@@ -130,7 +133,7 @@ sf::Vector2i	AI::getNextMove(
 
 void	AI::reset(void)
 {
-	// this->memoryEvaluation.clear();
+	this->memory.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -216,9 +219,8 @@ sf::Vector2i	AI::getEasyMove(
 	return (move);
 }
 
-# define DEPTH 4
 
-static int	mediumMiniMax(
+int	AI::mediumMiniMax(
 				Grid *grid, Player *player, Player *opponent,
 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
 				int depth, Tracker *tracker)
@@ -231,6 +233,7 @@ static int	mediumMiniMax(
 	std::vector<Move>	moves;
 	BitBoard			plBitBoard, opBitBoard;
 	BboxManager			bboxManagerSave;
+	BoardState			boardState;
 
 	// TODO : REMOVE
 	std::clock_t	start;
@@ -312,7 +315,7 @@ static int	mediumMiniMax(
 		tracker->checkStoneNumber++;
 
 		// If move have an high score, check win case
-		if (moves[i].eval >= 10000000)
+		if (moves[i].eval >= 100000)
 		{
 			start = std::clock();
 
@@ -344,10 +347,10 @@ static int	mediumMiniMax(
 		else
 		{
 			// Get evaluation for this move
-			tmpEval = mediumMiniMax(grid,
-						player, opponent, evaluator,
-						!maximizingEval, alpha, beta,
-						depth - 1, tracker);
+			tmpEval = this->mediumMiniMax(grid,
+								player, opponent, evaluator,
+								!maximizingEval, alpha, beta,
+								depth - 1, tracker);
 		}
 
 		// Reset grid
@@ -398,9 +401,9 @@ static int	mediumMiniMax(
 
 		// If we already have already better move, stop searching by pruning
 		if (beta <= alpha)
-			return (bestEval);
+			break;
 	}
-
+	
 	return (bestEval);
 }
 
@@ -485,10 +488,10 @@ sf::Vector2i	AI::getMediumMove(
 		else
 		{
 			// Get evaluation for this move
-			tmpEval = mediumMiniMax(grid,
-						player, opponent, evaluator,
-						false, -1000000001, 1000000001,
-						DEPTH - 1, tracker);
+			tmpEval = this->mediumMiniMax(grid,
+								player, opponent, evaluator,
+								false, -1000000001, 1000000001,
+								AI_MEDIUM_DEPTH - 1, tracker);
 		}
 
 		// Update score

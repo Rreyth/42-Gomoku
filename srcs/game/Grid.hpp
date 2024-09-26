@@ -5,8 +5,10 @@
 # include <ui/Button.hpp>
 # include <game/BitBoard.hpp>
 # include <game/BboxManager.hpp>
+# include <game/BoardState.hpp>
 
 # include <vector>
+# include <unordered_map>
 
 class Player;
 class Evaluation;
@@ -50,7 +52,10 @@ public:
 
 	std::vector<sf::Vector2i>	getLegalMoves(Player *player, Player *opponent);
 	std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
-	std::vector<Move>			getInterestingMovesSorted(Evaluation *evaluator, Player *player, Player *opponent, bool reverse, Tracker *tracker);
+	std::vector<Move>			getInterestingMovesSorted(
+									Evaluation *evaluator,
+									Player *player, Player *opponent,
+									bool reverse, Tracker *tracker);
 
 private:
 	int											x, y, w, h, previewX, previewY, boardHistoryId;

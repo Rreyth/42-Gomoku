@@ -526,11 +526,11 @@ std::vector<Move>	Grid::getInterestingMovesSorted(
 							Player *player, Player *opponent,
 							bool reverse, Tracker *tracker)
 {
-	int							size, eval, j, plCapture, opCapture;
+	int							size, eval, j, nbMove, plCapture, opCapture;
 	Move						tmp;
 	std::vector<Move>			moves;
 	std::vector<sf::Vector2i>	movesPosition;
-	BitBoard					*plBitboard, *opBitboard;
+	BitBoard					plBitboard, opBitboard;
 
 	// TODO : REMOVE
 	std::clock_t	start;
@@ -558,25 +558,29 @@ std::vector<Move>	Grid::getInterestingMovesSorted(
 
 	plCapture = player->getCaptured();
 	opCapture = opponent->getCaptured();
+	nbMove = player->getMoves() + opponent->getMoves();
 
 	if (player->getInterType() == INTER_LEFT)
 	{
-		plBitboard = &this->bitboardL;
-		opBitboard = &this->bitboardR;
+		plBitboard = this->bitboardL;
+		opBitboard = this->bitboardR;
 	}
 	else
 	{
-		plBitboard = &this->bitboardR;
-		opBitboard = &this->bitboardL;
+		plBitboard = this->bitboardR;
+		opBitboard = this->bitboardL;
 	}
 	for (int i = 0; i < size; i++)
 	{
 		Move	move;
 		move.pos = movesPosition[i];
+		
 		move.eval = evaluator->evaluationPosition(
-											plBitboard, opBitboard,
+											&plBitboard, &opBitboard,
 											plCapture, opCapture,
 											move.pos.x, move.pos.y);
+		if (!reverse)
+			move.eval = -move.eval;
 		moves.push_back(move);
 	}
 
@@ -588,7 +592,7 @@ std::vector<Move>	Grid::getInterestingMovesSorted(
 			{
 				tmp = moves[i];
 
-				for (j = i; j >= gap && moves[j - gap].eval > tmp.eval; j -= gap)
+				for (j = i; j >= gap && moves[j - gap] > tmp; j -= gap)
 				{
 					moves[j] = moves[j - gap];
 				}
@@ -605,7 +609,7 @@ std::vector<Move>	Grid::getInterestingMovesSorted(
 			{
 				tmp = moves[i];
 
-				for (j = i; j >= gap && moves[j - gap].eval < tmp.eval; j -= gap)
+				for (j = i; j >= gap && moves[j - gap] < tmp; j -= gap)
 				{
 					moves[j] = moves[j - gap];
 				}
