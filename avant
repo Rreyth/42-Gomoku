@@ -1,0 +1,222 @@
+Get move in 5 us
+  evaluate position
+   - number of call : 0
+   - TIME 0 us
+   - about -nan us per call
+  get sort moves
+   - number of call : 1
+   - get moves TIME 1 us
+   - about 1.000000 us per call
+   - sort moves TIME 0 us
+   - about 0.000000 us per call
+   - sort moves min size 0
+   - sort moves max size 0
+   - sort moves avg size 0.000000
+  check stone
+   - number of call : 0
+   - put stone TIME 0 us
+   - about -nan us per call
+  check win
+   - number of call : 0
+   - check win TIME 0 us
+   - about -nan us per call
+Compute move in 6 us
+
+
+Get move in 305,563 us
+  evaluate position
+   - number of call : 102,388
+   - TIME 125,292 us
+   - about 1.223698 us per call
+  get sort moves
+   - number of call : 10,069
+   - get moves TIME 40,168 us
+   - about 3.989274 us per call
+   - sort moves TIME 64,130 us
+   - about 6.369053 us per call
+   - sort moves min size 12
+   - sort moves max size 34
+   - sort moves avg size 20.371635
+  check stone
+   - number of call : 56,222
+   - put stone TIME 22,463 us
+   - about 0.399541 us per call
+  check win
+   - number of call : 1,830
+   - check win TIME 2,280 us
+   - about 1.245902 us per call
+Compute move in 7 us
+
+
+Get move in 393,084 us
+  evaluate position
+   - number of call : 122,077
+   - TIME 163,128 us
+   - about 1.336271 us per call
+  get sort moves
+   - number of call : 11,540
+   - get moves TIME 51,040 us
+   - about 4.422877 us per call
+   - sort moves TIME 84,408 us
+   - about 7.314385 us per call
+   - sort moves min size 14
+   - sort moves max size 35
+   - sort moves avg size 23.455807
+  check stone
+   - number of call : 66,899
+   - put stone TIME 27,519 us
+   - about 0.411351 us per call
+  check win
+   - number of call : 2,769
+   - check win TIME 3,871 us
+   - about 1.397978 us per call
+Compute move in 10 us
+
+
+Get move in 499,738 us
+  evaluate position
+   - number of call : 142,289
+   - TIME 203,623 us
+   - about 1.431052 us per call
+  get sort moves
+   - number of call : 14,329
+   - get moves TIME 69,086 us
+   - about 4.821411 us per call
+   - sort moves TIME 114,255 us
+   - about 7.973690 us per call
+   - sort moves min size 17
+   - sort moves max size 37
+   - sort moves avg size 26.522297
+  check stone
+   - number of call : 78,301
+   - put stone TIME 32,041 us
+   - about 0.409203 us per call
+  check win
+   - number of call : 2,981
+   - check win TIME 4,983 us
+   - about 1.671587 us per call
+Compute move in 10 us
+
+
+Get move in 635,692 us
+  evaluate position
+   - number of call : 169,754
+   - TIME 264,505 us
+   - about 1.558167 us per call
+  get sort moves
+   - number of call : 15,384
+   - get moves TIME 89,236 us
+   - about 5.800572 us per call
+   - sort moves TIME 149,697 us
+   - about 9.730694 us per call
+   - sort moves min size 23
+   - sort moves max size 45
+   - sort moves avg size 32.331253
+  check stone
+   - number of call : 92,626
+   - put stone TIME 37,478 us
+   - about 0.404616 us per call
+  check win
+   - number of call : 1,909
+   - check win TIME 3,755 us
+   - about 1.966998 us per call
+Compute move in 12 us
+
+
+Get move in 953,819 us
+  evaluate position
+   - number of call : 224,441
+   - TIME 366,078 us
+   - about 1.631066 us per call
+  get sort moves
+   - number of call : 25,199
+   - get moves TIME 144,871 us
+   - about 5.749077 us per call
+   - sort moves TIME 244,700 us
+   - about 9.710703 us per call
+   - sort moves min size 26
+   - sort moves max size 46
+   - sort moves avg size 32.181911
+  check stone
+   - number of call : 124,812
+   - put stone TIME 55,261 us
+   - about 0.442754 us per call
+  check win
+   - number of call : 4,728
+   - check win TIME 9,808 us
+   - about 2.074450 us per call
+Compute move in 12 us
+
+
+Get move in 693,292 us
+  evaluate position
+   - number of call : 162,211
+   - TIME 284,874 us
+   - about 1.756194 us per call
+  get sort moves
+   - number of call : 16,483
+   - get moves TIME 100,927 us
+   - about 6.123096 us per call
+   - sort moves TIME 170,001 us
+   - about 10.313717 us per call
+   - sort moves min size 26
+   - sort moves max size 48
+   - sort moves avg size 33.653763
+  check stone
+   - number of call : 89,423
+   - put stone TIME 39,252 us
+   - about 0.438947 us per call
+  check win
+   - number of call : 2,206
+   - check win TIME 4,819 us
+   - about 2.184497 us per call
+Compute move in 14 us
+
+
+Get move in 965,762 us
+  evaluate position
+   - number of call : 224,084
+   - TIME 427,026 us
+   - about 1.905651 us per call
+  get sort moves
+   - number of call : 18,872
+   - get moves TIME 127,498 us
+   - about 6.755935 us per call
+   - sort moves TIME 224,811 us
+   - about 11.912410 us per call
+   - sort moves min size 30
+   - sort moves max size 52
+   - sort moves avg size 38.261711
+  check stone
+   - number of call : 121,748
+   - put stone TIME 50,432 us
+   - about 0.414233 us per call
+  check win
+   - number of call : 6,667
+   - check win TIME 15,565 us
+   - about 2.334633 us per call
+Compute move in 15 us
+
+
+Get move in 108,586 us
+  evaluate position
+   - number of call : 21,422
+   - TIME 41,889 us
+   - about 1.955420 us per call
+  get sort moves
+   - number of call : 2,141
+   - get moves TIME 16,328 us
+   - about 7.626343 us per call
+   - sort moves TIME 29,786 us
+   - about 13.912190 us per call
+   - sort moves min size 38
+   - sort moves max size 57
+   - sort moves avg size 46.598320
+  check stone
+   - number of call : 11,863
+   - put stone TIME 5,495 us
+   - about 0.463205 us per call
+  check win
+   - number of call : 614
+   - check win TIME 1,846 us
+   - about 3.006515 us per call

@@ -23,7 +23,7 @@
 # define OPTI_BOARD_SIZE 91 // 361 / 4 = 90.25 -> 91
 
 # define AI_MEDIUM_DEPTH 6
-# define AI_MEDIUM_LIMIT 10
+# define AI_MEDIUM_LIMIT 15
 
 typedef enum e_font {
 	FONT_SQUADA,

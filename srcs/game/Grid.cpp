@@ -633,7 +633,7 @@ bool	Grid::checkWinByAlign(
 				Player *player, Player *opponent,
 				BitBoard *plBitboard, BitBoard *opBitboard)
 {
-	int		winCase, check, lines[4];
+	int		winCase, check, checkV, test, lines[4];
 	bool	isWin;
 
 	// Check win by axis
@@ -645,16 +645,21 @@ bool	Grid::checkWinByAlign(
 	{
 		for (int y = bboxes->at(i).Ly; y <= bboxes->at(i).Ry; y++)
 		{
+			checkV = 0b11111 << y;
 			lines[0] = plBitboard->getLine(BBH, 0, y);
-			lines[1] = plBitboard->getLine(BBV, y, 0);
 			for (int x = bboxes->at(i).Lx; x <= bboxes->at(i).Rx; x++)
 			{
 				check = 0b11111 << x;
+				lines[1] = plBitboard->getLine(BBV, x, y);
 				lines[2] = plBitboard->getLine(BBD, x, y);
 				lines[3] = plBitboard->getLine(BBA, x, y);
 				for (int axis = 0; axis < 4; axis++)
 				{
-					if ((lines[axis] & check) >> x == winCase)
+					if (axis == 1)
+						test = (lines[axis] & checkV) >> y;
+					else
+						test = (lines[axis] & check) >> x;
+					if (test == winCase)
 					{
 						isWin = this->validateWin(
 										player, opponent, plBitboard,
@@ -666,30 +671,6 @@ bool	Grid::checkWinByAlign(
 			}
 		}
 	}
-
-	// for (int y = 0; y < GRID_W_INTER; y++)
-	// {
-	// 	check = 0b11111;
-	// 	lines[0] = plBitboard->getLine(BBH, 0, y);
-	// 	lines[1] = plBitboard->getLine(BBV, y, 0);
-	// 	for (int x = 0; x < GRID_W_INTER - 4; x++)
-	// 	{
-	// 		lines[2] = plBitboard->getLine(BBD, x, y);
-	// 		lines[3] = plBitboard->getLine(BBA, x, y);
-	// 		for (int axis = 0; axis < 4; axis++)
-	// 		{
-	// 			if ((lines[axis] & check) >> x == winCase)
-	// 			{
-	// 				isWin = this->validateWin(
-	// 								player, opponent, plBitboard,
-	// 								opBitboard, (bitboardAxis)axis, x, y);
-	// 				if (isWin)
-	// 					return (true);
-	// 			}
-	// 		}
-	// 		check <<= 1;
-	// 	}
-	// }
 
 	return (false);
 }
@@ -706,13 +687,6 @@ bool	Grid::validateWin(
 		tmp;
 
 	int plLine, opLine;
-
-	if (bbAxis == BBV)
-	{
-		tmp = y;
-		y = x;
-		x = tmp;
-	}
 
 	plVerify = 0b0110;
 	opVerifyL = 0b0001;
