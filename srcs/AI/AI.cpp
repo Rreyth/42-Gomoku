@@ -216,7 +216,7 @@ sf::Vector2i	AI::getEasyMove(
 	return (move);
 }
 
-# define DEPTH 3
+# define DEPTH 4
 
 static int	mediumMiniMax(
 				Grid *grid, Player *player, Player *opponent,
@@ -488,7 +488,7 @@ sf::Vector2i	AI::getMediumMove(
 			tmpEval = mediumMiniMax(grid,
 						player, opponent, evaluator,
 						false, -1000000001, 1000000001,
-						DEPTH, tracker);
+						DEPTH - 1, tracker);
 		}
 
 		// Update score

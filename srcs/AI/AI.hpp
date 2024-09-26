@@ -6,6 +6,9 @@
 # include <AI/Evaluation.hpp>
 # include <functional>
 
+# include <unordered_map>
+
+
 class Player;
 
 class AI
