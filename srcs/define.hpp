@@ -22,7 +22,8 @@
 # define GRID_NB_INTER 361 // 361 = 19 * 19
 # define OPTI_BOARD_SIZE 91 // 361 / 4 = 90.25 -> 91
 
-# define AI_MEDIUM_DEPTH 4
+# define AI_MEDIUM_DEPTH 6
+# define AI_MEDIUM_LIMIT 10
 
 typedef enum e_font {
 	FONT_SQUADA,

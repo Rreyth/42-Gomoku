@@ -287,7 +287,7 @@ int	AI::mediumMiniMax(
 	else
 		bestEval = 1000000001;
 
-	for (int i = 0; i < moves.size(); i++)
+	for (int i = 0; i < moves.size() && i < AI_MEDIUM_LIMIT; i++)
 	{
 		tracker->nbEvaluations++;
 		start = std::clock();
@@ -450,7 +450,7 @@ sf::Vector2i	AI::getMediumMove(
 	// Find move
 	bestEval = -1000000001;
 	bestMove = sf::Vector2i(-1, -1);
-	for (int i = 0; i < moves.size(); i++)
+	for (int i = 0; i < moves.size() && i < AI_MEDIUM_LIMIT; i++)
 	{
 		// Simulate move
 		if (!grid->putStone(&moves[i].pos, nbMoves, player, opponent))
