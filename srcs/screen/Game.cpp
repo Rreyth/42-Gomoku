@@ -169,8 +169,11 @@ void	Game::setGame(player_type playerLeft, player_type playerRight,
 	if ((playerLeft == PLAYER && playerRight == PLAYER)||
 		(playerLeft == AI_PLAYER && playerRight == AI_PLAYER))
 		solo = false;
-	this->playerLeft.setPlayer(playerLeft, mode, 1, leftStone, solo, aiLeft);
-	this->playerRight.setPlayer(playerRight, mode, 2, rightStone, solo, aiRight);
+
+	this->playerLeft.setPlayer(&this->grid, mode, this->playerRight.getPlayerInfo(),
+								playerLeft, aiLeft, 1, leftStone, solo);
+	this->playerRight.setPlayer(&this->grid, mode, this->playerLeft.getPlayerInfo(),
+								playerRight, aiRight, 2, rightStone, solo);
 
 	this->startingPlayer = startingPlayer;
 	if (startingPlayer == PLAYER1)
@@ -191,8 +194,8 @@ void	Game::setGame(player_type playerLeft, player_type playerRight,
 void	Game::replay(display_state *displayState)
 {
 	this->grid.reset();
-	this->playerLeft.reset(this->mode);
-	this->playerRight.reset(this->mode);
+	this->playerLeft.reset(&this->grid, this->mode, this->playerRight.getPlayerInfo());
+	this->playerRight.reset(&this->grid, this->mode, this->playerLeft.getPlayerInfo());
 
 	if (this->startingPlayer == PLAYER1)
 		this->playerLeft.setPlaying(true);
@@ -232,7 +235,7 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 
 		str = "TIME OF PREDICTION";
 		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.25), 25, sf::Color::White, MID_CENTER);
-		str = std::to_string((int)ai->getTimer()) + " us";
+		str = std::to_string(ai->getTimer()) + " us";
 		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.30), 30, sf::Color::White, MID_CENTER);
 	}
 
@@ -275,7 +278,7 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 
 		str = "TIME OF PREDICTION";
 		drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.25), 25, sf::Color::White, MID_CENTER);
-		str = std::to_string((int)ai->getTimer()) + " us";
+		str = std::to_string(ai->getTimer()) + " us";
 		drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.30), 30, sf::Color::White, MID_CENTER);
 	}
 

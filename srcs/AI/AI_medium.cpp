@@ -1,9 +1,17 @@
 #include <AI/AI.hpp>
 #include <utils/Functions.hpp>
 
-sf::Vector2i	AI::getMediumMove(
-						Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
-						Evaluation *evaluator, Tracker *tracker)
+static int	miniMax(
+				std::unordered_map<int, std::vector<Move>> *memory,
+				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
+				int depth, Tracker *tracker);
+
+
+sf::Vector2i	getMediumMove(
+					std::unordered_map<int, std::vector<Move>> *memory,
+					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+					Evaluation *evaluator, Tracker *tracker)
 {
 	int					bestEval, tmpEval,
 						plCapture, opCapture,
@@ -81,7 +89,7 @@ sf::Vector2i	AI::getMediumMove(
 		else
 		{
 			// Get evaluation for this move
-			tmpEval = this->mediumMiniMax(grid,
+			tmpEval = miniMax(memory, grid,
 								player, opponent, evaluator,
 								false, -1000000001, 1000000001,
 								AI_MEDIUM_DEPTH - 1, tracker);
@@ -119,7 +127,8 @@ sf::Vector2i	AI::getMediumMove(
 }
 
 
-int	AI::mediumMiniMax(
+static int	miniMax(
+				std::unordered_map<int, std::vector<Move>> *memory,
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
 				int depth, Tracker *tracker)
@@ -168,7 +177,7 @@ int	AI::mediumMiniMax(
 
 	try
 	{
-		moves = this->memory.at(hash);
+		moves = memory->at(hash);
 	}
 	catch (std::exception &e)
 	{
@@ -179,7 +188,7 @@ int	AI::mediumMiniMax(
 		else
 			moves = grid->getInterestingMovesSorted(
 							evaluator, opponent, player, false, tracker);
-		this->memory.insert(std::pair<int, std::vector<Move>>(hash, moves));
+		memory->insert(std::pair<int, std::vector<Move>>(hash, moves));
 	}
 
 	if (moves.size() == 0)
@@ -257,7 +266,7 @@ int	AI::mediumMiniMax(
 		else
 		{
 			// Get evaluation for this move
-			tmpEval = this->mediumMiniMax(grid,
+			tmpEval = miniMax(memory, grid,
 								player, opponent, evaluator,
 								!maximizingEval, alpha, beta,
 								depth - 1, tracker);

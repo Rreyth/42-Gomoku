@@ -41,10 +41,14 @@ public:
 						Grid *grid, Player *opponent, Mouse *mouse,
 						Evaluation *evaluator, bool *moveDone);
 
-	void 			setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite, bool solo, AI_difficulty difficulty);
+	void 			setPlayer(
+						Grid *grid, game_mode mode, PlayerInfo *opponent,
+						player_type type, AI_difficulty difficulty, int pos,
+						sprite_name stoneSprite, bool solo);
 
 	void 			tick(float delta, game_mode mode);
-	void			reset(game_mode mode);
+	void			reset(
+						Grid *grid, game_mode mode, PlayerInfo *opponent);
 
 private:
 	player_type	type;

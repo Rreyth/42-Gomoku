@@ -70,6 +70,8 @@ bool		Player::isPlaying(void)
 void		Player::setPlaying(bool playing)
 {
 	this->playing = playing;
+	if (this->playing)
+		this->ai.startTurn();
 }
 
 
@@ -157,14 +159,16 @@ sf::Vector2i	Player::getNextMove(
 	else
 	{
 		grid->disablePreview();
-		move = this->ai.getNextMove(grid, &this->info, opponent->getPlayerInfo(), evaluator);
-		*moveDone = true;
+		move = this->ai.getNextMove(moveDone);
 	}
 	return (move);
 }
 
 
-void		Player::setPlayer(player_type type, game_mode mode, int pos, sprite_name stoneSprite, bool solo, AI_difficulty difficulty)
+void		Player::setPlayer(
+						Grid *grid, game_mode mode, PlayerInfo *opponent,
+						player_type type, AI_difficulty difficulty, int pos,
+						sprite_name stoneSprite, bool solo)
 {
 	this->setType(type);
 	this->setTimer(mode);
@@ -178,7 +182,7 @@ void		Player::setPlayer(player_type type, game_mode mode, int pos, sprite_name s
 		this->setName("AI");
 
 	if (type == AI_PLAYER)
-		this->ai.setAI(difficulty);
+		this->ai.setAI(grid, difficulty, &this->info, opponent);
 
 	if (pos == 1)
 		this->info.interType = INTER_LEFT;
@@ -209,11 +213,12 @@ void		Player::tick(float delta, game_mode mode)
 }
 
 
-void		Player::reset(game_mode mode)
+void		Player::reset(
+						Grid *grid, game_mode mode, PlayerInfo *opponent)
 {
 	this->setTimer(mode);
 	this->playing = false;
-	this->ai.reset();
+	this->ai.reset(grid, &this->info, opponent);
 	this->info.reset();
 }
 

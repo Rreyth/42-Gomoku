@@ -106,6 +106,8 @@ Grid	&Grid::operator=(const Grid &grid)
 	this->bitboardL = grid.bitboardL;
 	this->bitboardR = grid.bitboardR;
 
+	this->bboxManager = grid.bboxManager;
+
 	return (*this);
 }
 

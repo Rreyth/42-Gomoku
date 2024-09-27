@@ -9,15 +9,42 @@
 
 # include <functional>
 # include <unordered_map>
+# include <thread>
+# include <mutex>
+
+typedef struct	s_ParallelRun
+{
+	int				timeLastMove;
+	bool			needCompute;
+	bool			computeDone;
+	bool			running;
+	sf::Vector2i	move;
+}	ParallelRun;
 
 
-// typedef struct s_ParallelRun
-// {
-// 	bool			needCompute;
-// 	bool			computeDone;
-// 	bool			running;
-// 	sf::Vector2i	move;
-// }	ParallelRun;
+typedef struct	s_threadParams
+{
+	ParallelRun		*parallelRun;
+	std::mutex		*mutex;
+	AI_difficulty	aiDifficulty;
+	Grid			*grid;
+	PlayerInfo		*player;
+	PlayerInfo		*opponent;
+}	ThreadParams;
+
+
+void			aiThreadCore(ThreadParams *threadParams);
+sf::Vector2i	getRandomMove(
+					Grid *grid, PlayerInfo *player, PlayerInfo *opponent);
+sf::Vector2i	getBetterRandom(
+					Grid *grid, PlayerInfo *player, PlayerInfo *opponent);
+sf::Vector2i	getEasyMove(
+					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+					Evaluation *evaluator);
+sf::Vector2i	getMediumMove(
+					std::unordered_map<int, std::vector<Move>> *memory,
+					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+					Evaluation *evaluator, Tracker *tracker);
 
 
 class AI
@@ -26,29 +53,30 @@ public:
 	AI(void);
 	~AI();
 
-	AI_difficulty	getDifficulty(void);
 	void			setDifficulty(AI_difficulty difficulty);
-	double			getTimer(void);
-	void			setTimer(double timer);
-	void			reset(void);
+	AI_difficulty	getDifficulty(void);
 
-	void			setAI(AI_difficulty difficulty);
+	int				getTimer(void);
 
-	sf::Vector2i	getNextMove(Grid *grid, PlayerInfo *player, PlayerInfo *opponent, Evaluation *evaluator);
+	void			setAI(
+						Grid *grid, AI_difficulty difficulty,
+						PlayerInfo *player, PlayerInfo *opponent);
+
+	void			startTurn(void);
+	sf::Vector2i	getNextMove(bool *moveDone);
+	void			reset(Grid *grid, PlayerInfo *player, PlayerInfo *opponent);
 
 private:
-	double							timer;
-	AI_difficulty					difficulty;
-	std::unordered_map<int, std::vector<Move>>	memory;
+	int				timer;
+	AI_difficulty	difficulty;
+	std::thread		thread;
+	std::mutex		mutex;
+	ParallelRun		parallelRun;
+	ThreadParams	threadParams;
 
-	sf::Vector2i	getRandomMove(Grid *grid, PlayerInfo *player, PlayerInfo *opponent);
-	sf::Vector2i	getBetterRandom(Grid *grid, PlayerInfo *player, PlayerInfo *opponent);
-	sf::Vector2i	getEasyMove(Grid *grid, PlayerInfo *player, PlayerInfo *opponent, Evaluation *evaluator);
-	int				mediumMiniMax(
-						Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
-						Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
-						int depth, Tracker *tracker);
-	sf::Vector2i	getMediumMove(Grid *grid, PlayerInfo *player, PlayerInfo *opponent, Evaluation *evaluator, Tracker *tracker);
+	void	startThread(
+				Grid *grid, PlayerInfo *player, PlayerInfo *opponent);
+	void	destroyThread(void);
 };
 
 #endif

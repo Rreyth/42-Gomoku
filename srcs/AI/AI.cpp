@@ -1,64 +1,162 @@
 #include <AI/AI.hpp>
 #include <utils/Functions.hpp>
+#include <unistd.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
 ////////////////////////////////////////////////////////////////////////////////
+
 AI::AI(void)
 {
-
+	this->parallelRun.running = true;
+	this->parallelRun.needCompute = false;
+	this->parallelRun.computeDone = false;
+	this->parallelRun.move = sf::Vector2i(-1, -1);
+	this->timer = 0;
 }
 
 
 AI::~AI()
 {
-	this->memory.clear();
+	this->destroyThread();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Getters and setters
 ////////////////////////////////////////////////////////////////////////////////
-
-AI_difficulty	AI::getDifficulty(void)
-{
-	return (this->difficulty);
-}
 
 void	AI::setDifficulty(AI_difficulty difficulty)
 { 
 	this->difficulty = difficulty;
 }
 
-double	AI::getTimer(void)
+
+AI_difficulty	AI::getDifficulty(void)
+{
+	return (this->difficulty);
+}
+
+
+int	AI::getTimer(void)
 {
 	return (this->timer);
 }
 
-void	AI::setTimer(double timer)
+
+void	AI::setAI(
+			Grid *grid, AI_difficulty difficulty,
+			PlayerInfo *player, PlayerInfo *opponent)
 {
-	this->timer = timer;
+	this->difficulty = difficulty;
+	this->timer = 0;
+
+	this->destroyThread();
+	this->startThread(grid, player, opponent);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
-void	AI::setAI(AI_difficulty difficulty)
+void	AI::startTurn(void)
 {
-	this->difficulty = difficulty;
-	this->timer = 0;
-	this->memory.clear();
+	this->mutex.lock();
+	this->parallelRun.needCompute = true;
+	this->mutex.unlock();
 }
 
-sf::Vector2i	AI::getNextMove(
-					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
-					Evaluation *evaluator)
-{
-	sf::Vector2i	move(-1, -1);
-	std::clock_t	start, diff;
 
-	// TODO : REMOVE TRACKER
+sf::Vector2i	AI::getNextMove(bool *moveDone)
+{
+	sf::Vector2i	move;
+
+	move = sf::Vector2i(-1, -1);
+	this->mutex.lock();
+	if (this->parallelRun.computeDone)
+	{
+		this->parallelRun.needCompute = false;
+		this->parallelRun.computeDone = false;
+		move = this->parallelRun.move;
+		this->timer = this->parallelRun.timeLastMove;
+		*moveDone = true;
+	}
+	this->mutex.unlock();
+	
+	return (move);
+}
+
+
+void	AI::reset(
+				Grid *grid, PlayerInfo *player, PlayerInfo *opponent)
+{
+	this->timer = 0;
+	this->destroyThread();
+	this->startThread(grid, player, opponent);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Privbate methods
+////////////////////////////////////////////////////////////////////////////////
+
+void	AI::startThread(
+			Grid *grid, PlayerInfo *player, PlayerInfo *opponent)
+{
+	// Setup parallel variable
+	this->mutex.lock();
+	this->parallelRun.running = true;
+	this->parallelRun.timeLastMove = 0;
+	this->mutex.unlock();
+
+	// Fill struct params
+	this->threadParams.aiDifficulty = this->difficulty;
+	this->threadParams.grid = grid;
+	this->threadParams.mutex = &this->mutex;
+	this->threadParams.parallelRun = &this->parallelRun;
+	this->threadParams.player = player;
+	this->threadParams.opponent = opponent;
+
+	// Start thread
+	this->thread = std::thread(aiThreadCore, &this->threadParams);
+}
+
+
+void	AI::destroyThread(void)
+{
+	if (!this->thread.joinable())
+		return ;
+	this->mutex.lock();
+	this->parallelRun.running = false;
+	this->mutex.unlock();
+	this->thread.join();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Fonctions
+////////////////////////////////////////////////////////////////////////////////
+
+static void	printTracker(
+			Tracker &tracker, AI_difficulty &aiDifficulty, int timer);
+
+void	aiThreadCore(ThreadParams *threadParams)
+{
+	int				diff;
+	bool			running, needCompute;
+	Grid			grid;
+	PlayerInfo		player, opponent;
+	sf::Vector2i	move;
+	std::clock_t	start;
+	std::mutex		*mutex;
+	Evaluation		evaluator;
+	ParallelRun		*parallelRun;
+	AI_difficulty	aiDifficulty;
+	std::unordered_map<int, std::vector<Move>>	memory;
+	
+	// Get params from struct
+	mutex = threadParams->mutex;
+	parallelRun = threadParams->parallelRun;
+	aiDifficulty = threadParams->aiDifficulty;
+
+	// TODO: REMOVE
 	Tracker	tracker;
 	tracker.nbEvaluations = 0;
 	tracker.evaluationTime = 0;
@@ -76,28 +174,84 @@ sf::Vector2i	AI::getNextMove(
 	tracker.checkWinNumber = 0;
 	tracker.checkWinTime = 0;
 
-	// Start timer
-	start = std::clock();
-
-	// Get move to play
-	if (this->difficulty == RANDOM)
-		move = this->getRandomMove(grid, player, opponent);
-	else if (this->difficulty == BETTER_RANDOM)
-		move = this->getBetterRandom(grid, player, opponent);
-	else if (this->difficulty == EASY)
-		move = this->getEasyMove(grid, player, opponent, evaluator);
-	else if (this->difficulty == MEDIUM)
-		move = this->getMediumMove(grid, player, opponent, evaluator, &tracker);
-	//TODO: Implement other difficulties
-
-	// Compute time taken to choose ai
-	diff = std::clock() - start;
-	this->timer = ((double)diff / CLOCKS_PER_SEC) * 1000000;
-
-	if (this->difficulty == MEDIUM)
+	// Main thread loop
+	running = true;
+	needCompute = false;
+	while (running)
 	{
-		setlocale(LC_NUMERIC, "");
-		printf("\n\nGet move in %'i us\n", (int)this->timer);
+		if (needCompute)
+		{
+			move = sf::Vector2i(-1, -1);
+			start = std::clock();
+
+			grid = *threadParams->grid;
+			player = *threadParams->player;
+			opponent = *threadParams->opponent;
+
+			if (aiDifficulty == RANDOM)
+				move = getRandomMove(&grid, &player, &opponent);
+			else if (aiDifficulty == BETTER_RANDOM)
+				move = getBetterRandom(&grid, &player, &opponent);
+			else if (aiDifficulty == EASY)
+				move = getEasyMove(&grid, &player, &opponent, &evaluator);
+			else if (aiDifficulty == MEDIUM)
+				move = getMediumMove(&memory, &grid, &player,
+										&opponent, &evaluator, &tracker);
+			// else if (aiDifficulty == HARD)
+				// move = mtd(f);
+
+			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+
+			// TODO: REMOVE
+			printTracker(tracker, aiDifficulty, diff);
+
+			// Give result to main thread
+			mutex->lock();
+			parallelRun->needCompute = false;
+			parallelRun->computeDone = true;
+			parallelRun->move = move;
+			parallelRun->timeLastMove = diff;
+			mutex->unlock();
+		}
+
+		// Wait 100 ms before check the mutex
+		usleep(100000);
+
+		// Check if the thread need to stop or compute a new move
+		mutex->lock();
+		running = parallelRun->running;
+		needCompute = parallelRun->needCompute;
+		mutex->unlock();
+	}
+
+	memory.clear();
+}
+
+
+// TODO: REMOVE
+static void	printTracker(
+			Tracker &tracker, AI_difficulty &aiDifficulty, int timer)
+{
+	setlocale(LC_NUMERIC, "");
+	if (aiDifficulty == RANDOM)
+	{
+		printf("\n\n==================== RANDOM AI ====================\n");
+		printf("Compute move in %'i us\n", timer);
+	}
+	else if (aiDifficulty == BETTER_RANDOM)
+	{
+		printf("\n\n================= BETTER RANDOM AI ================\n");
+		printf("Compute move in %'i us\n", timer);
+	}
+	else if (aiDifficulty == EASY)
+	{
+		printf("\n\n===================== EASY AI =====================\n");
+		printf("Compute move in %'i us\n", timer);
+	}
+	else if (aiDifficulty == MEDIUM)
+	{
+		printf("\n\n==================== MEDIUM AI ====================\n");
+		printf("Compute move in %'i us\n", timer);
 		printf("  evaluate position\n");
 		printf("   - number of call : %'i\n", tracker.nbEvaluations);
 		printf("   - TIME %'i us\n", tracker.evaluationTime);
@@ -120,98 +274,30 @@ sf::Vector2i	AI::getNextMove(
 		printf("   - check win TIME %'i us\n", tracker.checkWinTime);
 		printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkWinNumber);
 	}
-	else
+	else if (aiDifficulty == HARD)
 	{
-		printf("Compute move in %'i us\n", (int)this->timer);
+		printf("\n\n===================== HARD AI =====================\n");
+		printf("Compute move in %'i us\n", timer);
+		printf("  evaluate position\n");
+		printf("   - number of call : %'i\n", tracker.nbEvaluations);
+		printf("   - TIME %'i us\n", tracker.evaluationTime);
+		printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
+		printf("  get sort moves\n");
+		printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
+		printf("   - get moves TIME %'i us\n", tracker.getMoveTime);
+		printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
+		printf("   - sort moves TIME %'i us\n", tracker.sortMoveTime);
+		printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
+		printf("   - sort moves min size %'i\n", tracker.sortSizeMin);
+		printf("   - sort moves max size %'i\n", tracker.sortSizeMax);
+		printf("   - sort moves avg size %'f\n", (float)tracker.sortSizeTotal / tracker.getSortMoveNumber);
+		printf("  check stone\n");
+		printf("   - number of call : %'i\n", tracker.checkStoneNumber);
+		printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
+		printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
+		printf("  check win\n");
+		printf("   - number of call : %'i\n", tracker.checkWinNumber);
+		printf("   - check win TIME %'i us\n", tracker.checkWinTime);
+		printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkWinNumber);
 	}
-	return (move);
-}
-
-
-void	AI::reset(void)
-{
-	this->memory.clear();
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Private methods
-////////////////////////////////////////////////////////////////////////////////
-
-sf::Vector2i	AI::getRandomMove(Grid *grid, PlayerInfo *player, PlayerInfo *opponent)
-{
-	std::vector<sf::Vector2i>	moves;
-
-	// Get all legal moves
-	moves = grid->getLegalMoves(player, opponent);
-	if (moves.size() == 0)
-		return (sf::Vector2i(-1, -1));
-
-	// Choose move to play
-	int index = rand_int(0, moves.size() - 1);
-	return (moves[index]);
-}
-
-
-sf::Vector2i	AI::getBetterRandom(Grid *grid, PlayerInfo *player, PlayerInfo *opponent)
-{
-	std::vector<sf::Vector2i>	moves;
-
-	// Get interesting move
-	moves = grid->getInterestingMoves(player, opponent);
-	if (moves.size() == 0)
-	{
-		if (player->nbMove + opponent->nbMove == 0)
-			return(sf::Vector2i(rand_int(0, GRID_W_INTER - 1),
-								rand_int(0, GRID_W_INTER - 1)));
-		else
-			return (sf::Vector2i(-1, -1));
-	}
-
-	// Find move to play
-	int index = rand_int(0, moves.size() - 1);
-	return (moves[index]);
-}
-
-
-sf::Vector2i	AI::getEasyMove(
-						Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
-						Evaluation *evaluator)
-{
-	int							bestEval, tmpEval, plCapture, opCapture;
-	sf::Vector2i				move;
-	std::vector<sf::Vector2i>	interestingMoves;
-	BitBoard					*plBitBoard, *opBitBoard;
-
-	// Get interesting move
-	interestingMoves = grid->getInterestingMoves(player, opponent);
-	if (interestingMoves.size() == 0)
-	{
-		if (player->nbMove + opponent->nbMove == 0)
-			return(sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
-		else
-			return (sf::Vector2i(-1, -1));
-	}
-
-	// Compute variables for evaluation
-	plCapture = player->nbCapture;
-	opCapture = opponent->nbCapture;
-	plBitBoard = grid->getBitBoard(player->interType);
-	opBitBoard = grid->getBitBoard(opponent->interType);
-
-	// Find move to play
-	move = sf::Vector2i(-1, -1);
-	bestEval = -1;
-	for (int i = 0; i < interestingMoves.size(); i++)
-	{
-		tmpEval = evaluator->evaluationPosition(
-								plBitBoard, opBitBoard, plCapture, opCapture,
-								interestingMoves[i].x, interestingMoves[i].y);
-		if (tmpEval > bestEval)
-		{
-			bestEval = tmpEval;
-			move = interestingMoves[i];
-		}
-	}
-
-	return (move);
 }

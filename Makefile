@@ -6,7 +6,7 @@ MAKEFLAGS			:= --no-print-directory
 
 #=================================COMPILATION==================================#
 CC					:= g++
-CPPFLAGS			:= -MP -MMD -pthread -I SFML_linux/include -I srcs -g3
+CPPFLAGS			:= -MP -MMD -I SFML_linux/include -I srcs -g3
 LIBFSMLFLAG			:= -L SFML_linux/lib -lsfml-graphics -lsfml-window -lsfml-system
 
 #=====================================NAME=====================================#
@@ -36,8 +36,11 @@ SRCS				:=	srcs/main.cpp \
 						srcs/game/PlayerInfo.cpp \
 						srcs/game/BboxManager.cpp \
 						srcs/AI/AI.cpp \
+						srcs/AI/AI_easy.cpp \
 						srcs/AI/AI_medium.cpp \
+						srcs/AI/AI_random.cpp \
 						srcs/AI/Evaluation.cpp \
+						srcs/AI/AI_betterRandom.cpp \
 
 OBJS 				:= ${SRCS:srcs/%.cpp=$(BUILD)/%.o}
 DEPS				:= $(SRCS:srcs/%.cpp=$(BUILD)/%.d)
@@ -107,6 +110,10 @@ run: $(NAME)
 runval: $(NAME)
 	@echo "$(BLUE)Debug$(NOC)"
 	@export LD_LIBRARY_PATH=SFML_linux/lib/ && valgrind --suppressions=vsupp ./$(NAME)
+
+runvalthread: $(NAME)
+	@echo "$(BLUE)Debug$(NOC)"
+	@export LD_LIBRARY_PATH=SFML_linux/lib/ && valgrind --trace-children=yes --suppressions=vsupp ./$(NAME)
 
 runallval: $(NAME)
 	@echo "$(BLUE)Debug$(NOC)"
