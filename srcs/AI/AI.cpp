@@ -120,8 +120,6 @@ sf::Vector2i	AI::getNextMove(
 		printf("   - number of call : %'i\n", tracker.checkWinNumber);
 		printf("   - check win TIME %'i us\n", tracker.checkWinTime);
 		printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkWinNumber);
-		// printf("  memory\n");
-		// printf("   - nb evaluation : %'lu\n", this->memory.size());
 	}
 	else
 	{
@@ -262,13 +260,26 @@ int	AI::mediumMiniMax(
 		return (tmpEval);
 	}
 
-	// Get interesting moves
-	if (maximizingEval)
-		moves = grid->getInterestingMovesSorted(
-						evaluator, player, opponent, true, tracker);
-	else
-		moves = grid->getInterestingMovesSorted(
-						evaluator, opponent, player, false, tracker);
+	plBitBoard = *grid->getBitBoard(plType);
+	opBitBoard = *grid->getBitBoard(opType);
+	boardState = BoardState(&plBitBoard, &opBitBoard);
+	int	hash = boardState.getHash();
+
+	try
+	{
+		moves = this->memory.at(hash);
+	}
+	catch (std::exception &e)
+	{
+		// Get interesting moves
+		if (maximizingEval)
+			moves = grid->getInterestingMovesSorted(
+							evaluator, player, opponent, true, tracker);
+		else
+			moves = grid->getInterestingMovesSorted(
+							evaluator, opponent, player, false, tracker);
+		this->memory.insert(std::pair<int, std::vector<Move>>(hash, moves));
+	}
 
 	if (moves.size() == 0)
 		return (0);
@@ -277,8 +288,6 @@ int	AI::mediumMiniMax(
 	plMoves = player->getMoves();
 	opMoves = opponent->getMoves();
 	nbMoves = plMoves + opMoves;
-	plBitBoard = *grid->getBitBoard(plType);
-	opBitBoard = *grid->getBitBoard(opType);
 	bboxManagerSave = *grid->getBboxManager();
 
 	// Find move
@@ -315,7 +324,7 @@ int	AI::mediumMiniMax(
 		tracker->checkStoneNumber++;
 
 		// If move have an high score, check win case
-		if (moves[i].eval >= 100000)
+		if (moves[i].eval >= 10000000)
 		{
 			start = std::clock();
 

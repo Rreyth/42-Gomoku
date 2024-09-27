@@ -145,6 +145,16 @@ typedef struct s_move
 		return (*this);
 	}
 
+	bool	operator==(const struct s_move &move) const
+	{
+		return (this->eval == move.eval && this->pos == move.pos);
+	}
+
+	bool	operator!=(const struct s_move &move) const
+	{
+		return (this->eval != move.eval || this->pos != move.pos);
+	}
+
 	bool	operator<(const struct s_move &move) const
 	{
 		return (this->eval < move.eval);
