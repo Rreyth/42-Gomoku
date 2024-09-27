@@ -1,7 +1,7 @@
 #include <game/Grid.hpp>
 #include <utils/Functions.hpp>
-#include <game/Player.hpp>
 #include <AI/Evaluation.hpp>
+#include <game/Player.hpp>
 
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
@@ -135,8 +135,8 @@ void	Grid::tick(display_state *displayState, Mouse *mouse,
 		int	evalL, evalR, captureL, captureR;
 		std::string	xaxis;
 
-		captureL = leftPlayer->getCaptured();
-		captureR = rightPlayer->getCaptured();
+		captureL = leftPlayer->getNbCapture();
+		captureR = rightPlayer->getNbCapture();
 
 		evalL = evaluator->evaluationPosition(
 							&this->bitboardL, &this->bitboardR,
@@ -156,17 +156,17 @@ void	Grid::tick(display_state *displayState, Mouse *mouse,
 
 	this->previewX = px;
 	this->previewY = py;
-	inter_type	plState = INTER_LEFT;
-	inter_type	opState = INTER_RIGHT;
+	inter_type	plType = INTER_LEFT;
+	inter_type	opType = INTER_RIGHT;
 	if (!leftPlayer->isPlaying())
 	{
-		plState = INTER_RIGHT;
-		opState = INTER_LEFT;
+		plType = INTER_RIGHT;
+		opType = INTER_LEFT;
 	}
 
 	this->previewLegal = this->checkLegalMove(px, py,
-							rightPlayer->getMoves() + leftPlayer->getMoves(),
-							plState, opState);
+							rightPlayer->getNbMove() + leftPlayer->getNbMove(),
+							plType, opType);
 
 	if (!mouse->isPressed(MBUT_LEFT) || !this->previewLegal)
 		return ;
@@ -233,23 +233,6 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text,
 		textureManager->drawTexture(window, SPRITE_STONE_PREVIEW,
 									drawX, drawY, MID_CENTER);
 	}
-
-	// TODO: REMOVE
-	// std::vector<sf::Vector2i>	positions = this->bboxManager.getListPosition();
-	// int	x, y;
-
-	// for (int i = 0; i < positions.size(); i++)
-	// {
-	// 	x = positions[i].x;
-	// 	y = positions[i].y;
-	// 	if (this->bitboardL.get(x, y) || this->bitboardR.get(x, y))
-	// 		continue;
-
-	// 	drawX = this->x + x * GRID_SQUARE_SIZE + 10;
-	// 	drawY = this->y + y * GRID_SQUARE_SIZE + 10;
-	// 	textureManager->drawTexture(window, SPRITE_STONE_PREVIEW,
-	// 								drawX, drawY, MID_CENTER);
-	// }
 }
 
 
@@ -286,7 +269,7 @@ bool	Grid::checkLegalMove(
 
 
 bool	Grid::putStone(
-				sf::Vector2i *move, int nbMoves, Player *player, Player *opponent)
+				sf::Vector2i *move, int nbMoves, PlayerInfo *player, PlayerInfo *opponent)
 {
 	if (!this->putStoneAI(move, nbMoves, player, opponent))
 		return (false);
@@ -297,12 +280,12 @@ bool	Grid::putStone(
 }
 
 
-bool	Grid::putStoneAI(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent)
+bool	Grid::putStoneAI(sf::Vector2i *move, int nbMoves, PlayerInfo *player, PlayerInfo *opponent)
 {
 	inter_type	plType, opType;
 
-	plType = player->getInterType();
-	opType = opponent->getInterType();
+	plType = player->interType;
+	opType = opponent->interType;
 
 	if (!this->checkLegalMove(move->x, move->y, nbMoves, plType, opType))
 		return (false);
@@ -310,14 +293,14 @@ bool	Grid::putStoneAI(sf::Vector2i *move, int nbMoves, Player *player, Player *o
 	if (plType == INTER_LEFT)
 	{
 		this->bitboardL.set(move->x, move->y, true);
-		player->addCaptured(this->makeCapture(
-									move, &this->bitboardL, &this->bitboardR));
+		player->nbCapture += this->makeCapture(
+									move, &this->bitboardL, &this->bitboardR);
 	}
 	else
 	{
 		this->bitboardR.set(move->x, move->y, true);
-		player->addCaptured(this->makeCapture(
-									move, &this->bitboardR, &this->bitboardL));
+		player->nbCapture += this->makeCapture(
+									move, &this->bitboardR, &this->bitboardL);
 	}
 
 	return (true);
@@ -334,19 +317,19 @@ void	Grid::removeStone(sf::Vector2i *move, inter_type plType)
 }
 
 
-bool	Grid::checkWinCondition(Player *player, Player *opponent)
+bool	Grid::checkWinCondition(PlayerInfo *player, PlayerInfo *opponent)
 {
 	// Check if the player capture at least 10 opponent's stones
-	if (player->getCaptured() >= WIN_CAPTURE)
+	if (player->nbCapture >= WIN_CAPTURE)
 	{
-		player->setWinState(WIN_STATE_CAPTURE);
+		player->winState = WIN_STATE_CAPTURE;
 		this->previewLegal = false;
 		return (true);
 	}
 	// Check capture for auto win
-	else if (player->getCaptured() == 8)
+	else if (player->nbCapture == 8)
 	{
-		if (player->getInterType() == INTER_LEFT)
+		if (player->interType == INTER_LEFT)
 		{
 			if (this->checkWinByAlign(
 							opponent, player, &this->bitboardR, &this->bitboardL))
@@ -360,7 +343,7 @@ bool	Grid::checkWinCondition(Player *player, Player *opponent)
 		}
 	}
 
-	if (player->getInterType() == INTER_LEFT)
+	if (player->interType == INTER_LEFT)
 		return (this->checkWinByAlign(
 						player, opponent, &this->bitboardL, &this->bitboardR));
 
@@ -462,20 +445,20 @@ void	Grid::disablePreview(void)
 }
 
 
-std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *player, Player *opponent)
+std::vector<sf::Vector2i>	Grid::getLegalMoves(PlayerInfo *player, PlayerInfo *opponent)
 {
 	int							nbMoves;
-	inter_type					plState, opState;
+	inter_type					plType, opType;
 	std::vector<sf::Vector2i>	moves;
 
-	nbMoves = player->getMoves() + opponent->getMoves();
-	plState = player->getInterType();
-	opState = opponent->getInterType();
+	nbMoves = player->nbMove + opponent->nbMove;
+	plType = player->interType;
+	opType = opponent->interType;
 	for (int i = 0; i < GRID_W_INTER; i++)
 	{
 		for (int j = 0; j < GRID_W_INTER; j++)
 		{
-			if (checkLegalMove(i, j, nbMoves, plState, opState))
+			if (checkLegalMove(i, j, nbMoves, plType, opType))
 				moves.push_back(sf::Vector2i(i, j));
 		}
 	}
@@ -485,17 +468,17 @@ std::vector<sf::Vector2i>	Grid::getLegalMoves(Player *player, Player *opponent)
 
 
 std::vector<sf::Vector2i>	Grid::getInterestingMoves(
-									Player *player, Player *opponent)
+									PlayerInfo *player, PlayerInfo *opponent)
 {
 	bool						isStoneAlone;
 	int							nbMoves, check, checkV, yD, yA, maxLimit, nbBbox;
-	inter_type					plState, opState;
+	inter_type					plType, opType;
 	std::vector<sf::Vector2i>	moves;
 	std::vector<Bbox>			*bboxes;
 
-	nbMoves = player->getMoves() + opponent->getMoves();
-	plState = player->getInterType();
-	opState = opponent->getInterType();
+	nbMoves = player->nbMove + opponent->nbMove;
+	plType = player->interType;
+	opType = opponent->interType;
 	maxLimit = GRID_W_INTER - 1;
 
 	bboxes = this->bboxManager.getBboxes();
@@ -509,7 +492,7 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(
 			for (int x = bboxes->at(i).Lx; x <= bboxes->at(i).Rx; x++)
 			{
 				// Remove the move if it's illegal
-				if (!checkLegalMove(x, y, nbMoves, plState, opState))
+				if (!checkLegalMove(x, y, nbMoves, plType, opType))
 					continue;
 
 				moves.push_back(sf::Vector2i(x, y));
@@ -523,7 +506,7 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(
 
 std::vector<Move>	Grid::getInterestingMovesSorted(
 							Evaluation *evaluator,
-							Player *player, Player *opponent,
+							PlayerInfo *player, PlayerInfo *opponent,
 							bool reverse, Tracker *tracker)
 {
 	int							size, eval, j, nbMove, plCapture, opCapture;
@@ -556,11 +539,11 @@ std::vector<Move>	Grid::getInterestingMovesSorted(
 
 	start = std::clock();
 
-	plCapture = player->getCaptured();
-	opCapture = opponent->getCaptured();
-	nbMove = player->getMoves() + opponent->getMoves();
+	plCapture = player->nbCapture;
+	opCapture = opponent->nbCapture;
+	nbMove = player->nbMove + opponent->nbMove;
 
-	if (player->getInterType() == INTER_LEFT)
+	if (player->interType == INTER_LEFT)
 	{
 		plBitboard = this->bitboardL;
 		opBitboard = this->bitboardR;
@@ -630,7 +613,7 @@ std::vector<Move>	Grid::getInterestingMovesSorted(
 ////////////////////////////////////////////////////////////////////////////////
 
 bool	Grid::checkWinByAlign(
-				Player *player, Player *opponent,
+				PlayerInfo *player, PlayerInfo *opponent,
 				BitBoard *plBitboard, BitBoard *opBitboard)
 {
 	int		winCase, check, checkV, test, lines[4];
@@ -677,7 +660,7 @@ bool	Grid::checkWinByAlign(
 
 
 bool	Grid::validateWin(
-				Player *player, Player *opponent,
+				PlayerInfo *player, PlayerInfo *opponent,
 				BitBoard *plBitBoard, BitBoard *opBitBoard,
 				bitboardAxis bbAxis, int x, int y)
 {
@@ -716,9 +699,9 @@ bool	Grid::validateWin(
 					&& ((opLine & checkR) >> shiftR == opVerifyL
 						|| (opLine & checkR) >> shiftR == opVerifyR)))
 			{
-				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
+				if (opponent->nbCapture >= WIN_CAPTURE - 2)
 				{
-					opponent->setWinState(WIN_STATE_AUTO_CAPTURE);
+					opponent->winState = WIN_STATE_AUTO_CAPTURE;
 					this->previewLegal = false;
 					return (true);
 				}
@@ -738,9 +721,9 @@ bool	Grid::validateWin(
 					&& ((opLine & checkVR) >> shiftVR == opVerifyL
 						|| (opLine & checkVR) >> shiftVR == opVerifyR)))
 			{
-				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
+				if (opponent->nbCapture >= WIN_CAPTURE - 2)
 				{
-					opponent->setWinState(WIN_STATE_AUTO_CAPTURE);
+					opponent->winState = WIN_STATE_AUTO_CAPTURE;
 					this->previewLegal = false;
 					return (true);
 				}
@@ -762,9 +745,9 @@ bool	Grid::validateWin(
 					&& ((opLine & checkR) >> shiftR == opVerifyL
 						|| (opLine & checkR) >> shiftR == opVerifyR)))
 			{
-				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
+				if (opponent->nbCapture >= WIN_CAPTURE - 2)
 				{
-					opponent->setWinState(WIN_STATE_AUTO_CAPTURE);
+					opponent->winState = WIN_STATE_AUTO_CAPTURE;
 					this->previewLegal = false;
 					return (true);
 				}
@@ -786,9 +769,9 @@ bool	Grid::validateWin(
 					&& ((opLine & checkR) >> shiftR == opVerifyL
 						|| (opLine & checkR) >> shiftR == opVerifyR)))
 			{
-				if (opponent->getCaptured() >= WIN_CAPTURE - 2)
+				if (opponent->nbCapture >= WIN_CAPTURE - 2)
 				{
-					opponent->setWinState(WIN_STATE_AUTO_CAPTURE);
+					opponent->winState = WIN_STATE_AUTO_CAPTURE;
 					this->previewLegal = false;
 					return (true);
 				}
@@ -818,7 +801,7 @@ bool	Grid::validateWin(
 		}
 	}
 
-	player->setWinState(WIN_STATE_ALIGN);
+	player->winState = WIN_STATE_ALIGN;
 	this->previewLegal = false;
 	return (true);
 }

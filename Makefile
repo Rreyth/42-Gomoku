@@ -6,7 +6,7 @@ MAKEFLAGS			:= --no-print-directory
 
 #=================================COMPILATION==================================#
 CC					:= g++
-CPPFLAGS			:= -MP -MMD -I SFML_linux/include -I srcs -g3
+CPPFLAGS			:= -MP -MMD -pthread -I SFML_linux/include -I srcs -g3
 LIBFSMLFLAG			:= -L SFML_linux/lib -lsfml-graphics -lsfml-window -lsfml-system
 
 #=====================================NAME=====================================#
@@ -33,8 +33,10 @@ SRCS				:=	srcs/main.cpp \
 						srcs/game/Player.cpp \
 						srcs/game/BitBoard.cpp \
 						srcs/game/BoardState.cpp \
+						srcs/game/PlayerInfo.cpp \
 						srcs/game/BboxManager.cpp \
 						srcs/AI/AI.cpp \
+						srcs/AI/AI_medium.cpp \
 						srcs/AI/Evaluation.cpp \
 
 OBJS 				:= ${SRCS:srcs/%.cpp=$(BUILD)/%.o}

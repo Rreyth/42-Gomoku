@@ -6,6 +6,7 @@
 # include <game/BitBoard.hpp>
 # include <game/BboxManager.hpp>
 # include <game/BoardState.hpp>
+# include <game/PlayerInfo.hpp>
 
 # include <vector>
 # include <unordered_map>
@@ -32,14 +33,19 @@ public:
 
 	Grid			&operator=(const Grid &grid);
 
-	void			tick(display_state *displayState, Mouse *mouse, Player *leftPlayer, Player *rightPlayer,
+	void			tick(display_state *displayState, Mouse *mouse,
+							Player *leftPlayer, Player *rightPlayer,
 							Evaluation *evaluator);
-	void			draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
-	bool			checkLegalMove(int x, int y, int nbMoves, inter_type plType, inter_type opType);
-	bool			putStone(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
-	bool			putStoneAI(sf::Vector2i *move, int nbMoves, Player *player, Player *opponent);
+	void			draw(sf::RenderWindow *window, sf::Text *text,
+							TextureManager *textureManager);
+	bool			checkLegalMove(int x, int y, int nbMoves,
+									inter_type plType, inter_type opType);
+	bool			putStone(sf::Vector2i *move, int nbMoves,
+								PlayerInfo *player, PlayerInfo *opponent);
+	bool			putStoneAI(sf::Vector2i *move, int nbMoves,
+								PlayerInfo *player, PlayerInfo *opponent);
 	void			removeStone(sf::Vector2i *move, inter_type plType);
-	bool			checkWinCondition(Player *player, Player *opponent);
+	bool			checkWinCondition(PlayerInfo *player, PlayerInfo *opponent);
 	void			updateBboxManager(sf::Vector2i *move);
 	void			clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
 	void			reset(void);
@@ -50,11 +56,11 @@ public:
 	void			goToHistoryEnd(void);
 	void			disablePreview(void);
 
-	std::vector<sf::Vector2i>	getLegalMoves(Player *player, Player *opponent);
-	std::vector<sf::Vector2i>	getInterestingMoves(Player *player, Player *opponent);
+	std::vector<sf::Vector2i>	getLegalMoves(PlayerInfo *player, PlayerInfo *opponent);
+	std::vector<sf::Vector2i>	getInterestingMoves(PlayerInfo *player, PlayerInfo *opponent);
 	std::vector<Move>			getInterestingMovesSorted(
 									Evaluation *evaluator,
-									Player *player, Player *opponent,
+									PlayerInfo *player, PlayerInfo *opponent,
 									bool reverse, Tracker *tracker);
 
 private:
@@ -67,8 +73,8 @@ private:
 	BboxManager									bboxManager;
 	std::vector<std::pair<BitBoard, BitBoard>>	boardHistory;
 
-	bool	checkWinByAlign(Player *player, Player *opponent, BitBoard *plBitboard, BitBoard *opBitboard);
-	bool	validateWin(Player *player, Player *opponent, BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis bbAxis, int x, int y);
+	bool	checkWinByAlign(PlayerInfo *player, PlayerInfo *opponent, BitBoard *plBitboard, BitBoard *opBitboard);
+	bool	validateWin(PlayerInfo *player, PlayerInfo *opponent, BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis bbAxis, int x, int y);
 	int		makeCapture(sf::Vector2i *move, BitBoard *plBitBoard, BitBoard *opBitBoard);
 	bool	checkDoubleFreeThree(int x, int y, BitBoard *plBitBoard, BitBoard *opBitBoard);
 	bool	checkProRule(int x, int y, inter_type interPlayer, int nbMoves);

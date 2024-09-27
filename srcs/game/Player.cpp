@@ -8,13 +8,11 @@
 Player::Player(void)
 {
 	this->type = PLAYER;
-	this->captured = 0;
 	this->playing = false;
-	this->winState = WIN_STATE_NONE;
 	this->timer = 0;
 	this->stoneSprite = SPRITE_STONE_BLUE;
-	this->moves = 0;
 }
+
 
 Player::~Player()
 {
@@ -29,25 +27,12 @@ player_type	Player::getType(void)
 	return (this->type);
 }
 
+
 void		Player::setType(player_type type)
 {
 	this->type = type;
 }
 
-int			Player::getCaptured(void)
-{
-	return (this->captured);
-}
-
-void		Player::setCaptured(int captured)
-{
-	this->captured = captured;
-}
-
-void		Player::addCaptured(int captured)
-{
-	this->captured += captured;
-}
 
 void		Player::setTimer(game_mode mode)
 {
@@ -57,88 +42,97 @@ void		Player::setTimer(game_mode mode)
 		this->timer = 0;
 }
 
+
 float		Player::getTimer(void)
 {
 	return (this->timer);
 }
+
 
 void		Player::setName(std::string name)
 {
 	this->name = name;
 }
 
+
 std::string	Player::getName(void)
 {
 	return (this->name);
 }
+
 
 bool		Player::isPlaying(void)
 {
 	return (this->playing);
 }
 
+
 void		Player::setPlaying(bool playing)
 {
 	this->playing = playing;
 }
 
-win_state		Player::getWinState(void)
-{
-	return (this->winState);
-}
 
 void		Player::setWinState(win_state winState)
 {
-	this->winState = winState;
+	this->info.winState = winState;
 }
+
+
+win_state	Player::getWinState(void)
+{
+	return (this->info.winState);
+}
+
 
 sprite_name	Player::getStoneSprite()
 {
 	return (this->stoneSprite);
 }
 
-void		Player::setMoves(int moves)
-{
-	this->moves = moves;
-}
-
 
 void		Player::addMove(void)
 {
-	this->moves++;
+	this->info.nbMove++;
 }
 
-int			Player::getMoves(void)
+
+int			Player::getNbMove(void)
 {
-	return (this->moves);
+	return (this->info.nbMove);
 }
 
-void		Player::setInterType(inter_type interType)
+
+int			Player::getNbCapture(void)
 {
-	this->interType = interType;
+	return (this->info.nbCapture);
 }
 
-inter_type	Player::getInterType(void)
-{
-	return (this->interType);
-}
 
-AI			*Player::getAI(void)
+AI	*Player::getAI(void)
 {
 	return (&this->ai);
+}
+
+
+PlayerInfo		*Player::getPlayerInfo(void)
+{
+	return (&this->info);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
 
-sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse, Evaluation *evaluator)
+sf::Vector2i	Player::getNextMove(
+							Grid *grid, Player *opponent, Mouse *mouse,
+							Evaluation *evaluator, bool *moveDone)
 {
-	sf::Vector2i	move(-1, -1);
+	sf::Vector2i	move;
+	int				nbMoves;
 
-	int				nbMoves = this->moves + opponent->getMoves();
-
-
+	move = sf::Vector2i(-1, -1);
+	nbMoves = this->getNbMove() + opponent->getNbMove();
 	if (this->type == PLAYER)
 	{
 		if (mouse->isPressed(MBUT_LEFT))
@@ -149,17 +143,22 @@ sf::Vector2i	Player::getNextMove(Grid *grid, Player *opponent, Mouse *mouse, Eva
 			my -= grid->getY();
 			int px = (mx + GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
 			int py = (my + GRID_SQUARE_HALF_SIZE) / GRID_SQUARE_SIZE;
-			if (grid->checkLegalMove(px, py, nbMoves, this->interType, opponent->getInterType()))
+			if (grid->checkLegalMove(
+						px, py, nbMoves,
+						this->info.interType,
+						opponent->getPlayerInfo()->interType))
 			{
 				move.x = px;
 				move.y = py;
+				*moveDone = true;
 			}
 		}
 	}
 	else
 	{
 		grid->disablePreview();
-		move = this->ai.getNextMove(grid, this, opponent, evaluator);
+		move = this->ai.getNextMove(grid, &this->info, opponent->getPlayerInfo(), evaluator);
+		*moveDone = true;
 	}
 	return (move);
 }
@@ -182,16 +181,15 @@ void		Player::setPlayer(player_type type, game_mode mode, int pos, sprite_name s
 		this->ai.setAI(difficulty);
 
 	if (pos == 1)
-		this->interType = INTER_LEFT;
+		this->info.interType = INTER_LEFT;
 	else
-		this->interType = INTER_RIGHT;
+		this->info.interType = INTER_RIGHT;
 
-	this->winState = WIN_STATE_NONE;
 	this->stoneSprite = stoneSprite;
 	this->playing = false;
-	this->captured = 0;
-	this->moves = 0;
+	this->info.reset();
 }
+
 
 void		Player::tick(float delta, game_mode mode)
 {
@@ -214,14 +212,10 @@ void		Player::tick(float delta, game_mode mode)
 void		Player::reset(game_mode mode)
 {
 	this->setTimer(mode);
-	this->winState = WIN_STATE_NONE;
 	this->playing = false;
-	this->captured = 0;
-	this->moves = 0;
 	this->ai.reset();
+	this->info.reset();
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods

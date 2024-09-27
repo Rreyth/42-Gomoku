@@ -48,6 +48,7 @@ Grid	*Game::getGrid(void)
 
 void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 {
+	bool			moveDone;
 	int				nbMoves;
 	sf::Vector2i	move;
 	Player			*player, *opponent;
@@ -56,35 +57,8 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 	this->grid.tick(displayState, mouse, &this->playerLeft, &this->playerRight,
 						&this->evaluator);
 
-	nbMoves = this->playerLeft.getMoves() + this->playerRight.getMoves();
-	if (this->playerLeft.isPlaying())
-	{
-		player = &this->playerLeft;
-		opponent = &this->playerRight;
-		move = this->playerLeft.getNextMove(&this->grid, &this->playerRight, mouse, &this->evaluator);
-		this->playerLeft.tick(delta, this->mode);
-	}
-	else
-	{
-		player = &this->playerRight;
-		opponent = &this->playerLeft;
-		move = this->playerRight.getNextMove(&this->grid, &this->playerLeft, mouse, &this->evaluator);
-		this->playerRight.tick(delta, this->mode);
-	}
-
-	if (this->grid.putStone(&move, nbMoves, player, opponent))
-	{
-		this->grid.addBoardToHistory();
-		player->addMove();
-		// printf("player capture %i\nop capture %i\n", player->getCaptured(), opponent->getCaptured());
-		if (this->grid.checkWinCondition(player, opponent))
-		{
-			this->grid.goToHistoryEnd();
-			*displayState = DISPLAY_END;
-			return ;
-		}
-		this->swapTurn();
-	}
+	if (this->leave.getPressed())
+		*displayState = DISPLAY_MENU;
 
 	if (this->mode == BLITZ)
 	{
@@ -100,8 +74,43 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 		}
 	}
 
-	if (this->leave.getPressed())
-		*displayState = DISPLAY_MENU;
+	moveDone = false;
+	nbMoves = this->playerLeft.getNbMove() + this->playerRight.getNbMove();
+	if (this->playerLeft.isPlaying())
+	{
+		player = &this->playerLeft;
+		opponent = &this->playerRight;
+		move = this->playerLeft.getNextMove(
+								&this->grid, &this->playerRight, mouse,
+								&this->evaluator, &moveDone);
+		this->playerLeft.tick(delta, this->mode);
+	}
+	else
+	{
+		player = &this->playerRight;
+		opponent = &this->playerLeft;
+		move = this->playerRight.getNextMove(
+								&this->grid, &this->playerLeft, mouse,
+								&this->evaluator, &moveDone);
+		this->playerRight.tick(delta, this->mode);
+	}
+
+	// If no move is done, skip next part
+	if (!moveDone)
+		return ;
+
+	if (this->grid.putStone(&move, nbMoves, player->getPlayerInfo(), opponent->getPlayerInfo()))
+	{
+		this->grid.addBoardToHistory();
+		player->addMove();
+		if (this->grid.checkWinCondition(player->getPlayerInfo(), opponent->getPlayerInfo()))
+		{
+			this->grid.goToHistoryEnd();
+			*displayState = DISPLAY_END;
+			return ;
+		}
+		this->swapTurn();
+	}
 }
 
 void	Game::swapTurn(void)
@@ -232,12 +241,12 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 
 	textureManager->drawTexture(window, this->playerLeft.getStoneSprite(), size.x / 2, gridY + (size.y * 0.4), MID_CENTER);
 
-	str = std::to_string(this->playerLeft.getMoves());
+	str = std::to_string(this->playerLeft.getNbMove());
 
 	drawText(window, text, "MOVES", size.x / 2, gridY + (size.y * 0.60), 25, sf::Color::White, MID_CENTER);
 	drawText(window, text, str, size.x / 2, gridY + (size.y * 0.65), 30, sf::Color::White, MID_CENTER);
 
-	str = std::to_string(this->playerLeft.getCaptured());
+	str = std::to_string(this->playerLeft.getNbCapture());
 	drawText(window, text, "CAPTURED STONES", size.x / 2, gridY + (size.y * 0.75), 25, sf::Color::White, MID_CENTER);
 	drawText(window, text, str, size.x / 2, gridY + (size.y * 0.8), 30, sf::Color::White, MID_CENTER);
 
@@ -275,11 +284,11 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 
 	textureManager->drawTexture(window, this->playerRight.getStoneSprite(), WIN_W - (size.x / 2), gridY + (size.y * 0.4), MID_CENTER);
 
-	str = std::to_string(this->playerRight.getMoves());
+	str = std::to_string(this->playerRight.getNbMove());
 	drawText(window, text, "MOVES", WIN_W - (size.x / 2), gridY + (size.y * 0.60), 25, sf::Color::White, MID_CENTER);
 	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.65), 30, sf::Color::White, MID_CENTER);
 
-	str = std::to_string(this->playerRight.getCaptured());
+	str = std::to_string(this->playerRight.getNbCapture());
 	drawText(window, text, "CAPTURED STONES", WIN_W - (size.x / 2), gridY + (size.y * 0.75), 25, sf::Color::White, MID_CENTER);
 	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.80), 30, sf::Color::White, MID_CENTER);
 
@@ -313,20 +322,20 @@ void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *
 	// drawText(window, text, "PREDICTED POS", pos.x + (size.x / 2), pos.y + (size.y / 2), 15, sf::Color::White, MID_CENTER);
 
 		// TODO: REMOVE
-	if (nbTurn != this->playerLeft.getMoves() + this->playerRight.getMoves())
+	if (nbTurn != this->playerLeft.getNbMove() + this->playerRight.getNbMove())
 	{
-		nbTurn = this->playerLeft.getMoves() + this->playerRight.getMoves();
+		nbTurn = this->playerLeft.getNbMove() + this->playerRight.getNbMove();
 
 		leftEval = this->evaluator.evaluateGrid(
 									this->grid.getBitBoard(INTER_LEFT),
 									this->grid.getBitBoard(INTER_RIGHT),
-									this->playerLeft.getCaptured(),
-									this->playerRight.getCaptured());
+									this->playerLeft.getNbCapture(),
+									this->playerRight.getNbCapture());
 		rightEval = this->evaluator.evaluateGrid(
 									this->grid.getBitBoard(INTER_RIGHT),
 									this->grid.getBitBoard(INTER_LEFT),
-									this->playerRight.getCaptured(),
-									this->playerLeft.getCaptured());
+									this->playerRight.getNbCapture(),
+									this->playerLeft.getNbCapture());
 	}
 
 	std::string tkt = std::to_string(leftEval) + " | " + std::to_string(rightEval);

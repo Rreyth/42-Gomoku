@@ -2,7 +2,6 @@
 # define BITBOARD_HPP
 
 # include <define.hpp>
-// # include <functional>
 
 typedef enum e_bitboardAxis
 {
