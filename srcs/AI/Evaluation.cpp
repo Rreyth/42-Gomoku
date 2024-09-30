@@ -394,9 +394,13 @@ int	Evaluation::evaluateGridOnAxis(
 	}
 
 	plTmpCompleteLine++;
+	if (plTmpCompleteLine < 0)
+		plTmpCompleteLine++;
 	if (plTmpCompleteLine > 5)
 		plTmpCompleteLine = 5;
 	opTmpCompleteLine++;
+	if (opTmpCompleteLine < 0)
+		opTmpCompleteLine++;
 	if (opTmpCompleteLine > 5)
 		opTmpCompleteLine = 5;
 

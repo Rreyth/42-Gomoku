@@ -74,7 +74,7 @@ static Move	miniMax(
 		if (evalFind != memoryEval->end())
 		{
 			// Try to get evaluation in memory
-			bestMove.eval = evalFind->second;
+			tmpMove.eval = evalFind->second;
 			tracker->nbMemoryEval++;
 		}
 		else
@@ -82,11 +82,11 @@ static Move	miniMax(
 			// If not in memory, compute it and put it in memory
 			start = std::clock();
 
-			bestMove.eval = evaluator->evaluateGrid(
+			tmpMove.eval = evaluator->evaluateGrid(
 									grid->getBitBoard(plType),
 									grid->getBitBoard(opType),
 									plCapture, opCapture);
-			memoryEval->insert(std::pair<int, int>(hash, bestMove.eval));
+			memoryEval->insert(std::pair<int, int>(hash, tmpMove.eval));
 
 			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 			tracker->computeEvalTime += diff;
@@ -97,7 +97,7 @@ static Move	miniMax(
 		tracker->evaluationTime += diff;
 		tracker->nbEvaluations++;
 
-		return (bestMove);
+		return (tmpMove);
 	}
 
 	// Get interesting moves
@@ -217,9 +217,9 @@ static Move	miniMax(
 		else
 		{
 			if (maximizingEval)
-				grid->removeStone(&moves[i].pos, plType);
+				grid->removeStone(&tmpMove.pos, plType);
 			else
-				grid->removeStone(&moves[i].pos, opType);
+				grid->removeStone(&tmpMove.pos, opType);
 		}
 		if (depth > 1)
 			grid->setBboxManager(&bboxManagerSave);
