@@ -113,7 +113,7 @@ runval: $(NAME)
 
 runvalthread: $(NAME)
 	@echo "$(BLUE)Debug$(NOC)"
-	@export LD_LIBRARY_PATH=SFML_linux/lib/ && valgrind --trace-children=yes --suppressions=vsupp ./$(NAME)
+	@export LD_LIBRARY_PATH=SFML_linux/lib/ && valgrind --trace-children=yes --track-origins=yes --suppressions=vsupp ./$(NAME)
 
 runallval: $(NAME)
 	@echo "$(BLUE)Debug$(NOC)"

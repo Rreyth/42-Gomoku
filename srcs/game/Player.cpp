@@ -213,7 +213,8 @@ void		Player::reset(
 {
 	this->setTimer(mode);
 	this->playing = false;
-	this->ai.reset(grid, &this->info, opponent);
+	if (type == AI_PLAYER)
+		this->ai.reset(grid, &this->info, opponent);
 	this->info.reset();
 }
 

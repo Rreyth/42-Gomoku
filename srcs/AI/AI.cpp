@@ -101,6 +101,7 @@ void	AI::reset(
 void	AI::startThread(
 			Grid *grid, PlayerInfo *player, PlayerInfo *opponent)
 {
+	printf("START ORDER\n");
 	// Setup parallel variable
 	this->mutex.lock();
 	this->parallelRun.running = true;
@@ -122,8 +123,10 @@ void	AI::startThread(
 
 void	AI::destroyThread(void)
 {
+	printf("DISTROY ORDER CALL\n");
 	if (!this->thread.joinable())
 		return ;
+	printf("DISTROY ORDER\n");
 	this->mutex.lock();
 	this->parallelRun.running = false;
 	this->mutex.unlock();
@@ -153,6 +156,8 @@ void	aiThreadCore(ThreadParams *threadParams)
 	AI_difficulty	aiDifficulty;
 	std::unordered_map<int, std::vector<Move>>	memoryMoves;
 	std::unordered_map<int, int>				memoryEval;
+
+	printf("ohayo thread-san\n");
 
 	// Get params from struct
 	mutex = threadParams->mutex;
@@ -195,6 +200,8 @@ void	aiThreadCore(ThreadParams *threadParams)
 			printTracker(tracker, aiDifficulty, diff);
 			resetTracker(tracker);
 
+			// printf("MOVE %i %i\n", move.x, move.y);
+
 			// Give result to main thread
 			mutex->lock();
 			parallelRun->needCompute = false;
@@ -216,6 +223,7 @@ void	aiThreadCore(ThreadParams *threadParams)
 
 	memoryMoves.clear();
 	memoryEval.clear();
+	printf("janee thread-kun\n");
 }
 
 
