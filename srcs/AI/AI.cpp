@@ -186,8 +186,9 @@ void	aiThreadCore(ThreadParams *threadParams)
 			else if (aiDifficulty == MEDIUM)
 				move = getMediumMove(&memoryMoves, &memoryEval, &grid, &player,
 										&opponent, &evaluator, &tracker);
-			// else if (aiDifficulty == HARD)
-				// move = mtd(f);
+			else if (aiDifficulty == HARD)
+				move = getHardMove(&memoryMoves, &memoryEval, &grid, &player,
+									&opponent, &evaluator, &tracker);
 
 			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 
@@ -300,8 +301,12 @@ static void	printTracker(
 		printf("Compute move in %'i us\n", timer);
 		printf("  evaluate position\n");
 		printf("   - number of call : %'i\n", tracker.nbEvaluations);
-		printf("   - TIME %'i us\n", tracker.evaluationTime);
+		printf("   - number of compute call : %'i\n", tracker.nbComputeEval);
+		printf("   - number of memory call : %'i\n", tracker.nbMemoryEval);
+		printf("   - TIME ALL %'i us\n", tracker.evaluationTime);
+		printf("   - TIME COMPUTE %'i us\n", tracker.computeEvalTime);
 		printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
+		printf("   - about %'f us per compute call\n", (float)tracker.computeEvalTime / tracker.nbComputeEval);
 		printf("  get sort moves\n");
 		printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
 		printf("   - get moves TIME %'i us\n", tracker.getMoveTime);

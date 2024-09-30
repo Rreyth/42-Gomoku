@@ -364,28 +364,28 @@ int	Evaluation::evaluateGridOnAxis(
 		if (plTmpL == this->verifyAlignFullL[i])
 		{
 			plIsEvalL = true;
-			plTmpCompleteLine += i - 1;
+			plTmpCompleteLine += i;
 		}
 
 		// Check for line complete on right
 		if (plTmpR == this->verifyAlignFullR[i])
 		{
 			plIsEvalR = true;
-			plTmpCompleteLine += i - 1;
+			plTmpCompleteLine += i;
 		}
 
 		// Check for line block on left
 		if (opTmpL == this->verifyAlignFullL[i])
 		{
 			opIsEvalL = true;
-			opTmpCompleteLine += i - 1;
+			opTmpCompleteLine += i;
 		}
 
 		// Check for line block on right
 		if (opTmpR == this->verifyAlignFullR[i])
 		{
 			opIsEvalR = true;
-			opTmpCompleteLine += i - 1;
+			opTmpCompleteLine += i;
 		}
 
 		// If all case are already count, break
@@ -394,13 +394,9 @@ int	Evaluation::evaluateGridOnAxis(
 	}
 
 	plTmpCompleteLine++;
-	if (plTmpCompleteLine < 0)
-		plTmpCompleteLine++;
 	if (plTmpCompleteLine > 5)
 		plTmpCompleteLine = 5;
 	opTmpCompleteLine++;
-	if (opTmpCompleteLine < 0)
-		opTmpCompleteLine++;
 	if (opTmpCompleteLine > 5)
 		opTmpCompleteLine = 5;
 

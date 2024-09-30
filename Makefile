@@ -37,6 +37,7 @@ SRCS				:=	srcs/main.cpp \
 						srcs/game/BboxManager.cpp \
 						srcs/AI/AI.cpp \
 						srcs/AI/AI_easy.cpp \
+						srcs/AI/AI_hard.cpp \
 						srcs/AI/AI_medium.cpp \
 						srcs/AI/AI_random.cpp \
 						srcs/AI/Evaluation.cpp \
