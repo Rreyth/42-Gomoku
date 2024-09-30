@@ -26,7 +26,7 @@ AI::~AI()
 ////////////////////////////////////////////////////////////////////////////////
 
 void	AI::setDifficulty(AI_difficulty difficulty)
-{ 
+{
 	this->difficulty = difficulty;
 }
 
@@ -81,7 +81,7 @@ sf::Vector2i	AI::getNextMove(bool *moveDone)
 		*moveDone = true;
 	}
 	this->mutex.unlock();
-	
+
 	return (move);
 }
 
@@ -134,6 +134,8 @@ void	AI::destroyThread(void)
 // Fonctions
 ////////////////////////////////////////////////////////////////////////////////
 
+// TODO: REMOVE
+static void	resetTracker(Tracker &tracker);
 static void	printTracker(
 			Tracker &tracker, AI_difficulty &aiDifficulty, int timer);
 
@@ -149,8 +151,9 @@ void	aiThreadCore(ThreadParams *threadParams)
 	Evaluation		evaluator;
 	ParallelRun		*parallelRun;
 	AI_difficulty	aiDifficulty;
-	std::unordered_map<int, std::vector<Move>>	memory;
-	
+	std::unordered_map<int, std::vector<Move>>	memoryMoves;
+	std::unordered_map<int, int>				memoryEval;
+
 	// Get params from struct
 	mutex = threadParams->mutex;
 	parallelRun = threadParams->parallelRun;
@@ -158,21 +161,7 @@ void	aiThreadCore(ThreadParams *threadParams)
 
 	// TODO: REMOVE
 	Tracker	tracker;
-	tracker.nbEvaluations = 0;
-	tracker.evaluationTime = 0;
-
-	tracker.getSortMoveNumber = 0;
-	tracker.getMoveTime = 0;
-	tracker.sortMoveTime = 0;
-	tracker.sortSizeTotal = 0;
-	tracker.sortSizeMin = GRID_NB_INTER + 1;
-	tracker.sortSizeMax = -1;
-
-	tracker.checkStoneNumber = 0;
-	tracker.putStoneTime = 0;
-
-	tracker.checkWinNumber = 0;
-	tracker.checkWinTime = 0;
+	resetTracker(tracker);
 
 	// Main thread loop
 	running = true;
@@ -195,7 +184,7 @@ void	aiThreadCore(ThreadParams *threadParams)
 			else if (aiDifficulty == EASY)
 				move = getEasyMove(&grid, &player, &opponent, &evaluator);
 			else if (aiDifficulty == MEDIUM)
-				move = getMediumMove(&memory, &grid, &player,
+				move = getMediumMove(&memoryMoves, &memoryEval, &grid, &player,
 										&opponent, &evaluator, &tracker);
 			// else if (aiDifficulty == HARD)
 				// move = mtd(f);
@@ -204,6 +193,7 @@ void	aiThreadCore(ThreadParams *threadParams)
 
 			// TODO: REMOVE
 			printTracker(tracker, aiDifficulty, diff);
+			resetTracker(tracker);
 
 			// Give result to main thread
 			mutex->lock();
@@ -224,13 +214,34 @@ void	aiThreadCore(ThreadParams *threadParams)
 		mutex->unlock();
 	}
 
-	memory.clear();
+	memoryMoves.clear();
+	memoryEval.clear();
 }
 
 
 // TODO: REMOVE
+static void	resetTracker(Tracker &tracker)
+{
+	tracker.nbEvaluations = 0;
+	tracker.evaluationTime = 0;
+
+	tracker.getSortMoveNumber = 0;
+	tracker.getMoveTime = 0;
+	tracker.sortMoveTime = 0;
+	tracker.sortSizeTotal = 0;
+	tracker.sortSizeMin = GRID_NB_INTER + 1;
+	tracker.sortSizeMax = -1;
+
+	tracker.checkStoneNumber = 0;
+	tracker.putStoneTime = 0;
+
+	tracker.checkWinNumber = 0;
+	tracker.checkWinTime = 0;
+}
+
+// TODO: REMOVE
 static void	printTracker(
-			Tracker &tracker, AI_difficulty &aiDifficulty, int timer)
+				Tracker &tracker, AI_difficulty &aiDifficulty, int timer)
 {
 	setlocale(LC_NUMERIC, "");
 	if (aiDifficulty == RANDOM)

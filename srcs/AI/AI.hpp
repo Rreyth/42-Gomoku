@@ -42,7 +42,8 @@ sf::Vector2i	getEasyMove(
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 					Evaluation *evaluator);
 sf::Vector2i	getMediumMove(
-					std::unordered_map<int, std::vector<Move>> *memory,
+					std::unordered_map<int, std::vector<Move>> *memoryMoves,
+					std::unordered_map<int, int> *memoryEval,
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 					Evaluation *evaluator, Tracker *tracker);
 

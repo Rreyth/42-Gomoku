@@ -2,14 +2,16 @@
 #include <utils/Functions.hpp>
 
 static int	miniMax(
-				std::unordered_map<int, std::vector<Move>> *memory,
+				std::unordered_map<int, std::vector<Move>> *memoryMoves,
+					std::unordered_map<int, int> *memoryEval,
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
 				int depth, Tracker *tracker);
 
 
 sf::Vector2i	getMediumMove(
-					std::unordered_map<int, std::vector<Move>> *memory,
+					std::unordered_map<int, std::vector<Move>> *memoryMoves,
+					std::unordered_map<int, int> *memoryEval,
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 					Evaluation *evaluator, Tracker *tracker)
 {
@@ -89,7 +91,7 @@ sf::Vector2i	getMediumMove(
 		else
 		{
 			// Get evaluation for this move
-			tmpEval = miniMax(memory, grid,
+			tmpEval = miniMax(memoryMoves, memoryEval, grid,
 								player, opponent, evaluator,
 								false, -1000000001, 1000000001,
 								AI_MEDIUM_DEPTH - 1, tracker);
@@ -128,14 +130,15 @@ sf::Vector2i	getMediumMove(
 
 
 static int	miniMax(
-				std::unordered_map<int, std::vector<Move>> *memory,
+				std::unordered_map<int, std::vector<Move>> *memoryMoves,
+				std::unordered_map<int, int> *memoryEval,
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
 				int depth, Tracker *tracker)
 {
 	int					bestEval, tmpEval,
 						plCapture, opCapture,
-						plMoves, opMoves, nbMoves;
+						plMoves, opMoves, nbMoves, hash;
 	bool				killerMove;
 	inter_type			plType, opType;
 	std::vector<Move>	moves;
@@ -152,43 +155,54 @@ static int	miniMax(
 	opType = opponent->interType;
 	plCapture = player->nbCapture;
 	opCapture = opponent->nbCapture;
+	plBitBoard = *grid->getBitBoard(plType);
+	opBitBoard = *grid->getBitBoard(opType);
+	boardState = BoardState(&plBitBoard, &opBitBoard);
+	hash = boardState.getHash();
 
 	// Stop recursion and return the grid evaluation
 	if (depth <= 0)
 	{
-		tracker->nbEvaluations++;
-		start = std::clock();
+		try
+		{
+			// Try to get evaluation in memory
+			tmpEval = memoryEval->at(hash);
+		}
+		catch (std::exception &e)
+		{
+			// If not in memory, compute it and put it in memory
+			tracker->nbEvaluations++;
+			start = std::clock();
 
-		tmpEval = evaluator->evaluateGrid(
-								grid->getBitBoard(plType),
-								grid->getBitBoard(opType),
-								plCapture, opCapture);
+			tmpEval = evaluator->evaluateGrid(
+									grid->getBitBoard(plType),
+									grid->getBitBoard(opType),
+									plCapture, opCapture);
+			memoryEval->insert(std::pair<int, int>(hash, tmpEval));
 
-		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-		tracker->evaluationTime += diff;
+			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+			tracker->evaluationTime += diff;
+		}
 
 		return (tmpEval);
 	}
 
-	plBitBoard = *grid->getBitBoard(plType);
-	opBitBoard = *grid->getBitBoard(opType);
-	boardState = BoardState(&plBitBoard, &opBitBoard);
-	int	hash = boardState.getHash();
-
+	// Get interesting moves
 	try
 	{
-		moves = memory->at(hash);
+		// Try to get it in memory
+		moves = memoryMoves->at(hash);
 	}
 	catch (std::exception &e)
 	{
-		// Get interesting moves
+		// If not in memory, compute it and put it in memory
 		if (maximizingEval)
 			moves = grid->getInterestingMovesSorted(
 							evaluator, player, opponent, true, tracker);
 		else
 			moves = grid->getInterestingMovesSorted(
 							evaluator, opponent, player, false, tracker);
-		memory->insert(std::pair<int, std::vector<Move>>(hash, moves));
+		memoryMoves->insert(std::pair<int, std::vector<Move>>(hash, moves));
 	}
 
 	if (moves.size() == 0)
@@ -266,7 +280,7 @@ static int	miniMax(
 		else
 		{
 			// Get evaluation for this move
-			tmpEval = miniMax(memory, grid,
+			tmpEval = miniMax(memoryMoves, memoryEval, grid,
 								player, opponent, evaluator,
 								!maximizingEval, alpha, beta,
 								depth - 1, tracker);
@@ -322,6 +336,6 @@ static int	miniMax(
 		if (beta <= alpha)
 			break;
 	}
-	
+
 	return (bestEval);
 }
