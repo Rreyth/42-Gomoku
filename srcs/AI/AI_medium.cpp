@@ -147,7 +147,7 @@ static int	miniMax(
 	BoardState			boardState;
 
 	// TODO : REMOVE
-	std::clock_t	start;
+	std::clock_t	start, start2;
 	int				diff;
 
 	// Compute variables for evaluation and put stone
@@ -163,15 +163,16 @@ static int	miniMax(
 	// Stop recursion and return the grid evaluation
 	if (depth <= 0)
 	{
-		try
+		start2 = std::clock();
+		std::unordered_map<int, int>::const_iterator got = memoryEval->find(hash);
+
+		if (got != memoryEval->end())
 		{
-			// Try to get evaluation in memory
-			tmpEval = memoryEval->at(hash);
+			tmpEval = got->second;
+			tracker->nbMemoryEval++;
 		}
-		catch (std::exception &e)
+		else
 		{
-			// If not in memory, compute it and put it in memory
-			tracker->nbEvaluations++;
 			start = std::clock();
 
 			tmpEval = evaluator->evaluateGrid(
@@ -181,19 +182,50 @@ static int	miniMax(
 			memoryEval->insert(std::pair<int, int>(hash, tmpEval));
 
 			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-			tracker->evaluationTime += diff;
+			tracker->computeEvalTime += diff;
+			tracker->nbComputeEval++;
 		}
+
+		// try
+		// {
+		// 	start = std::clock();
+
+		// 	// Try to get evaluation in memory
+		// 	tmpEval = memoryEval->at(hash);
+
+		// 	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+		// 	tracker->memoryEvalTime += diff;
+		// 	tracker->nbMemoryEval++;
+		// }
+		// catch (std::exception &e)
+		// {
+		// 	// If not in memory, compute it and put it in memory
+		// 	start = std::clock();
+
+		// 	tmpEval = evaluator->evaluateGrid(
+		// 							grid->getBitBoard(plType),
+		// 							grid->getBitBoard(opType),
+		// 							plCapture, opCapture);
+		// 	memoryEval->insert(std::pair<int, int>(hash, tmpEval));
+
+		// 	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+		// 	tracker->computeEvalTime += diff;
+		// 	tracker->nbComputeEval++;
+		// }
+
+		diff = ((double)(std::clock() - start2) / CLOCKS_PER_SEC) * 1000000;
+		tracker->evaluationTime += diff;
+		tracker->nbEvaluations++;
 
 		return (tmpEval);
 	}
 
-	// Get interesting moves
-	try
+	std::unordered_map<int, std::vector<Move>>::const_iterator gotMoves = memoryMoves->find(hash);
+	if (gotMoves != memoryMoves->end())
 	{
-		// Try to get it in memory
-		moves = memoryMoves->at(hash);
+		moves = gotMoves->second;
 	}
-	catch (std::exception &e)
+	else
 	{
 		// If not in memory, compute it and put it in memory
 		if (maximizingEval)
@@ -204,6 +236,24 @@ static int	miniMax(
 							evaluator, opponent, player, false, tracker);
 		memoryMoves->insert(std::pair<int, std::vector<Move>>(hash, moves));
 	}
+
+	// // Get interesting moves
+	// try
+	// {
+	// 	// Try to get it in memory
+	// 	moves = memoryMoves->at(hash);
+	// }
+	// catch (std::exception &e)
+	// {
+	// 	// If not in memory, compute it and put it in memory
+	// 	if (maximizingEval)
+	// 		moves = grid->getInterestingMovesSorted(
+	// 						evaluator, player, opponent, true, tracker);
+	// 	else
+	// 		moves = grid->getInterestingMovesSorted(
+	// 						evaluator, opponent, player, false, tracker);
+	// 	memoryMoves->insert(std::pair<int, std::vector<Move>>(hash, moves));
+	// }
 
 	if (moves.size() == 0)
 		return (0);
@@ -222,7 +272,6 @@ static int	miniMax(
 
 	for (int i = 0; i < moves.size() && i < AI_MEDIUM_LIMIT; i++)
 	{
-		tracker->nbEvaluations++;
 		start = std::clock();
 
 		// Simulate move

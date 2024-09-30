@@ -224,6 +224,9 @@ static void	resetTracker(Tracker &tracker)
 {
 	tracker.nbEvaluations = 0;
 	tracker.evaluationTime = 0;
+	tracker.nbComputeEval = 0;
+	tracker.computeEvalTime = 0;
+	tracker.nbMemoryEval = 0;
 
 	tracker.getSortMoveNumber = 0;
 	tracker.getMoveTime = 0;
@@ -265,8 +268,12 @@ static void	printTracker(
 		printf("Compute move in %'i us\n", timer);
 		printf("  evaluate position\n");
 		printf("   - number of call : %'i\n", tracker.nbEvaluations);
-		printf("   - TIME %'i us\n", tracker.evaluationTime);
+		printf("   - number of compute call : %'i\n", tracker.nbComputeEval);
+		printf("   - number of memory call : %'i\n", tracker.nbMemoryEval);
+		printf("   - TIME ALL %'i us\n", tracker.evaluationTime);
+		printf("   - TIME COMPUTE %'i us\n", tracker.computeEvalTime);
 		printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
+		printf("   - about %'f us per compute call\n", (float)tracker.computeEvalTime / tracker.nbComputeEval);
 		printf("  get sort moves\n");
 		printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
 		printf("   - get moves TIME %'i us\n", tracker.getMoveTime);

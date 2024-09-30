@@ -173,6 +173,9 @@ typedef struct s_tracker
 {
 	int	nbEvaluations;
 	int	evaluationTime;
+	int	nbComputeEval;
+	int	computeEvalTime;
+	int	nbMemoryEval;
 
 	int	getSortMoveNumber;
 	int	getMoveTime;
