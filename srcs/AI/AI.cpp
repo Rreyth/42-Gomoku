@@ -151,8 +151,9 @@ void	aiThreadCore(ThreadParams *threadParams)
 	Evaluation		evaluator;
 	ParallelRun		*parallelRun;
 	AI_difficulty	aiDifficulty;
-	std::unordered_map<int, std::vector<Move>>	memoryMoves;
+	std::unordered_map<int, Node>				memoryNode;
 	std::unordered_map<int, int>				memoryEval;
+	std::unordered_map<int, std::vector<Move>>	memoryMoves;
 
 	// Get params from struct
 	mutex = threadParams->mutex;
@@ -188,7 +189,7 @@ void	aiThreadCore(ThreadParams *threadParams)
 										&opponent, &evaluator, &tracker);
 			else if (aiDifficulty == HARD)
 				move = getHardMove(&memoryMoves, &memoryEval, &grid, &player,
-									&opponent, &evaluator, &tracker);
+										&opponent, &evaluator, &tracker);
 
 			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 
@@ -217,8 +218,9 @@ void	aiThreadCore(ThreadParams *threadParams)
 		mutex->unlock();
 	}
 
-	memoryMoves.clear();
+	memoryNode.clear();
 	memoryEval.clear();
+	memoryMoves.clear();
 }
 
 

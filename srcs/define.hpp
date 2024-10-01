@@ -24,7 +24,7 @@
 
 # define AI_MEDIUM_DEPTH 6
 # define AI_MEDIUM_LIMIT 15
-# define AI_HARD_DEPTH 6
+# define AI_HARD_DEPTH 1
 # define AI_HARD_LIMIT 15
 
 typedef enum e_font {
@@ -168,6 +168,25 @@ typedef struct s_move
 	}
 
 }	Move;
+
+
+typedef struct s_node
+{
+	Move	lower;
+	Move	upper;
+
+	struct s_node	&operator=(const struct s_node &node)
+	{
+		if (this == &node)
+			return (*this);
+
+		this->lower = node.lower;
+		this->upper = node.upper;
+
+		return (*this);
+	}
+
+}	Node;
 
 
 // TODO : REMOVE
