@@ -58,3 +58,18 @@ int	max(int a, int b)
 		return (b);
 	return (a);
 }
+
+
+std::string	format_time(const std::string &str)
+{
+	if (str.length() <= 3)
+		return (str);
+	
+	std::string	formated_res = str;
+	int			size = str.length();
+
+	for (int i = size - 3; i > 0; i-= 3)
+		formated_res.insert(i, "'");
+
+	return (formated_res);
+}

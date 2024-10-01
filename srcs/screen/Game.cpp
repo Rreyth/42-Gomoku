@@ -235,7 +235,7 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 
 		str = "TIME OF PREDICTION";
 		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.25), 25, sf::Color::White, MID_CENTER);
-		str = std::to_string(ai->getTimer()) + " us";
+		str = format_time(std::to_string(ai->getTimer())) + " us";
 		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.30), 30, sf::Color::White, MID_CENTER);
 	}
 
@@ -253,7 +253,7 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 	drawText(window, text, "CAPTURED STONES", size.x / 2, gridY + (size.y * 0.75), 25, sf::Color::White, MID_CENTER);
 	drawText(window, text, str, size.x / 2, gridY + (size.y * 0.8), 30, sf::Color::White, MID_CENTER);
 
-	str = std::to_string((int)this->playerLeft.getTimer()) + " s";
+	str = format_time(std::to_string((int)this->playerLeft.getTimer())) + " s";
 	drawText(window, text, "TIMER", size.x / 2, gridY + (size.y * 0.90), 25, sf::Color::White, MID_CENTER);
 	drawText(window, text, str, size.x / 2, gridY + (size.y * 0.95), 30, sf::Color::White, MID_CENTER);
 }
@@ -278,7 +278,7 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 
 		str = "TIME OF PREDICTION";
 		drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.25), 25, sf::Color::White, MID_CENTER);
-		str = std::to_string(ai->getTimer()) + " us";
+		str = format_time(std::to_string(ai->getTimer())) + " us";
 		drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.30), 30, sf::Color::White, MID_CENTER);
 	}
 
@@ -295,12 +295,12 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 	drawText(window, text, "CAPTURED STONES", WIN_W - (size.x / 2), gridY + (size.y * 0.75), 25, sf::Color::White, MID_CENTER);
 	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.80), 30, sf::Color::White, MID_CENTER);
 
-	str = std::to_string((int)this->playerRight.getTimer()) + " s";
+	str = format_time(std::to_string((int)this->playerRight.getTimer())) + " s";
 	drawText(window, text, "TIMER", WIN_W - (size.x / 2), gridY + (size.y * 0.90), 30, sf::Color::White, MID_CENTER);
 	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.95), 30, sf::Color::White, MID_CENTER);
 }
 
-void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager) //TODO: not for actual ai player
+void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager) //TODO: toggleable suggestion box -> suggest move + time to suggest
 {
 	// TODO: REMOVE
 	static int	nbTurn = -1;
