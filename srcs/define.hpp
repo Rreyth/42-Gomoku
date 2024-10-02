@@ -170,25 +170,6 @@ typedef struct s_move
 }	Move;
 
 
-typedef struct s_node
-{
-	Move	lower;
-	Move	upper;
-
-	struct s_node	&operator=(const struct s_node &node)
-	{
-		if (this == &node)
-			return (*this);
-
-		this->lower = node.lower;
-		this->upper = node.upper;
-
-		return (*this);
-	}
-
-}	Node;
-
-
 // TODO : REMOVE
 typedef struct s_tracker
 {

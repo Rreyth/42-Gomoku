@@ -151,7 +151,7 @@ void	aiThreadCore(ThreadParams *threadParams)
 	Evaluation		evaluator;
 	ParallelRun		*parallelRun;
 	AI_difficulty	aiDifficulty;
-	std::unordered_map<int, Node>				memoryNode;
+	// std::unordered_map<int, Node>				memoryNode;
 	std::unordered_map<int, int>				memoryEval;
 	std::unordered_map<int, std::vector<Move>>	memoryMoves;
 
@@ -218,7 +218,7 @@ void	aiThreadCore(ThreadParams *threadParams)
 		mutex->unlock();
 	}
 
-	memoryNode.clear();
+	// memoryNode.clear();
 	memoryEval.clear();
 	memoryMoves.clear();
 }
