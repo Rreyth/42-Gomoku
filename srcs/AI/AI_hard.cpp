@@ -8,9 +8,10 @@ static Move	alphaBetaMemory(
 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
 				int depth, Tracker *tracker);
 
-static bool	makeMove(
+static void	makeMove(
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
-				sf::Vector2i *pos, int nbMoves, int depth, Tracker *tracker);
+				sf::Vector2i *pos, bool playerTurn,
+				int nbMoves, int depth, Tracker *tracker);
 
 static void	reverseMove(
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
@@ -18,8 +19,13 @@ static void	reverseMove(
 				BboxManager *bboxManagerSave,
 				int plSaveNbCapture, int opSaveNbCapture,
 				int plSaveNbMove, int opSaveNbMove,
-				sf::Vector2i *pos, int depth);
+				sf::Vector2i *pos, bool playerTurn, int depth);
 
+static bool	computeKillerMove(
+				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+				bool playerTurn, Move *tmpMove, Tracker *tracker);
+
+#define DEPTH 4
 
 sf::Vector2i	getHardMove(
 					std::unordered_map<int, std::vector<Move>> *memoryMoves,
@@ -32,7 +38,7 @@ sf::Vector2i	getHardMove(
 	bestMove = alphaBetaMemory(memoryMoves, memoryEval, grid,
 								player, opponent, evaluator,
 								true, -1000000001, 1000000001,
-								6, tracker);
+								DEPTH, tracker);
 
 	return (bestMove.pos);
 }
@@ -46,173 +52,197 @@ static Move	alphaBetaMemory(
 				int depth, Tracker *tracker)
 {
 	int					plSaveNbCapture, opSaveNbCapture,
-						plSaveNbMove, opSaveNbMove, nbMove;
-	Move				bestMove, current;
-	bool				killerMove;
+						plSaveNbMove, opSaveNbMove, nbMoves, hash;
+	Move				bestMove, tmpMove;
+	inter_type			plType, opType;
 	std::vector<Move>	moves;
-	BitBoard			plSaveBitboard, opSaveBitboard;
+	BitBoard			plBitBoard, opBitBoard;
 	BboxManager			bboxManagerSave;
+	BoardState			boardState;
+	std::unordered_map<int, int>::const_iterator	evalFind;
+	std::unordered_map<int, std::vector<Move>>::const_iterator	movesFind;
 
 	// TODO : REMOVE
-	std::clock_t	start;
+	std::clock_t	start, start2;
 	int				diff;
 
-	// If case of end of recursion, evaluate grid
+	// Compute variables for evaluation and put stone
+	plType = player->interType;
+	opType = opponent->interType;
+	plSaveNbCapture = player->nbCapture;
+	opSaveNbCapture = opponent->nbCapture;
+	plBitBoard = *grid->getBitBoard(plType);
+	opBitBoard = *grid->getBitBoard(opType);
+	boardState = BoardState(&plBitBoard, &opBitBoard);
+	hash = boardState.getHash();
+
+	bestMove.pos = sf::Vector2i(-1, -1);
+	bestMove.eval = 0;
+	tmpMove.pos = sf::Vector2i(-1, -1);
+	tmpMove.eval = 0;
+
+	if (computeKillerMove(
+			grid, player, opponent, !maximizingEval,
+			&tmpMove, tracker))
+		return (tmpMove);
+
+	// Stop recursion and return the grid evaluation
 	if (depth <= 0)
 	{
-		start = std::clock();
+		start2 = std::clock();
 
-		current.pos = sf::Vector2i(-1, -1);
-		current.eval = evaluator->evaluateGrid(
-									grid->getBitBoard(player->interType),
-									grid->getBitBoard(opponent->interType),
-									player->nbCapture, opponent->nbCapture);
+		// Evalute move
+		evalFind = memoryEval->find(hash);
+		if (evalFind != memoryEval->end())
+		{
+			// Try to get evaluation in memory
+			tmpMove.eval = evalFind->second;
+			tracker->nbMemoryEval++;
+		}
+		else
+		{
+			// If not in memory, compute it and put it in memory
+			start = std::clock();
 
-		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-		tracker->computeEvalTime += diff;
-		tracker->nbComputeEval++;
+			tmpMove.eval = evaluator->evaluateGrid(
+									grid->getBitBoard(plType),
+									grid->getBitBoard(opType),
+									plSaveNbCapture, opSaveNbCapture);
+			memoryEval->insert(std::pair<int, int>(hash, tmpMove.eval));
 
+			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+			tracker->computeEvalTime += diff;
+			tracker->nbComputeEval++;
+		}
+
+		diff = ((double)(std::clock() - start2) / CLOCKS_PER_SEC) * 1000000;
 		tracker->evaluationTime += diff;
 		tracker->nbEvaluations++;
 
-		return (current);
+		return (tmpMove);
 	}
 
-	// Compute variables
+	// Get interesting moves
+	movesFind = memoryMoves->find(hash);
+	if (movesFind != memoryMoves->end())
+	{
+		moves = movesFind->second;
+	}
+	else
+	{
+		// If not in memory, compute it and put it in memory
+		if (maximizingEval)
+			moves = grid->getInterestingMovesSorted(
+							evaluator, player, opponent, true, tracker);
+		else
+			moves = grid->getInterestingMovesSorted(
+							evaluator, opponent, player, false, tracker);
+		memoryMoves->insert(std::pair<int, std::vector<Move>>(hash, moves));
+	}
+
+	// Compute nb moves
 	plSaveNbMove = player->nbMove;
 	opSaveNbMove = opponent->nbMove;
-	nbMove = plSaveNbMove + opSaveNbMove;
-	plSaveNbCapture = player->nbCapture;
-	opSaveNbCapture = opponent->nbCapture;
-	plSaveBitboard = *grid->getBitBoard(player->interType);
-	opSaveBitboard = *grid->getBitBoard(opponent->interType);
-	bboxManagerSave = *grid->getBboxManager();
+	nbMoves = plSaveNbMove + opSaveNbMove;
 
-	// Get moves
-	if (maximizingEval)
-		moves = grid->getInterestingMovesSorted(
-						evaluator, player, opponent, true, tracker);
-	else
-		moves = grid->getInterestingMovesSorted(
-						evaluator, opponent, player, false, tracker);
-
-	current.eval = 0;
-	current.pos = sf::Vector2i(-1, -1);
 	if (moves.size() == 0)
 	{
-		if (nbMove == 0)
-			current.pos = sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2);
-		return (current);
+		if (nbMoves == 0)
+			bestMove.pos = sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2);
+		return (bestMove);
 	}
 
-	// Init bestMove
-	if (maximizingEval)
-		bestMove.eval = -1000000001;
-	else
-		bestMove.eval = 1000000001;
+	// Compute variables put stone and reset players
+	bboxManagerSave = *grid->getBboxManager();
+
+	// Compute first move
+	bestMove.eval = -1000000001;
 
 	for (int i = 0; i < moves.size(); i++)
 	{
-		// Make move
-		if (!makeMove(
-				grid, player, opponent, &moves[i].pos,
-				nbMove, depth, tracker))
-			continue;
+		// Simulate move
+		makeMove(
+			grid, player, opponent, &moves[i].pos,
+			maximizingEval, nbMoves, depth, tracker);
 
-		// If move have an high score, check win case
-		if ((maximizingEval && moves[i].eval >= 10000000)
-			|| (!maximizingEval && moves[i].eval <= -10000000))
+		// Get evaluation for this move
+		if (i == 0)
 		{
-			start = std::clock();
-
-			if (maximizingEval)
-				killerMove = grid->checkWinCondition(player, opponent);
-			else
-				killerMove = grid->checkWinCondition(opponent, player);
-
-			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-			tracker->checkWinTime += diff;
-			tracker->checkWinNumber++;
-		}
-		else
-			killerMove = false;
-
-		if (killerMove)
-		{
-			if (player->winState != WIN_STATE_NONE)
-			{
-				player->winState = WIN_STATE_NONE;
-				current.eval = CASE_WIN_POINT; // Nothing is better than a victory
-			}
-			else
-			{
-				opponent->winState = WIN_STATE_NONE;
-				current.eval = CASE_LOOSE_POINT; // Nothing is worst than a defeat
-			}
+			tmpMove = alphaBetaMemory(memoryMoves, memoryEval, grid,
+										player, opponent, evaluator,
+										!maximizingEval, -beta, -alpha,
+										depth - 1, tracker);
+			tmpMove.eval = -tmpMove.eval;
 		}
 		else
 		{
-			// Compute evaluation for this position
-			current = alphaBetaMemory(
-						memoryMoves, memoryEval, grid,
-						player, opponent, evaluator, !maximizingEval,
-						-alpha - 1, -alpha, depth - 1, tracker);
-			current.eval = -current.eval;
+			tmpMove = alphaBetaMemory(memoryMoves, memoryEval, grid,
+										player, opponent, evaluator,
+										!maximizingEval, -alpha - 1, -alpha,
+										depth - 1, tracker);
+			tmpMove.eval = -tmpMove.eval;
 
-			if (current.eval > alpha && current.eval < beta)
+			if (alpha < tmpMove.eval && tmpMove.eval < beta)
 			{
-				current = alphaBetaMemory(
-							memoryMoves, memoryEval, grid,
-							player, opponent, evaluator, !maximizingEval,
-							-beta, -alpha, depth - 1, tracker);
-				current.eval = -current.eval;
+				tmpMove = alphaBetaMemory(memoryMoves, memoryEval, grid,
+											player, opponent, evaluator,
+											!maximizingEval, -beta, -alpha,
+											depth - 1, tracker);
+				tmpMove.eval = -tmpMove.eval;
 			}
-			current.pos = moves[i].pos;
 		}
-		// Unmake move
+		tmpMove.pos = moves[i].pos;
+
 		reverseMove(
-			grid, player, opponent,
-			&plSaveBitboard, &opSaveBitboard, &bboxManagerSave,
-			plSaveNbCapture, opSaveNbCapture,
-			plSaveNbMove, opSaveNbMove, &moves[i].pos, depth);
+			grid, player, opponent, &plBitBoard, &opBitBoard,
+			&bboxManagerSave, plSaveNbCapture, opSaveNbCapture,
+			plSaveNbMove, opSaveNbMove, &moves[i].pos, maximizingEval, depth);
 
-		// Update best eval and alpha
-		if (current.eval >= bestMove.eval)
-		{
-			bestMove = current;
+		// For maximizing
+		// Update score
+		if (tmpMove.eval > bestMove.eval)
+			bestMove = tmpMove;
 
-			if (bestMove.eval >= alpha)
-				alpha = bestMove.eval;
+		// Update alpha
+		if (tmpMove.eval > alpha)
+			alpha = tmpMove.eval;
 
-			if (bestMove.eval >= beta)
-				break;
-		}
+		// If we already have already better move, stop searching by pruning
+		if (alpha >= beta)
+			break;
 	}
 
 	return (bestMove);
 }
 
 
-static bool	makeMove(
+static void	makeMove(
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
-				sf::Vector2i *pos, int nbMove, int depth, Tracker *tracker)
+				sf::Vector2i *pos, bool playerTurn,
+				int nbMoves, int depth, Tracker *tracker)
 {
 	// TODO : REMOVE
 	std::clock_t	start;
 	int				diff;
 
 	start = std::clock();
-	if (!grid->putStoneAI(pos, nbMove, player, opponent))
-		return (false);
 
+	if (playerTurn)
+	{
+		grid->putStoneAI(pos, nbMoves, player, opponent);
+		player->nbMove++;
+	}
+	else
+	{
+		grid->putStoneAI(pos, nbMoves, opponent, player);
+		opponent->nbMove++;
+	}
 	if (depth > 1)
 		grid->updateBboxManager(pos);
 
 	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-	tracker->checkStoneNumber++;
 	tracker->putStoneTime += diff;
-	player->nbMove++;
-	return (true);
+	tracker->checkStoneNumber++;
 }
 
 
@@ -222,7 +252,7 @@ static void	reverseMove(
 				BboxManager *bboxManagerSave,
 				int plSaveNbCapture, int opSaveNbCapture,
 				int plSaveNbMove, int opSaveNbMove,
-				sf::Vector2i *pos, int depth)
+				sf::Vector2i *pos, bool playerTurn, int depth)
 {
 	// Reset grid
 	if (player->nbCapture != plSaveNbCapture
@@ -232,8 +262,12 @@ static void	reverseMove(
 		grid->setBitBoard(opBitBoard, opponent->interType);
 	}
 	else
-		grid->removeStone(pos, player->interType);
-
+	{
+		if (playerTurn)
+			grid->removeStone(pos, player->interType);
+		else
+			grid->removeStone(pos, opponent->interType);
+	}
 	if (depth > 1)
 		grid->setBboxManager(bboxManagerSave);
 
@@ -242,4 +276,44 @@ static void	reverseMove(
 	player->nbCapture = plSaveNbCapture;
 	opponent->nbMove = opSaveNbMove;
 	opponent->nbCapture = opSaveNbCapture;
+}
+
+
+static bool	computeKillerMove(
+				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+				bool playerTurn, Move *tmpMove, Tracker *tracker)
+{
+	bool	killerMove;
+
+	// TODO : REMOVE
+	std::clock_t	start;
+	int				diff;
+
+	start = std::clock();
+
+	if (playerTurn)
+	{
+		killerMove = grid->checkWinCondition(player, opponent);
+	}
+	else
+	{
+		killerMove = grid->checkWinCondition(opponent, player);
+	}
+
+	if (player->winState != WIN_STATE_NONE)
+	{
+		player->winState = WIN_STATE_NONE;
+		tmpMove->eval = CASE_WIN_POINT; // Nothing is better than a victory
+	}
+	else
+	{
+		opponent->winState = WIN_STATE_NONE;
+		tmpMove->eval = CASE_LOOSE_POINT; // Nothing is worst than a defeat
+	}
+
+	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+	tracker->checkWinTime += diff;
+	tracker->checkWinNumber++;
+
+	return (killerMove);
 }
