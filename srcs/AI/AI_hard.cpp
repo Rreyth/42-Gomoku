@@ -11,6 +11,7 @@ static Move	alphaBetaMemory(
 static bool	makeMove(
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 				sf::Vector2i *pos, int nbMoves, int depth, Tracker *tracker);
+
 static void	reverseMove(
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 				BitBoard *plBitBoard, BitBoard *opBitBoard,
@@ -19,7 +20,6 @@ static void	reverseMove(
 				int plSaveNbMove, int opSaveNbMove,
 				sf::Vector2i *pos, int depth);
 
-#define DEPTH 4
 
 sf::Vector2i	getHardMove(
 					std::unordered_map<int, std::vector<Move>> *memoryMoves,
@@ -32,7 +32,7 @@ sf::Vector2i	getHardMove(
 	bestMove = alphaBetaMemory(memoryMoves, memoryEval, grid,
 								player, opponent, evaluator,
 								true, -1000000001, 1000000001,
-								DEPTH, tracker);
+								6, tracker);
 
 	return (bestMove.pos);
 }
@@ -57,7 +57,6 @@ static Move	alphaBetaMemory(
 	std::clock_t	start;
 	int				diff;
 
-
 	// If case of end of recursion, evaluate grid
 	if (depth <= 0)
 	{
@@ -76,36 +75,13 @@ static Move	alphaBetaMemory(
 		tracker->evaluationTime += diff;
 		tracker->nbEvaluations++;
 
-		return (bestMove);
+		return (current);
 	}
-
-	// TODO: IMPLEMENT KILLER MOVES
-	// if (maximizingEval)
-	// 	killerMove = grid->checkWinCondition(opponent, player);
-	// else
-	// 	killerMove = grid->checkWinCondition(player, opponent);
-
-	// // If a there is a win, return here
-	// if (killerMove)
-	// {
-	// 	current.pos = sf::Vector2i(-1, -1);
-	// 	if (player->winState != WIN_STATE_NONE)
-	// 	{
-	// 		current.eval = CASE_WIN_POINT;
-	// 		player->winState = WIN_STATE_NONE;
-	// 	}
-	// 	else
-	// 	{
-	// 		current.eval = CASE_LOOSE_POINT;
-	// 		opponent->winState = WIN_STATE_NONE;
-	// 	}
-	// 	return (bestMove);
-	// }
 
 	// Compute variables
 	plSaveNbMove = player->nbMove;
 	opSaveNbMove = opponent->nbMove;
-	nbMove = plSaveNbCapture + opSaveNbCapture;
+	nbMove = plSaveNbMove + opSaveNbMove;
 	plSaveNbCapture = player->nbCapture;
 	opSaveNbCapture = opponent->nbCapture;
 	plSaveBitboard = *grid->getBitBoard(player->interType);
@@ -129,6 +105,12 @@ static Move	alphaBetaMemory(
 		return (current);
 	}
 
+	// Init bestMove
+	if (maximizingEval)
+		bestMove.eval = -1000000001;
+	else
+		bestMove.eval = 1000000001;
+
 	for (int i = 0; i < moves.size(); i++)
 	{
 		// Make move
@@ -137,23 +119,56 @@ static Move	alphaBetaMemory(
 				nbMove, depth, tracker))
 			continue;
 
-		// Compute evaluation for this position
-		current = alphaBetaMemory(
-					memoryMoves, memoryEval, grid,
-					player, opponent, evaluator, !maximizingEval,
-					-alpha - 1, -alpha, depth - 1, tracker);
-		current.eval = -current.eval;
-
-		if (current.eval > alpha && current.eval < beta)
+		// If move have an high score, check win case
+		if ((maximizingEval && moves[i].eval >= 10000000)
+			|| (!maximizingEval && moves[i].eval <= -10000000))
 		{
+			start = std::clock();
+
+			if (maximizingEval)
+				killerMove = grid->checkWinCondition(player, opponent);
+			else
+				killerMove = grid->checkWinCondition(opponent, player);
+
+			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+			tracker->checkWinTime += diff;
+			tracker->checkWinNumber++;
+		}
+		else
+			killerMove = false;
+
+		if (killerMove)
+		{
+			if (player->winState != WIN_STATE_NONE)
+			{
+				player->winState = WIN_STATE_NONE;
+				current.eval = CASE_WIN_POINT; // Nothing is better than a victory
+			}
+			else
+			{
+				opponent->winState = WIN_STATE_NONE;
+				current.eval = CASE_LOOSE_POINT; // Nothing is worst than a defeat
+			}
+		}
+		else
+		{
+			// Compute evaluation for this position
 			current = alphaBetaMemory(
 						memoryMoves, memoryEval, grid,
 						player, opponent, evaluator, !maximizingEval,
-						-beta, -alpha, depth - 1, tracker);
+						-alpha - 1, -alpha, depth - 1, tracker);
 			current.eval = -current.eval;
-		}
-		current.pos = moves[i].pos;
 
+			if (current.eval > alpha && current.eval < beta)
+			{
+				current = alphaBetaMemory(
+							memoryMoves, memoryEval, grid,
+							player, opponent, evaluator, !maximizingEval,
+							-beta, -alpha, depth - 1, tracker);
+				current.eval = -current.eval;
+			}
+			current.pos = moves[i].pos;
+		}
 		// Unmake move
 		reverseMove(
 			grid, player, opponent,
