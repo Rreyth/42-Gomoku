@@ -222,6 +222,9 @@ int	Node::getEvaluation(Evaluation *evaluator, Tracker *tracker)
 									this->opponent.nbCapture);
 	this->evaluationCompute = true;
 
+	if (this->playerTurn)
+		this->evaluation = -this->evaluation;
+
 	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 	tracker->evaluationTime += diff;
 	tracker->computeEvalTime += diff;
@@ -244,7 +247,7 @@ std::vector<Node>	*Node::getChildren(Evaluation *evaluator, Tracker *tracker)
 	}
 
 	// Else compute them
-	if (this->playerTurn)
+	if (!this->playerTurn)
 		moves = this->grid.getInterestingMovesSorted(
 							evaluator, &this->player, &this->opponent,
 							true, tracker);
@@ -334,34 +337,32 @@ bool	Node::isKillerMove(void)
 	}
 
 	this->killerMoveResult = false;
-	if (this->playerTurn)
+	if (this->lastMove.eval >= 10000000)
 	{
-		if (this->lastMove.eval >= 10000000)
+		if (this->playerTurn)
+		{
 			this->killerMoveResult = this->grid.checkWinCondition(
 													&this->player,
 													&this->opponent);
-	}
-	else
-	{
-		if (this->lastMove.eval <= -1000000)
+		}
+		else
+		{
 			this->killerMoveResult = this->grid.checkWinCondition(
 													&this->opponent,
 													&this->player);
+		}
 	}
 
 	if (this->player.winState != WIN_STATE_NONE)
 	{
 		this->player.winState = WIN_STATE_NONE;
 		this->killerMoveScore = CASE_WIN_POINT;
-		printf("WIIIIIIIIIIIIIIIIIIN\n");
 	}
 	else if (this->opponent.winState != WIN_STATE_NONE)
 	{
 		this->opponent.winState = WIN_STATE_NONE;
 		this->killerMoveScore = CASE_LOOSE_POINT;
-		printf("OH NOOOOOOOOOOOOOOOOOOOOOOOOOOO\n");
 	}
-
 	this->killerMoveCompute = true;
 	return (this->killerMoveResult);
 }

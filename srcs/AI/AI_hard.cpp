@@ -12,7 +12,7 @@ sf::Vector2i	getHardMove(
 	Move	bestMove;
 
 	bestMove = negaMax(rootNode, evaluator,
-						-1000000001, 1000000001, 4, tracker);
+						-1000000001, 1000000001, 1, tracker);
 
 	return (bestMove.pos);
 }
@@ -68,8 +68,8 @@ static Move	negaMax(
 		{
 			// Get evaluation of the position
 			tmpMove = negaMax(child, evaluator, -beta, -alpha, depth - 1, tracker);
-			tmpMove.eval = -tmpMove.eval;
 		}
+		tmpMove.eval = -tmpMove.eval;
 
 		if (tmpMove.eval > bestMove.eval)
 		{

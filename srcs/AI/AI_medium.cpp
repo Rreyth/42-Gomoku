@@ -20,7 +20,7 @@ sf::Vector2i	getMediumMove(
 	bestMove = miniMax(memoryMoves, memoryEval, grid,
 								player, opponent, evaluator,
 								true, -1000000001, 1000000001,
-								AI_MEDIUM_DEPTH, tracker);
+								2, tracker);
 
 	return (bestMove.pos);
 }
