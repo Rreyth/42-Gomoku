@@ -80,7 +80,7 @@ ModeMenu::ModeMenu(void)
 	this->playerLeft.setSelected(1);
 	this->aiLeft.setSelected(2);
 	this->playerRight.setSelected(1);
-	this->aiRight.setSelected(4);
+	this->aiRight.setSelected(3);
 	this->starting.setSelected(2);
 
 }
