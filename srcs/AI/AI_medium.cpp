@@ -8,6 +8,13 @@ static Move	miniMax(
 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
 				int depth, Tracker *tracker);
 
+static Move	negaMax(
+				std::unordered_map<int, std::vector<Move>> *memoryMoves,
+				std::unordered_map<int, int> *memoryEval,
+				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
+				int depth, Tracker *tracker);
+
 
 sf::Vector2i	getMediumMove(
 					std::unordered_map<int, std::vector<Move>> *memoryMoves,
@@ -17,13 +24,153 @@ sf::Vector2i	getMediumMove(
 {
 	Move	bestMove;
 
-	bestMove = miniMax(memoryMoves, memoryEval, grid,
-								player, opponent, evaluator,
-								true, -1000000001, 1000000001,
-								2, tracker);
+	// bestMove = miniMax(memoryMoves, memoryEval, grid,
+	// 							player, opponent, evaluator,
+	// 							true, -1000000001, 1000000001,
+	// 							1, tracker);
+
+	bestMove = negaMax(memoryMoves, memoryEval, grid,
+							player, opponent, evaluator,
+							true, -1000000001, 1000000001,
+							4, tracker);
 
 	return (bestMove.pos);
 }
+
+
+static Move	negaMax(
+				std::unordered_map<int, std::vector<Move>> *memoryMoves,
+				std::unordered_map<int, int> *memoryEval,
+				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+				Evaluation *evaluator, bool playerTurn, int alpha, int beta,
+				int depth, Tracker *tracker)
+{
+	int					nbMove, plSaveNbCapture, opSaveNbCapture;
+	std::vector<Move>	moves;
+	Move				bestMove, tmpMove;
+	BitBoard			saveBitboard;
+	BboxManager			saveBboxManager;
+
+	if (depth <= 0)
+	{
+		tmpMove.pos = sf::Vector2i(-1, -1);
+
+		// If this is player turn, evaluate position from it's view point
+		if (playerTurn)
+			tmpMove.eval = evaluator->evaluateGrid(
+										grid->getBitBoard(player->interType),
+										grid->getBitBoard(opponent->interType),
+										player->nbCapture, opponent->nbCapture);
+		// If this is opponent turn, evaluate position from it's view point
+		else
+			tmpMove.eval = evaluator->evaluateGrid(
+										grid->getBitBoard(opponent->interType),
+										grid->getBitBoard(player->interType),
+										opponent->nbCapture, player->nbCapture);
+		return (tmpMove);
+	}
+
+	// Compute variables
+	nbMove = player->nbMove + opponent->nbMove;
+	plSaveNbCapture = player->nbCapture;
+	opSaveNbCapture = opponent->nbCapture;
+	// If this is player turn, save only oppenent bitboard for capture case
+	if (playerTurn)
+		saveBitboard = *grid->getBitBoard(opponent->interType);
+	else
+		saveBitboard = *grid->getBitBoard(player->interType);
+	saveBboxManager = *grid->getBboxManager();
+
+	// Get possible moves
+	if (playerTurn)
+		moves = grid->getInterestingMovesSorted(evaluator, player, opponent, true, tracker);
+	else
+		moves = grid->getInterestingMovesSorted(evaluator, opponent, player, true, tracker);
+
+	// If there is no move, 2 case possible
+	if (moves.size() == 0)
+	{
+		tmpMove.eval = 0;
+		// This is the first move, play at center
+		if (nbMove == 0)
+			tmpMove.pos = sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2);
+		// This is end game, return an error
+		else
+			tmpMove.pos = sf::Vector2i(-1, -1);
+		return (tmpMove);
+	}
+
+	bestMove.eval = -1000000001;
+	bestMove.pos = sf::Vector2i(-1, -1);
+	for (int i = 0; i < moves.size(); i++)
+	{
+		// Make the move
+		if (playerTurn)
+		{
+			grid->putStoneAI(&moves[i].pos, nbMove, player, opponent);
+			grid->updateBboxManager(&moves[i].pos);
+			player->nbMove++;
+		}
+		else
+		{
+			grid->putStoneAI(&moves[i].pos, nbMove, opponent, player);
+			grid->updateBboxManager(&moves[i].pos);
+			opponent->nbMove++;
+		}
+
+		// Call negaMax to next player reply score
+		tmpMove = negaMax(
+					memoryMoves, memoryEval,
+					grid, player, opponent, evaluator, !playerTurn,
+					-beta, -alpha, depth - 1, tracker);
+		// Reverse evaluation because a good opponent move is a bad move for player
+		tmpMove.eval = -tmpMove.eval;
+
+		// Reverse the move
+		if (playerTurn)
+		{
+			// Remove the stone of player
+			grid->removeStone(&tmpMove.pos, player->interType);
+
+			// If the move make a capture
+			if (player->nbCapture != plSaveNbCapture)
+			{
+				// Reset opponent bitboard
+				grid->setBitBoard(&saveBitboard, opponent->interType);
+				player->nbCapture = plSaveNbCapture;
+			}
+
+			grid->setBboxManager(&saveBboxManager);
+			player->nbMove--;
+		}
+		else
+		{
+			// Remove the stone of player
+			grid->removeStone(&tmpMove.pos, opponent->interType);
+
+			// If the move make a capture
+			if (opponent->nbCapture != opSaveNbCapture)
+			{
+				// Reset player bitboard
+				grid->setBitBoard(&saveBitboard, player->interType);
+				opponent->nbCapture = opSaveNbCapture;
+			}
+
+			grid->setBboxManager(&saveBboxManager);
+			opponent->nbMove--;
+		}
+
+		if (tmpMove.eval > bestMove.eval)
+		{
+			bestMove.eval = tmpMove.eval;
+			bestMove.pos = moves[i].pos;
+		}
+	}
+
+	return (bestMove);
+}
+
+
 
 
 static Move	miniMax(
