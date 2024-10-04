@@ -1,0 +1,456 @@
+==================== MEDIUM AI ====================
+Compute move in 52 us
+  evaluate position
+   - number of call : 0
+   - number of compute call : 0
+   - number of memory call : 0
+   - TIME ALL 0 us
+   - TIME COMPUTE 0 us
+   - about -nan us per call
+   - about -nan us per compute call
+  get sort moves
+   - number of call : 1
+   - get moves TIME 1 us
+   - about 1,000000 us per call
+   - sort moves TIME 0 us
+   - about 0,000000 us per call
+   - sort moves min size 0
+   - sort moves max size 0
+   - sort moves avg size 0,000000
+  check stone
+   - number of call : 0
+   - put stone TIME 0 us
+   - about -nan us per call
+  check win
+   - number of call : 0
+   - check win TIME 0 us
+   - about -nan us per call
+
+
+===================== EASY AI =====================
+Compute move in 89 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 12 431 us
+  evaluate position
+   - number of call : 534
+   - number of compute call : 459
+   - number of memory call : 75
+   - TIME ALL 3 337 us
+   - TIME COMPUTE 2 970 us
+   - about 6,249063 us per call
+   - about 6,470588 us per compute call
+  get sort moves
+   - number of call : 281
+   - get moves TIME 1 838 us
+   - about 6,540926 us per call
+   - sort moves TIME 3 010 us
+   - about 10,711743 us per call
+   - sort moves min size 12
+   - sort moves max size 26
+   - sort moves avg size 17,284697
+  check stone
+   - number of call : 814
+   - put stone TIME 1 576 us
+   - about 1,936118 us per call
+  check win
+   - number of call : 0
+   - check win TIME 0 us
+   - about -nan us per call
+
+
+===================== EASY AI =====================
+Compute move in 24 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 15 281 us
+  evaluate position
+   - number of call : 599
+   - number of compute call : 443
+   - number of memory call : 156
+   - TIME ALL 3 527 us
+   - TIME COMPUTE 2 662 us
+   - about 5,888147 us per call
+   - about 6,009029 us per compute call
+  get sort moves
+   - number of call : 342
+   - get moves TIME 3 906 us
+   - about 11,421053 us per call
+   - sort moves TIME 3 870 us
+   - about 11,315789 us per call
+   - sort moves min size 14
+   - sort moves max size 25
+   - sort moves avg size 20,564327
+  check stone
+   - number of call : 940
+   - put stone TIME 1 582 us
+   - about 1,682979 us per call
+  check win
+   - number of call : 0
+   - check win TIME 0 us
+   - about -nan us per call
+
+
+===================== EASY AI =====================
+Compute move in 24 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 42 810 us
+  evaluate position
+   - number of call : 1 927
+   - number of compute call : 1 459
+   - number of memory call : 468
+   - TIME ALL 11 656 us
+   - TIME COMPUTE 9 654 us
+   - about 6,048780 us per call
+   - about 6,616861 us per compute call
+  get sort moves
+   - number of call : 750
+   - get moves TIME 6 917 us
+   - about 9,222667 us per call
+   - sort moves TIME 11 419 us
+   - about 15,225333 us per call
+   - sort moves min size 17
+   - sort moves max size 30
+   - sort moves avg size 24,459999
+  check stone
+   - number of call : 2 676
+   - put stone TIME 4 852 us
+   - about 1,813154 us per call
+  check win
+   - number of call : 0
+   - check win TIME 0 us
+   - about -nan us per call
+
+
+===================== EASY AI =====================
+Compute move in 29 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 28 573 us
+  evaluate position
+   - number of call : 772
+   - number of compute call : 578
+   - number of memory call : 194
+   - TIME ALL 4 394 us
+   - TIME COMPUTE 3 794 us
+   - about 5,691710 us per call
+   - about 6,564014 us per compute call
+  get sort moves
+   - number of call : 604
+   - get moves TIME 4 433 us
+   - about 7,339404 us per call
+   - sort moves TIME 9 278 us
+   - about 15,360928 us per call
+   - sort moves min size 20
+   - sort moves max size 32
+   - sort moves avg size 27,369205
+  check stone
+   - number of call : 1 886
+   - put stone TIME 3 113 us
+   - about 1,650583 us per call
+  check win
+   - number of call : 511
+   - check win TIME 1 249 us
+   - about 2,444227 us per call
+
+
+===================== EASY AI =====================
+Compute move in 21 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 23 964 us
+  evaluate position
+   - number of call : 1 515
+   - number of compute call : 1 087
+   - number of memory call : 428
+   - TIME ALL 10 595 us
+   - TIME COMPUTE 9 188 us
+   - about 6,993399 us per call
+   - about 8,452621 us per compute call
+  get sort moves
+   - number of call : 224
+   - get moves TIME 2 506 us
+   - about 11,187500 us per call
+   - sort moves TIME 4 552 us
+   - about 20,321428 us per call
+   - sort moves min size 27
+   - sort moves max size 40
+   - sort moves avg size 33,593750
+  check stone
+   - number of call : 1 765
+   - put stone TIME 1 718 us
+   - about 0,973371 us per call
+  check win
+   - number of call : 27
+   - check win TIME 58 us
+   - about 2,148148 us per call
+
+
+===================== EASY AI =====================
+Compute move in 38 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 77 149 us
+  evaluate position
+   - number of call : 1 859
+   - number of compute call : 1 386
+   - number of memory call : 473
+   - TIME ALL 14 049 us
+   - TIME COMPUTE 11 610 us
+   - about 7,557289 us per call
+   - about 8,376623 us per compute call
+  get sort moves
+   - number of call : 1 300
+   - get moves TIME 15 330 us
+   - about 11,792308 us per call
+   - sort moves TIME 25 480 us
+   - about 19,600000 us per call
+   - sort moves min size 30
+   - sort moves max size 43
+   - sort moves avg size 36,967693
+  check stone
+   - number of call : 4 256
+   - put stone TIME 6 768 us
+   - about 1,590226 us per call
+  check win
+   - number of call : 1 098
+   - check win TIME 3 212 us
+   - about 2,925319 us per call
+
+
+===================== EASY AI =====================
+Compute move in 49 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 32 695 us
+  evaluate position
+   - number of call : 2 232
+   - number of compute call : 1 656
+   - number of memory call : 576
+   - TIME ALL 16 995 us
+   - TIME COMPUTE 14 860 us
+   - about 7,614247 us per call
+   - about 8,973430 us per compute call
+  get sort moves
+   - number of call : 166
+   - get moves TIME 1 810 us
+   - about 10,903614 us per call
+   - sort moves TIME 5 196 us
+   - about 31,301205 us per call
+   - sort moves min size 36
+   - sort moves max size 47
+   - sort moves avg size 41,584339
+  check stone
+   - number of call : 2 433
+   - put stone TIME 2 862 us
+   - about 1,176326 us per call
+  check win
+   - number of call : 36
+   - check win TIME 350 us
+   - about 9,722222 us per call
+
+
+===================== EASY AI =====================
+Compute move in 51 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 222 242 us
+  evaluate position
+   - number of call : 9 429
+   - number of compute call : 6 233
+   - number of memory call : 3 196
+   - TIME ALL 72 862 us
+   - TIME COMPUTE 57 798 us
+   - about 7,727437 us per call
+   - about 9,272902 us per compute call
+  get sort moves
+   - number of call : 2 253
+   - get moves TIME 31 081 us
+   - about 13,795384 us per call
+   - sort moves TIME 53 852 us
+   - about 23,902353 us per call
+   - sort moves min size 37
+   - sort moves max size 48
+   - sort moves avg size 42,457611
+  check stone
+   - number of call : 13 066
+   - put stone TIME 17 196 us
+   - about 1,316088 us per call
+  check win
+   - number of call : 1 535
+   - check win TIME 8 099 us
+   - about 5,276221 us per call
+
+
+===================== EASY AI =====================
+Compute move in 30 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 644 892 us
+  evaluate position
+   - number of call : 27 413
+   - number of compute call : 18 659
+   - number of memory call : 8 754
+   - TIME ALL 234 622 us
+   - TIME COMPUTE 198 130 us
+   - about 8,558786 us per call
+   - about 10,618468 us per compute call
+  get sort moves
+   - number of call : 5 719
+   - get moves TIME 82 794 us
+   - about 14,477007 us per call
+   - sort moves TIME 149 295 us
+   - about 26,105089 us per call
+   - sort moves min size 36
+   - sort moves max size 49
+   - sort moves avg size 42,485573
+  check stone
+   - number of call : 33 131
+   - put stone TIME 45 106 us
+   - about 1,361444 us per call
+  check win
+   - number of call : 4 638
+   - check win TIME 27 155 us
+   - about 5,854894 us per call
+
+
+===================== EASY AI =====================
+Compute move in 29 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 198 754 us
+  evaluate position
+   - number of call : 6 884
+   - number of compute call : 4 500
+   - number of memory call : 2 384
+   - TIME ALL 61 225 us
+   - TIME COMPUTE 51 539 us
+   - about 8,893812 us per call
+   - about 11,453111 us per compute call
+  get sort moves
+   - number of call : 2 152
+   - get moves TIME 29 762 us
+   - about 13,829926 us per call
+   - sort moves TIME 55 185 us
+   - about 25,643587 us per call
+   - sort moves min size 37
+   - sort moves max size 47
+   - sort moves avg size 41,839218
+  check stone
+   - number of call : 10 458
+   - put stone TIME 14 839 us
+   - about 1,418914 us per call
+  check win
+   - number of call : 1 507
+   - check win TIME 7 032 us
+   - about 4,666224 us per call
+
+
+===================== EASY AI =====================
+Compute move in 37 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 530 259 us
+  evaluate position
+   - number of call : 20 291
+   - number of compute call : 13 648
+   - number of memory call : 6 643
+   - TIME ALL 192 623 us
+   - TIME COMPUTE 165 660 us
+   - about 9,493027 us per call
+   - about 12,138042 us per compute call
+  get sort moves
+   - number of call : 4 855
+   - get moves TIME 78 817 us
+   - about 16,234192 us per call
+   - sort moves TIME 130 568 us
+   - about 26,893513 us per call
+   - sort moves min size 35
+   - sort moves max size 50
+   - sort moves avg size 41,803707
+  check stone
+   - number of call : 25 145
+   - put stone TIME 35 477 us
+   - about 1,410897 us per call
+  check win
+   - number of call : 1 421
+   - check win TIME 7 489 us
+   - about 5,270232 us per call
+
+
+===================== EASY AI =====================
+Compute move in 29 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 227 403 us
+  evaluate position
+   - number of call : 6 229
+   - number of compute call : 4 691
+   - number of memory call : 1 538
+   - TIME ALL 63 548 us
+   - TIME COMPUTE 56 284 us
+   - about 10,201959 us per call
+   - about 11,998295 us per compute call
+  get sort moves
+   - number of call : 2 587
+   - get moves TIME 36 859 us
+   - about 14,247777 us per call
+   - sort moves TIME 66 168 us
+   - about 25,577116 us per call
+   - sort moves min size 36
+   - sort moves max size 47
+   - sort moves avg size 41,892155
+  check stone
+   - number of call : 8 871
+   - put stone TIME 14 386 us
+   - about 1,621689 us per call
+  check win
+   - number of call : 2 724
+   - check win TIME 14 558 us
+   - about 5,344347 us per call
+
+
+===================== EASY AI =====================
+Compute move in 27 us
+
+
+==================== MEDIUM AI ====================
+Compute move in 114 678 us
+  evaluate position
+   - number of call : 1 635
+   - number of compute call : 942
+   - number of memory call : 693
+   - TIME ALL 14 325 us
+   - TIME COMPUTE 11 858 us
+   - about 8,761468 us per call
+   - about 12,588110 us per compute call
+  get sort moves
+   - number of call : 1 719
+   - get moves TIME 23 698 us
+   - about 13,785922 us per call
+   - sort moves TIME 45 389 us
+   - about 26,404305 us per call
+   - sort moves min size 39
+   - sort moves max size 51
+   - sort moves avg size 45,508434
+  check stone
+   - number of call : 3 428
+   - put stone TIME 7 487 us
+   - about 2,184072 us per call
+  check win
+   - number of call : 1 683
+   - check win TIME 10 289 us
+   - about 6,113488 us per call
