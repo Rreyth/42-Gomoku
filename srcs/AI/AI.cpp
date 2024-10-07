@@ -142,12 +142,10 @@ static void	printTracker(
 void	aiThreadCore(ThreadParams *threadParams)
 {
 	int				diff;
-	bool			running, needCompute, firstCall;
+	bool			running, needCompute;
 	Grid			grid;
-	Node			originNode, *actualRootNode;
 	PlayerInfo		player, opponent;
 	sf::Vector2i	move;
-	Move			rootNodeMove;
 	std::clock_t	start;
 	std::mutex		*mutex;
 	Evaluation		evaluator;
@@ -161,10 +159,6 @@ void	aiThreadCore(ThreadParams *threadParams)
 	mutex = threadParams->mutex;
 	parallelRun = threadParams->parallelRun;
 	aiDifficulty = threadParams->aiDifficulty;
-
-	firstCall = true;
-	rootNodeMove.pos = sf::Vector2i(-1, -1);
-	rootNodeMove.eval = 0;
 
 	// TODO: REMOVE
 	Tracker	tracker;
@@ -194,36 +188,8 @@ void	aiThreadCore(ThreadParams *threadParams)
 				move = getMediumMove(&memoryMoves, &memoryEval, &grid, &player,
 										&opponent, &evaluator, &tracker);
 			else if (aiDifficulty == HARD)
-			{
-				// If this is the first call, create root node
-				if (firstCall)
-				{
-					firstCall = false;
-					originNode = Node(&grid,
-										&player, &opponent,
-										false, &rootNodeMove);
-					actualRootNode = &originNode;
-				}
-				// Else, update it
-				else
-				{
-					if (actualRootNode != NULL)
-						actualRootNode = actualRootNode->getActualNode(&grid);
-
-					// If we cannot find current node, recreate root node
-					if (actualRootNode == NULL)
-					{
-						originNode = Node(&grid,
-											&player, &opponent,
-											false, &rootNodeMove);
-						actualRootNode = &originNode;
-					}
-				}
-
-				move = getHardMove(actualRootNode, &evaluator, &tracker);
-				// Get next node
-				actualRootNode = actualRootNode->getNextNode(&move);
-			}
+				move = getHardMove(&memoryMoves, &memoryEval, &grid, &player,
+										&opponent, &evaluator, &tracker);
 
 			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 
