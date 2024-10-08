@@ -1,12 +1,20 @@
 #include <AI/AI.hpp>
 #include <utils/Functions.hpp>
 
+static Move	mtdf(
+				std::unordered_map<int, std::vector<Move>> *memoryMoves,
+				std::unordered_map<int, int> *memoryEval,
+				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+				Evaluation *evaluator,
+				int depth, Move firstGuess,
+				Tracker *tracker);
 static Move	pvs(
 				std::unordered_map<int, std::vector<Move>> *memoryMoves,
 				std::unordered_map<int, int> *memoryEval,
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
-				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
-				int depth, Tracker *tracker);
+				Evaluation *evaluator, bool maximizingEval,
+				int alpha, int beta, int depth,
+				Tracker *tracker);
 static void	makeMove(
 				Grid *grid, sf::Vector2i *move, int nbMove, int depth,
 				PlayerInfo *player, PlayerInfo *opponent, bool playerTurn,
@@ -27,14 +35,65 @@ sf::Vector2i	getHardMove(
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 					Evaluation *evaluator, Tracker *tracker)
 {
-	Move	bestMove;
+	Move				bestMove;
+	std::vector<Move>	moves;
 
-	bestMove = pvs(memoryMoves, memoryEval, grid,
-					player, opponent, evaluator,
-					true, -1000000001, 1000000001,
-					AI_HARD_DEPTH, tracker);
+	// bestMove = pvs(memoryMoves, memoryEval, grid,
+	// 				player, opponent, evaluator,
+	// 				true, -1000000001, 1000000001,
+	// 				AI_HARD_DEPTH, tracker);
+
+	moves = grid->getInterestingMovesSorted(
+					evaluator, player, opponent, true, tracker);
+	if (moves.size() == 0)
+	{
+		if (player->nbMove + opponent->nbMove == 0)
+			return (sf::Vector2i(GRID_W_INTER / 2, GRID_W_INTER / 2));
+		return (sf::Vector2i(-1, -1));
+	}
+
+	bestMove = moves[0];
+	bestMove = mtdf(
+				memoryMoves, memoryEval, grid, player, opponent,
+				evaluator, AI_HARD_DEPTH, bestMove, tracker);
 
 	return (bestMove.pos);
+}
+
+
+static Move	mtdf(
+				std::unordered_map<int, std::vector<Move>> *memoryMoves,
+				std::unordered_map<int, int> *memoryEval,
+				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+				Evaluation *evaluator,
+				int depth, Move firstGuess, Tracker *tracker)
+{
+	Move	bestMove;
+	int		upperBound, lowerBound, beta;
+
+	bestMove = firstGuess;
+	upperBound = 1000000001;
+	lowerBound = -1000000001;
+
+	while (lowerBound < upperBound)
+	{
+		// Set alpha beta
+		if (bestMove.eval == lowerBound)
+			beta = bestMove.eval + 1;
+		else
+			beta = bestMove.eval;
+
+		bestMove = pvs(
+					memoryMoves, memoryEval, grid, player, opponent,
+					evaluator, true, beta - 1, beta, depth, tracker);
+
+		if (bestMove.eval < beta)
+			upperBound = bestMove.eval;
+		else
+			lowerBound = bestMove.eval;
+	}
+
+	return (bestMove);
 }
 
 
