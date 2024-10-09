@@ -142,8 +142,10 @@ static void	printTracker(
 void	aiThreadCore(ThreadParams *threadParams)
 {
 	int				diff;
-	bool			running, needCompute;
+	bool			running, needCompute, firstMove;
 	Grid			grid;
+	Move			originMove;
+	Node			originNode, *rootNode;
 	PlayerInfo		player, opponent;
 	sf::Vector2i	move;
 	std::clock_t	start;
@@ -151,9 +153,12 @@ void	aiThreadCore(ThreadParams *threadParams)
 	Evaluation		evaluator;
 	ParallelRun		*parallelRun;
 	AI_difficulty	aiDifficulty;
-	// std::unordered_map<int, Node>				memoryNode;
 	std::unordered_map<int, int>				memoryEval;
 	std::unordered_map<int, std::vector<Move>>	memoryMoves;
+
+	firstMove = true;
+	originMove.eval = 0;
+	originMove.pos = sf::Vector2i(-1, -1);
 
 	// Get params from struct
 	mutex = threadParams->mutex;
@@ -178,6 +183,30 @@ void	aiThreadCore(ThreadParams *threadParams)
 			player = *threadParams->player;
 			opponent = *threadParams->opponent;
 
+			// If this is the first move
+			if (firstMove)
+			{
+				// Create originNode
+				originNode = Node(&player, &opponent, &grid, &originMove);
+				rootNode = &originNode;
+				firstMove = false;
+			}
+			// Else get rootNode from grid
+			else
+			{
+				if (rootNode)
+					rootNode = rootNode->getRootNodeFromGrid(&grid);
+
+				// If we can find root node, recreate
+				if (rootNode == NULL)
+				{
+					// Create originNode
+					originNode = Node(&player, &opponent, &grid, &originMove);
+					rootNode = &originNode;
+					firstMove = false;
+				}
+			}
+
 			if (aiDifficulty == RANDOM)
 				move = getRandomMove(&grid, &player, &opponent);
 			else if (aiDifficulty == BETTER_RANDOM)
@@ -188,8 +217,12 @@ void	aiThreadCore(ThreadParams *threadParams)
 				move = getMediumMove(&memoryMoves, &memoryEval, &grid, &player,
 										&opponent, &evaluator, &tracker);
 			else if (aiDifficulty == HARD)
-				move = getHardMove(&memoryMoves, &memoryEval, &grid, &player,
-										&opponent, &evaluator, &tracker);
+				move = getHardMove(
+							&memoryMoves, &memoryEval,
+							rootNode, &evaluator,
+							&tracker);
+
+			rootNode = rootNode->getRootNodeFromMove(&move);
 
 			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 
@@ -197,7 +230,7 @@ void	aiThreadCore(ThreadParams *threadParams)
 			printTracker(tracker, aiDifficulty, diff);
 			resetTracker(tracker);
 
-			// printf("MOVE %i %i\n", move.x, move.y);
+			printf("MOVE %i %i\n", move.x, move.y);
 
 			// Give result to main thread
 			mutex->lock();
