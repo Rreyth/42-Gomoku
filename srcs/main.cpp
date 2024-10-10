@@ -95,26 +95,26 @@ int	main(void)
 		switch (displayState)
 		{
 		case DISPLAY_MENU:
-			menu.tick(&displayState, delta, &mouse);
 			menu.draw(&window, &text, &textureManager);
+			menu.tick(&displayState, delta, &mouse);
 			break;
 		case DISPLAY_SETTINGS:
-			settings.tick(&displayState, delta, &mouse, &window, &view, &text, font, &sprite);
 			settings.draw(&window, &text, &textureManager);
+			settings.tick(&displayState, delta, &mouse, &window, &view, &text, font, &sprite);
 			break;
 		case DISPLAY_MODEMENU:
-			modeMenu.tick(&displayState, delta, &mouse, &game, &sprite);
 			modeMenu.draw(&window, &text, &textureManager);
+			modeMenu.tick(&displayState, delta, &mouse, &game, &sprite);
 			break;
 		case DISPLAY_GAME:
-			game.tick(&displayState, delta, &mouse);
 			game.draw(&window, &text, &textureManager);
+			game.tick(&displayState, delta, &mouse);
 			break;
 		case DISPLAY_END:
-			end.tick(&displayState, delta, &mouse, &game);
 			end.draw(&window, &text, &textureManager,
 						game.getLeftPlayer(), game.getRightPlayer(),
 						game.getGrid());
+			end.tick(&displayState, delta, &mouse, &game);
 			break;
 		}
 
