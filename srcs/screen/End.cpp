@@ -2,6 +2,9 @@
 #include <utils/Functions.hpp>
 #include <screen/Game.hpp>
 
+static void	drawLeft(sf::RenderWindow *window, sf::Text *text, Player *leftPlayer, std::string leftWin);
+static void drawRight(sf::RenderWindow *window, sf::Text *text, Player *rightPlayer, std::string rightWin);
+
 ////////////////////////////////////////////////////////////////////////////////
 // Constructors and destructor
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,14 +94,14 @@ void	End::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *texture
 	}
 	else
 	{
-		drawText(window, text, "WIN BY", WIN_W * 0.92, 40, 70, sf::Color::White, MID_CENTER);
+		drawText(window, text, "WIN BY", WIN_W * 0.875, 40, 70, sf::Color::White, MID_CENTER);
 
 		std::string winStates[] = {"NONE", "ALIGN", "CAPTURE", "AUTO CAPTURE", "TIMEOUT"};
 
 		if (leftPlayer->getWinState() != WIN_STATE_NONE)
-			drawText(window, text, winStates[leftPlayer->getWinState()], WIN_W * 0.92, 110, 70, sf::Color::White, MID_CENTER);
+			drawText(window, text, winStates[leftPlayer->getWinState()], WIN_W * 0.875, 110, 70, sf::Color::White, MID_CENTER);
 		else
-			drawText(window, text, winStates[rightPlayer->getWinState()], WIN_W * 0.92, 110, 70, sf::Color::White, MID_CENTER);
+			drawText(window, text, winStates[rightPlayer->getWinState()], WIN_W * 0.875, 110, 70, sf::Color::White, MID_CENTER);
 
 		leftWin = (leftPlayer->getWinState() != WIN_STATE_NONE) ? "WIN" : "LOSE";
 		rightWin = (rightPlayer->getWinState() != WIN_STATE_NONE) ? "WIN" : "LOSE";
@@ -107,26 +110,10 @@ void	End::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *texture
 	this->back.draw(window, text, textureManager);
 
 	// Left player info
-	drawText(window, text, leftPlayer->getName(), WIN_W * 0.15, WIN_H * 0.33, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, leftWin, WIN_W * 0.15, WIN_H * 0.43, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "TIMER", WIN_W * 0.10, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
-	timer = format_time(std::to_string((int)leftPlayer->getTimer())) + " s";
-	drawText(window, text, timer, WIN_W * 0.20, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "MOVES", WIN_W * 0.10, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, std::to_string(leftPlayer->getNbMove()), WIN_W * 0.20, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "CAPTURED", WIN_W * 0.10, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, std::to_string(leftPlayer->getNbCapture()), WIN_W * 0.20, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
+	drawLeft(window, text, leftPlayer, leftWin);
 
 	// Right player info
-	drawText(window, text, rightPlayer->getName(), WIN_W * 0.85, WIN_H * 0.33, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, rightWin, WIN_W * 0.85, WIN_H * 0.43, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "TIMER", WIN_W * 0.80, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
-	timer = format_time(std::to_string((int)rightPlayer->getTimer())) + " s";
-	drawText(window, text, timer, WIN_W * 0.90, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "MOVES", WIN_W * 0.80, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, std::to_string(rightPlayer->getNbMove()), WIN_W * 0.90, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "CAPTURED", WIN_W * 0.80, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, std::to_string(rightPlayer->getNbCapture()), WIN_W * 0.90, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
+	drawRight(window, text, rightPlayer, rightWin);
 
 	// Moves control
 	drawText(window, text, "MOVES", WIN_W / 2, WIN_H * 0.875, 35, sf::Color::White, MID_CENTER);
@@ -136,4 +123,33 @@ void	End::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *texture
 	this->nextMove.draw(window, text, textureManager);
 	this->lastMove.draw(window, text, textureManager);
 	this->replay.draw(window, text, textureManager);
+}
+
+
+static void	drawLeft(sf::RenderWindow *window, sf::Text *text, Player *leftPlayer, std::string leftWin)
+{
+	std::string	timer = format_time(std::to_string((int)leftPlayer->getTimer())) + " s";
+
+	drawText(window, text, leftPlayer->getName(), WIN_W * 0.15, WIN_H * 0.33, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, leftWin, WIN_W * 0.15, WIN_H * 0.43, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "TIMER", WIN_W * 0.10, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, timer, WIN_W * 0.20, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "MOVES", WIN_W * 0.10, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, std::to_string(leftPlayer->getNbMove()), WIN_W * 0.20, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "CAPTURED", WIN_W * 0.10, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, std::to_string(leftPlayer->getNbCapture()), WIN_W * 0.20, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
+}
+
+static void drawRight(sf::RenderWindow *window, sf::Text *text, Player *rightPlayer, std::string rightWin)
+{
+	std::string	timer = format_time(std::to_string((int)rightPlayer->getTimer())) + " s";
+
+	drawText(window, text, rightPlayer->getName(), WIN_W * 0.85, WIN_H * 0.33, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, rightWin, WIN_W * 0.85, WIN_H * 0.43, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "TIMER", WIN_W * 0.80, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, timer, WIN_W * 0.90, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "MOVES", WIN_W * 0.80, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, std::to_string(rightPlayer->getNbMove()), WIN_W * 0.90, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "CAPTURED", WIN_W * 0.80, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, std::to_string(rightPlayer->getNbCapture()), WIN_W * 0.90, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
 }
