@@ -154,7 +154,7 @@ int	Node::getKillerMove(
 
 	start = std::clock();
 
-	bool	killerMove = this->grid.checkWinCondition(&this->player, &this->opponent);
+	bool	killerMove = this->grid.checkWinCondition(&this->opponent, &this->player);
 
 	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 	tracker->checkWinTime += diff;
@@ -164,19 +164,19 @@ int	Node::getKillerMove(
 	if (!killerMove)
 		return (this->killerMoveResult);
 
-	// If player win from player view point
+	// If player win from opponent view point
 	if (this->player.winState != WIN_STATE_NONE)
 	{
 		this->player.winState = WIN_STATE_NONE;
 		// Nothing is better than a victory
-		this->killerMoveResult = CASE_WIN_POINT;
+		this->killerMoveResult = CASE_LOOSE_POINT;
 	}
-	// If opponent win from player view point
+	// If opponent win from opponent view point
 	else
 	{
 		this->opponent.winState = WIN_STATE_NONE;
 		// Nothing is better than a victory
-		this->killerMoveResult = CASE_LOOSE_POINT;
+		this->killerMoveResult = CASE_WIN_POINT;
 	}
 
 	return (this->killerMoveResult);
@@ -184,29 +184,53 @@ int	Node::getKillerMove(
 
 
 int	Node::getEvaluation(
+			std::unordered_map<int, int> *memoryEval,
 			Evaluation *evaluator, Tracker *tracker)
 {
+	std::unordered_map<int, int>::const_iterator	evalFind;
 	// TODO : REMOVE
 	std::clock_t	start;
 	int				diff;
+
 	tracker->nbEvaluations++;
 
-	// If evaluation is alreayd compute, return it
+	// If evaluation is already compute, return it
 	if (this->evaluationCompute)
 		return (this->evaluation);
 
-	start = std::clock();
 	// Else compute it
+	this->evaluationCompute = true;
+
+	start = std::clock();
+
+	evalFind = memoryEval->find(this->hash);
+
+	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+	tracker->evaluationTime += diff;
+
+	// If the evaluation has already be compute, just get it from memory
+	if (evalFind != memoryEval->end())
+	{
+		tracker->nbMemoryEval++;
+
+		this->evaluation = evalFind->second;
+		return (this->evaluation);
+	}
+
+	// Else compute it
+	start = std::clock();
 	this->evaluation = evaluator->evaluateGrid(
 									this->plBitboard, this->opBitboard,
 									this->player.nbCapture, this->opponent.nbCapture);
+
+	// And save it in memory
+	memoryEval->insert(std::pair<int, int>(this->hash, this->evaluation));
 
 	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 	tracker->computeEvalTime += diff;
 	tracker->evaluationTime += diff;
 	tracker->nbComputeEval++;
 
-	this->childrenCompute = true;
 	return (this->evaluation);
 }
 
@@ -223,12 +247,13 @@ void	Node::appliedMove(
 	{
 		start = std::clock();
 
+		// Move is the move done by the opponent to arrived on this grid state.
 		this->grid.putStoneAI(
 						&this->move.pos,
 						this->player.nbMove + this->opponent.nbMove,
-						&this->player, &this->opponent);
+						&this->opponent, &this->player);
 		this->moveApplied = true;
-		this->player.nbMove++;
+		this->opponent.nbMove++;
 
 		this->computeHash();
 
@@ -264,19 +289,34 @@ void	Node::computeHash(void)
 
 
 std::vector<Node>	*Node::getChildren(
+							std::unordered_map<int, std::vector<Move>> *memoryMoves,
 							Evaluation *evaluator, Tracker *tracker)
 {
-	std::vector<Move>	moves;
+	std::vector<Move>											moves;
+	std::unordered_map<int, std::vector<Move>>::const_iterator	movesFind;
 
 	// If children is already compute, just return them
 	if (this->childrenCompute)
 		return (&this->children);
 
+	// Else compute them
 	this->childrenCompute = true;
 
-	// Else compute them
-	moves = this->grid.getInterestingMovesSorted(
-						evaluator, &this->player, &this->opponent, true, tracker);
+	movesFind = memoryMoves->find(this->hash);
+
+	// If moves are already be computed, just get them from memory
+	if (movesFind != memoryMoves->end())
+	{
+		moves = movesFind->second;
+	}
+	else
+	{
+		// Else compute them
+		moves = this->grid.getInterestingMovesSorted(
+							evaluator, &this->player, &this->opponent, true, tracker);
+		// And add them into memory
+		memoryMoves->insert(std::pair<int, std::vector<Move>>(this->hash, moves));
+	}
 
 	// If there is no children interesting
 	if (moves.size() == 0)
@@ -292,7 +332,7 @@ std::vector<Node>	*Node::getChildren(
 		moves.push_back(tmp);
 	}
 
-	for (int i = 0; i < moves.size(); i++)
+	for (int i = 0; i < moves.size() && i < AI_HARD_LIMIT; i++)
 	{
 		Node	tmp(&this->opponent, &this->player, &this->grid, &moves[i]);
 		this->children.push_back(tmp);
@@ -315,8 +355,8 @@ Node	*Node::getRootNodeFromGrid(
 	{
 		child = &this->children[i];
 
-		if (*plBitboard == *child->plBitboard
-			&& *opBitboard == *child->opBitboard)
+		if (*plBitboard == *child->opBitboard
+			&& *opBitboard == *child->plBitboard)
 			return (child);
 	}
 

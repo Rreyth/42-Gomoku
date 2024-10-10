@@ -33,7 +33,8 @@ sf::Vector2i	getHardMove(
 				memoryMoves, memoryEval,
 				rootNode, evaluator,
 				-1000000001, 1000000001,
-				AI_HARD_DEPTH, tracker);
+				AI_HARD_DEPTH,
+				tracker);
 
 	return (bestMove.pos);
 }
@@ -51,13 +52,13 @@ static Move	negaMax(
 
 	if (depth <= 0)
 	{
-		tmpMove.eval = node->getEvaluation(evaluator, tracker);
+		tmpMove.eval = node->getEvaluation(memoryEval, evaluator, tracker);
 		tmpMove.pos = sf::Vector2i(-1, -1);
 		return (tmpMove);
 	}
 
 	// Get children
-	children = node->getChildren(evaluator, tracker);
+	children = node->getChildren(memoryMoves, evaluator, tracker);
 
 	// If there is no move, error
 	if (children->size() == 0)

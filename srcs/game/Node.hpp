@@ -26,11 +26,13 @@ public:
 	int					getKillerMove(
 							Tracker *tracker);
 	int					getEvaluation(
+							std::unordered_map<int, int> *memoryEval,
 							Evaluation *evaluator, Tracker *tracker);
 	void				appliedMove(
 							int depth, Tracker *tracker);
 	void				computeHash(void);
 	std::vector<Node>	*getChildren(
+							std::unordered_map<int, std::vector<Move>> *memoryMoves,
 							Evaluation *evaluator, Tracker *tracker);
 
 	Node				*getRootNodeFromGrid(

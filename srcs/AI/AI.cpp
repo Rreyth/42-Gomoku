@@ -203,7 +203,6 @@ void	aiThreadCore(ThreadParams *threadParams)
 					// Create originNode
 					originNode = Node(&player, &opponent, &grid, &originMove);
 					rootNode = &originNode;
-					firstMove = false;
 				}
 			}
 
@@ -230,7 +229,7 @@ void	aiThreadCore(ThreadParams *threadParams)
 			printTracker(tracker, aiDifficulty, diff);
 			resetTracker(tracker);
 
-			printf("MOVE %i %i\n", move.x, move.y);
+			// printf("MOVE %i %i\n", move.x, move.y);
 
 			// Give result to main thread
 			mutex->lock();
