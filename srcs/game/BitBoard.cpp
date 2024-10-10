@@ -8,6 +8,8 @@ BitBoard::BitBoard(void)
 {
 	this->clear();
 	this->hashUpToDate = false;
+	for (int i = 0; i < GRID_W_INTER; i++)
+		this->hashes[i] = 0;
 }
 
 
