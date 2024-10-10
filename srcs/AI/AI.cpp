@@ -227,7 +227,6 @@ void	aiThreadCore(ThreadParams *threadParams)
 		mutex->unlock();
 	}
 
-	// memoryNode.clear();
 	memoryEval.clear();
 	memoryMoves.clear();
 }

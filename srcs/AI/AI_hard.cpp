@@ -46,7 +46,8 @@ static Move	pvs(
 				Evaluation *evaluator, bool playerTurn, int alpha, int beta,
 				int depth, Tracker *tracker)
 {
-	int					nbMove, plSaveNbCapture, opSaveNbCapture, hash;
+	int					nbMove, plSaveNbCapture, opSaveNbCapture;
+	std::size_t			hash;
 	std::vector<Move>	moves;
 	Move				bestMove, tmpMove;
 	BitBoard			saveBitboard, *plBitboard, *opBitboard;
