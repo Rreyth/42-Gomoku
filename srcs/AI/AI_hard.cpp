@@ -1,11 +1,12 @@
 #include <AI/AI.hpp>
 #include <utils/Functions.hpp>
 
-static Move	negaMax(
+static Move	pvs(
 				std::unordered_map<int, std::vector<Move>> *memoryMoves,
-				std::unordered_map<int, int> *memoryEval, Node *node,
-				Evaluation *evaluator, int alpha, int beta, int depth,
-				Tracker *tracker);
+				std::unordered_map<int, int> *memoryEval,
+				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+				Evaluation *evaluator, bool playerTurn, int alpha, int beta,
+				int depth, Tracker *tracker);
 static void	makeMove(
 				Grid *grid, sf::Vector2i *move, int nbMove, int depth,
 				PlayerInfo *player, PlayerInfo *opponent, bool playerTurn,
@@ -23,244 +24,21 @@ static int	checkKillerMove(
 sf::Vector2i	getHardMove(
 					std::unordered_map<int, std::vector<Move>> *memoryMoves,
 					std::unordered_map<int, int> *memoryEval,
-					Node *rootNode, Evaluation *evaluator,
-					Tracker *tracker)
+					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+					Evaluation *evaluator, Tracker *tracker)
 {
 	Move	bestMove;
 
-	rootNode->computeHash();
-	bestMove = negaMax(
+	bestMove = pvs(
 				memoryMoves, memoryEval,
-				rootNode, evaluator,
-				-1000000001, 1000000001,
-				AI_HARD_DEPTH,
+				grid, player, opponent, evaluator, true,
+				-1000000001, 1000000001, AI_HARD_DEPTH,
 				tracker);
 
 	return (bestMove.pos);
 }
 
 
-static Move	negaMax(
-				std::unordered_map<int, std::vector<Move>> *memoryMoves,
-				std::unordered_map<int, int> *memoryEval, Node *node,
-				Evaluation *evaluator, int alpha, int beta, int depth,
-				Tracker *tracker)
-{
-	Move				bestMove, tmpMove;
-	std::vector<Node>	*children;
-	Node				*current;
-
-	if (depth <= 0)
-	{
-		tmpMove.eval = node->getEvaluation(memoryEval, evaluator, tracker);
-		tmpMove.pos = sf::Vector2i(-1, -1);
-		return (tmpMove);
-	}
-
-	// Get children
-	children = node->getChildren(memoryMoves, evaluator, tracker);
-
-	// If there is no move, error
-	if (children->size() == 0)
-	{
-		tmpMove.eval = 0;
-		tmpMove.pos = sf::Vector2i(-1, -1);
-		return (tmpMove);
-	}
-
-	bestMove.eval = -1000000001;
-	bestMove.pos = sf::Vector2i(-1, -1);
-	for (int i = 0; i < children->size(); i++)
-	{
-		current = &children->at(i);
-
-		// Make the move
-		current->appliedMove(depth, tracker);
-
-		// Check if move is a killer move
-		tmpMove.eval = current->getKillerMove(tracker);
-
-		// Check if this move isn't a killer one. In this case, the eval is 0
-		// A killer move is the end of the game, so don't contine recursion
-		if (tmpMove.eval == 0)
-		{
-			// Call negaMax to next player reply score
-			tmpMove = negaMax(
-						memoryMoves, memoryEval, current, evaluator,
-						-beta, -alpha, depth - 1,
-						tracker);
-			// Reverse evaluation because a good opponent move is
-			// a bad move for player
-			tmpMove.eval = -tmpMove.eval;
-		}
-
-		// Keep the best move encounter so far
-		if (tmpMove.eval > bestMove.eval)
-		{
-			bestMove.eval = tmpMove.eval;
-			bestMove.pos = *current->getMove();
-		}
-
-		// Update alpha
-		if (tmpMove.eval > alpha)
-			alpha = tmpMove.eval;
-
-		// If the move is too good, opponent will avoir this move
-		if (alpha >= beta)
-			break;
-	}
-
-	return (bestMove);
-}
-
-
-static void	makeMove(
-				Grid *grid, sf::Vector2i *move, int nbMove, int depth,
-				PlayerInfo *player, PlayerInfo *opponent, bool playerTurn,
-				Tracker *tracker)
-{
-	// TODO : REMOVE
-	std::clock_t	start;
-	int				diff;
-
-	start = std::clock();
-
-	if (playerTurn)
-	{
-		grid->putStoneAI(move, nbMove, player, opponent);
-		if (depth > 1)
-			grid->updateBboxManager(move);
-		player->nbMove++;
-	}
-	else
-	{
-		grid->putStoneAI(move, nbMove, opponent, player);
-		if (depth > 1)
-			grid->updateBboxManager(move);
-		opponent->nbMove++;
-	}
-
-	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-	tracker->putStoneTime += diff;
-	tracker->checkStoneNumber++;
-}
-
-
-static void	unmakeMove(
-				Grid *grid, sf::Vector2i *move, int nbMove, int depth,
-				PlayerInfo *player, PlayerInfo *opponent, bool playerTurn,
-				BitBoard *saveBitboard, BboxManager *saveBboxManager,
-				int plSaveNbCapture, int opSaveNbCapture)
-{
-	if (playerTurn)
-	{
-		// Remove the stone of player
-		grid->removeStone(move, player->interType);
-
-		// If the move make a capture
-		if (player->nbCapture != plSaveNbCapture)
-		{
-			// Reset opponent bitboard
-			grid->setBitBoard(saveBitboard, opponent->interType);
-			player->nbCapture = plSaveNbCapture;
-		}
-
-		if (depth > 1)
-			grid->setBboxManager(saveBboxManager);
-		player->nbMove--;
-	}
-	else
-	{
-		// Remove the stone of player
-		grid->removeStone(move, opponent->interType);
-
-		// If the move make a capture
-		if (opponent->nbCapture != opSaveNbCapture)
-		{
-			// Reset player bitboard
-			grid->setBitBoard(saveBitboard, player->interType);
-			opponent->nbCapture = opSaveNbCapture;
-		}
-
-		if (depth > 1)
-			grid->setBboxManager(saveBboxManager);
-		opponent->nbMove--;
-	}
-}
-
-
-static int	checkKillerMove(
-				Grid *grid, bool playerTurn, int moveEvaluation,
-				PlayerInfo *player, PlayerInfo *opponent,
-				Tracker *tracker)
-{
-	// TODO : REMOVE
-	std::clock_t	start;
-	int				diff;
-	int				score; // Remove it and return instant
-
-	// Use the evaluation of position to limit the number of check win
-	if (moveEvaluation < 10000000)
-		return (0);
-
-	score = 0;
-	if (playerTurn)
-	{
-		start = std::clock();
-
-		// Check if player move is a killer move
-		if (grid->checkWinCondition(player, opponent))
-		{
-			// Player win from player view point = good
-			if (player->winState != WIN_STATE_NONE)
-			{
-				player->winState = WIN_STATE_NONE;
-				score = CASE_WIN_POINT;
-			}
-			// Opponent win from player view point = bad
-			else
-			{
-				opponent->winState = WIN_STATE_NONE;
-				score = CASE_LOOSE_POINT;
-			}
-		}
-
-		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-		tracker->checkWinTime += diff;
-		tracker->checkWinNumber++;
-	}
-	else
-	{
-		start = std::clock();
-
-		// Check if opponent move is a killer move
-		if (grid->checkWinCondition(opponent, player))
-		{
-			// Player win from opponent view point = bad
-			if (player->winState != WIN_STATE_NONE)
-			{
-				player->winState = WIN_STATE_NONE;
-				score = CASE_LOOSE_POINT;
-			}
-			// Opponent win from opponent view point = good
-			else
-			{
-				opponent->winState = WIN_STATE_NONE;
-				score = CASE_WIN_POINT;
-			}
-		}
-
-		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-		tracker->checkWinTime += diff;
-		tracker->checkWinNumber++;
-	}
-
-	return (score);
-}
-
-
-
-/*
 static Move	pvs(
 				std::unordered_map<int, std::vector<Move>> *memoryMoves,
 				std::unordered_map<int, int> *memoryEval,
@@ -456,4 +234,148 @@ static Move	pvs(
 
 	return (bestMove);
 }
-*/
+
+
+static void	makeMove(
+				Grid *grid, sf::Vector2i *move, int nbMove, int depth,
+				PlayerInfo *player, PlayerInfo *opponent, bool playerTurn,
+				Tracker *tracker)
+{
+	// TODO : REMOVE
+	std::clock_t	start;
+	int				diff;
+
+	start = std::clock();
+
+	if (playerTurn)
+	{
+		grid->putStoneAI(move, nbMove, player, opponent);
+		if (depth > 1)
+			grid->updateBboxManager(move);
+		player->nbMove++;
+	}
+	else
+	{
+		grid->putStoneAI(move, nbMove, opponent, player);
+		if (depth > 1)
+			grid->updateBboxManager(move);
+		opponent->nbMove++;
+	}
+
+	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+	tracker->putStoneTime += diff;
+	tracker->checkStoneNumber++;
+}
+
+
+static void	unmakeMove(
+				Grid *grid, sf::Vector2i *move, int nbMove, int depth,
+				PlayerInfo *player, PlayerInfo *opponent, bool playerTurn,
+				BitBoard *saveBitboard, BboxManager *saveBboxManager,
+				int plSaveNbCapture, int opSaveNbCapture)
+{
+	if (playerTurn)
+	{
+		// Remove the stone of player
+		grid->removeStone(move, player->interType);
+
+		// If the move make a capture
+		if (player->nbCapture != plSaveNbCapture)
+		{
+			// Reset opponent bitboard
+			grid->setBitBoard(saveBitboard, opponent->interType);
+			player->nbCapture = plSaveNbCapture;
+		}
+
+		if (depth > 1)
+			grid->setBboxManager(saveBboxManager);
+		player->nbMove--;
+	}
+	else
+	{
+		// Remove the stone of player
+		grid->removeStone(move, opponent->interType);
+
+		// If the move make a capture
+		if (opponent->nbCapture != opSaveNbCapture)
+		{
+			// Reset player bitboard
+			grid->setBitBoard(saveBitboard, player->interType);
+			opponent->nbCapture = opSaveNbCapture;
+		}
+
+		if (depth > 1)
+			grid->setBboxManager(saveBboxManager);
+		opponent->nbMove--;
+	}
+}
+
+
+static int	checkKillerMove(
+				Grid *grid, bool playerTurn, int moveEvaluation,
+				PlayerInfo *player, PlayerInfo *opponent,
+				Tracker *tracker)
+{
+	// TODO : REMOVE
+	std::clock_t	start;
+	int				diff;
+	int				score; // Remove it and return instant
+
+	// Use the evaluation of position to limit the number of check win
+	if (moveEvaluation < 10000000)
+		return (0);
+
+	score = 0;
+	if (playerTurn)
+	{
+		start = std::clock();
+
+		// Check if player move is a killer move
+		if (grid->checkWinCondition(player, opponent))
+		{
+			// Player win from player view point = good
+			if (player->winState != WIN_STATE_NONE)
+			{
+				player->winState = WIN_STATE_NONE;
+				score = CASE_WIN_POINT;
+			}
+			// Opponent win from player view point = bad
+			else
+			{
+				opponent->winState = WIN_STATE_NONE;
+				score = CASE_LOOSE_POINT;
+			}
+		}
+
+		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+		tracker->checkWinTime += diff;
+		tracker->checkWinNumber++;
+	}
+	else
+	{
+		start = std::clock();
+
+		// Check if opponent move is a killer move
+		if (grid->checkWinCondition(opponent, player))
+		{
+			// Player win from opponent view point = bad
+			if (player->winState != WIN_STATE_NONE)
+			{
+				player->winState = WIN_STATE_NONE;
+				score = CASE_LOOSE_POINT;
+			}
+			// Opponent win from opponent view point = good
+			else
+			{
+				opponent->winState = WIN_STATE_NONE;
+				score = CASE_WIN_POINT;
+			}
+		}
+
+		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
+		tracker->checkWinTime += diff;
+		tracker->checkWinNumber++;
+	}
+
+	return (score);
+}

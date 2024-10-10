@@ -5,7 +5,6 @@
 # include <game/Grid.hpp>
 # include <game/BoardState.hpp>
 # include <game/PlayerInfo.hpp>
-# include <game/Node.hpp>
 # include <AI/Evaluation.hpp>
 
 # include <functional>
@@ -50,8 +49,8 @@ sf::Vector2i	getMediumMove(
 sf::Vector2i	getHardMove(
 					std::unordered_map<int, std::vector<Move>> *memoryMoves,
 					std::unordered_map<int, int> *memoryEval,
-					Node *rootNode, Evaluation *evaluator,
-					Tracker *tracker);
+					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+					Evaluation *evaluator, Tracker *tracker);
 
 class AI
 {

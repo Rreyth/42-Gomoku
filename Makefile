@@ -30,7 +30,6 @@ SRCS				:=	srcs/main.cpp \
 						srcs/screen/ModeMenu.cpp \
 						srcs/game/Grid.cpp \
 						srcs/game/Bbox.cpp \
-						srcs/game/Node.cpp \
 						srcs/game/Player.cpp \
 						srcs/game/BitBoard.cpp \
 						srcs/game/BoardState.cpp \
