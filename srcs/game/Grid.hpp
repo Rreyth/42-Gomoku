@@ -57,7 +57,8 @@ public:
 
 	std::vector<sf::Vector2i>	getLegalMoves(PlayerInfo *player, PlayerInfo *opponent);
 	std::vector<sf::Vector2i>	getInterestingMoves(PlayerInfo *player, PlayerInfo *opponent);
-	std::vector<Move>			getInterestingMovesSorted(
+	void			getInterestingMovesSorted(
+									std::vector<Move> *moves,
 									Evaluation *evaluator,
 									PlayerInfo *player, PlayerInfo *opponent,
 									bool reverse, Tracker *tracker);

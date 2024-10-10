@@ -142,9 +142,9 @@ static Move	negaMax(
 	else
 	{
 		if (playerTurn)
-			moves = grid->getInterestingMovesSorted(evaluator, player, opponent, true, tracker);
+			grid->getInterestingMovesSorted(&moves, evaluator, player, opponent, true, tracker);
 		else
-			moves = grid->getInterestingMovesSorted(evaluator, opponent, player, true, tracker);
+			grid->getInterestingMovesSorted(&moves, evaluator, opponent, player, true, tracker);
 
 		memoryMoves->insert(std::pair<std::size_t, std::vector<Move>>(hash, moves));
 	}

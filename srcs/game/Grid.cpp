@@ -506,14 +506,14 @@ std::vector<sf::Vector2i>	Grid::getInterestingMoves(
 }
 
 
-std::vector<Move>	Grid::getInterestingMovesSorted(
+void	Grid::getInterestingMovesSorted(
+							std::vector<Move> *moves,
 							Evaluation *evaluator,
 							PlayerInfo *player, PlayerInfo *opponent,
 							bool reverse, Tracker *tracker)
 {
 	int							size, eval, j, nbMove, plCapture, opCapture;
 	Move						tmp;
-	std::vector<Move>			moves;
 	std::vector<sf::Vector2i>	movesPosition;
 	BitBoard					plBitboard, opBitboard;
 
@@ -537,7 +537,7 @@ std::vector<Move>	Grid::getInterestingMovesSorted(
 		tracker->sortSizeMax = size;
 
 	if (size < 2)
-		return (moves);
+		return ;
 
 	start = std::clock();
 
@@ -566,7 +566,7 @@ std::vector<Move>	Grid::getInterestingMovesSorted(
 											move.pos.x, move.pos.y);
 		if (!reverse)
 			move.eval = -move.eval;
-		moves.push_back(move);
+		moves->push_back(move);
 	}
 
 	if (!reverse)
@@ -575,14 +575,14 @@ std::vector<Move>	Grid::getInterestingMovesSorted(
 		{
 			for (int i = gap; i < size; i++)
 			{
-				tmp = moves[i];
+				tmp = (*moves)[i];
 
-				for (j = i; j >= gap && moves[j - gap] > tmp; j -= gap)
+				for (j = i; j >= gap && (*moves)[j - gap] > tmp; j -= gap)
 				{
-					moves[j] = moves[j - gap];
+					(*moves)[j] = (*moves)[j - gap];
 				}
 
-				moves[j] = tmp;
+				(*moves)[j] = tmp;
 			}
 		}
 	}
@@ -592,22 +592,20 @@ std::vector<Move>	Grid::getInterestingMovesSorted(
 		{
 			for (int i = gap; i < size; i++)
 			{
-				tmp = moves[i];
+				tmp = (*moves)[i];
 
-				for (j = i; j >= gap && moves[j - gap] < tmp; j -= gap)
+				for (j = i; j >= gap && (*moves)[j - gap] < tmp; j -= gap)
 				{
-					moves[j] = moves[j - gap];
+					(*moves)[j] = (*moves)[j - gap];
 				}
 
-				moves[j] = tmp;
+				(*moves)[j] = tmp;
 			}
 		}
 	}
 
 	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 	tracker->sortMoveTime += diff;
-
-	return (moves);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

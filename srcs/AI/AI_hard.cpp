@@ -131,15 +131,15 @@ static Move	pvs(
 	// If moves is in memory, get moves from it
 	if (movesFind != memoryMoves->end())
 	{
-		moves = movesFind->second;
+		moves.insert(moves.begin(), movesFind->second.begin(), movesFind->second.end());
 	}
 	// Else compute moves and put them in memory
 	else
 	{
 		if (playerTurn)
-			moves = grid->getInterestingMovesSorted(evaluator, player, opponent, true, tracker);
+			grid->getInterestingMovesSorted(&moves, evaluator, player, opponent, true, tracker);
 		else
-			moves = grid->getInterestingMovesSorted(evaluator, opponent, player, true, tracker);
+			grid->getInterestingMovesSorted(&moves, evaluator, opponent, player, true, tracker);
 
 		memoryMoves->insert(std::pair<std::size_t, std::vector<Move>>(hash, moves));
 	}
