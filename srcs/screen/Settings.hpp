@@ -5,6 +5,7 @@
 # include <ui/Button.hpp>
 # include <ui/Select.hpp>
 # include <ui/ToggleButton.hpp>
+# include <screen/Game.hpp>
 
 class Settings
 {
@@ -12,19 +13,20 @@ public:
 	Settings(void);
 	~Settings();
 
-	void	tick(display_state *displayState, float delta, Mouse *mouse, sf::RenderWindow *window, sf::View *view, sf::Text *text, sf::Font *font, stone_sprite *sprite);
+	void	tick(Game *game, display_state *displayState, float delta, Mouse *mouse, sf::RenderWindow *window, sf::View *view, sf::Text *text, sf::Font *font, stone_sprite *sprite);
 	void	draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 
 private:
 	std::string		title;
 	Button			back;
-	ToggleButton	fullscreen;
+	ToggleButton	fullscreen, suggestion;
 	Select			resolution, stones, fonts;
 	int				currentResolutionId, currentFontId, currentStoneId;
 
 	void	updateWindow(sf::RenderWindow *window, sf::View *view);
 	void	updateFont(sf::Text *text, sf::Font *font);
 	void	updateStone(stone_sprite *sprite);
+	void	updateSuggestion(Game *game);
 };
 
 #endif

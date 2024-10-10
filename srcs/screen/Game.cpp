@@ -8,6 +8,7 @@
 
 Game::Game(void)
 {
+	this->suggestion = false;
 	this->leave = Button("LEAVE", 25, MID_CENTER, sf::Color::White,
 						20, WIN_H - 60, 190, 48,
 						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF);
@@ -40,6 +41,11 @@ Player	*Game::getRightPlayer(void)
 Grid	*Game::getGrid(void)
 {
 	return (&this->grid);
+}
+
+void	Game::setSuggestion(bool suggestion)
+{
+	this->suggestion = suggestion;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,6 +146,8 @@ void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 
 	this->drawLeftSide(window, text, textureManager);
 	this->drawRightSide(window, text, textureManager);
+
+	// if (this->suggestion)
 	this->drawBottom(window, text, textureManager);
 
 	this->leave.draw(window, text, textureManager);

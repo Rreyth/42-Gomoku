@@ -19,7 +19,7 @@ Settings::Settings(void)
 	res.push_back("2560x1440");
 
 	this->resolution = Select(res, 30, MID_CENTER, sf::Color::White,
-						WIN_W / 3 - 95, WIN_H * 0.45, 190, 48,
+						WIN_W / 4 - 95, WIN_H * 0.45, 190, 48,
 						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF, SPRITE_SQUARE_BUTTON_ON);
 	this->currentResolutionId = 0;
 
@@ -29,7 +29,7 @@ Settings::Settings(void)
 	res.push_back("Coins");
 
 	this->stones = Select(res, 30, MID_CENTER, sf::Color::White,
-						WIN_W / 3 * 2 - 95, WIN_H * 0.45, 190, 48,
+						WIN_W / 4 * 2 - 95, WIN_H * 0.45, 190, 48,
 						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF, SPRITE_SQUARE_BUTTON_ON);
 	this->currentStoneId = 0;
 
@@ -39,12 +39,17 @@ Settings::Settings(void)
 	res.push_back("Sankofa");
 
 	this->fonts = Select(res, 30, MID_CENTER, sf::Color::White,
-						WIN_W / 3 * 2 - 95, WIN_H * 0.65, 190, 48,
+						WIN_W / 4 * 2 - 95, WIN_H * 0.65, 190, 48,
 						SPRITE_SQUARE_BUTTON_ON, SPRITE_SQUARE_BUTTON_OFF, SPRITE_SQUARE_BUTTON_ON);
 	this->currentFontId = 0;
 
 	this->fullscreen = ToggleButton("", 0, TOP_LEFT, sf::Color::White,
-									WIN_W / 3 + 70, WIN_H * 0.6625, 24, 24,
+									WIN_W / 4 + 70, WIN_H * 0.6625, 24, 24,
+									SPRITE_SMALL_ROUND_BUTTON_ON, SPRITE_SMALL_ROUND_BUTTON_OFF,
+									SPRITE_SMALL_ROUND_BUTTON_ON);
+
+	this->suggestion = ToggleButton("", 0, TOP_LEFT, sf::Color::White,
+									WIN_W / 4 * 3 + 70, WIN_H * 0.54, 24, 24,
 									SPRITE_SMALL_ROUND_BUTTON_ON, SPRITE_SMALL_ROUND_BUTTON_OFF,
 									SPRITE_SMALL_ROUND_BUTTON_ON);
 
@@ -57,11 +62,12 @@ Settings::~Settings()
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
-void	Settings::tick(display_state *displayState, float delta, Mouse *mouse, sf::RenderWindow *window, sf::View *view, sf::Text *text, sf::Font *font, stone_sprite *sprite)
+void	Settings::tick(Game *game, display_state *displayState, float delta, Mouse *mouse, sf::RenderWindow *window, sf::View *view, sf::Text *text, sf::Font *font, stone_sprite *sprite)
 {
 	this->back.tick(mouse);
 	this->resolution.tick(mouse);
 	this->fullscreen.tick(mouse);
+	this->suggestion.tick(mouse);
 	this->stones.tick(mouse);
 	this->fonts.tick(mouse);
 
@@ -71,6 +77,8 @@ void	Settings::tick(display_state *displayState, float delta, Mouse *mouse, sf::
 	this->updateWindow(window, view);
 	this->updateFont(text, font);
 	this->updateStone(sprite);
+	if (this->suggestion.getPressed())
+		this->updateSuggestion(game);
 }
 
 
@@ -79,12 +87,15 @@ void	Settings::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *te
 	drawText(window, text, this->title, WIN_W / 2, 20, 192, sf::Color::White, TOP_CENTER);
 	this->back.draw(window, text, textureManager);
 
-	drawText(window, text, "Resolution", WIN_W / 3, WIN_H * 0.4, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "Stones", WIN_W / 3 * 2, WIN_H * 0.4, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "Font", WIN_W / 3 * 2, WIN_H * 0.6, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "Resolution", WIN_W / 4, WIN_H * 0.4, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "Stones", WIN_W / 4 * 2, WIN_H * 0.4, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "Font", WIN_W / 4 * 2, WIN_H * 0.6, 50, sf::Color::White, MID_CENTER);
 
-	drawText(window, text, "Fullscreen", WIN_W * 0.325, WIN_H * 0.67, 35, sf::Color::White, MID_CENTER);
+	drawText(window, text, "Fullscreen", WIN_W * 0.245, WIN_H * 0.67, 35, sf::Color::White, MID_CENTER);
 	this->fullscreen.draw(window, text, textureManager);
+
+	drawText(window, text, "AI suggestion", WIN_W * 0.73, WIN_H * 0.5525, 35, sf::Color::White, MID_CENTER);
+	this->suggestion.draw(window, text, textureManager);
 
 	this->fonts.draw(window, text, textureManager);
 	this->stones.draw(window, text, textureManager);
@@ -168,4 +179,9 @@ void	Settings::updateStone(stone_sprite *sprite)
 		*sprite = (stone_sprite)stoneId;
 		this->currentStoneId = stoneId;
 	}
+}
+
+void	Settings::updateSuggestion(Game *game)
+{
+	game->setSuggestion(this->suggestion.getToggle());
 }
