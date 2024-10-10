@@ -128,28 +128,54 @@ void	End::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *texture
 
 static void	drawLeft(sf::RenderWindow *window, sf::Text *text, Player *leftPlayer, std::string leftWin)
 {
-	std::string	timer = format_time(std::to_string((int)leftPlayer->getTimer())) + " s";
+	std::string	timer;
+	int	timePerMove;
 
-	drawText(window, text, leftPlayer->getName(), WIN_W * 0.15, WIN_H * 0.33, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, leftWin, WIN_W * 0.15, WIN_H * 0.43, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "TIMER", WIN_W * 0.10, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, timer, WIN_W * 0.20, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
+	if (leftPlayer->getType() == AI_PLAYER) 
+		timePerMove = leftPlayer->getAI()->getTotalTimer() / leftPlayer->getNbMove();
+	else
+		timePerMove = (leftPlayer->getTimer() * 1000000) / leftPlayer->getNbMove();
+
+	drawText(window, text, leftPlayer->getName(), WIN_W * 0.15, WIN_H * 0.30, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, leftWin, WIN_W * 0.15, WIN_H * 0.41, 50, sf::Color::White, MID_CENTER);
+
+	timer = format_time(std::to_string((int)leftPlayer->getTimer())) + " s";
+	drawText(window, text, "TIMER", WIN_W * 0.10, WIN_H * 0.52, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, timer, WIN_W * 0.20, WIN_H * 0.52, 50, sf::Color::White, MID_CENTER);
+
+	timer = format_time(std::to_string(timePerMove)) + " us";
+	drawText(window, text, "time/move", WIN_W * 0.10, WIN_H * 0.565, 30, sf::Color(192, 192, 192), MID_CENTER);
+	drawText(window, text, timer, WIN_W * 0.20, WIN_H * 0.565, 30, sf::Color(192, 192, 192), MID_CENTER);
+
 	drawText(window, text, "MOVES", WIN_W * 0.10, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
 	drawText(window, text, std::to_string(leftPlayer->getNbMove()), WIN_W * 0.20, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "CAPTURED", WIN_W * 0.10, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, std::to_string(leftPlayer->getNbCapture()), WIN_W * 0.20, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "CAPTURED", WIN_W * 0.10, WIN_H * 0.74, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, std::to_string(leftPlayer->getNbCapture()), WIN_W * 0.20, WIN_H * 0.74, 50, sf::Color::White, MID_CENTER);
 }
 
 static void drawRight(sf::RenderWindow *window, sf::Text *text, Player *rightPlayer, std::string rightWin)
 {
-	std::string	timer = format_time(std::to_string((int)rightPlayer->getTimer())) + " s";
+	std::string	timer;
+	int	timePerMove;
 
-	drawText(window, text, rightPlayer->getName(), WIN_W * 0.85, WIN_H * 0.33, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, rightWin, WIN_W * 0.85, WIN_H * 0.43, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "TIMER", WIN_W * 0.80, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, timer, WIN_W * 0.90, WIN_H * 0.53, 50, sf::Color::White, MID_CENTER);
+	if (rightPlayer->getType() == AI_PLAYER) 
+		timePerMove = rightPlayer->getAI()->getTotalTimer() / rightPlayer->getNbMove();
+	else
+		timePerMove = (rightPlayer->getTimer() * 1000000) / rightPlayer->getNbMove();
+
+	drawText(window, text, rightPlayer->getName(), WIN_W * 0.85, WIN_H * 0.30, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, rightWin, WIN_W * 0.85, WIN_H * 0.41, 50, sf::Color::White, MID_CENTER);
+
+	timer = format_time(std::to_string((int)rightPlayer->getTimer())) + " s";
+	drawText(window, text, "TIMER", WIN_W * 0.80, WIN_H * 0.52, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, timer, WIN_W * 0.90, WIN_H * 0.52, 50, sf::Color::White, MID_CENTER);
+
+	timer = format_time(std::to_string(timePerMove)) + " us";
+	drawText(window, text, "time/move", WIN_W * 0.80, WIN_H * 0.565, 30, sf::Color(192, 192, 192), MID_CENTER);
+	drawText(window, text, timer, WIN_W * 0.90, WIN_H * 0.565, 30, sf::Color(192, 192, 192), MID_CENTER);
+
 	drawText(window, text, "MOVES", WIN_W * 0.80, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
 	drawText(window, text, std::to_string(rightPlayer->getNbMove()), WIN_W * 0.90, WIN_H * 0.63, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, "CAPTURED", WIN_W * 0.80, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
-	drawText(window, text, std::to_string(rightPlayer->getNbCapture()), WIN_W * 0.90, WIN_H * 0.73, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, "CAPTURED", WIN_W * 0.80, WIN_H * 0.74, 50, sf::Color::White, MID_CENTER);
+	drawText(window, text, std::to_string(rightPlayer->getNbCapture()), WIN_W * 0.90, WIN_H * 0.74, 50, sf::Color::White, MID_CENTER);
 }

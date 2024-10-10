@@ -61,6 +61,7 @@ public:
 	AI_difficulty	getDifficulty(void);
 
 	int				getTimer(void);
+	int				getTotalTimer(void);
 
 	void			setAI(
 						Grid *grid, AI_difficulty difficulty,
@@ -71,7 +72,7 @@ public:
 	void			reset(Grid *grid, PlayerInfo *player, PlayerInfo *opponent);
 
 private:
-	int				timer;
+	int				timer, totalTimer;
 	AI_difficulty	difficulty;
 	std::thread		thread;
 	std::mutex		mutex;

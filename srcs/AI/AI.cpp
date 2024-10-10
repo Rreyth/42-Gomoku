@@ -13,6 +13,7 @@ AI::AI(void)
 	this->parallelRun.computeDone = false;
 	this->parallelRun.move = sf::Vector2i(-1, -1);
 	this->timer = 0;
+	this->totalTimer = 0;
 }
 
 
@@ -43,12 +44,19 @@ int	AI::getTimer(void)
 }
 
 
+int	AI::getTotalTimer(void)
+{
+	return (this->totalTimer);
+}
+
+
 void	AI::setAI(
 			Grid *grid, AI_difficulty difficulty,
 			PlayerInfo *player, PlayerInfo *opponent)
 {
 	this->difficulty = difficulty;
 	this->timer = 0;
+	this->totalTimer = 0;
 
 	this->destroyThread();
 	this->startThread(grid, player, opponent);
@@ -78,6 +86,7 @@ sf::Vector2i	AI::getNextMove(bool *moveDone)
 		this->parallelRun.computeDone = false;
 		move = this->parallelRun.move;
 		this->timer = this->parallelRun.timeLastMove;
+		this->totalTimer += this->timer;
 		*moveDone = true;
 	}
 	this->mutex.unlock();
@@ -90,6 +99,7 @@ void	AI::reset(
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent)
 {
 	this->timer = 0;
+	this->totalTimer = 0;
 	this->destroyThread();
 	this->startThread(grid, player, opponent);
 }
