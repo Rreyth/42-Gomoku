@@ -2,8 +2,8 @@
 #include <utils/Functions.hpp>
 
 static Move	pvs(
-				std::unordered_map<int, std::vector<Move>> *memoryMoves,
-				std::unordered_map<int, int> *memoryEval,
+				std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
+				std::unordered_map<std::size_t, int> *memoryEval,
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 				Evaluation *evaluator, bool playerTurn, int alpha, int beta,
 				int depth, Tracker *tracker);
@@ -22,8 +22,8 @@ static int	checkKillerMove(
 				Tracker *tracker);
 
 sf::Vector2i	getHardMove(
-					std::unordered_map<int, std::vector<Move>> *memoryMoves,
-					std::unordered_map<int, int> *memoryEval,
+					std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
+					std::unordered_map<std::size_t, int> *memoryEval,
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 					Evaluation *evaluator, Tracker *tracker)
 {
@@ -40,8 +40,8 @@ sf::Vector2i	getHardMove(
 
 
 static Move	pvs(
-				std::unordered_map<int, std::vector<Move>> *memoryMoves,
-				std::unordered_map<int, int> *memoryEval,
+				std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
+				std::unordered_map<std::size_t, int> *memoryEval,
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 				Evaluation *evaluator, bool playerTurn, int alpha, int beta,
 				int depth, Tracker *tracker)
@@ -51,9 +51,8 @@ static Move	pvs(
 	Move				bestMove, tmpMove;
 	BitBoard			saveBitboard, *plBitboard, *opBitboard;
 	BboxManager			saveBboxManager;
-	BoardState			boardState;
-	std::unordered_map<int, int>::const_iterator				evalFind;
-	std::unordered_map<int, std::vector<Move>>::const_iterator	movesFind;
+	std::unordered_map<std::size_t, int>::const_iterator				evalFind;
+	std::unordered_map<std::size_t, std::vector<Move>>::const_iterator	movesFind;
 
 	// TODO : REMOVE
 	std::clock_t	start;
@@ -62,8 +61,7 @@ static Move	pvs(
 	plBitboard = grid->getBitBoard(player->interType);
 	opBitboard = grid->getBitBoard(opponent->interType);
 	// Compute hash of the current grid
-	boardState = BoardState(plBitboard, opBitboard);
-	hash = boardState.getHash();
+	hash = plBitboard->getHash(opBitboard);
 
 	if (depth <= 0)
 	{
@@ -102,7 +100,7 @@ static Move	pvs(
 											opponent->nbCapture, player->nbCapture);
 
 			// Put the result in memory to avoid to recompute the evaluation for this board
-			memoryEval->insert(std::pair<int, int>(hash, tmpMove.eval));
+			memoryEval->insert(std::pair<std::size_t, int>(hash, tmpMove.eval));
 
 			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 			tracker->computeEvalTime += diff;
@@ -142,7 +140,7 @@ static Move	pvs(
 		else
 			moves = grid->getInterestingMovesSorted(evaluator, opponent, player, true, tracker);
 
-		memoryMoves->insert(std::pair<int, std::vector<Move>>(hash, moves));
+		memoryMoves->insert(std::pair<std::size_t, std::vector<Move>>(hash, moves));
 	}
 
 	// If there is no move, 2 case possible

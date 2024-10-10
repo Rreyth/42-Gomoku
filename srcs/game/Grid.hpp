@@ -5,7 +5,6 @@
 # include <ui/Button.hpp>
 # include <game/BitBoard.hpp>
 # include <game/BboxManager.hpp>
-# include <game/BoardState.hpp>
 # include <game/PlayerInfo.hpp>
 
 # include <vector>

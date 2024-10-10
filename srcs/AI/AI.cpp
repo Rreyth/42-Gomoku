@@ -151,8 +151,8 @@ void	aiThreadCore(ThreadParams *threadParams)
 	Evaluation		evaluator;
 	ParallelRun		*parallelRun;
 	AI_difficulty	aiDifficulty;
-	std::unordered_map<int, int>				memoryEval;
-	std::unordered_map<int, std::vector<Move>>	memoryMoves;
+	std::unordered_map<std::size_t, int>				memoryEval;
+	std::unordered_map<std::size_t, std::vector<Move>>	memoryMoves;
 
 	// Get params from struct
 	mutex = threadParams->mutex;

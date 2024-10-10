@@ -16,10 +16,13 @@ class BitBoard
 public:
 	// bb = bitboard
 	// H = horizontal | V = vertical | D = diagonal | A = anti diagonal
-	int	bbH[GRID_W_INTER];
-	int	bbV[GRID_W_INTER];
-	int	bbD[GRID_W_INTER];
-	int	bbA[GRID_W_INTER];
+	int			bbH[GRID_W_INTER];
+	int			bbV[GRID_W_INTER];
+	int			bbD[GRID_W_INTER];
+	int			bbA[GRID_W_INTER];
+	std::size_t	hashes[GRID_W_INTER];
+	std::size_t	hash;
+	bool		hashUpToDate;
 
 	BitBoard(void);
 	BitBoard(const BitBoard &obj);
@@ -33,8 +36,10 @@ public:
 
 	void		clear(void);
 	int			getLine(bitboardAxis bbAxis, int x, int y) const;
+	std::size_t	getHash(BitBoard *bitboard);
 
 private:
+	void		computeHash(void);
 };
 
 #endif

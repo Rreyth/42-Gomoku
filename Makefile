@@ -32,7 +32,6 @@ SRCS				:=	srcs/main.cpp \
 						srcs/game/Bbox.cpp \
 						srcs/game/Player.cpp \
 						srcs/game/BitBoard.cpp \
-						srcs/game/BoardState.cpp \
 						srcs/game/PlayerInfo.cpp \
 						srcs/game/BboxManager.cpp \
 						srcs/AI/AI.cpp \
