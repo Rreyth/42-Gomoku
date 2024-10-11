@@ -7,9 +7,6 @@
 BitBoard::BitBoard(void)
 {
 	this->clear();
-	this->hashUpToDate = false;
-	for (int i = 0; i < GRID_W_INTER; i++)
-		this->hashes[i] = 0;
 }
 
 
@@ -130,7 +127,10 @@ void	BitBoard::clear(void)
 		this->bbV[i] = 0;
 		this->bbD[i] = 0;
 		this->bbA[i] = 0;
+		this->hashes[i] = 0;
 	}
+	this->hash = 0;
+	this->hashUpToDate = false;
 }
 
 

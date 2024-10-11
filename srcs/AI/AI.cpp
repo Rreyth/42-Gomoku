@@ -206,6 +206,7 @@ void	aiThreadCore(ThreadParams *threadParams)
 			printTracker(tracker, aiDifficulty, diff);
 			resetTracker(tracker);
 
+			// TODO: REMOVE
 			// printf("MOVE %i %i\n", move.x, move.y);
 
 			// Give result to main thread

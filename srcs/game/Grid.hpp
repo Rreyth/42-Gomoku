@@ -63,6 +63,9 @@ public:
 									PlayerInfo *player, PlayerInfo *opponent,
 									bool reverse, Tracker *tracker);
 
+	// TODO : REMOVE
+	void	printGrind(void);
+
 private:
 	int											x, y, w, h, previewX, previewY, boardHistoryId;
 	bool										previewLegal;

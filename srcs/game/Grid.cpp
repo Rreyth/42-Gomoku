@@ -386,17 +386,8 @@ void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone,
 
 void	Grid::reset(void)
 {
-	for (int i = 0; i < GRID_W_INTER; i++)
-	{
-		this->bitboardL.bbH[i] = 0;
-		this->bitboardL.bbV[i] = 0;
-		this->bitboardL.bbD[i] = 0;
-		this->bitboardL.bbA[i] = 0;
-		this->bitboardR.bbH[i] = 0;
-		this->bitboardR.bbV[i] = 0;
-		this->bitboardR.bbD[i] = 0;
-		this->bitboardR.bbA[i] = 0;
-	}
+	this->bitboardL.clear();
+	this->bitboardR.clear();
 	this->boardHistoryId = 0;
 	this->boardHistory.clear();
 	this->bboxManager.clear();
@@ -559,7 +550,7 @@ void	Grid::getInterestingMovesSorted(
 	{
 		Move	move;
 		move.pos = movesPosition[i];
-		
+
 		move.eval = evaluator->evaluationPosition(
 											&plBitboard, &opBitboard,
 											plCapture, opCapture,
@@ -606,6 +597,29 @@ void	Grid::getInterestingMovesSorted(
 
 	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 	tracker->sortMoveTime += diff;
+}
+
+
+void	Grid::printGrind(void)
+{
+	printf("   ");
+	for (int i = 0; i < GRID_W_INTER; i++)
+		printf("%2i ", i);
+	printf("\n");
+	for (int i = 0; i < GRID_W_INTER; i++)
+	{
+		printf("%2i  ", i);
+		for (int j = 0; j < 19; j++)
+		{
+			if (this->bitboardL.bbH[i] & (1 << j))
+				printf("L  ");
+			else if (this->bitboardR.bbH[i] & (1 << j))
+				printf("R  ");
+			else
+				printf(".  ");
+		}
+		printf("\n");
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
