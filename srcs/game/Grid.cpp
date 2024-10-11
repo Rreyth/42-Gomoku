@@ -366,18 +366,8 @@ void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone,
 	this->leftStone = leftStone;
 	this->rightStone = rightStone;
 	this->rule = rule;
-
-	for (int i = 0; i < GRID_W_INTER; i++)
-	{
-		this->bitboardL.bbH[i] = 0;
-		this->bitboardL.bbV[i] = 0;
-		this->bitboardL.bbD[i] = 0;
-		this->bitboardL.bbA[i] = 0;
-		this->bitboardR.bbH[i] = 0;
-		this->bitboardR.bbV[i] = 0;
-		this->bitboardR.bbD[i] = 0;
-		this->bitboardR.bbA[i] = 0;
-	}
+	this->bitboardL.clear();
+	this->bitboardR.clear();
 	this->boardHistoryId = 0;
 	this->boardHistory.clear();
 	this->bboxManager.clear();

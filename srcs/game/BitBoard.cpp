@@ -18,10 +18,8 @@ BitBoard::BitBoard(const BitBoard &obj)
 		this->bbV[i] = obj.bbV[i];
 		this->bbD[i] = obj.bbD[i];
 		this->bbA[i] = obj.bbA[i];
-		this->hashes[i] = std::hash<int>{}(this->bbH[i]);
+		this->hash[i] = std::hash<int>{}(this->bbH[i]);
 	}
-	this->hashUpToDate = false;
-	this->hash = 0;
 }
 
 
@@ -72,8 +70,7 @@ void	BitBoard::set(int x, int y, bool value)
 	}
 
 	// Update hash line
-	this->hashes[y] = std::hash<int>{}(this->bbH[y]);
-	this->hashUpToDate = false;
+	this->hash[y] = std::hash<int>{}(this->bbH[y]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,10 +88,8 @@ BitBoard	&BitBoard::operator=(const BitBoard &obj)
 		this->bbV[i] = obj.bbV[i];
 		this->bbD[i] = obj.bbD[i];
 		this->bbA[i] = obj.bbA[i];
-		this->hashes[i] = obj.hashes[i];
+		this->hash[i] = obj.hash[i];
 	}
-	this->hash = obj.hash;
-	this->hashUpToDate = obj.hashUpToDate;
 
 	return (*this);
 }
@@ -104,9 +99,6 @@ bool	BitBoard::operator==(const BitBoard &obj) const
 {
 	if (this == &obj)
 		return (true);
-
-	if (this->hashUpToDate && obj.hashUpToDate)
-		return (this->hash == obj.hash);
 
 	for (int i = 0; i < GRID_W_INTER; i++)
 	{
@@ -128,10 +120,8 @@ void	BitBoard::clear(void)
 		this->bbV[i] = 0;
 		this->bbD[i] = 0;
 		this->bbA[i] = 0;
-		this->hashes[i] = 0;
+		this->hash[i] = 0;
 	}
-	this->hash = 0;
-	this->hashUpToDate = false;
 }
 
 
@@ -181,31 +171,18 @@ std::size_t	BitBoard::getHash(BitBoard *bitboard)
 	std::size_t	plTmp;
 	std::size_t	opTmp;
 
-	if (!this->hashUpToDate)
+	res = 0;
+	for (int i = 0; i < GRID_W_INTER; i++)
 	{
-		this->hashUpToDate = true;
-		this->computeHash();
-	}
-	if (!bitboard->hashUpToDate)
-	{
-		bitboard->hashUpToDate = true;
-		bitboard->computeHash();
+		plTmp = std::hash<int>{}(this->hash[i]);
+		opTmp = std::hash<int>{}(bitboard->hash[i]);
+		res = plTmp + 0x9e3779b9 + (res<<6) + (res>>2);
+		res = opTmp + 0x9e3779b9 + (res<<6) + (res>>2);
 	}
 
-	plTmp = this->hash;
-	opTmp = bitboard->hash;
-	res = opTmp + 0x9e3779b9 + (plTmp<<6) + (plTmp>>2);
 	return (res);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////
-
-void	BitBoard::computeHash(void)
-{
-	this->hash = this->hashes[0];
-	for (int i = 1; i < GRID_W_INTER; i++)
-		this->hash = this->hashes[i] + 0x9e3779b9
-						+ (this->hash<<6) + (this->hash>>2);
-}

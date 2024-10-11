@@ -148,8 +148,116 @@ void	BboxManager::update(int x, int y)
 				// Else the bbox is in a corner
 				else
 				{
+					// If bbox is 1 tile high
+					if (bbox->Ry - bbox->Ly == 0)
+					{
+						// If new bbox is on the left of bbox
+						if (bbox->Lx > newBbox->Lx)
+						{
+							// Create new bbox for top left
+							tmp = Bbox();
+							tmp.Lx = bbox->Lx;
+							tmp.Rx = newBbox->Rx;
+							tmp.Ly = newBbox->Ly;
+							tmp.Ry = bbox->Ly - 1;
+							newBboxes.push_back(tmp);
+							newBbox = &newBboxes[idNewBbox];
+
+							// Create new bbox for bot left
+							tmp = Bbox();
+							tmp.Lx = bbox->Lx;
+							tmp.Rx = newBbox->Rx;
+							tmp.Ly = bbox->Ry + 1;
+							tmp.Ry = newBbox->Ry;
+							newBboxes.push_back(tmp);
+							newBbox = &newBboxes[idNewBbox];
+
+							// Update newBbox
+							newBbox->Rx = bbox->Lx - 1;
+						}
+
+						// If new bbox is on the right of bbox
+						else
+						{
+							// Create new bbox for top right
+							tmp = Bbox();
+							tmp.Lx = newBbox->Lx;
+							tmp.Rx = bbox->Rx;
+							tmp.Ly = newBbox->Ly;
+							tmp.Ry = bbox->Ly - 1;
+							newBboxes.push_back(tmp);
+							newBbox = &newBboxes[idNewBbox];
+
+							// Create new bbox for bot right
+							tmp = Bbox();
+							tmp.Lx = newBbox->Lx;
+							tmp.Rx = bbox->Rx;
+							tmp.Ly = bbox->Ry + 1;
+							tmp.Ry = newBbox->Ry;
+							newBboxes.push_back(tmp);
+							newBbox = &newBboxes[idNewBbox];
+
+							// Update newBbox
+							newBbox->Lx = bbox->Rx + 1;
+						}
+					}
+
+					// If bbox is 1 tile width
+					else if (bbox->Rx - bbox->Lx == 0)
+					{
+						// If new bbox is on the top of bbox
+						if (bbox->Ly > newBbox->Ly)
+						{
+							// Create new bbox for bot left
+							tmp = Bbox();
+							tmp.Lx = newBbox->Lx;
+							tmp.Rx = bbox->Lx - 1;
+							tmp.Ly = bbox->Ly;
+							tmp.Ry = newBbox->Ry;
+							newBboxes.push_back(tmp);
+							newBbox = &newBboxes[idNewBbox];
+
+							// Create new bbox for bot right
+							tmp = Bbox();
+							tmp.Lx = bbox->Rx + 1;
+							tmp.Rx = newBbox->Rx;
+							tmp.Ly = bbox->Ly;
+							tmp.Ry = newBbox->Ry;
+							newBboxes.push_back(tmp);
+							newBbox = &newBboxes[idNewBbox];
+
+							// Update newBbox
+							newBbox->Ry = bbox->Ly - 1;
+						}
+
+						// If new bbox is on the bot of bbox
+						else
+						{
+							// Create new bbox for top left
+							tmp = Bbox();
+							tmp.Lx = newBbox->Lx;
+							tmp.Rx = bbox->Lx - 1;
+							tmp.Ly = newBbox->Ly;
+							tmp.Ry = bbox->Ry;
+							newBboxes.push_back(tmp);
+							newBbox = &newBboxes[idNewBbox];
+
+							// Create new bbox for top right
+							tmp = Bbox();
+							tmp.Lx = bbox->Rx + 1;
+							tmp.Rx = newBbox->Rx;
+							tmp.Ly = newBbox->Ly;
+							tmp.Ry = bbox->Ry;
+							newBboxes.push_back(tmp);
+							newBbox = &newBboxes[idNewBbox];
+
+							// Update newBbox
+							newBbox->Ly = bbox->Ry + 1;
+						}
+					}
+
 					// If newBbox is in top left corner of bbox
-					if (bbox->Lx > newBbox->Lx && bbox->Ly > newBbox->Ly)
+					else if (bbox->Lx > newBbox->Lx && bbox->Ly > newBbox->Ly)
 					{
 						// Create a new bbox for fill the empty space left by cutting newBbox
 						tmp = Bbox();

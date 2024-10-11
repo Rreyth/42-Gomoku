@@ -20,9 +20,7 @@ public:
 	int			bbV[GRID_W_INTER];
 	int			bbD[GRID_W_INTER];
 	int			bbA[GRID_W_INTER];
-	std::size_t	hashes[GRID_W_INTER];
-	std::size_t	hash;
-	bool		hashUpToDate;
+	std::size_t	hash[GRID_W_INTER];
 
 	BitBoard(void);
 	BitBoard(const BitBoard &obj);
@@ -39,7 +37,6 @@ public:
 	std::size_t	getHash(BitBoard *bitboard);
 
 private:
-	void		computeHash(void);
 };
 
 #endif

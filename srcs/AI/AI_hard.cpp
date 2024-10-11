@@ -63,7 +63,6 @@ static Move	pvs(
 	int					nbMove, plSaveNbCapture, opSaveNbCapture;
 	std::size_t			hash;
 	std::vector<Move>	moves;
-	std::vector<Move>	movesTEST;
 	Move				bestMove, tmpMove;
 	BitBoard			saveBitboard, *plBitboard, *opBitboard;
 	BboxManager			saveBboxManager;
@@ -73,8 +72,6 @@ static Move	pvs(
 	// TODO : REMOVE
 	std::clock_t	start;
 	int				diff;
-	std::size_t HASHTEST = 3616546876818078414;
-
 
 	plBitboard = grid->getBitBoard(player->interType);
 	opBitboard = grid->getBitBoard(opponent->interType);
@@ -145,59 +142,9 @@ static Move	pvs(
 	// Get possible moves
 	movesFind = memoryMoves->find(hash);
 
-	if (hash == HASHTEST)
-	{
-		printf("\ndepth %i - grid\n", depth);
-		printf("Player : nbMove %i, nbCapture %i\n", player->nbMove, player->nbCapture);
-		printf("Opponent : nbMove %i, nbCapture %i\n", opponent->nbMove, opponent->nbCapture);
-		grid->print();
-
-		LastMove	*tmpLastMove = lastMove;
-		printf("GRID ORIGIN\n");
-		tmpLastMove->grid.print();
-		printf("Moves :\n");
-		while(tmpLastMove->lastMove)
-		{
-			printf(" |%2i,%2i|\n", tmpLastMove->move.x, tmpLastMove->move.y);
-			tmpLastMove = tmpLastMove->lastMove;
-		}
-		printf("\n");
-	}
-
 	// If moves is in memory, get moves from it
 	if (movesFind != memoryMoves->end())
-	{
 		moves.insert(moves.begin(), movesFind->second.begin(), movesFind->second.end());
-
-		if (playerTurn)
-			grid->getInterestingMovesSorted(&movesTEST, evaluator, player, opponent, true, tracker);
-		else
-			grid->getInterestingMovesSorted(&movesTEST, evaluator, opponent, player, true, tracker);
-
-		// if (moves.size() != movesTEST.size())
-		// 	printf(" hash %lu\n", hash);
-
-		if (hash == HASHTEST)
-		{
-
-			printf(" equality compute - memory\n");
-			printf(" hash %lu\n", hash);
-			printf(" size %lu != %lu\n",
-					moves.size(), movesTEST.size());
-
-			for (int i = 0; i < max(moves.size(), movesTEST.size()); i++)
-			{
-				if (i < moves.size())
-					printf("%2i,%2i-%6i", moves[i].pos.x, moves[i].pos.y, moves[i].eval);
-				else
-					printf("  ,  -      ");
-				printf(" | ");
-				if (i < movesTEST.size())
-					printf("%2i,%2i-%6i", movesTEST[i].pos.x, movesTEST[i].pos.y, movesTEST[i].eval);
-				printf("\n");
-			}
-		}
-	}
 	// Else compute moves and put them in memory
 	else
 	{
@@ -206,31 +153,7 @@ static Move	pvs(
 		else
 			grid->getInterestingMovesSorted(&moves, evaluator, opponent, player, true, tracker);
 
-		if (hash == HASHTEST)
-		{
-			printf("Compute list : %lu\n", moves.size());
-			for (int i = 0; i < moves.size(); i++)
-				printf("%2i,%2i-%6i\n", moves[i].pos.x, moves[i].pos.y, moves[i].eval);
-		}
-
 		memoryMoves->insert(std::pair<std::size_t, std::vector<Move>>(hash, moves));
-
-		if (hash == HASHTEST)
-		{
-			movesFind = memoryMoves->find(hash);
-
-			if (movesFind == memoryMoves->end())
-			{
-				printf("No moves in memory ?!\n");
-			}
-			else
-			{
-				movesTEST = movesFind->second;
-				printf("Memory list :\n");
-				for (int i = 0; i < movesTEST.size(); i++)
-					printf(" [%i, %i] => %i\n", movesTEST[i].pos.x, movesTEST[i].pos.y, movesTEST[i].eval);
-			}
-		}
 	}
 
 	// If there is no move, 2 case possible
@@ -345,19 +268,13 @@ static bool	makeMove(
 	if (playerTurn)
 	{
 		if (!grid->putStoneAI(move, nbMove, player, opponent))
-		{
-			// printf("Nope %i %i\n", move->x, move->y);
 			return (false);
-		}
 		player->nbMove++;
 	}
 	else
 	{
 		if (!grid->putStoneAI(move, nbMove, opponent, player))
-		{
-			// printf("Nope %i %i\n", move->x, move->y);
 			return (false);
-		}
 		opponent->nbMove++;
 	}
 	if (depth > 1)

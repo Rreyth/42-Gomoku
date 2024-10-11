@@ -179,8 +179,104 @@ class BboxManager:
 							pass
 
 					else:
+						# If bbox is 1 tile high
+						if bbox.Ry - bbox.y == 0:
+							# If new bbox is on the left of bbox
+							if bbox.x > newBbox.x:
+								# Create new bbox for top left
+								tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
+																	% COLORS_PANELS_NB])
+								tmp.x = bbox.x
+								tmp.Rx = newBbox.Rx
+								tmp.y = newBbox.y
+								tmp.Ry = bbox.y - 1
+								newBboxes.append(tmp)
+
+								# Create new bbox for bot left
+								tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
+																	% COLORS_PANELS_NB])
+								tmp.x = bbox.x
+								tmp.Rx = newBbox.Rx
+								tmp.y = bbox.Ry + 1
+								tmp.Ry = newBbox.Ry
+								newBboxes.append(tmp)
+
+								# Update newBbox
+								newBbox.Rx = bbox.x - 1
+
+							# If new bbox is on the right of bbox
+							else:
+								# Create new bbox for top right
+								tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
+																	% COLORS_PANELS_NB])
+								tmp.x = newBbox.x
+								tmp.Rx = bbox.Rx
+								tmp.y = newBbox.y
+								tmp.Ry = bbox.y - 1
+								newBboxes.append(tmp)
+
+								# Create new bbox for bot right
+								tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
+																	% COLORS_PANELS_NB])
+								tmp.x = newBbox.x
+								tmp.Rx = bbox.Rx
+								tmp.y = bbox.Ry + 1
+								tmp.Ry = newBbox.Ry
+								newBboxes.append(tmp)
+
+								# Update newBbox
+								newBbox.x = bbox.Rx + 1
+
+						# If bbox is 1 tile width
+						elif bbox.Rx - bbox.x == 0:
+							# If new bbox is on the top of bbox
+							if bbox.y > newBbox.y:
+								# Create new bbox for bot left
+								tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
+																	% COLORS_PANELS_NB])
+								tmp.x = newBbox.x
+								tmp.Rx = bbox.x - 1
+								tmp.y = bbox.y
+								tmp.Ry = newBbox.Ry
+								newBboxes.append(tmp)
+
+								# Create new bbox for bot right
+								tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
+																	% COLORS_PANELS_NB])
+								tmp.x = bbox.Rx + 1
+								tmp.Rx = newBbox.Rx
+								tmp.y = bbox.y
+								tmp.Ry = newBbox.Ry
+								newBboxes.append(tmp)
+
+								# Update newBbox
+								newBbox.Ry = bbox.y - 1
+
+							# If new bbox is on the bot of bbox
+							else:
+								# Create new bbox for top left
+								tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
+																	% COLORS_PANELS_NB])
+								tmp.x = newBbox.x
+								tmp.Rx = bbox.x - 1
+								tmp.y = newBbox.y
+								tmp.Ry = bbox.Ry
+								newBboxes.append(tmp)
+
+								# Create new bbox for top right
+								tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \
+																	% COLORS_PANELS_NB])
+								tmp.x = bbox.Rx + 1
+								tmp.Rx = newBbox.Rx
+								tmp.y = newBbox.y
+								tmp.Ry = bbox.Ry
+								newBboxes.append(tmp)
+
+								# Update newBbox
+								newBbox.y = bbox.Ry + 1
+
 						# If new bbox is on the top left corner
-						if bbox.x > newBbox.x and bbox.y > newBbox.y:
+						elif bbox.x > newBbox.x and bbox.y > newBbox.y:
 							print("  collide with bbox top left corner")
 							# Create a new bbox to fill empty space left by cutting newBbox
 							tmp = Bbox(0, 0, COLORS_PANELS[(self.nbBoxes + len(newBboxes)) \

@@ -207,7 +207,7 @@ void	aiThreadCore(ThreadParams *threadParams)
 			resetTracker(tracker);
 
 			// TODO: REMOVE
-			printf("MOVE %i %i\n", move.x, move.y);
+			// printf("MOVE %i %i\n", move.x, move.y);
 
 			// Give result to main thread
 			mutex->lock();
