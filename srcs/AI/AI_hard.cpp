@@ -250,12 +250,6 @@ static Move	pvs(
 	bestMove.pos = sf::Vector2i(-1, -1);
 	for (int i = 0; i < moves.size() && i < AI_HARD_LIMIT; i++)
 	{
-		// TODO: REMOVE
-		LastMove	newLastMove;
-		newLastMove.move = moves[i].pos;
-		newLastMove.lastMove = lastMove;
-		newLastMove.grid = lastMove->grid;
-
 		// Make the move
 		if (!makeMove(
 				grid, &moves[i].pos, nbMove, depth, player, opponent, playerTurn,
@@ -271,6 +265,12 @@ static Move	pvs(
 		// A killer move is the end of the game, so don't contine recursion
 		if (tmpMove.eval == 0)
 		{
+			// TODO: REMOVE
+			LastMove	newLastMove;
+			newLastMove.move = moves[i].pos;
+			newLastMove.lastMove = lastMove;
+			newLastMove.grid = lastMove->grid;
+
 			// For first child, do a classic recursion
 			if (i == 0)
 			{
@@ -346,7 +346,7 @@ static bool	makeMove(
 	{
 		if (!grid->putStoneAI(move, nbMove, player, opponent))
 		{
-			printf("Nope %i %i\n", move->x, move->y);
+			// printf("Nope %i %i\n", move->x, move->y);
 			return (false);
 		}
 		player->nbMove++;
@@ -355,7 +355,7 @@ static bool	makeMove(
 	{
 		if (!grid->putStoneAI(move, nbMove, opponent, player))
 		{
-			printf("Nope %i %i\n", move->x, move->y);
+			// printf("Nope %i %i\n", move->x, move->y);
 			return (false);
 		}
 		opponent->nbMove++;

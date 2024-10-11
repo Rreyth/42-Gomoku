@@ -21,6 +21,7 @@ BitBoard::BitBoard(const BitBoard &obj)
 		this->hashes[i] = std::hash<int>{}(this->bbH[i]);
 	}
 	this->hashUpToDate = false;
+	this->hash = 0;
 }
 
 

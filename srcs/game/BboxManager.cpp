@@ -97,22 +97,50 @@ void	BboxManager::update(int x, int y)
 				if (bbox->Ly <= newBbox->Ly && bbox->Ry >= newBbox->Ry)
 				{
 					// If newBbox is on the left of bbox
-					if (newBbox->Lx < bbox->Lx)
+					if (newBbox->Lx < bbox->Lx && newBbox->Rx <= bbox->Rx)
 						newBbox->Rx = bbox->Lx - 1;
 					// If newBbox is on the right of bbox
-					else
+					else if (newBbox->Rx > bbox->Rx && newBbox->Lx >= bbox->Lx)
 						newBbox->Lx = bbox->Rx + 1;
+					// Else newBbox is cut by bbox
+					else
+					{
+						// Create a new bbox on the right of bbox
+						tmp = Bbox();
+						tmp.Lx = bbox->Rx + 1;
+						tmp.Rx = newBbox->Rx;
+						tmp.Ly = newBbox->Ly;
+						tmp.Ry = newBbox->Ry;
+						newBboxes.push_back(tmp);
+
+						// Update newBbox to be on the left of bbox
+						newBbox->Rx = bbox->Lx - 1;
+					}
 				}
 
 				// If newBbox collide with bbox on the y axis side
 				else if (bbox->Lx <= newBbox->Lx && bbox->Rx >= newBbox->Rx)
 				{
 					// If newBbox is on the top of bbox
-					if (newBbox->Ly < bbox->Ly)
+					if (newBbox->Ly < bbox->Ly && newBbox->Ry <= bbox->Ry)
 						newBbox->Ry = bbox->Ly - 1;
 					// If newBbox is on the bot of bbox
-					else
+					else if (newBbox->Ry > bbox->Ry && newBbox->Ly >= bbox->Ly)
 						newBbox->Ly = bbox->Ry + 1;
+					// Else newBbox is cut by bbox
+					else
+					{
+						// Create a new bbox on the top of bbox
+						tmp = Bbox();
+						tmp.Lx = newBbox->Lx;
+						tmp.Rx = newBbox->Rx;
+						tmp.Ly = bbox->Ry + 1;
+						tmp.Ry = newBbox->Ry;
+						newBboxes.push_back(tmp);
+
+						// Update newBbox to be on the bot of bbox
+						newBbox->Ry = bbox->Ly - 1;
+					}
 				}
 
 				// Else the bbox is in a corner

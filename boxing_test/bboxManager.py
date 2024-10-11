@@ -138,21 +138,45 @@ class BboxManager:
 					if bbox.y <= newBbox.y and bbox.Ry >= newBbox.Ry:
 						print("  newBbox collide with bbox on x axis")
 						# new bbox on the left of bbox
-						if newBbox.x < bbox.x:
+						if newBbox.x < bbox.x and newBbox.Rx <= bbox.Rx:
+							print("   right newBbox full in bbox")
 							newBbox.Rx = bbox.x - 1
 						# new bbox on the right of bbox
-						else:
+						elif newBbox.Rx > bbox.Rx and newBbox.x >= bbox.x:
+							print("   left newBbox full in bbox")
 							newBbox.x = bbox.Rx + 1
+						else:
+							print("   newBbox splited by bbox")
+							# Create new bbox
+							tmpNewBBox = newBbox.copy()
+							tmpNewBBox.x = bbox.Rx + 1
+							newBboxes.append(tmpNewBBox)
+
+							# Update newBbox
+							newBbox.Rx = bbox.x - 1
+							pass
 
 					# If new bbox is on the y side of bbox
 					elif bbox.x <= newBbox.x and bbox.Rx >= newBbox.Rx:
 						print("  newBbox collide with bbox on y axis")
 						# new bbox on the top of bbox
-						if newBbox.y < bbox.y:
+						if newBbox.y < bbox.y and newBbox.Ry <= bbox.Ry:
+							print("   bot newBbox full in bbox")
 							newBbox.Ry = bbox.y - 1
 						# new bbox on the bottom of bbox
-						else:
+						elif newBbox.Ry > bbox.Ry and newBbox.y >= bbox.y:
+							print("   up newBbox full in bbox")
 							newBbox.y = bbox.Ry + 1
+						else:
+							print("   newBbox splited by bbox")
+							# Create new bbox
+							tmpNewBBox = newBbox.copy()
+							tmpNewBBox.y = bbox.Ry + 1
+							newBboxes.append(tmpNewBBox)
+
+							# Update newBbox
+							newBbox.Ry = bbox.y - 1
+							pass
 
 					else:
 						# If new bbox is on the top left corner
