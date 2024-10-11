@@ -119,6 +119,6 @@ runallval: $(NAME)
 	@echo "$(BLUE)Debug$(NOC)"
 	@export LD_LIBRARY_PATH=SFML_linux/lib/ && valgrind --suppressions=vsupp --leak-check=full --show-leak-kinds=all --track-origins=yes --error-limit=no ./$(NAME)
 
-.PHONY : $(NAME) all clean fclean re run runval runallval
+.PHONY : $(NAME) all clean fclean re run runval runallval runvalthread
 
 -include $(DEPS)
