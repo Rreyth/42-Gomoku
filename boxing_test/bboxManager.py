@@ -136,7 +136,7 @@ class BboxManager:
 
 					# If new bbox is on the x side of bbox
 					if bbox.y <= newBbox.y and bbox.Ry >= newBbox.Ry:
-						print("  collide with bbox on x axis")
+						print("  newBbox collide with bbox on x axis")
 						# new bbox on the left of bbox
 						if newBbox.x < bbox.x:
 							newBbox.Rx = bbox.x - 1
@@ -146,33 +146,13 @@ class BboxManager:
 
 					# If new bbox is on the y side of bbox
 					elif bbox.x <= newBbox.x and bbox.Rx >= newBbox.Rx:
-						print("  collide with bbox on y axis")
+						print("  newBbox collide with bbox on y axis")
 						# new bbox on the top of bbox
 						if newBbox.y < bbox.y:
 							newBbox.Ry = bbox.y - 1
 						# new bbox on the bottom of bbox
 						else:
 							newBbox.y = bbox.Ry + 1
-
-					# If bbox is on the x side of new bbox
-					elif newBbox.y <= bbox.y and newBbox.Ry >= bbox.Ry:
-						print("  collide with bbox on x axis")
-						# new bbox on the left of bbox
-						if bbox.x < newBbox.x:
-							bbox.Rx = newBbox.x - 1
-						# new bbox on the right of bbox
-						else:
-							bbox.x = newBbox.Rx + 1
-
-					# If bbox is on the y side of new bbox
-					elif newBbox.x <= bbox.x and newBbox.Rx >= bbox.Rx:
-						print("  collide with bbox on x axis")
-						# new bbox on the left of bbox
-						if bbox.y < newBbox.y:
-							bbox.Ry = newBbox.y - 1
-						# new bbox on the right of bbox
-						else:
-							bbox.y = newBbox.Ry + 1
 
 					else:
 						# If new bbox is on the top left corner
@@ -277,7 +257,6 @@ class BboxManager:
 		return ((end - start) * 1000000, nbSave, self.nbBoxes)
 
 
-
 	def countBboxCover(self, x, y):
 		count = 0
 		for bbox in self.bboxes:
@@ -325,3 +304,9 @@ class BboxManager:
 					lst.append((x, y))
 
 		return lst
+
+
+	def printBbox(self):
+		print("\nbboxes :")
+		for bbox in self.bboxes:
+			print(bbox)

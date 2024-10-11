@@ -115,28 +115,6 @@ void	BboxManager::update(int x, int y)
 						newBbox->Ly = bbox->Ry + 1;
 				}
 
-				// If bbox collide with newBbox on the x axis side
-				else if (newBbox->Ly <= bbox->Ly && newBbox->Ry >= bbox->Ry)
-				{
-					// If newBbox is on the left of bbox
-					if (bbox->Lx < newBbox->Lx)
-						bbox->Rx = newBbox->Lx - 1;
-					// If newBbox is on the right of bbox
-					else
-						bbox->Lx = newBbox->Rx + 1;
-				}
-
-				// If bbox collide with newBbox on the y axis side
-				else if (newBbox->Lx <= bbox->Lx && newBbox->Rx >= bbox->Rx)
-				{
-					// If newBbox is on the top of bbox
-					if (bbox->Ly < newBbox->Ly)
-						bbox->Ry = newBbox->Ly - 1;
-					// If newBbox is on the bot of bbox
-					else
-						bbox->Ly = newBbox->Ry + 1;
-				}
-
 				// Else the bbox is in a corner
 				else
 				{
@@ -258,6 +236,16 @@ void	BboxManager::clear(void)
 {
 	this->bboxes.clear();
 	this->nbBbox = 0;
+}
+
+
+void	BboxManager::print(void)
+{
+	printf("Nb bbox %i\n", this->nbBbox);
+	for (int i = 0; i < this->nbBbox; i++)
+		printf(" bbox %02i-%02i, %02i-%02i\n",
+			this->bboxes[i].Lx, this->bboxes[i].Rx,
+			this->bboxes[i].Ly, this->bboxes[i].Ry);
 }
 
 //**** PRIVATE METHODS *********************************************************

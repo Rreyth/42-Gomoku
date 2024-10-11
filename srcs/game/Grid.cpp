@@ -600,7 +600,7 @@ void	Grid::getInterestingMovesSorted(
 }
 
 
-void	Grid::printGrind(void)
+void	Grid::print(void)
 {
 	printf("   ");
 	for (int i = 0; i < GRID_W_INTER; i++)
@@ -620,6 +620,9 @@ void	Grid::printGrind(void)
 		}
 		printf("\n");
 	}
+
+	this->bboxManager.print();
+	printf("\n");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

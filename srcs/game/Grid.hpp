@@ -64,7 +64,7 @@ public:
 									bool reverse, Tracker *tracker);
 
 	// TODO : REMOVE
-	void	printGrind(void);
+	void	print(void);
 
 private:
 	int											x, y, w, h, previewX, previewY, boardHistoryId;
