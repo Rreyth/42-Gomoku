@@ -199,6 +199,9 @@ void	aiThreadCore(ThreadParams *threadParams)
 			else if (aiDifficulty == HARD)
 				move = getHardMove(&memoryMoves, &memoryEval, &grid, &player,
 										&opponent, &evaluator, &tracker);
+			// else if (aiDifficulty == MTDF)
+			// 	move = mtdf(&memoryMoves, &memoryEval, &grid, &player,
+										// &opponent, &evaluator, &tracker);
 
 			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 

@@ -43,11 +43,6 @@ Grid	*Game::getGrid(void)
 	return (&this->grid);
 }
 
-void	Game::setSuggestion(bool suggestion)
-{
-	this->suggestion = suggestion;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -147,8 +142,8 @@ void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 	this->drawLeftSide(window, text, textureManager);
 	this->drawRightSide(window, text, textureManager);
 
-	// if (this->suggestion)
-	this->drawBottom(window, text, textureManager);
+	if (this->suggestion)
+		this->drawBottom(window, text, textureManager);
 
 	this->leave.draw(window, text, textureManager);
 }
@@ -156,7 +151,8 @@ void	Game::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textur
 void	Game::setGame(player_type playerLeft, player_type playerRight,
 						game_mode mode, game_rules rule,
 						AI_difficulty aiLeft, AI_difficulty aiRight,
-						starter startingPlayer, stone_sprite *sprite)
+						starter startingPlayer, stone_sprite *sprite,
+						bool suggestion)
 {
 	this->mode = mode;
 
@@ -178,10 +174,12 @@ void	Game::setGame(player_type playerLeft, player_type playerRight,
 		(playerLeft == AI_PLAYER && playerRight == AI_PLAYER))
 		solo = false;
 
+	this->suggestion = suggestion && !solo && playerLeft == PLAYER;
+
 	this->playerLeft.setPlayer(&this->grid, mode, this->playerRight.getPlayerInfo(),
-								playerLeft, aiLeft, 1, leftStone, solo);
+								playerLeft, aiLeft, 1, leftStone, solo, this->suggestion);
 	this->playerRight.setPlayer(&this->grid, mode, this->playerLeft.getPlayerInfo(),
-								playerRight, aiRight, 2, rightStone, solo);
+								playerRight, aiRight, 2, rightStone, solo, this->suggestion);
 
 	this->startingPlayer = startingPlayer;
 	if (startingPlayer == PLAYER1)
@@ -236,7 +234,7 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 
 	if (this->playerLeft.getType() == AI_PLAYER)
 	{
-		std::string	difficulty[] = {"RANDOM", "BETTER_RANDOM", "EASY", "MEDIUM", "HARD"};
+		std::string	difficulty[] = {"RANDOM", "BETTER_RANDOM", "EASY", "MEDIUM", "HARD", "MTDF"};
 		AI *ai = this->playerLeft.getAI();
 		str = difficulty[ai->getDifficulty()];
 		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.15), 30, sf::Color::White, MID_CENTER);
@@ -279,7 +277,7 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 
 	if (this->playerRight.getType() == AI_PLAYER)
 	{
-		std::string	difficulty[] = {"RANDOM", "BETTER_RANDOM", "EASY", "MEDIUM", "HARD"};
+		std::string	difficulty[] = {"RANDOM", "BETTER_RANDOM", "EASY", "MEDIUM", "HARD", "MTDF"};
 		AI *ai = this->playerRight.getAI();
 		str = difficulty[ai->getDifficulty()];
 		drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.15), 30, sf::Color::White, MID_CENTER);
@@ -308,51 +306,70 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 	drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.95), 30, sf::Color::White, MID_CENTER);
 }
 
-void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager) //TODO: toggleable suggestion box -> suggest move + time to suggest
+void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager)
 {
-	// TODO: REMOVE
-	static int	nbTurn = -1;
-	static int	leftEval = 0;
-	static int	rightEval = 0;
+	AI				*ai;
+	sf::Vector2f	size, pos;
+	sf::Vector2i	move;
+	std::string		str, alpha;
+	int				gridX, avg;
 
-	// if (this->playerLeft.getType() != AI_PLAYER && this->playerRight.getType() != AI_PLAYER) //not a player but just a predict
-
-	int gridX = this->grid.getX();
+	gridX = this->grid.getX();
 
 	this->rect.setSize(sf::Vector2f(this->grid.getW(), WIN_H * 0.1));
 	this->rect.setPosition(gridX, WIN_H * 0.9 - 2);
 
+	size = this->rect.getSize();
+	pos = this->rect.getPosition();
+
 	window->draw(this->rect);
-
-	sf::Vector2f size = this->rect.getSize();
-	sf::Vector2f pos = this->rect.getPosition();
-	drawText(window, text, "AI PREDICT", pos.x + (size.x / 2), pos.y + 5,
+	drawText(window, text, "AI SUGGESTION", pos.x + (size.x / 2), pos.y + 5,
 				20, sf::Color::White, MID_CENTER);
-	drawText(window, text, "AI SPRITE", pos.x + 10, pos.y + (size.y / 2),
-				15, sf::Color::White, MID_LEFT);
-	// drawText(window, text, "PREDICTED POS", pos.x + (size.x / 2), pos.y + (size.y / 2), 15, sf::Color::White, MID_CENTER);
+	drawText(window, text, "MOVE", pos.x + (size.x / 4), pos.y + (size.y * 0.3),
+				20, sf::Color::White, MID_CENTER);
+	drawText(window, text, "TIME", pos.x + (size.x / 2), pos.y + (size.y * 0.3),
+				20, sf::Color::White, MID_CENTER);
+	drawText(window, text, "AVG TIME/SUGGESTION", pos.x + (size.x / 4 * 3), pos.y + (size.y * 0.3),
+				20, sf::Color::White, MID_CENTER);
 
-		// TODO: REMOVE
-	if (nbTurn != this->playerLeft.getNbMove() + this->playerRight.getNbMove())
+	alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+	if (this->playerLeft.isPlaying() && this->playerLeft.getSuggestDone())
 	{
-		nbTurn = this->playerLeft.getNbMove() + this->playerRight.getNbMove();
+		ai = this->playerLeft.getAI();
+		move = this->playerLeft.getSuggestedMove();
+		
+		str = alpha[move.x] + std::string(", ") + std::to_string(move.y + 1);
+		drawText(window, text, str, pos.x + (size.x / 4), pos.y + (size.y * 0.6),
+				20, sf::Color::White, MID_CENTER);
+		
+		str = format_time(std::to_string(ai->getTimer())) + " us";
+		drawText(window, text, str, pos.x + (size.x / 2), pos.y + (size.y * 0.6),
+				20, sf::Color::White, MID_CENTER);
 
-		leftEval = this->evaluator.evaluateGrid(
-									this->grid.getBitBoard(INTER_LEFT),
-									this->grid.getBitBoard(INTER_RIGHT),
-									this->playerLeft.getNbCapture(),
-									this->playerRight.getNbCapture());
-		rightEval = this->evaluator.evaluateGrid(
-									this->grid.getBitBoard(INTER_RIGHT),
-									this->grid.getBitBoard(INTER_LEFT),
-									this->playerRight.getNbCapture(),
-									this->playerLeft.getNbCapture());
+		avg = ai->getTotalTimer() / (this->playerLeft.getNbMove() + 1);
+		str = format_time(std::to_string(avg)) + " us";
+		drawText(window, text, str, pos.x + (size.x / 4 * 3), pos.y + (size.y * 0.6),
+				20, sf::Color::White, MID_CENTER);
+	}
+	else if (this->playerRight.getSuggestDone())
+	{
+		ai = this->playerRight.getAI();
+		move = this->playerRight.getSuggestedMove();
+		
+		str = alpha[move.x] + std::string(", ") + std::to_string(move.y + 1);
+		drawText(window, text, str, pos.x + (size.x / 4), pos.y + (size.y * 0.6),
+				20, sf::Color::White, MID_CENTER);
+		
+		str = format_time(std::to_string(ai->getTimer())) + " us";
+		drawText(window, text, str, pos.x + (size.x / 2), pos.y + (size.y * 0.6),
+				20, sf::Color::White, MID_CENTER);
+
+		avg = ai->getTotalTimer() / (this->playerRight.getNbMove() + 1);
+		str = format_time(std::to_string(avg)) + " us";
+		drawText(window, text, str, pos.x + (size.x / 4 * 3), pos.y + (size.y * 0.6),
+				20, sf::Color::White, MID_CENTER);
 	}
 
-	std::string tkt = std::to_string(leftEval) + " | " + std::to_string(rightEval);
-	drawText(window, text, tkt, pos.x + (size.x / 2), pos.y + (size.y / 2),
-				15, sf::Color::White, MID_CENTER);
-
 	this->rect.setSize(sf::Vector2f(WIN_W * 0.15, this->grid.getH()));
-
 }

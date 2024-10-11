@@ -13,14 +13,13 @@ public:
 	Game(void);
 	~Game();
 
-	void				setSuggestion(bool suggestion);
-
 	void				tick(display_state *displayState, float delta, Mouse *mouse);
 	void				draw(sf::RenderWindow *window, sf::Text *text, TextureManager *textureManager);
 	void				setGame(player_type playerLeft, player_type playerRight,
 								game_mode mode, game_rules rule,
 								AI_difficulty aiLeft, AI_difficulty aiRight,
-								starter startingPlayer, stone_sprite *sprite);
+								starter startingPlayer, stone_sprite *sprite,
+								bool suggestion);
 	void				replay(display_state *displayState);
 
 	Player				*getLeftPlayer(void);

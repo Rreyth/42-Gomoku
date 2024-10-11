@@ -9,8 +9,11 @@ Player::Player(void)
 {
 	this->type = PLAYER;
 	this->playing = false;
+	this->suggestion = false;
+	this->suggestDone = false;
 	this->timer = 0;
 	this->stoneSprite = SPRITE_STONE_BLUE;
+	this->suggestedMove = sf::Vector2i(-1, -1);
 }
 
 
@@ -71,7 +74,10 @@ void		Player::setPlaying(bool playing)
 {
 	this->playing = playing;
 	if (this->playing)
+	{
 		this->ai.startTurn();
+	}
+	this->suggestDone = false;
 }
 
 
@@ -122,6 +128,18 @@ PlayerInfo		*Player::getPlayerInfo(void)
 	return (&this->info);
 }
 
+
+bool			Player::getSuggestDone(void)
+{
+	return (this->suggestDone);
+}
+
+
+sf::Vector2i	Player::getSuggestedMove(void)
+{
+	return (this->suggestedMove);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -130,9 +148,9 @@ sf::Vector2i	Player::getNextMove(
 							Grid *grid, Player *opponent, Mouse *mouse,
 							Evaluation *evaluator, bool *moveDone)
 {
-	sf::Vector2i	move;
+	sf::Vector2i	move, tmp;
 	int				nbMoves;
-
+	
 	move = sf::Vector2i(-1, -1);
 	nbMoves = this->getNbMove() + opponent->getNbMove();
 	if (this->type == PLAYER)
@@ -155,6 +173,12 @@ sf::Vector2i	Player::getNextMove(
 				*moveDone = true;
 			}
 		}
+		if (this->suggestion && !this->suggestDone)
+		{
+			tmp = this->ai.getNextMove(&this->suggestDone);
+			if (this->suggestDone)
+				this->suggestedMove = tmp;
+		}
 	}
 	else
 	{
@@ -168,7 +192,7 @@ sf::Vector2i	Player::getNextMove(
 void		Player::setPlayer(
 						Grid *grid, game_mode mode, PlayerInfo *opponent,
 						player_type type, AI_difficulty difficulty, int pos,
-						sprite_name stoneSprite, bool solo)
+						sprite_name stoneSprite, bool solo, bool suggestion)
 {
 	this->setType(type);
 	this->setTimer(mode);
@@ -184,6 +208,9 @@ void		Player::setPlayer(
 	if (type == AI_PLAYER)
 		this->ai.setAI(grid, difficulty, &this->info, opponent);
 
+	if (suggestion)
+		this->ai.setAI(grid, HARD, &this->info, opponent);
+
 	if (pos == 1)
 		this->info.interType = INTER_LEFT;
 	else
@@ -191,6 +218,8 @@ void		Player::setPlayer(
 
 	this->stoneSprite = stoneSprite;
 	this->playing = false;
+	this->suggestion = suggestion;
+	this->suggestDone = false;
 	this->info.reset();
 }
 
@@ -213,6 +242,7 @@ void		Player::reset(
 {
 	this->setTimer(mode);
 	this->playing = false;
+	this->suggestDone = false;
 	if (type == AI_PLAYER)
 		this->ai.reset(grid, &this->info, opponent);
 	this->info.reset();

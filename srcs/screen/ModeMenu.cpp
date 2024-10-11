@@ -55,6 +55,7 @@ ModeMenu::ModeMenu(void)
 	vec.push_back("EASY");
 	vec.push_back("MEDIUM");
 	vec.push_back("HARD");
+	vec.push_back("MTDF");
 
 	this->aiLeft = Select(vec, 40, MID_CENTER, sf::Color::White,
 								WIN_W * 0.3 - 150, WIN_H * 0.565, 300, 45,
@@ -76,12 +77,12 @@ ModeMenu::ModeMenu(void)
 								SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_ON, SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_OFF,
 								SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_ON);
 
-	// TODO: REMOVE THIS SHIT
-	this->playerLeft.setSelected(1);
-	this->aiLeft.setSelected(2);
-	this->playerRight.setSelected(1);
-	this->aiRight.setSelected(4);
-	this->starting.setSelected(2);
+	// // TODO: REMOVE THIS SHIT
+	// this->playerLeft.setSelected(1);
+	// this->aiLeft.setSelected(2);
+	// this->playerRight.setSelected(1);
+	// this->aiRight.setSelected(4);
+	// this->starting.setSelected(2);
 
 }
 
@@ -90,8 +91,18 @@ ModeMenu::~ModeMenu()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Getters and setters
+////////////////////////////////////////////////////////////////////////////////
+
+void	ModeMenu::setSuggestion(bool suggestion)
+{
+	this->suggestion = suggestion;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
+
 void	ModeMenu::tick(display_state *displayState, float delta, Mouse *mouse, Game *game, stone_sprite *sprite)
 {
 	this->play.tick(mouse);
@@ -115,7 +126,7 @@ void	ModeMenu::tick(display_state *displayState, float delta, Mouse *mouse, Game
 						(AI_difficulty)this->aiLeft.getSelected(),
 						(AI_difficulty)this->aiRight.getSelected(),
 						(starter)this->starting.getSelected(),
-						sprite);
+						sprite, this->suggestion);
 		*displayState = DISPLAY_GAME;
 	}
 }

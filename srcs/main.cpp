@@ -100,7 +100,7 @@ int	main(void)
 			break;
 		case DISPLAY_SETTINGS:
 			settings.draw(&window, &text, &textureManager);
-			settings.tick(&game, &displayState, delta, &mouse, &window, &view, &text, font, &sprite);
+			settings.tick(&modeMenu, &displayState, delta, &mouse, &window, &view, &text, font, &sprite);
 			break;
 		case DISPLAY_MODEMENU:
 			modeMenu.draw(&window, &text, &textureManager);

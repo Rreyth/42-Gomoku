@@ -36,6 +36,8 @@ public:
 	int				getNbCapture(void);
 	AI				*getAI(void);
 	PlayerInfo		*getPlayerInfo(void);
+	bool			getSuggestDone(void);
+	sf::Vector2i	getSuggestedMove(void);
 
 	sf::Vector2i	getNextMove(
 						Grid *grid, Player *opponent, Mouse *mouse,
@@ -44,21 +46,22 @@ public:
 	void 			setPlayer(
 						Grid *grid, game_mode mode, PlayerInfo *opponent,
 						player_type type, AI_difficulty difficulty, int pos,
-						sprite_name stoneSprite, bool solo);
+						sprite_name stoneSprite, bool solo, bool suggestion);
 
 	void 			tick(float delta, game_mode mode);
 	void			reset(
 						Grid *grid, game_mode mode, PlayerInfo *opponent);
 
 private:
-	player_type	type;
-	std::string	name;
-	sprite_name	stoneSprite;
-	AI			ai;
-	PlayerInfo	info;
+	player_type		type;
+	std::string		name;
+	sprite_name		stoneSprite;
+	AI				ai;
+	PlayerInfo		info;
+	sf::Vector2i	suggestedMove;
 
-	float		timer;
-	bool		playing;
+	float			timer;
+	bool			playing, suggestion, suggestDone;
 };
 
 #endif

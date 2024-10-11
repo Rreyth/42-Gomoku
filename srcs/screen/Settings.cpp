@@ -62,7 +62,7 @@ Settings::~Settings()
 ////////////////////////////////////////////////////////////////////////////////
 // Public methods
 ////////////////////////////////////////////////////////////////////////////////
-void	Settings::tick(Game *game, display_state *displayState, float delta, Mouse *mouse, sf::RenderWindow *window, sf::View *view, sf::Text *text, sf::Font *font, stone_sprite *sprite)
+void	Settings::tick(ModeMenu *menu, display_state *displayState, float delta, Mouse *mouse, sf::RenderWindow *window, sf::View *view, sf::Text *text, sf::Font *font, stone_sprite *sprite)
 {
 	this->back.tick(mouse);
 	this->resolution.tick(mouse);
@@ -78,7 +78,7 @@ void	Settings::tick(Game *game, display_state *displayState, float delta, Mouse 
 	this->updateFont(text, font);
 	this->updateStone(sprite);
 	if (this->suggestion.getPressed())
-		this->updateSuggestion(game);
+		this->updateSuggestion(menu);
 }
 
 
@@ -181,7 +181,7 @@ void	Settings::updateStone(stone_sprite *sprite)
 	}
 }
 
-void	Settings::updateSuggestion(Game *game)
+void	Settings::updateSuggestion(ModeMenu *menu)
 {
-	game->setSuggestion(this->suggestion.getToggle());
+	menu->setSuggestion(this->suggestion.getToggle());
 }
