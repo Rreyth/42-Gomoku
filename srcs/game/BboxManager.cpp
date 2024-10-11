@@ -112,6 +112,7 @@ void	BboxManager::update(int x, int y)
 						tmp.Ly = newBbox->Ly;
 						tmp.Ry = newBbox->Ry;
 						newBboxes.push_back(tmp);
+						newBbox = &newBboxes[idNewBbox];
 
 						// Update newBbox to be on the left of bbox
 						newBbox->Rx = bbox->Lx - 1;
@@ -137,6 +138,7 @@ void	BboxManager::update(int x, int y)
 						tmp.Ly = bbox->Ry + 1;
 						tmp.Ry = newBbox->Ry;
 						newBboxes.push_back(tmp);
+						newBbox = &newBboxes[idNewBbox];
 
 						// Update newBbox to be on the bot of bbox
 						newBbox->Ry = bbox->Ly - 1;

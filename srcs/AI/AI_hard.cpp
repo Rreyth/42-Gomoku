@@ -73,7 +73,7 @@ static Move	pvs(
 	// TODO : REMOVE
 	std::clock_t	start;
 	int				diff;
-	std::size_t HASHTEST = 9652871420158296975;
+	std::size_t HASHTEST = 3616546876818078414;
 
 
 	plBitboard = grid->getBitBoard(player->interType);
