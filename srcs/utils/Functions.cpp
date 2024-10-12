@@ -37,9 +37,13 @@ void	drawText(sf::RenderWindow *window, sf::Text *text, std::string str,
 }
 
 
-int		rand_int(int start, int end)
+void	initRandom(void)
 {
 	srand(time(NULL));
+}
+
+int		rand_int(int start, int end)
+{
 	return (rand() % end + start);
 }
 

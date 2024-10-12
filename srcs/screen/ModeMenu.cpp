@@ -9,6 +9,8 @@ ModeMenu::ModeMenu(void)
 {
 	this->title = "MODE MENU";
 
+	this->suggestion = false;
+
 	this->play = Button("Play", 40, MID_CENTER, sf::Color::White,
 						WIN_W * 0.795, WIN_H * 0.9, 300, 60,
 						SPRITE_SQUARE_ROUNDED_BUTTON_ON, SPRITE_SQUARE_ROUNDED_BUTTON_OFF);

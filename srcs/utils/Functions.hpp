@@ -9,6 +9,8 @@
 void		drawText(sf::RenderWindow *window, sf::Text *text, std::string str,
 					int x, int y, int fontSize, sf::Color color, draw_pos pos);
 
+void		initRandom(void);
+
 int			rand_int(int start, int end);
 
 int			min(int a, int b);

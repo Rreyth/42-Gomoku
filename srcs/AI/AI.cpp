@@ -173,6 +173,8 @@ void	aiThreadCore(ThreadParams *threadParams)
 	Tracker	tracker;
 	resetTracker(tracker);
 
+	initRandom();
+
 	// Main thread loop
 	running = true;
 	needCompute = false;
