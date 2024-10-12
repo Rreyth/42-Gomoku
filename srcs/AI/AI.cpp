@@ -161,8 +161,9 @@ void	aiThreadCore(ThreadParams *threadParams)
 	Evaluation		evaluator;
 	ParallelRun		*parallelRun;
 	AI_difficulty	aiDifficulty;
-	std::unordered_map<std::size_t, int>				memoryEval;
-	std::unordered_map<std::size_t, std::vector<Move>>	memoryMoves;
+	std::unordered_map<std::size_t, int>					memoryEval;
+	std::unordered_map<std::size_t, std::vector<Move>>		memoryMoves;
+	std::unordered_map<std::size_t, std::pair<Move, Move>>	memoryBounds;
 
 	// Get params from struct
 	mutex = threadParams->mutex;
@@ -201,9 +202,10 @@ void	aiThreadCore(ThreadParams *threadParams)
 			else if (aiDifficulty == HARD)
 				move = getHardMove(&memoryMoves, &memoryEval, &grid, &player,
 										&opponent, &evaluator, &tracker);
-			// else if (aiDifficulty == MTDF)
-			// 	move = mtdf(&memoryMoves, &memoryEval, &grid, &player,
-										// &opponent, &evaluator, &tracker);
+			else if (aiDifficulty == MTDF)
+				move = getMTDFMove(&memoryMoves, &memoryEval, &memoryBounds,
+									&grid, &player, &opponent, &evaluator,
+									&tracker);
 
 			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 
@@ -235,6 +237,7 @@ void	aiThreadCore(ThreadParams *threadParams)
 
 	memoryEval.clear();
 	memoryMoves.clear();
+	memoryBounds.clear();
 }
 
 
@@ -314,6 +317,36 @@ static void	printTracker(
 	else if (aiDifficulty == HARD)
 	{
 		printf("\n\n===================== HARD AI =====================\n");
+		printf("Compute move in %'i us\n", timer);
+		printf("  evaluate position\n");
+		printf("   - number of call : %'i\n", tracker.nbEvaluations);
+		printf("   - number of compute call : %'i\n", tracker.nbComputeEval);
+		printf("   - number of memory call : %'i\n", tracker.nbMemoryEval);
+		printf("   - TIME ALL %'i us\n", tracker.evaluationTime);
+		printf("   - TIME COMPUTE %'i us\n", tracker.computeEvalTime);
+		printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
+		printf("   - about %'f us per compute call\n", (float)tracker.computeEvalTime / tracker.nbComputeEval);
+		printf("  get sort moves\n");
+		printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
+		printf("   - get moves TIME %'i us\n", tracker.getMoveTime);
+		printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
+		printf("   - sort moves TIME %'i us\n", tracker.sortMoveTime);
+		printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
+		printf("   - sort moves min size %'i\n", tracker.sortSizeMin);
+		printf("   - sort moves max size %'i\n", tracker.sortSizeMax);
+		printf("   - sort moves avg size %'f\n", (float)tracker.sortSizeTotal / tracker.getSortMoveNumber);
+		printf("  check stone\n");
+		printf("   - number of call : %'i\n", tracker.checkStoneNumber);
+		printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
+		printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
+		printf("  check win\n");
+		printf("   - number of call : %'i\n", tracker.checkWinNumber);
+		printf("   - check win TIME %'i us\n", tracker.checkWinTime);
+		printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkWinNumber);
+	}
+	else
+	{
+		printf("\n\n==================== HARDEST AI ===================\n");
 		printf("Compute move in %'i us\n", timer);
 		printf("  evaluate position\n");
 		printf("   - number of call : %'i\n", tracker.nbEvaluations);

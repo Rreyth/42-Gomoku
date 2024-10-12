@@ -1,9 +1,17 @@
 #include <AI/AI.hpp>
 #include <utils/Functions.hpp>
 
-static Move	pvs(
+static Move	mtdf(
 				std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
 				std::unordered_map<std::size_t, int> *memoryEval,
+				std::unordered_map<std::size_t, std::pair<Move, Move>> *memoryBounds,
+				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+				Evaluation *evaluator, int depth, Move *firstGuess,
+				Tracker *tracker);
+static Move	alphaBetaWithMemory(
+				std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
+				std::unordered_map<std::size_t, int> *memoryEval,
+				std::unordered_map<std::size_t, std::pair<Move, Move>> *memoryBounds,
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 				Evaluation *evaluator, bool playerTurn, int alpha, int beta,
 				int depth, Tracker *tracker);
@@ -21,39 +29,84 @@ static int	checkKillerMove(
 				PlayerInfo *player, PlayerInfo *opponent,
 				Tracker *tracker);
 
-sf::Vector2i	getHardMove(
+sf::Vector2i	getMTDFMove(
 					std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
 					std::unordered_map<std::size_t, int> *memoryEval,
+					std::unordered_map<std::size_t, std::pair<Move, Move>> *memoryBounds,
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 					Evaluation *evaluator, Tracker *tracker)
 {
 	Move	bestMove;
 
-	bestMove = pvs(
-				memoryMoves, memoryEval,
-				grid, player, opponent, evaluator, true,
-				-1000000001, 1000000001, AI_HARD_DEPTH,
-				tracker);
+	bestMove.eval = 0;
+	bestMove.pos = sf::Vector2i(-1, -1);
+	for (int d = 1; d <= AI_HARD_DEPTH; d++)
+	{
+		bestMove = mtdf(
+					memoryMoves, memoryEval, memoryBounds,
+					grid, player, opponent, evaluator,
+					d, &bestMove,
+					tracker);
+	}
 
 	return (bestMove.pos);
 }
 
 
-static Move	pvs(
+static Move	mtdf(
 				std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
 				std::unordered_map<std::size_t, int> *memoryEval,
+				std::unordered_map<std::size_t, std::pair<Move, Move>> *memoryBounds,
+				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+				Evaluation *evaluator, int depth, Move *firstGuess,
+				Tracker *tracker)
+{
+	Move	bestMove;
+	int		upperBound, lowerBound, beta;
+
+	bestMove = *firstGuess;
+	upperBound = 1000000001;
+	lowerBound = -1000000001;
+	while (lowerBound < upperBound)
+	{
+		if (bestMove.eval == lowerBound)
+			beta = bestMove.eval + 1;
+		else
+			beta = bestMove.eval;
+
+		bestMove = alphaBetaWithMemory(
+					memoryMoves, memoryEval, memoryBounds,
+					grid, player, opponent,
+					evaluator, true, beta - 1, beta, depth, tracker);
+
+		if (bestMove.eval < beta)
+			upperBound = bestMove.eval;
+		else
+			lowerBound = bestMove.eval;
+	}
+
+	return (bestMove);
+}
+
+
+static Move	alphaBetaWithMemory(
+				std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
+				std::unordered_map<std::size_t, int> *memoryEval,
+				std::unordered_map<std::size_t, std::pair<Move, Move>> *memoryBounds,
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 				Evaluation *evaluator, bool playerTurn, int alpha, int beta,
 				int depth, Tracker *tracker)
 {
+	bool				boundsInMemory;
 	int					nbMove, plSaveNbCapture, opSaveNbCapture;
 	std::size_t			hash;
 	std::vector<Move>	moves;
-	Move				bestMove, tmpMove;
+	Move				bestMove, tmpMove, lowerBound, upperBound;
 	BitBoard			saveBitboard, *plBitboard, *opBitboard;
 	BboxManager			saveBboxManager;
-	std::unordered_map<std::size_t, int>::const_iterator				evalFind;
-	std::unordered_map<std::size_t, std::vector<Move>>::const_iterator	movesFind;
+	std::unordered_map<std::size_t, int>::const_iterator					evalFind;
+	std::unordered_map<std::size_t, std::vector<Move>>::const_iterator		movesFind;
+	std::unordered_map<std::size_t, std::pair<Move, Move>>::const_iterator	boundsFind;
 
 	// TODO : REMOVE
 	std::clock_t	start;
@@ -63,6 +116,26 @@ static Move	pvs(
 	opBitboard = grid->getBitBoard(opponent->interType);
 	// Compute hash of the current grid
 	hash = plBitboard->getHash(opBitboard);
+
+	// Check if there is bounds in memory
+	boundsFind = memoryBounds->find(hash);
+	boundsInMemory = (boundsFind != memoryBounds->end());
+
+	if (boundsInMemory)
+	{
+		lowerBound = boundsFind->second.first;
+		upperBound = boundsFind->second.second;
+
+		// If yes, check if we can avoid computation
+		if (lowerBound.eval >= beta)
+			return (lowerBound);
+		if (upperBound.eval <= alpha)
+			return (upperBound);
+
+		// If we can avoid computation,
+		alpha = max(alpha, lowerBound.eval);
+		beta = min(beta, upperBound.eval);
+	}
 
 	if (depth <= 0)
 	{
@@ -155,9 +228,15 @@ static Move	pvs(
 		return (tmpMove);
 	}
 
-	bestMove.eval = -1000000001;
+	// Init best move
+	if (playerTurn)
+		bestMove.eval = -1000000001;
+	else
+		bestMove.eval = 1000000001;
 	bestMove.pos = sf::Vector2i(-1, -1);
-	for (int i = 0; i < moves.size() && i < AI_HARD_LIMIT; i++)
+
+	// Find best move
+	for (int i = 0; i < moves.size(); i++)
 	{
 		// Make the move
 		if (!makeMove(
@@ -174,38 +253,11 @@ static Move	pvs(
 		// A killer move is the end of the game, so don't contine recursion
 		if (tmpMove.eval == 0)
 		{
-			// For first child, do a classic recursion
-			if (i == 0)
-			{
-				// Call pvs to next player reply score
-				tmpMove = pvs(
-							memoryMoves, memoryEval,
-							grid, player, opponent, evaluator, !playerTurn,
-							-beta, -alpha, depth - 1, tracker);
-				// Reverse evaluation because a good opponent move is
-				// a bad move for player
-				tmpMove.eval = -tmpMove.eval;
-			}
-			else
-			{
-				// Do a first 0-window search
-				tmpMove = pvs(
-							memoryMoves, memoryEval,
-							grid, player, opponent, evaluator, !playerTurn,
-							-alpha - 1, -alpha, depth - 1, tracker);
-				tmpMove.eval = -tmpMove.eval;
-
-				// If the 0-window search fail
-				if (alpha < tmpMove.eval && tmpMove.eval < beta)
-				{
-					// Do a classic one
-					tmpMove = pvs(
-								memoryMoves, memoryEval,
-								grid, player, opponent, evaluator, !playerTurn,
-								-beta, -alpha, depth - 1, tracker);
-					tmpMove.eval = -tmpMove.eval;
-				}
-			}
+			// Call pvs to next player reply score
+			tmpMove = alphaBetaWithMemory(
+						memoryMoves, memoryEval, memoryBounds,
+						grid, player, opponent, evaluator, !playerTurn,
+						alpha, beta, depth - 1, tracker);
 		}
 
 		// Reverse the move
@@ -215,24 +267,69 @@ static Move	pvs(
 			plSaveNbCapture, opSaveNbCapture);
 
 		// Keep the best move encounter so far
-		if (tmpMove.eval > bestMove.eval)
+		if (playerTurn)
 		{
-			bestMove.eval = tmpMove.eval;
-			bestMove.pos = moves[i].pos;
+			if (bestMove.eval < tmpMove.eval)
+			{
+				bestMove.eval = tmpMove.eval;
+				bestMove.pos = moves[i].pos;
+			}
+
+			// Update alpha
+			if (alpha < tmpMove.eval)
+				alpha = tmpMove.eval;
 		}
+		else if (!playerTurn)
+		{
+			if (bestMove.eval > tmpMove.eval)
+			{
+				bestMove.eval = tmpMove.eval;
+				bestMove.pos = moves[i].pos;
+			}
 
-		// Update alpha
-		if (tmpMove.eval > alpha)
-			alpha = tmpMove.eval;
-
-		// If the move is too good, opponent will take this move
-		if (alpha >= beta)
-			break;
+			// Update beta
+			if (beta > tmpMove.eval)
+				beta = tmpMove.eval;
+		}
 	}
+
+	// Update or create lower and upper bounds
+	if (bestMove.eval <= alpha)
+	{
+		upperBound = bestMove;
+		if (boundsInMemory)
+			lowerBound = boundsFind->second.first;
+		else
+		{
+			lowerBound.eval = -1000000001;
+			lowerBound.pos = sf::Vector2i(-1, -1);
+		}
+	}
+	else if (bestMove.eval > alpha && bestMove.eval < beta)
+	{
+		upperBound = bestMove;
+		lowerBound = bestMove;
+	}
+	else
+	{
+		lowerBound = bestMove;
+		if (boundsInMemory)
+			upperBound = boundsFind->second.second;
+		else
+		{
+			upperBound.eval = 1000000001;
+			upperBound.pos = sf::Vector2i(-1, -1);
+		}
+	}
+
+	// Save bounds in memory
+	if (boundsInMemory)
+		memoryBounds->erase(hash);
+	memoryBounds->insert(std::pair<std::size_t, std::pair<Move, Move>>(hash,
+																		std::pair<Move, Move>(lowerBound, upperBound)));
 
 	return (bestMove);
 }
-
 
 static bool	makeMove(
 				Grid *grid, sf::Vector2i *move, int nbMove, int depth,
