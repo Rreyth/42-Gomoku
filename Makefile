@@ -6,7 +6,7 @@ MAKEFLAGS			:= --no-print-directory
 
 #=================================COMPILATION==================================#
 CC					:= g++
-CPPFLAGS			:= -MP -MMD -I SFML_linux/include -I srcs -g3
+CPPFLAGS			:= -MP -MMD -I SFML_linux/include -I srcs -Ofast
 LIBFSMLFLAG			:= -L SFML_linux/lib -lsfml-graphics -lsfml-window -lsfml-system
 
 #=====================================NAME=====================================#

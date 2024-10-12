@@ -21,9 +21,6 @@ public:
 	std::vector<sf::Vector2i>	getListPosition(void) const;
 	void						clear(void);
 
-	// TODO: REMOVE
-	void	print(void);
-
 private:
 	std::vector<Bbox>	bboxes;
 	int					nbBbox;

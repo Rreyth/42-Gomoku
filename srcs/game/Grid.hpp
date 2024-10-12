@@ -61,10 +61,7 @@ public:
 									std::vector<Move> *moves,
 									Evaluation *evaluator,
 									PlayerInfo *player, PlayerInfo *opponent,
-									bool reverse, Tracker *tracker);
-
-	// TODO : REMOVE
-	void	print(void);
+									bool reverse);
 
 private:
 	int											x, y, w, h, previewX, previewY, boardHistoryId;

@@ -491,36 +491,18 @@ void	Grid::getInterestingMovesSorted(
 							std::vector<Move> *moves,
 							Evaluation *evaluator,
 							PlayerInfo *player, PlayerInfo *opponent,
-							bool reverse, Tracker *tracker)
+							bool reverse)
 {
 	int							size, eval, j, nbMove, plCapture, opCapture;
 	Move						tmp;
 	std::vector<sf::Vector2i>	movesPosition;
 	BitBoard					plBitboard, opBitboard;
 
-	// TODO : REMOVE
-	std::clock_t	start;
-	int				diff;
-	start = std::clock();
-
 	movesPosition = this->getInterestingMoves(player, opponent);
 
-	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-	tracker->getMoveTime += diff;
-	tracker->getSortMoveNumber++;
-
 	size = movesPosition.size();
-
-	tracker->sortSizeTotal += size;
-	if (size < tracker->sortSizeMin)
-		tracker->sortSizeMin = size;
-	if (size > tracker->sortSizeMax)
-		tracker->sortSizeMax = size;
-
 	if (size < 2)
 		return ;
-
-	start = std::clock();
 
 	plCapture = player->nbCapture;
 	opCapture = opponent->nbCapture;
@@ -584,35 +566,6 @@ void	Grid::getInterestingMovesSorted(
 			}
 		}
 	}
-
-	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-	tracker->sortMoveTime += diff;
-}
-
-
-void	Grid::print(void)
-{
-	printf("   ");
-	for (int i = 0; i < GRID_W_INTER; i++)
-		printf("%2i ", i);
-	printf("\n");
-	for (int i = 0; i < GRID_W_INTER; i++)
-	{
-		printf("%2i  ", i);
-		for (int j = 0; j < 19; j++)
-		{
-			if (this->bitboardL.bbH[i] & (1 << j))
-				printf("L  ");
-			else if (this->bitboardR.bbH[i] & (1 << j))
-				printf("R  ");
-			else
-				printf(".  ");
-		}
-		printf("\n");
-	}
-
-	this->bboxManager.print();
-	printf("\n");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

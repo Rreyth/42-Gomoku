@@ -44,18 +44,18 @@ sf::Vector2i	getMediumMove(
 					std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
 					std::unordered_map<std::size_t, int> *memoryEval,
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
-					Evaluation *evaluator, Tracker *tracker);
+					Evaluation *evaluator);
 sf::Vector2i	getHardMove(
 					std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
 					std::unordered_map<std::size_t, int> *memoryEval,
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
-					Evaluation *evaluator, Tracker *tracker);
+					Evaluation *evaluator);
 sf::Vector2i	getMTDFMove(
 					std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
 					std::unordered_map<std::size_t, int> *memoryEval,
 					std::unordered_map<std::size_t, std::pair<Move, Move>> *memoryBounds,
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
-					Evaluation *evaluator, Tracker *tracker);
+					Evaluation *evaluator);
 class AI
 {
 public:

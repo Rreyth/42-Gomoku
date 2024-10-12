@@ -376,14 +376,4 @@ void	BboxManager::clear(void)
 	this->nbBbox = 0;
 }
 
-
-void	BboxManager::print(void)
-{
-	printf("Nb bbox %i\n", this->nbBbox);
-	for (int i = 0; i < this->nbBbox; i++)
-		printf(" bbox %02i-%02i, %02i-%02i\n",
-			this->bboxes[i].Lx, this->bboxes[i].Rx,
-			this->bboxes[i].Ly, this->bboxes[i].Ry);
-}
-
 //**** PRIVATE METHODS *********************************************************

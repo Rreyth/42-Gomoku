@@ -6,18 +6,17 @@ static Move	miniMax(
 				std::unordered_map<std::size_t, int> *memoryEval,
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
-				int depth, Tracker *tracker);
+				int depth);
 
 static Move	negaMax(
 				std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
 				std::unordered_map<std::size_t, int> *memoryEval,
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 				Evaluation *evaluator, bool maximizingEval, int alpha, int beta,
-				int depth, Tracker *tracker);
+				int depth);
 static void	makeMove(
 				Grid *grid, sf::Vector2i *move, int nbMove, int depth,
-				PlayerInfo *player, PlayerInfo *opponent, bool playerTurn,
-				Tracker *tracker);
+				PlayerInfo *player, PlayerInfo *opponent, bool playerTurn);
 static void	unmakeMove(
 				Grid *grid, sf::Vector2i *move, int nbMove, int depth,
 				PlayerInfo *player, PlayerInfo *opponent, bool playerTurn,
@@ -25,21 +24,20 @@ static void	unmakeMove(
 				int plSaveNbCapture, int opSaveNbCapture);
 static int	checkKillerMove(
 				Grid *grid, bool playerTurn, int moveEvaluation,
-				PlayerInfo *player, PlayerInfo *opponent,
-				Tracker *tracker);
+				PlayerInfo *player, PlayerInfo *opponent);
 
 sf::Vector2i	getMediumMove(
 					std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
 					std::unordered_map<std::size_t, int> *memoryEval,
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
-					Evaluation *evaluator, Tracker *tracker)
+					Evaluation *evaluator)
 {
 	Move	bestMove;
 
 	bestMove = negaMax(memoryMoves, memoryEval, grid,
 							player, opponent, evaluator,
 							true, -1000000001, 1000000001,
-							AI_MEDIUM_DEPTH, tracker);
+							AI_MEDIUM_DEPTH);
 
 	return (bestMove.pos);
 }
@@ -50,7 +48,7 @@ static Move	negaMax(
 				std::unordered_map<std::size_t, int> *memoryEval,
 				Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 				Evaluation *evaluator, bool playerTurn, int alpha, int beta,
-				int depth, Tracker *tracker)
+				int depth)
 {
 	int					nbMove, plSaveNbCapture, opSaveNbCapture, hash;
 	std::vector<Move>	moves;
@@ -60,10 +58,6 @@ static Move	negaMax(
 	std::unordered_map<std::size_t, int>::const_iterator				evalFind;
 	std::unordered_map<std::size_t, std::vector<Move>>::const_iterator	movesFind;
 
-	// TODO : REMOVE
-	std::clock_t	start;
-	int				diff;
-
 	plBitboard = grid->getBitBoard(player->interType);
 	opBitboard = grid->getBitBoard(opponent->interType);
 	// Compute hash of the current grid
@@ -71,27 +65,17 @@ static Move	negaMax(
 
 	if (depth <= 0)
 	{
-		start = std::clock();
 		tmpMove.pos = sf::Vector2i(-1, -1);
 
 		// Check in memory if we have already compute the evaluation
 		evalFind = memoryEval->find(hash);
 
-		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-		tracker->evaluationTime += diff;
-		tracker->nbEvaluations++;
-
 		// If the evaluate have already be compute, get it's value from saved one
 		if (evalFind != memoryEval->end())
-		{
 			tmpMove.eval = evalFind->second;
-			tracker->nbMemoryEval++;
-		}
 		// Else compute the evaluation and put it in memory
 		else
 		{
-			start = std::clock();
-
 			// If this is player turn, evaluate position from it's view point
 			if (playerTurn)
 				tmpMove.eval = evaluator->evaluateGrid(
@@ -107,12 +91,6 @@ static Move	negaMax(
 
 			// Put the result in memory to avoid to recompute the evaluation for this board
 			memoryEval->insert(std::pair<std::size_t, int>(hash, tmpMove.eval));
-
-			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-			tracker->computeEvalTime += diff;
-			tracker->nbComputeEval++;
-
-			tracker->evaluationTime += diff;
 		}
 
 		return (tmpMove);
@@ -142,9 +120,9 @@ static Move	negaMax(
 	else
 	{
 		if (playerTurn)
-			grid->getInterestingMovesSorted(&moves, evaluator, player, opponent, true, tracker);
+			grid->getInterestingMovesSorted(&moves, evaluator, player, opponent, true);
 		else
-			grid->getInterestingMovesSorted(&moves, evaluator, opponent, player, true, tracker);
+			grid->getInterestingMovesSorted(&moves, evaluator, opponent, player, true);
 
 		memoryMoves->insert(std::pair<std::size_t, std::vector<Move>>(hash, moves));
 	}
@@ -168,13 +146,11 @@ static Move	negaMax(
 	{
 		// Make the move
 		makeMove(
-			grid, &moves[i].pos, nbMove, depth, player, opponent, playerTurn,
-			tracker);
+			grid, &moves[i].pos, nbMove, depth, player, opponent, playerTurn);
 
 		// Check if move is a killer move
 		tmpMove.eval = checkKillerMove(
-							grid, playerTurn, moves[i].eval, player, opponent,
-							tracker);
+							grid, playerTurn, moves[i].eval, player, opponent);
 
 		// Check if this move isn't a killer one. In this case, the eval is 0
 		// A killer move is the end of the game, so don't contine recursion
@@ -184,7 +160,7 @@ static Move	negaMax(
 			tmpMove = negaMax(
 						memoryMoves, memoryEval,
 						grid, player, opponent, evaluator, !playerTurn,
-						-beta, -alpha, depth - 1, tracker);
+						-beta, -alpha, depth - 1);
 			// Reverse evaluation because a good opponent move is
 			// a bad move for player
 			tmpMove.eval = -tmpMove.eval;
@@ -218,15 +194,8 @@ static Move	negaMax(
 
 static void	makeMove(
 				Grid *grid, sf::Vector2i *move, int nbMove, int depth,
-				PlayerInfo *player, PlayerInfo *opponent, bool playerTurn,
-				Tracker *tracker)
+				PlayerInfo *player, PlayerInfo *opponent, bool playerTurn)
 {
-	// TODO : REMOVE
-	std::clock_t	start;
-	int				diff;
-
-	start = std::clock();
-
 	if (playerTurn)
 	{
 		grid->putStoneAI(move, nbMove, player, opponent);
@@ -241,10 +210,6 @@ static void	makeMove(
 			grid->updateBboxManager(move);
 		opponent->nbMove++;
 	}
-
-	diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-	tracker->putStoneTime += diff;
-	tracker->checkStoneNumber++;
 }
 
 
@@ -293,13 +258,9 @@ static void	unmakeMove(
 
 static int	checkKillerMove(
 				Grid *grid, bool playerTurn, int moveEvaluation,
-				PlayerInfo *player, PlayerInfo *opponent,
-				Tracker *tracker)
+				PlayerInfo *player, PlayerInfo *opponent)
 {
-	// TODO : REMOVE
-	std::clock_t	start;
-	int				diff;
-	int				score; // Remove it and return instant
+	int	score; // Remove it and return instant
 
 	// Use the evaluation of position to limit the number of check win
 	if (moveEvaluation < 10000000)
@@ -308,8 +269,6 @@ static int	checkKillerMove(
 	score = 0;
 	if (playerTurn)
 	{
-		start = std::clock();
-
 		// Check if player move is a killer move
 		if (grid->checkWinCondition(player, opponent))
 		{
@@ -326,15 +285,9 @@ static int	checkKillerMove(
 				score = CASE_LOOSE_POINT;
 			}
 		}
-
-		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-		tracker->checkWinTime += diff;
-		tracker->checkWinNumber++;
 	}
 	else
 	{
-		start = std::clock();
-
 		// Check if opponent move is a killer move
 		if (grid->checkWinCondition(opponent, player))
 		{
@@ -351,10 +304,6 @@ static int	checkKillerMove(
 				score = CASE_WIN_POINT;
 			}
 		}
-
-		diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-		tracker->checkWinTime += diff;
-		tracker->checkWinNumber++;
 	}
 
 	return (score);

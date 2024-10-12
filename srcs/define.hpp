@@ -170,28 +170,4 @@ typedef struct s_move
 
 }	Move;
 
-
-// TODO : REMOVE
-typedef struct s_tracker
-{
-	int	nbEvaluations;
-	int	evaluationTime;
-	int	nbComputeEval;
-	int	computeEvalTime;
-	int	nbMemoryEval;
-
-	int	getSortMoveNumber;
-	int	getMoveTime;
-	int	sortMoveTime;
-	int	sortSizeTotal;
-	int	sortSizeMin;
-	int	sortSizeMax;
-
-	int	checkStoneNumber;
-	int	putStoneTime;
-
-	int	checkWinNumber;
-	int	checkWinTime;
-}	Tracker;
-
 #endif

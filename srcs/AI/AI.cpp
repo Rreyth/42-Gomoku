@@ -144,11 +144,6 @@ void	AI::destroyThread(void)
 // Fonctions
 ////////////////////////////////////////////////////////////////////////////////
 
-// TODO: REMOVE
-static void	resetTracker(Tracker &tracker);
-static void	printTracker(
-			Tracker &tracker, AI_difficulty &aiDifficulty, int timer);
-
 void	aiThreadCore(ThreadParams *threadParams)
 {
 	int				diff;
@@ -169,10 +164,6 @@ void	aiThreadCore(ThreadParams *threadParams)
 	mutex = threadParams->mutex;
 	parallelRun = threadParams->parallelRun;
 	aiDifficulty = threadParams->aiDifficulty;
-
-	// TODO: REMOVE
-	Tracker	tracker;
-	resetTracker(tracker);
 
 	initRandom();
 
@@ -198,23 +189,15 @@ void	aiThreadCore(ThreadParams *threadParams)
 				move = getEasyMove(&grid, &player, &opponent, &evaluator);
 			else if (aiDifficulty == MEDIUM)
 				move = getMediumMove(&memoryMoves, &memoryEval, &grid, &player,
-										&opponent, &evaluator, &tracker);
+										&opponent, &evaluator);
 			else if (aiDifficulty == HARD)
 				move = getHardMove(&memoryMoves, &memoryEval, &grid, &player,
-										&opponent, &evaluator, &tracker);
+										&opponent, &evaluator);
 			else if (aiDifficulty == MTDF)
 				move = getMTDFMove(&memoryMoves, &memoryEval, &memoryBounds,
-									&grid, &player, &opponent, &evaluator,
-									&tracker);
+									&grid, &player, &opponent, &evaluator);
 
 			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
-
-			// TODO: REMOVE
-			printTracker(tracker, aiDifficulty, diff);
-			resetTracker(tracker);
-
-			// TODO: REMOVE
-			// printf("MOVE %i %i\n", move.x, move.y);
 
 			// Give result to main thread
 			mutex->lock();
@@ -238,140 +221,4 @@ void	aiThreadCore(ThreadParams *threadParams)
 	memoryEval.clear();
 	memoryMoves.clear();
 	memoryBounds.clear();
-}
-
-
-// TODO: REMOVE
-static void	resetTracker(Tracker &tracker)
-{
-	tracker.nbEvaluations = 0;
-	tracker.evaluationTime = 0;
-	tracker.nbComputeEval = 0;
-	tracker.computeEvalTime = 0;
-	tracker.nbMemoryEval = 0;
-
-	tracker.getSortMoveNumber = 0;
-	tracker.getMoveTime = 0;
-	tracker.sortMoveTime = 0;
-	tracker.sortSizeTotal = 0;
-	tracker.sortSizeMin = GRID_NB_INTER + 1;
-	tracker.sortSizeMax = -1;
-
-	tracker.checkStoneNumber = 0;
-	tracker.putStoneTime = 0;
-
-	tracker.checkWinNumber = 0;
-	tracker.checkWinTime = 0;
-}
-
-// TODO: REMOVE
-static void	printTracker(
-				Tracker &tracker, AI_difficulty &aiDifficulty, int timer)
-{
-	setlocale(LC_NUMERIC, "");
-	if (aiDifficulty == RANDOM)
-	{
-		printf("\n\n==================== RANDOM AI ====================\n");
-		printf("Compute move in %'i us\n", timer);
-	}
-	else if (aiDifficulty == BETTER_RANDOM)
-	{
-		printf("\n\n================= BETTER RANDOM AI ================\n");
-		printf("Compute move in %'i us\n", timer);
-	}
-	else if (aiDifficulty == EASY)
-	{
-		printf("\n\n===================== EASY AI =====================\n");
-		printf("Compute move in %'i us\n", timer);
-	}
-	else if (aiDifficulty == MEDIUM)
-	{
-		printf("\n\n==================== MEDIUM AI ====================\n");
-		printf("Compute move in %'i us\n", timer);
-		printf("  evaluate position\n");
-		printf("   - number of call : %'i\n", tracker.nbEvaluations);
-		printf("   - number of compute call : %'i\n", tracker.nbComputeEval);
-		printf("   - number of memory call : %'i\n", tracker.nbMemoryEval);
-		printf("   - TIME ALL %'i us\n", tracker.evaluationTime);
-		printf("   - TIME COMPUTE %'i us\n", tracker.computeEvalTime);
-		printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
-		printf("   - about %'f us per compute call\n", (float)tracker.computeEvalTime / tracker.nbComputeEval);
-		printf("  get sort moves\n");
-		printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
-		printf("   - get moves TIME %'i us\n", tracker.getMoveTime);
-		printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
-		printf("   - sort moves TIME %'i us\n", tracker.sortMoveTime);
-		printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
-		printf("   - sort moves min size %'i\n", tracker.sortSizeMin);
-		printf("   - sort moves max size %'i\n", tracker.sortSizeMax);
-		printf("   - sort moves avg size %'f\n", (float)tracker.sortSizeTotal / tracker.getSortMoveNumber);
-		printf("  check stone\n");
-		printf("   - number of call : %'i\n", tracker.checkStoneNumber);
-		printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
-		printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
-		printf("  check win\n");
-		printf("   - number of call : %'i\n", tracker.checkWinNumber);
-		printf("   - check win TIME %'i us\n", tracker.checkWinTime);
-		printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkWinNumber);
-	}
-	else if (aiDifficulty == HARD)
-	{
-		printf("\n\n===================== HARD AI =====================\n");
-		printf("Compute move in %'i us\n", timer);
-		printf("  evaluate position\n");
-		printf("   - number of call : %'i\n", tracker.nbEvaluations);
-		printf("   - number of compute call : %'i\n", tracker.nbComputeEval);
-		printf("   - number of memory call : %'i\n", tracker.nbMemoryEval);
-		printf("   - TIME ALL %'i us\n", tracker.evaluationTime);
-		printf("   - TIME COMPUTE %'i us\n", tracker.computeEvalTime);
-		printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
-		printf("   - about %'f us per compute call\n", (float)tracker.computeEvalTime / tracker.nbComputeEval);
-		printf("  get sort moves\n");
-		printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
-		printf("   - get moves TIME %'i us\n", tracker.getMoveTime);
-		printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
-		printf("   - sort moves TIME %'i us\n", tracker.sortMoveTime);
-		printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
-		printf("   - sort moves min size %'i\n", tracker.sortSizeMin);
-		printf("   - sort moves max size %'i\n", tracker.sortSizeMax);
-		printf("   - sort moves avg size %'f\n", (float)tracker.sortSizeTotal / tracker.getSortMoveNumber);
-		printf("  check stone\n");
-		printf("   - number of call : %'i\n", tracker.checkStoneNumber);
-		printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
-		printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
-		printf("  check win\n");
-		printf("   - number of call : %'i\n", tracker.checkWinNumber);
-		printf("   - check win TIME %'i us\n", tracker.checkWinTime);
-		printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkWinNumber);
-	}
-	else
-	{
-		printf("\n\n==================== HARDEST AI ===================\n");
-		printf("Compute move in %'i us\n", timer);
-		printf("  evaluate position\n");
-		printf("   - number of call : %'i\n", tracker.nbEvaluations);
-		printf("   - number of compute call : %'i\n", tracker.nbComputeEval);
-		printf("   - number of memory call : %'i\n", tracker.nbMemoryEval);
-		printf("   - TIME ALL %'i us\n", tracker.evaluationTime);
-		printf("   - TIME COMPUTE %'i us\n", tracker.computeEvalTime);
-		printf("   - about %'f us per call\n", (float)tracker.evaluationTime / tracker.nbEvaluations);
-		printf("   - about %'f us per compute call\n", (float)tracker.computeEvalTime / tracker.nbComputeEval);
-		printf("  get sort moves\n");
-		printf("   - number of call : %'i\n", tracker.getSortMoveNumber);
-		printf("   - get moves TIME %'i us\n", tracker.getMoveTime);
-		printf("   - about %'f us per call\n", (float)tracker.getMoveTime / tracker.getSortMoveNumber);
-		printf("   - sort moves TIME %'i us\n", tracker.sortMoveTime);
-		printf("   - about %'f us per call\n", (float)tracker.sortMoveTime / tracker.getSortMoveNumber);
-		printf("   - sort moves min size %'i\n", tracker.sortSizeMin);
-		printf("   - sort moves max size %'i\n", tracker.sortSizeMax);
-		printf("   - sort moves avg size %'f\n", (float)tracker.sortSizeTotal / tracker.getSortMoveNumber);
-		printf("  check stone\n");
-		printf("   - number of call : %'i\n", tracker.checkStoneNumber);
-		printf("   - put stone TIME %'i us\n", tracker.putStoneTime);
-		printf("   - about %'f us per call\n", (float)tracker.putStoneTime / tracker.checkStoneNumber);
-		printf("  check win\n");
-		printf("   - number of call : %'i\n", tracker.checkWinNumber);
-		printf("   - check win TIME %'i us\n", tracker.checkWinTime);
-		printf("   - about %'f us per call\n", (float)tracker.checkWinTime / tracker.checkWinNumber);
-	}
 }
