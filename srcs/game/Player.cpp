@@ -243,7 +243,7 @@ void		Player::reset(
 	this->setTimer(mode);
 	this->playing = false;
 	this->suggestDone = false;
-	if (type == AI_PLAYER)
+	if (type == AI_PLAYER || this->suggestion)
 		this->ai.reset(grid, &this->info, opponent);
 	this->info.reset();
 }
