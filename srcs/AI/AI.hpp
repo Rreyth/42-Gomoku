@@ -34,10 +34,8 @@ typedef struct	s_threadParams
 
 typedef struct s_bounds
 {
-	Move	lowerBound;
-	Move	upperBound;
-	bool	lowerBoundSet;
-	bool	upperBoundSet;
+	Move	value;
+	char	type; // v = exact value, l = lowerbound, u = upperbound
 	int		depth;
 
 	struct s_bounds	&operator=(const struct s_bounds &bounds)
@@ -45,10 +43,8 @@ typedef struct s_bounds
 		if (this == &bounds)
 			return (*this);
 
-		this->lowerBound = bounds.lowerBound;
-		this->upperBound = bounds.upperBound;
-		this->lowerBoundSet = bounds.lowerBoundSet;
-		this->upperBoundSet = bounds.upperBoundSet;
+		this->value = bounds.value;
+		this->type = bounds.type;
 		this->depth = bounds.depth;
 
 		return (*this);

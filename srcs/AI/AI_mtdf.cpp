@@ -37,7 +37,7 @@ sf::Vector2i	getMTDFMove(
 
 	bestMove.eval = 0;
 	bestMove.pos = sf::Vector2i(-1, -1);
-	for (int d = 1; d <= 10; d++)
+	for (int d = 1; d <= AI_MTDF_DEPTH; d++)
 	{
 		bestMove = mtdf(
 					memoryMoves, memoryEval, memoryBounds,
@@ -93,7 +93,7 @@ static Move	alphaBetaWithMemory(
 				int depth)
 {
 	bool				boundsInMemory;
-	int					nbMove, plSaveNbCapture, opSaveNbCapture;
+	int					nbMove, plSaveNbCapture, opSaveNbCapture, limit;
 	std::size_t			hash;
 	std::vector<Move>	moves;
 	Move				bestMove, tmpMove;
@@ -104,15 +104,6 @@ static Move	alphaBetaWithMemory(
 	std::unordered_map<std::size_t, std::vector<Move>>::const_iterator	movesFind;
 	std::unordered_map<std::size_t, Bounds>::const_iterator				boundsFind;
 
-	// Init bounds value
-	bounds.lowerBound.eval = 0;
-	bounds.lowerBound.pos = sf::Vector2i(-1, -1);
-	bounds.lowerBoundSet = false;
-	bounds.upperBound.eval = 0;
-	bounds.upperBound.pos = sf::Vector2i(-1, -1);
-	bounds.upperBoundSet = false;
-	bounds.depth = depth;
-
 	plBitboard = grid->getBitBoard(player->interType);
 	opBitboard = grid->getBitBoard(opponent->interType);
 	// Compute hash of the current grid
@@ -122,24 +113,25 @@ static Move	alphaBetaWithMemory(
 	boundsFind = memoryBounds->find(hash);
 	boundsInMemory = (boundsFind != memoryBounds->end());
 
-	if (boundsInMemory)
+	if (boundsInMemory && boundsFind->second.depth >= depth)
 	{
 		bounds = boundsFind->second;
 
-		if (bounds.depth >= depth)
-		{
-			// If yes, check if we can avoid computation
-			if (bounds.lowerBoundSet && bounds.lowerBound.eval >= beta)
-				return (bounds.lowerBound);
-			if (bounds.upperBoundSet && bounds.upperBound.eval <= alpha)
-				return (bounds.upperBound);
+		// If bound in memory is an exact value, return it
+		if (bounds.type == 'v')
+			return (bounds.value);
 
-		}
-		// If we can avoid computation
-		if (bounds.lowerBoundSet)
-			alpha = max(alpha, bounds.lowerBound.eval);
-		if (bounds.upperBoundSet)
-			beta = min(beta, bounds.upperBound.eval);
+		// If bound in memory is a lowerbound, check if we can update alpha
+		if (bounds.type == 'l' && bounds.value.eval > alpha)
+			alpha = bounds.value.eval;
+
+		// If bound in memory is a upperbound, check if we can update beta
+		else if (bounds.type == 'u' && bounds.value.eval < beta)
+			beta = bounds.value.eval;
+
+		// If there is prunning, return move in memory
+		if (alpha >= beta)
+			return (bounds.value);
 	}
 
 	if (depth <= 0)
@@ -171,6 +163,33 @@ static Move	alphaBetaWithMemory(
 			// Put the result in memory to avoid to recompute the evaluation for this board
 			memoryEval->insert(std::pair<std::size_t, int>(hash, tmpMove.eval));
 		}
+
+		// Store eval as lowerbound
+		if (tmpMove.eval <= alpha)
+		{
+			bounds.value = tmpMove;
+			bounds.type = 'l';
+			bounds.depth = depth;
+		}
+		// Store eval as upperbound
+		else if (tmpMove.eval >= beta)
+		{
+			bounds.value = tmpMove;
+			bounds.type = 'u';
+			bounds.depth = depth;
+		}
+		// Store eval as exact value
+		else
+		{
+			bounds.value = tmpMove;
+			bounds.type = 'v';
+			bounds.depth = depth;
+		}
+
+		// Set bounds in memory
+		if (boundsInMemory)
+			memoryBounds->erase(hash);
+		memoryBounds->insert(std::pair<std::size_t, Bounds>(hash, bounds));
 
 		return (tmpMove);
 	}
@@ -218,14 +237,17 @@ static Move	alphaBetaWithMemory(
 	}
 
 	// Init best move
-	if (playerTurn)
-		bestMove.eval = -1000000001;
-	else
-		bestMove.eval = 1000000001;
+	bestMove.eval = -1000000001;
 	bestMove.pos = sf::Vector2i(-1, -1);
 
+	// Compute limit
+	if (depth == 10)
+		limit = 10;
+	else
+		limit = 6;
+
 	// Find best move
-	for (int i = 0; i < moves.size() && i < 6; i++)
+	for (int i = 0; i < moves.size() && i < limit; i++)
 	{
 		// Make the move
 		if (!makeMove(
@@ -240,11 +262,14 @@ static Move	alphaBetaWithMemory(
 		// A killer move is the end of the game, so don't contine recursion
 		if (tmpMove.eval == 0)
 		{
-			// Call pvs to next player reply score
+			// Call alphaBeta to next player reply score
 			tmpMove = alphaBetaWithMemory(
 						memoryMoves, memoryEval, memoryBounds,
 						grid, player, opponent, evaluator, !playerTurn,
-						alpha, beta, depth - 1);
+						-beta, -alpha, depth - 1);
+			// Reverse evaluation because a good opponent move is
+			// a bad move for player
+			tmpMove.eval = -tmpMove.eval;
 		}
 
 		// Reverse the move
@@ -254,58 +279,44 @@ static Move	alphaBetaWithMemory(
 			plSaveNbCapture, opSaveNbCapture);
 
 		// Keep the best move encounter so far
-		if (playerTurn)
+		if (tmpMove.eval > bestMove.eval)
 		{
-			if (bestMove.eval < tmpMove.eval)
-			{
-				bestMove.eval = tmpMove.eval;
-				bestMove.pos = moves[i].pos;
-			}
-
-			// Update alpha
-			if (alpha < tmpMove.eval)
-				alpha = tmpMove.eval;
-
-			if (bestMove.eval >= beta)
-				break;
+			bestMove.eval = tmpMove.eval;
+			bestMove.pos = moves[i].pos;
 		}
-		else if (!playerTurn)
-		{
-			if (bestMove.eval > tmpMove.eval)
-			{
-				bestMove.eval = tmpMove.eval;
-				bestMove.pos = moves[i].pos;
-			}
 
-			// Update beta
-			if (beta > tmpMove.eval)
-				beta = tmpMove.eval;
+		// Update alpha
+		if (bestMove.eval > alpha)
+			alpha = bestMove.eval;
 
-			if (bestMove.eval <= alpha)
-				break;
-		}
+		// If the move is too good, opponent will avoir this move
+		if (bestMove.eval >= beta)
+			break;
 	}
 
-	// Update or create lower and upper bounds
+	// Store eval as lowerbound
 	if (bestMove.eval <= alpha)
 	{
-		bounds.upperBound = bestMove;
-		bounds.upperBoundSet = true;
+		bounds.value = bestMove;
+		bounds.type = 'l';
+		bounds.depth = depth;
 	}
-	if (bestMove.eval > alpha && bestMove.eval < beta)
+	// Store eval as upperbound
+	else if (bestMove.eval >= beta)
 	{
-		bounds.upperBound = bestMove;
-		bounds.upperBoundSet = true;
-		bounds.lowerBound = bestMove;
-		bounds.lowerBoundSet = true;
+		bounds.value = bestMove;
+		bounds.type = 'u';
+		bounds.depth = depth;
 	}
-	if (bestMove.eval >= beta)
+	// Store eval as exact value
+	else
 	{
-		bounds.lowerBound = bestMove;
-		bounds.lowerBoundSet = true;
+		bounds.value = bestMove;
+		bounds.type = 'v';
+		bounds.depth = depth;
 	}
 
-	// Save bounds in memory
+	// Set bounds in memory
 	if (boundsInMemory)
 		memoryBounds->erase(hash);
 	memoryBounds->insert(std::pair<std::size_t, Bounds>(hash, bounds));
@@ -414,13 +425,13 @@ static int	checkKillerMove(
 			if (player->winState != WIN_STATE_NONE)
 			{
 				player->winState = WIN_STATE_NONE;
-				score = CASE_WIN_POINT;
+				score = CASE_LOOSE_POINT;
 			}
 			// Opponent win from opponent view point = good
 			else
 			{
 				opponent->winState = WIN_STATE_NONE;
-				score = CASE_LOOSE_POINT;
+				score = CASE_WIN_POINT;
 			}
 		}
 	}
