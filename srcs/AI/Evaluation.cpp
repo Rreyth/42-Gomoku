@@ -435,3 +435,158 @@ int	Evaluation::evaluateGridOnAxis(
 
 	return (evalutation);
 }
+
+
+// TODO: REMOVE
+static void	printLineOnly(int line, int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		if (line & (1 << i))
+			printf("1");
+		else
+			printf(".");
+	}
+	printf("\n");
+}
+
+static void	printLine(int line, const char *txt)
+{
+	printf(txt);
+	printLineOnly(line, GRID_W_INTER);
+}
+
+static void	printNbit(int line, int size, const char *txt)
+{
+	printf(txt);
+	printLineOnly(line, size);
+}
+
+
+
+static int	evalPosAxis(
+				BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
+				int *plCapture, int *opCapture, int x, int y);
+
+
+int	Evaluation::evalPosition(
+					BitBoard *plBitBoard, BitBoard *opBitBoard,
+					int plCapture, int opCapture, int x, int y)
+{
+	int	score;
+
+	printf("\n\nNew evaluation of %i %i\n", x, y);
+
+	// Evaluate on horizontal axis
+	score = evalPosAxis(
+				plBitBoard, opBitBoard, BBH,
+				&plCapture, &opCapture, x, y);
+	// if (score >= CASE_WIN_POINT)
+	// 	return (score);
+
+	// // Evaluate on vertical axis
+	// score = evalPosAxis(
+	// 			plBitBoard, opBitBoard, BBV,
+	// 			&plCapture, &opCapture, x, y);
+	// if (score >= CASE_WIN_POINT)
+	// 	return (score);
+
+	// // Evaluate on diagonal axis
+	// score = evalPosAxis(
+	// 			plBitBoard, opBitBoard, BBD,
+	// 			&plCapture, &opCapture, x, y);
+	// if (score >= CASE_WIN_POINT)
+	// 	return (score);
+
+	// // Evaluate on anti diagonal axis
+	// score = evalPosAxis(
+	// 			plBitBoard, opBitBoard, BBA,
+	// 			&plCapture, &opCapture, x, y);
+
+	return (score);
+}
+
+
+static int	evalPosAxis(
+				BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
+				int *plCapture, int *opCapture, int x, int y)
+{
+	int	score;
+
+	score = 0;
+
+	// Get line part ---------------------------------------------------------
+	int	plLine, plLinePart,
+		opLine, opLinePart,
+		shift, lineMask;
+
+	plLine = plBitBoard->getLine(axis, x, y);
+	opLine = opBitBoard->getLine(axis, x, y);
+
+	printLine(plLine, "Player line :   ");
+	printLine(opLine, "Opponent line : ");
+
+	shift = x - 4;
+	if (shift < 0)
+		lineMask = 0b111111111 >> -shift;
+	else
+		lineMask = 0b111111111 << shift;
+
+	printLine(lineMask, "Mask :          ");
+
+	if (shift < 0)
+	{
+		plLinePart = (plLine & lineMask) << -shift;
+		opLinePart = (opLine & lineMask) << -shift;
+	}
+	else
+	{
+		plLinePart = (plLine & lineMask) >> shift;
+		opLinePart = (opLine & lineMask) >> shift;
+	}
+
+	printNbit(plLinePart, 9, "plLine : ");
+	printNbit(opLinePart, 9, "opLine : ");
+
+	// Get make line point ---------------------------------------------------
+	printf("make line part -----------------------------\n");
+	int	makeLineLeft, makeLineRight,
+		makeLineCheckLeft[4], makeLineCheckRight[4],
+		tmpLeft, tmpRight;
+
+	makeLineCheckLeft[0] = 0b000001000;
+	makeLineCheckLeft[1] = 0b000001100;
+	makeLineCheckLeft[2] = 0b000001110;
+	makeLineCheckLeft[3] = 0b000001111;
+
+	makeLineCheckRight[0] = 0b000100000;
+	makeLineCheckRight[1] = 0b001100000;
+	makeLineCheckRight[2] = 0b011100000;
+	makeLineCheckRight[3] = 0b111100000;
+
+	makeLineLeft = 0;
+	makeLineRight = 0;
+	tmpLeft = plLinePart & 0b000001111;
+	tmpRight = plLinePart & 0b111100000;
+	printNbit(tmpLeft, 9, "tmpL : ");
+	printNbit(tmpRight, 9, "tmpR : ");
+	for (int i = 3; i >= 0; i--)
+	{
+		printf("------------\n");
+		if (tmpLeft == makeLineCheckLeft[i])
+			makeLineLeft = i + 1;
+		if (tmpRight == makeLineCheckRight[i])
+			makeLineRight = i + 1;
+
+		if (makeLineLeft > 0 && makeLineRight > 0)
+			break;
+	}
+	printf("------------\n");
+	printf("Line left  : %i\n", makeLineLeft);
+	printf("Line right : %i\n", makeLineRight);
+
+	// Get block line point --------------------------------------------------
+	// Get capture point -----------------------------------------------------
+
+	return (score);
+}

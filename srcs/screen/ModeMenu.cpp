@@ -80,11 +80,11 @@ ModeMenu::ModeMenu(void)
 								SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_ON);
 
 	// TODO: REMOVE
-	this->playerLeft.setSelected(1);
-	this->playerRight.setSelected(1);
-	this->aiLeft.setSelected(2);
-	this->aiRight.setSelected(5);
-	this->starting.setSelected(2);
+	// this->playerLeft.setSelected(1);
+	// this->playerRight.setSelected(1);
+	// this->aiLeft.setSelected(2);
+	// this->aiRight.setSelected(5);
+	this->starting.setSelected(1);
 }
 
 ModeMenu::~ModeMenu()

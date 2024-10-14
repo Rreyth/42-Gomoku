@@ -140,12 +140,13 @@ void	Grid::tick(display_state *displayState, Mouse *mouse,
 		captureL = leftPlayer->getNbCapture();
 		captureR = rightPlayer->getNbCapture();
 
-		evalL = evaluator->evaluationPosition(
+		evalL = evaluator->evalPosition(
 							&this->bitboardL, &this->bitboardR,
 							captureL, captureR, px, py);
-		evalR = evaluator->evaluationPosition(
-							&this->bitboardR, &this->bitboardL,
-							captureR, captureL, px, py);
+		// evalR = evaluator->evalPosition(
+		// 					&this->bitboardR, &this->bitboardL,
+		// 					captureR, captureL, px, py);
+		evalR = 0;
 
 		xaxis = "ABCDEFGHIJKLMNOPQRSTUVW";
 		printf("\nEvaluation of %c%i : %i | %i\n",

@@ -18,6 +18,8 @@ public:
 							int plCapture, int opCapture, int x, int y);
 	int	evaluateGrid(BitBoard *plBitBoard, BitBoard *opBitBoard,
 						int plCapture, int opCapture);
+	int	evalPosition(BitBoard *plBitBoard, BitBoard *opBitBoard,
+							int plCapture, int opCapture, int x, int y);
 
 private:
 	int				completeLinePoint[6], blockLinePoint[6],
