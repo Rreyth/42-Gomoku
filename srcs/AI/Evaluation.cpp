@@ -440,7 +440,7 @@ int	Evaluation::evaluateGridOnAxis(
 // TODO: REMOVE
 static void	printLineOnly(int line, int size)
 {
-	for (int i = 0; i < size; i++)
+	for (int i = size - 1; i >= 0; i--)
 	{
 		if (line & (1 << i))
 			printf("1");
@@ -473,7 +473,7 @@ int	Evaluation::evalPosition(
 					BitBoard *plBitBoard, BitBoard *opBitBoard,
 					int plCapture, int opCapture, int x, int y)
 {
-	int	score;
+	int	score = 0;
 
 	printf("\n\nNew evaluation of %i %i\n", x, y);
 
@@ -513,30 +513,31 @@ static int	evalPosAxis(
 {
 	int	score;
 
-	char	*tkt = "HVDA";
+	// TODO: Return 0 if there already have a stone on this pos
 
-	printf("\nAXIS %c ==============================================\n", tkt[axis]);
+	char	*charAxis = "HVDA";
+
+	printf("\nAXIS %c ==============================================\n", charAxis[axis]);
 	score = 0;
 
 	// Get line part ---------------------------------------------------------
 	int	plLine, plLinePart,
 		opLine, opLinePart,
-		shift, lineMask;
+		shift, lineMask,
+		bitX;
 
 	plLine = plBitBoard->getLine(axis, x, y);
 	opLine = opBitBoard->getLine(axis, x, y);
 
 	if (axis == BBV)
-	{
-		shift = y;
-		y = x;
-		x = shift;
-	}
+		bitX = y;
+	else
+		bitX = x;
 
 	printLine(plLine, "Player line :   ");
 	printLine(opLine, "Opponent line : ");
 
-	shift = x - 4;
+	shift = bitX - 4;
 	if (shift < 0)
 		lineMask = 0b111111111 >> -shift;
 	else
@@ -560,11 +561,10 @@ static int	evalPosAxis(
 
 	// Get make line point ---------------------------------------------------
 	printf("--- make line part -----------------------------\n");
-	int		nbStoneL, nbStoneR,
-			nbOpStoneL, nbOpStoneR,
+	int		nbStoneL, nbStoneR, nbStone,
+			nbOpStoneL, nbOpStoneR, nbOpStone,
 			nbFreeL, nbFreeR,
 			checkNbStoneL[4], checkNbStoneR[4];
-	bool	check;
 
 	checkNbStoneL[0] = 0b000001000;
 	checkNbStoneL[1] = 0b000001100;
@@ -577,61 +577,206 @@ static int	evalPosAxis(
 	checkNbStoneR[3] = 0b111100000;
 
 	nbStoneL = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		if ((plLinePart & checkNbStoneL[i]) == checkNbStoneL[i])
+			nbStoneL = i + 1;
+		else
+			break;
+	}
 	nbStoneR = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		check = false;
-
-		if ((plLinePart & checkNbStoneL[i]) == checkNbStoneL[i])
-		{
-			nbStoneL = i + 1;
-			check = true;
-		}
-
 		if ((plLinePart & checkNbStoneR[i]) == checkNbStoneR[i])
-		{
 			nbStoneR = i + 1;
-			check = true;
-		}
-
-		if (!check)
+		else
 			break;
 	}
 	printf("Line left  : %i\n", nbStoneL);
 	printf("Line right : %i\n", nbStoneR);
 
 	nbFreeL = 4;
+	for (int i = 3; i >= 0; i--)
+	{
+		if (opLinePart & checkNbStoneL[i])
+			nbFreeL = i;
+		else
+			break;
+	}
 	nbFreeR = 4;
 	for (int i = 3; i >= 0; i--)
 	{
-		check = false;
-
-		if (opLinePart & checkNbStoneL[i])
-		{
-			nbFreeL = i;
-			check = true;
-		}
-
 		if (opLinePart & checkNbStoneR[i])
-		{
 			nbFreeR = i;
-			check = true;
-		}
-
-		if (!check)
+		else
 			break;
 	}
-	if (x - nbFreeL < 0)
-		nbFreeL += x - nbFreeL;
-	if (x + nbFreeR >= GRID_W_INTER)
-		nbFreeR -= (x + nbFreeR) - GRID_W_INTER + 1;
+
+	if (bitX - nbFreeL < 0)
+		nbFreeL += bitX - nbFreeL;
+	if (bitX + nbFreeR >= GRID_W_INTER)
+		nbFreeR -= (bitX + nbFreeR) - GRID_W_INTER + 1;
 	printf("Free space left  : %i\n", nbFreeL);
 	printf("Free space right : %i\n", nbFreeR);
 
-	// TODO: do this
-	// Get score of line
+	nbStone = nbStoneL + nbStoneR + 1;
 	// If line >= 5 -> check if winnable
-	//   If winnable -> return CASE WIN
+	if (nbStone >= 5)
+	{
+		// Check killer move -------------------------------------------------
+		int 	checkX, checkY, addX, addY,
+				nbStoneOk, checkPlLine, checkOpLine,
+				plTmpLine[2], opTmpLine[2],
+				lineMasks[2],
+				BitY;
+		bool	capturable;
+
+		if (axis == BBH)
+		{
+			checkX = x - nbStoneL;
+			checkY = y;
+			addX = 1;
+			addY = 0;
+		}
+		else if (axis == BBV)
+		{
+			checkX = x;
+			checkY = y - nbStoneL;
+			addX = 0;
+			addY = 1;
+		}
+		else if (axis == BBD)
+		{
+			checkX = x - nbStoneL;
+			checkY = y + nbStoneL;
+			addX = 1;
+			addY = -1;
+		}
+		else // BBA
+		{
+			checkX = x - nbStoneL;
+			checkY = y - nbStoneL;
+			addX = 1;
+			addY = 1;
+		}
+
+		printf("start check line of 5+ (%i %i) + i * (%i, %i)\n",
+				checkX, checkY, addX, addY);
+
+		nbStoneOk = 0;
+		for (int i = 0; i < nbStone; i++)
+		{
+			capturable = false;
+			printf(" check stone %i %i -------------------\n", checkX, checkY);
+
+			for (int checkAxis = 0; checkAxis < 4; checkAxis++)
+			{
+				printf(" - check on axis %c\n", charAxis[checkAxis]);
+				if (checkAxis == axis) // Skip the check of our axis
+					continue;
+
+				if (checkAxis == BBV)
+				{
+					shift = checkY - 2;
+					bitX = checkY;
+				}
+				else
+				{
+					shift = checkX - 2;
+					bitX = checkX;
+				}
+
+				if (shift < 0)
+				{
+					lineMasks[0] = 0b01011 >> -shift;
+					lineMasks[1] = 0b11010 >> -shift;
+				}
+				else
+				{
+					lineMasks[0] = 0b11010 << shift;
+					lineMasks[1] = 0b01011 << shift;
+				}
+
+				plLine = plBitBoard->getLine((bitboardAxis)checkAxis, checkX, checkY);
+				opLine = opBitBoard->getLine((bitboardAxis)checkAxis, checkX, checkY);
+
+				printLine(plLine, "   plLine : ");
+				printLine(opLine, "   opLine : ");
+				printLine(lineMasks[0], "   mask1 :  ");
+				printLine(lineMasks[1], "   mask2 :  ");
+				printf("   shift %i\n", shift);
+				printLine((opLine & lineMasks[1]) << 1, "   tmp-2 :  ");
+				printLine((opLine & lineMasks[1]) << 0, "   tmp-2 :  ");
+				printNbit((opLine & lineMasks[1]) << 0, 4, "   tmp-2 :  ");
+
+				if (shift < 0)
+				{
+					plTmpLine[0] = (plLine & lineMasks[0]) << -shift;
+					plTmpLine[1] = (plLine & lineMasks[1]) << (-shift - 1);
+					opTmpLine[0] = (opLine & lineMasks[0]) << -shift;
+					opTmpLine[1] = (opLine & lineMasks[1]) << (-shift - 1);
+				}
+				else
+				{
+					plTmpLine[0] = (plLine & lineMasks[0]) >> (shift + 1);
+					plTmpLine[1] = (plLine & lineMasks[1]) >> shift;
+					opTmpLine[0] = (opLine & lineMasks[0]) >> (shift + 1);
+					opTmpLine[1] = (opLine & lineMasks[1]) >> shift;
+				}
+
+				printNbit(plTmpLine[0], 4, "   plTmp1 : ");
+				printNbit(opTmpLine[0], 4, "   opTmp1 : ");
+				printNbit(plTmpLine[1], 4, "   plTmp2 : ");
+				printNbit(opTmpLine[1], 4, "   opTmp2 : ");
+
+				printf("bitX %i\n", bitX);
+				if (plTmpLine[0] == 0b0100)
+				{
+					printf("    match pl1 #################\n");
+					if (opTmpLine[0] == 0b1000 || opTmpLine[0] == 0b0001)
+					{
+						printf("    match op1 #################\n");
+						capturable = true;
+						break;
+					}
+				}
+				if (plTmpLine[1] == 0b0010)
+				{
+					printf("    match pl2 #################\n");
+					if (opTmpLine[1] == 0b1000 || opTmpLine[1] == 0b0001)
+					{
+						printf("    match op2 #################\n");
+						capturable = true;
+						break;
+					}
+				}
+			}
+
+			// If the stone is capturable, break the winning line
+			if (capturable)
+			{
+				nbStoneOk = 0;
+				// If we know there is not enough stone left to win, stop here
+				if (nbStone - i - 1 < 5)
+					break;
+			}
+			// Else continue it
+			else
+			{
+				nbStoneOk++;
+				// If we have already 5 stone ok, stop here
+				if (nbStoneOk == 5)
+					break;
+			}
+			checkX += addX;
+			checkY += addY;
+		}
+
+		// If there is 5 stones ok, it's a victory !
+		if (nbStoneOk == 5)
+			return (CASE_WIN_POINT);
+	}
+	// Get score of line
 	// Apply free space malus
 	// Add it to score
 
@@ -639,30 +784,26 @@ static int	evalPosAxis(
 	printf("--- block line part -----------------------------\n");
 
 	nbOpStoneL = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		if ((opLinePart & checkNbStoneL[i]) == checkNbStoneL[i])
+			nbOpStoneL = i + 1;
+		else
+			break;
+	}
 	nbOpStoneR = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		check = false;
-
-		if ((opLinePart & checkNbStoneL[i]) == checkNbStoneL[i])
-		{
-			nbOpStoneL = i + 1;
-			check = true;
-		}
-
 		if ((opLinePart & checkNbStoneR[i]) == checkNbStoneR[i])
-		{
 			nbOpStoneR = i + 1;
-			check = true;
-		}
-
-		if (!check)
+		else
 			break;
 	}
 	printf("Line block left  : %i\n", nbOpStoneL);
 	printf("Line block right : %i\n", nbOpStoneR);
 
 	// TODO: do this
+	nbOpStone = nbOpStoneL + nbOpStoneR + 1;
 	// Get score of block line
 	// Add it to score
 
