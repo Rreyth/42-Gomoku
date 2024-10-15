@@ -485,21 +485,21 @@ int	Evaluation::evalPosition(
 	// 	return (score);
 
 	// // Evaluate on vertical axis
-	// score = evalPosAxis(
+	// score += evalPosAxis(
 	// 			plBitBoard, opBitBoard, BBV,
 	// 			&plCapture, &opCapture, x, y);
 	// if (score >= CASE_WIN_POINT)
 	// 	return (score);
 
 	// // Evaluate on diagonal axis
-	// score = evalPosAxis(
+	// score += evalPosAxis(
 	// 			plBitBoard, opBitBoard, BBD,
 	// 			&plCapture, &opCapture, x, y);
 	// if (score >= CASE_WIN_POINT)
 	// 	return (score);
 
 	// // Evaluate on anti diagonal axis
-	// score = evalPosAxis(
+	// score += evalPosAxis(
 	// 			plBitBoard, opBitBoard, BBA,
 	// 			&plCapture, &opCapture, x, y);
 
@@ -513,6 +513,9 @@ static int	evalPosAxis(
 {
 	int	score;
 
+	char	*tkt = "HVDA";
+
+	printf("\nAXIS %c ==============================================\n", tkt[axis]);
 	score = 0;
 
 	// Get line part ---------------------------------------------------------
@@ -522,6 +525,13 @@ static int	evalPosAxis(
 
 	plLine = plBitBoard->getLine(axis, x, y);
 	opLine = opBitBoard->getLine(axis, x, y);
+
+	if (axis == BBV)
+	{
+		shift = y;
+		y = x;
+		x = shift;
+	}
 
 	printLine(plLine, "Player line :   ");
 	printLine(opLine, "Opponent line : ");
@@ -549,44 +559,126 @@ static int	evalPosAxis(
 	printNbit(opLinePart, 9, "opLine : ");
 
 	// Get make line point ---------------------------------------------------
-	printf("make line part -----------------------------\n");
-	int	makeLineLeft, makeLineRight,
-		makeLineCheckLeft[4], makeLineCheckRight[4],
-		tmpLeft, tmpRight;
+	printf("--- make line part -----------------------------\n");
+	int		nbStoneL, nbStoneR,
+			nbOpStoneL, nbOpStoneR,
+			nbFreeL, nbFreeR,
+			checkNbStoneL[4], checkNbStoneR[4];
+	bool	check;
 
-	makeLineCheckLeft[0] = 0b000001000;
-	makeLineCheckLeft[1] = 0b000001100;
-	makeLineCheckLeft[2] = 0b000001110;
-	makeLineCheckLeft[3] = 0b000001111;
+	checkNbStoneL[0] = 0b000001000;
+	checkNbStoneL[1] = 0b000001100;
+	checkNbStoneL[2] = 0b000001110;
+	checkNbStoneL[3] = 0b000001111;
 
-	makeLineCheckRight[0] = 0b000100000;
-	makeLineCheckRight[1] = 0b001100000;
-	makeLineCheckRight[2] = 0b011100000;
-	makeLineCheckRight[3] = 0b111100000;
+	checkNbStoneR[0] = 0b000100000;
+	checkNbStoneR[1] = 0b001100000;
+	checkNbStoneR[2] = 0b011100000;
+	checkNbStoneR[3] = 0b111100000;
 
-	makeLineLeft = 0;
-	makeLineRight = 0;
-	tmpLeft = plLinePart & 0b000001111;
-	tmpRight = plLinePart & 0b111100000;
-	printNbit(tmpLeft, 9, "tmpL : ");
-	printNbit(tmpRight, 9, "tmpR : ");
-	for (int i = 3; i >= 0; i--)
+	nbStoneL = 0;
+	nbStoneR = 0;
+	for (int i = 0; i < 4; i++)
 	{
-		printf("------------\n");
-		if (tmpLeft == makeLineCheckLeft[i])
-			makeLineLeft = i + 1;
-		if (tmpRight == makeLineCheckRight[i])
-			makeLineRight = i + 1;
+		check = false;
 
-		if (makeLineLeft > 0 && makeLineRight > 0)
+		if ((plLinePart & checkNbStoneL[i]) == checkNbStoneL[i])
+		{
+			nbStoneL = i + 1;
+			check = true;
+		}
+
+		if ((plLinePart & checkNbStoneR[i]) == checkNbStoneR[i])
+		{
+			nbStoneR = i + 1;
+			check = true;
+		}
+
+		if (!check)
 			break;
 	}
-	printf("------------\n");
-	printf("Line left  : %i\n", makeLineLeft);
-	printf("Line right : %i\n", makeLineRight);
+	printf("Line left  : %i\n", nbStoneL);
+	printf("Line right : %i\n", nbStoneR);
+
+	nbFreeL = 4;
+	nbFreeR = 4;
+	for (int i = 3; i >= 0; i--)
+	{
+		check = false;
+
+		if (opLinePart & checkNbStoneL[i])
+		{
+			nbFreeL = i;
+			check = true;
+		}
+
+		if (opLinePart & checkNbStoneR[i])
+		{
+			nbFreeR = i;
+			check = true;
+		}
+
+		if (!check)
+			break;
+	}
+	if (x - nbFreeL < 0)
+		nbFreeL += x - nbFreeL;
+	if (x + nbFreeR >= GRID_W_INTER)
+		nbFreeR -= (x + nbFreeR) - GRID_W_INTER + 1;
+	printf("Free space left  : %i\n", nbFreeL);
+	printf("Free space right : %i\n", nbFreeR);
+
+	// TODO: do this
+	// Get score of line
+	// If line >= 5 -> check if winnable
+	//   If winnable -> return CASE WIN
+	// Apply free space malus
+	// Add it to score
 
 	// Get block line point --------------------------------------------------
+	printf("--- block line part -----------------------------\n");
+
+	nbOpStoneL = 0;
+	nbOpStoneR = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		check = false;
+
+		if ((opLinePart & checkNbStoneL[i]) == checkNbStoneL[i])
+		{
+			nbOpStoneL = i + 1;
+			check = true;
+		}
+
+		if ((opLinePart & checkNbStoneR[i]) == checkNbStoneR[i])
+		{
+			nbOpStoneR = i + 1;
+			check = true;
+		}
+
+		if (!check)
+			break;
+	}
+	printf("Line block left  : %i\n", nbOpStoneL);
+	printf("Line block right : %i\n", nbOpStoneR);
+
+	// TODO: do this
+	// Get score of block line
+	// Add it to score
+
 	// Get capture point -----------------------------------------------------
+
+	// TODO: do this
+	// Check if capture possible
+	// If yes :
+	//   get score for this capture
+	//   update plCapture
+	//   add score for block line of ennemi stone captured
+
+	// Check if block capture possible
+	// If yes :
+	//   get score for block this capture
+	//   add score for make line of player stone saved
 
 	return (score);
 }
