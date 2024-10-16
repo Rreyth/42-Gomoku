@@ -467,6 +467,28 @@ static void	printNbit(int line, int size, const char *txt)
 static int	evalPosAxis(
 				BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
 				int *plCapture, int *opCapture, int x, int y);
+static int	getLinePart(
+				BitBoard *plBitBoard, BitBoard *opBitBoard,
+				int x, int y, bitboardAxis axis,
+				int *plLinePart, int *opLinePart);
+static int	computeAlignScore(
+				BitBoard *plBitBoard, BitBoard *opBitBoard,
+				int x, int y, bitboardAxis axis,
+				int plLine, int opLine, int bitX);
+static bool	isLineWinnable(
+				BitBoard *plBitBoard, BitBoard *opBitBoard,
+				int x, int y, bitboardAxis axis,
+				int plLine, int opLine, int bitX,
+				int nbStoneL, int nbStoneR, int nbStone);
+static bool	isCapturable(
+				BitBoard *plBitBoard, BitBoard *opBitBoard,
+				int x, int y, bitboardAxis axis,
+				int plLine, int opLine, int bitX,
+				int nbStoneL, int nbStoneR, int nbStone);
+static int	computeBlockScore(int opLine);
+static int	computeCaptureScore();
+
+
 
 
 int	Evaluation::evalPosition(
@@ -477,66 +499,90 @@ int	Evaluation::evalPosition(
 
 	printf("\n\nNew evaluation of %i %i\n", x, y);
 
+	// TODO: Return 0 if there already have a stone on this pos
+
 	// Evaluate on horizontal axis
 	score = evalPosAxis(
 				plBitBoard, opBitBoard, BBH,
 				&plCapture, &opCapture, x, y);
-	// if (score >= CASE_WIN_POINT)
-	// 	return (score);
+	if (score >= CASE_WIN_POINT)
+		return (score);
 
-	// // Evaluate on vertical axis
-	// score += evalPosAxis(
-	// 			plBitBoard, opBitBoard, BBV,
-	// 			&plCapture, &opCapture, x, y);
-	// if (score >= CASE_WIN_POINT)
-	// 	return (score);
+	// Evaluate on vertical axis
+	score += evalPosAxis(
+				plBitBoard, opBitBoard, BBV,
+				&plCapture, &opCapture, x, y);
+	if (score >= CASE_WIN_POINT)
+		return (score);
 
-	// // Evaluate on diagonal axis
-	// score += evalPosAxis(
-	// 			plBitBoard, opBitBoard, BBD,
-	// 			&plCapture, &opCapture, x, y);
-	// if (score >= CASE_WIN_POINT)
-	// 	return (score);
+	// Evaluate on diagonal axis
+	score += evalPosAxis(
+				plBitBoard, opBitBoard, BBD,
+				&plCapture, &opCapture, x, y);
+	if (score >= CASE_WIN_POINT)
+		return (score);
 
-	// // Evaluate on anti diagonal axis
-	// score += evalPosAxis(
-	// 			plBitBoard, opBitBoard, BBA,
-	// 			&plCapture, &opCapture, x, y);
+	// Evaluate on anti diagonal axis
+	score += evalPosAxis(
+				plBitBoard, opBitBoard, BBA,
+				&plCapture, &opCapture, x, y);
 
 	return (score);
 }
-
 
 static int	evalPosAxis(
 				BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
 				int *plCapture, int *opCapture, int x, int y)
 {
-	int	score;
-
-	// TODO: Return 0 if there already have a stone on this pos
+	int	score,
+		bitX, plLine, opLine;
 
 	char	*charAxis = "HVDA";
-
 	printf("\nAXIS %c ==============================================\n", charAxis[axis]);
+
 	score = 0;
 
-	// Get line part ---------------------------------------------------------
-	int	plLine, plLinePart,
-		opLine, opLinePart,
+	// Get line part
+	bitX = getLinePart(plBitBoard, opBitBoard, x, y, axis, &plLine, &opLine);
+
+	// Get make line point
+	score += computeAlignScore(
+				plBitBoard, opBitBoard, x, y, axis,
+				plLine, opLine, bitX);
+
+	// Get block line point
+	score += computeBlockScore(opLine);
+
+	// Get capture point
+	score += computeCaptureScore();
+
+	return (score);
+}
+
+
+static int	getLinePart(
+				BitBoard *plBitBoard, BitBoard *opBitBoard,
+					int x, int y, bitboardAxis axis,
+					int *plLinePart, int *opLinePart)
+{
+	int	plLine, opLine,
 		shift, lineMask,
 		bitX;
 
-	plLine = plBitBoard->getLine(axis, x, y);
-	opLine = opBitBoard->getLine(axis, x, y);
-
+	// Get the bitX
 	if (axis == BBV)
 		bitX = y;
 	else
 		bitX = x;
 
+	// Get line by axis
+	plLine = plBitBoard->getLine(axis, x, y);
+	opLine = opBitBoard->getLine(axis, x, y);
+
 	printLine(plLine, "Player line :   ");
 	printLine(opLine, "Opponent line : ");
 
+	// Compute shift
 	shift = bitX - 4;
 	if (shift < 0)
 		lineMask = 0b111111111 >> -shift;
@@ -545,22 +591,30 @@ static int	evalPosAxis(
 
 	printLine(lineMask, "Mask :          ");
 
+	// Compute line part by apply the mask and shift it
 	if (shift < 0)
 	{
-		plLinePart = (plLine & lineMask) << -shift;
-		opLinePart = (opLine & lineMask) << -shift;
+		*plLinePart = (plLine & lineMask) << -shift;
+		*opLinePart = (opLine & lineMask) << -shift;
 	}
 	else
 	{
-		plLinePart = (plLine & lineMask) >> shift;
-		opLinePart = (opLine & lineMask) >> shift;
+		*plLinePart = (plLine & lineMask) >> shift;
+		*opLinePart = (opLine & lineMask) >> shift;
 	}
 
-	printNbit(plLinePart, 9, "plLine : ");
-	printNbit(opLinePart, 9, "opLine : ");
+	printNbit(*plLinePart, 9, "plLine : ");
+	printNbit(*opLinePart, 9, "opLine : ");
 
-	// Get make line point ---------------------------------------------------
-	printf("--- make line part -----------------------------\n");
+	return (bitX);
+}
+
+
+static int	computeAlignScore(
+				BitBoard *plBitBoard, BitBoard *opBitBoard,
+					int x, int y, bitboardAxis axis,
+					int plLine, int opLine, int bitX)
+{
 	int		nbStoneL, nbStoneR, nbStone,
 			nbOpStoneL, nbOpStoneR, nbOpStone,
 			nbFreeL, nbFreeR,
@@ -576,18 +630,20 @@ static int	evalPosAxis(
 	checkNbStoneR[2] = 0b011100000;
 	checkNbStoneR[3] = 0b111100000;
 
+	// Get the number of stone at the left (for H)
 	nbStoneL = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		if ((plLinePart & checkNbStoneL[i]) == checkNbStoneL[i])
+		if ((plLine & checkNbStoneL[i]) == checkNbStoneL[i])
 			nbStoneL = i + 1;
 		else
 			break;
 	}
+	// Get the number of stone at the right (for H)
 	nbStoneR = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		if ((plLinePart & checkNbStoneR[i]) == checkNbStoneR[i])
+		if ((plLine & checkNbStoneR[i]) == checkNbStoneR[i])
 			nbStoneR = i + 1;
 		else
 			break;
@@ -595,198 +651,243 @@ static int	evalPosAxis(
 	printf("Line left  : %i\n", nbStoneL);
 	printf("Line right : %i\n", nbStoneR);
 
+	// Get the number of space before the closest ennemy stone on the left
 	nbFreeL = 4;
 	for (int i = 3; i >= 0; i--)
 	{
-		if (opLinePart & checkNbStoneL[i])
+		if (opLine & checkNbStoneL[i])
 			nbFreeL = i;
 		else
 			break;
 	}
+	// Correct the free space in accordance with the border
+	if (bitX - nbFreeL < 0)
+		nbFreeL += bitX - nbFreeL;
+
+	// Get the number of space before the closest ennemy stone on the right
 	nbFreeR = 4;
 	for (int i = 3; i >= 0; i--)
 	{
-		if (opLinePart & checkNbStoneR[i])
+		if (opLine & checkNbStoneR[i])
 			nbFreeR = i;
 		else
 			break;
 	}
-
-	if (bitX - nbFreeL < 0)
-		nbFreeL += bitX - nbFreeL;
+	// Correct the free space in accordance with the border
 	if (bitX + nbFreeR >= GRID_W_INTER)
 		nbFreeR -= (bitX + nbFreeR) - GRID_W_INTER + 1;
+
 	printf("Free space left  : %i\n", nbFreeL);
 	printf("Free space right : %i\n", nbFreeR);
 
 	nbStone = nbStoneL + nbStoneR + 1;
-	// If line >= 5 -> check if winnable
-	if (nbStone >= 5)
-	{
-		// Check killer move -------------------------------------------------
-		int 	checkX, checkY, addX, addY,
-				nbStoneOk, checkPlLine, checkOpLine,
-				plTmpLine[2], opTmpLine[2],
-				lineMasks[2],
-				BitY;
-		bool	capturable;
 
-		if (axis == BBH)
-		{
-			checkX = x - nbStoneL;
-			checkY = y;
-			addX = 1;
-			addY = 0;
-		}
-		else if (axis == BBV)
-		{
-			checkX = x;
-			checkY = y - nbStoneL;
-			addX = 0;
-			addY = 1;
-		}
-		else if (axis == BBD)
-		{
-			checkX = x - nbStoneL;
-			checkY = y + nbStoneL;
-			addX = 1;
-			addY = -1;
-		}
-		else // BBA
-		{
-			checkX = x - nbStoneL;
-			checkY = y - nbStoneL;
-			addX = 1;
-			addY = 1;
-		}
+	// If line have 5 or more stones, check if this is a victory
+	if (nbStone >= 5 && isLineWinnable(
+							plBitBoard, opBitBoard, x, y, axis,
+							plLine, opLine, bitX,
+							nbStoneL, nbStoneR, nbStone))
+		return (CASE_WIN_POINT); // If yes, return the max score
 
-		printf("start check line of 5+ (%i %i) + i * (%i, %i)\n",
-				checkX, checkY, addX, addY);
-
-		nbStoneOk = 0;
-		for (int i = 0; i < nbStone; i++)
-		{
-			capturable = false;
-			printf(" check stone %i %i -------------------\n", checkX, checkY);
-
-			for (int checkAxis = 0; checkAxis < 4; checkAxis++)
-			{
-				printf(" - check on axis %c\n", charAxis[checkAxis]);
-				if (checkAxis == axis) // Skip the check of our axis
-					continue;
-
-				if (checkAxis == BBV)
-				{
-					shift = checkY - 2;
-					bitX = checkY;
-				}
-				else
-				{
-					shift = checkX - 2;
-					bitX = checkX;
-				}
-
-				if (shift < 0)
-				{
-					lineMasks[0] = 0b01011 >> -shift;
-					lineMasks[1] = 0b11010 >> -shift;
-				}
-				else
-				{
-					lineMasks[0] = 0b11010 << shift;
-					lineMasks[1] = 0b01011 << shift;
-				}
-
-				plLine = plBitBoard->getLine((bitboardAxis)checkAxis, checkX, checkY);
-				opLine = opBitBoard->getLine((bitboardAxis)checkAxis, checkX, checkY);
-
-				printLine(plLine, "   plLine : ");
-				printLine(opLine, "   opLine : ");
-				printLine(lineMasks[0], "   mask1 :  ");
-				printLine(lineMasks[1], "   mask2 :  ");
-				printf("   shift %i\n", shift);
-				printLine((opLine & lineMasks[1]) << 1, "   tmp-2 :  ");
-				printLine((opLine & lineMasks[1]) << 0, "   tmp-2 :  ");
-				printNbit((opLine & lineMasks[1]) << 0, 4, "   tmp-2 :  ");
-
-				if (shift < 0)
-				{
-					plTmpLine[0] = (plLine & lineMasks[0]) << -shift;
-					plTmpLine[1] = (plLine & lineMasks[1]) << (-shift - 1);
-					opTmpLine[0] = (opLine & lineMasks[0]) << -shift;
-					opTmpLine[1] = (opLine & lineMasks[1]) << (-shift - 1);
-				}
-				else
-				{
-					plTmpLine[0] = (plLine & lineMasks[0]) >> (shift + 1);
-					plTmpLine[1] = (plLine & lineMasks[1]) >> shift;
-					opTmpLine[0] = (opLine & lineMasks[0]) >> (shift + 1);
-					opTmpLine[1] = (opLine & lineMasks[1]) >> shift;
-				}
-
-				printNbit(plTmpLine[0], 4, "   plTmp1 : ");
-				printNbit(opTmpLine[0], 4, "   opTmp1 : ");
-				printNbit(plTmpLine[1], 4, "   plTmp2 : ");
-				printNbit(opTmpLine[1], 4, "   opTmp2 : ");
-
-				printf("bitX %i\n", bitX);
-				if (plTmpLine[0] == 0b0100)
-				{
-					printf("    match pl1 #################\n");
-					if (opTmpLine[0] == 0b1000 || opTmpLine[0] == 0b0001)
-					{
-						printf("    match op1 #################\n");
-						capturable = true;
-						break;
-					}
-				}
-				if (plTmpLine[1] == 0b0010)
-				{
-					printf("    match pl2 #################\n");
-					if (opTmpLine[1] == 0b1000 || opTmpLine[1] == 0b0001)
-					{
-						printf("    match op2 #################\n");
-						capturable = true;
-						break;
-					}
-				}
-			}
-
-			// If the stone is capturable, break the winning line
-			if (capturable)
-			{
-				nbStoneOk = 0;
-				// If we know there is not enough stone left to win, stop here
-				if (nbStone - i - 1 < 5)
-					break;
-			}
-			// Else continue it
-			else
-			{
-				nbStoneOk++;
-				// If we have already 5 stone ok, stop here
-				if (nbStoneOk == 5)
-					break;
-			}
-			checkX += addX;
-			checkY += addY;
-		}
-
-		// If there is 5 stones ok, it's a victory !
-		if (nbStoneOk == 5)
-			return (CASE_WIN_POINT);
-	}
 	// Get score of line
 	// Apply free space malus
 	// Add it to score
 
-	// Get block line point --------------------------------------------------
-	printf("--- block line part -----------------------------\n");
+	return (0);
+}
+
+
+static bool	isLineWinnable(
+				BitBoard *plBitBoard, BitBoard *opBitBoard,
+				int x, int y, bitboardAxis axis,
+				int plLine, int opLine, int bitX,
+				int nbStoneL, int nbStoneR, int nbStone)
+{
+	// Check killer move -------------------------------------------------
+	int 	checkX, checkY, addX, addY,
+			nbStoneOk, checkPlLine, checkOpLine;
+	bool	capturable;
+
+	// Get start position and increments depends on axis
+	if (axis == BBH)
+	{
+		checkX = x - nbStoneL;
+		checkY = y;
+		addX = 1;
+		addY = 0;
+	}
+	else if (axis == BBV)
+	{
+		checkX = x;
+		checkY = y - nbStoneL;
+		addX = 0;
+		addY = 1;
+	}
+	else if (axis == BBD)
+	{
+		checkX = x - nbStoneL;
+		checkY = y + nbStoneL;
+		addX = 1;
+		addY = -1;
+	}
+	else // BBA
+	{
+		checkX = x - nbStoneL;
+		checkY = y - nbStoneL;
+		addX = 1;
+		addY = 1;
+	}
+
+	// For each stone
+	nbStoneOk = 0;
+	for (int i = 0; i < nbStone; i++)
+	{
+		capturable = false;
+
+		// If the stone is capturable, break the winning line
+		if (isCapturable(
+				plBitBoard, opBitBoard, checkX, checkY, axis,
+				plLine, opLine, bitX,
+				nbStoneL, nbStoneR, nbStone))
+		{
+			nbStoneOk = 0;
+			// If we know there is not enough stone left to win, stop here
+			if (nbStone - i - 1 < 5)
+				break;
+		}
+		// Else continue it
+		else
+		{
+			nbStoneOk++;
+			// If we have already 5 stone ok, stop here
+			if (nbStoneOk == 5)
+				break;
+		}
+		checkX += addX;
+		checkY += addY;
+	}
+
+	// If there is 5 stones ok, it's a victory !
+	if (nbStoneOk == 5)
+		return (true);
+	return (false);
+}
+
+
+static bool	isCapturable(
+				BitBoard *plBitBoard, BitBoard *opBitBoard,
+				int x, int y, bitboardAxis axis,
+				int plLine, int opLine, int bitX,
+				int nbStoneL, int nbStoneR, int nbStone)
+{
+	bool	skipCapture1, skipCapture2;
+	int		shift,
+			lineMasks[2],
+			plTmpLine[2], opTmpLine[2];
+
+	for (int checkAxis = 0; checkAxis < 4; checkAxis++)
+	{
+		if (checkAxis == axis) // Skip the check of our axis
+			continue;
+
+		if (checkAxis == BBH)
+		{
+			skipCapture1 = (x <= 0 || x >= GRID_W_INTER - 2);
+			skipCapture2 = (x <= 1 || x >= GRID_W_INTER - 1);
+		}
+		else if (checkAxis == BBV)
+		{
+			skipCapture1 = (y <= 0 || y >= GRID_W_INTER - 2);
+			skipCapture2 = (y <= 1 || y >= GRID_W_INTER - 1);
+		}
+		else if (checkAxis == BBD)
+		{
+			skipCapture1 = (x <= 0 || x >= GRID_W_INTER - 2
+							|| y <= 1 || y >= GRID_W_INTER - 1);
+			skipCapture2 = (x <= 1 || x >= GRID_W_INTER - 1
+							|| y <= 0 || y >= GRID_W_INTER - 2);
+		}
+		else // BBA
+		{
+			skipCapture1 = (x <= 0 || x >= GRID_W_INTER - 2
+							|| y <= 0 || y >= GRID_W_INTER - 2);
+			skipCapture2 = (x <= 1 || x >= GRID_W_INTER - 1
+							|| y <= 1 || y >= GRID_W_INTER - 1);
+		}
+
+		// If both capture case are impossible, skip stone check
+		if (skipCapture1 && skipCapture2)
+			continue;
+
+		if (checkAxis == BBV)
+			shift = y - 1;
+		else
+			shift = x - 1;
+
+		if (shift < 0)
+		{
+			lineMasks[0] = 0b01011 >> -shift;
+			lineMasks[1] = 0b11010 >> -shift;
+		}
+		else
+		{
+			lineMasks[0] = 0b11010 << shift;
+			lineMasks[1] = 0b01011 << shift;
+		}
+
+		plLine = plBitBoard->getLine((bitboardAxis)checkAxis, x, y) << 1;
+		opLine = opBitBoard->getLine((bitboardAxis)checkAxis, x, y) << 1;
+
+		if (shift < 0)
+		{
+			plTmpLine[0] = (plLine & lineMasks[0]) << -shift;
+			plTmpLine[1] = (plLine & lineMasks[1]) << (-shift - 1);
+			opTmpLine[0] = (opLine & lineMasks[0]) << -shift;
+			opTmpLine[1] = (opLine & lineMasks[1]) << (-shift - 1);
+		}
+		else
+		{
+			plTmpLine[0] = (plLine & lineMasks[0]) >> (shift + 1);
+			plTmpLine[1] = (plLine & lineMasks[1]) >> shift;
+			opTmpLine[0] = (opLine & lineMasks[0]) >> (shift + 1);
+			opTmpLine[1] = (opLine & lineMasks[1]) >> shift;
+		}
+
+		if (plTmpLine[0] == 0b0100 && !skipCapture1)
+		{
+			if (opTmpLine[0] == 0b1000 || opTmpLine[0] == 0b0001)
+				return (true);
+		}
+		if (plTmpLine[1] == 0b0010 && !skipCapture2)
+		{
+			if (opTmpLine[1] == 0b1000 || opTmpLine[1] == 0b0001)
+				return (true);
+		}
+	}
+
+	return (false);
+}
+
+
+static int	computeBlockScore(int opLine)
+{
+	int	nbOpStoneL, nbOpStoneR, nbOpStone,
+		checkNbStoneL[4], checkNbStoneR[4];
+
+	checkNbStoneL[0] = 0b000001000;
+	checkNbStoneL[1] = 0b000001100;
+	checkNbStoneL[2] = 0b000001110;
+	checkNbStoneL[3] = 0b000001111;
+
+	checkNbStoneR[0] = 0b000100000;
+	checkNbStoneR[1] = 0b001100000;
+	checkNbStoneR[2] = 0b011100000;
+	checkNbStoneR[3] = 0b111100000;
 
 	nbOpStoneL = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		if ((opLinePart & checkNbStoneL[i]) == checkNbStoneL[i])
+		if ((opLine & checkNbStoneL[i]) == checkNbStoneL[i])
 			nbOpStoneL = i + 1;
 		else
 			break;
@@ -794,7 +895,7 @@ static int	evalPosAxis(
 	nbOpStoneR = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		if ((opLinePart & checkNbStoneR[i]) == checkNbStoneR[i])
+		if ((opLine & checkNbStoneR[i]) == checkNbStoneR[i])
 			nbOpStoneR = i + 1;
 		else
 			break;
@@ -807,8 +908,12 @@ static int	evalPosAxis(
 	// Get score of block line
 	// Add it to score
 
-	// Get capture point -----------------------------------------------------
+	return (0);
+}
 
+
+static int	computeCaptureScore()
+{
 	// TODO: do this
 	// Check if capture possible
 	// If yes :
@@ -820,6 +925,4 @@ static int	evalPosAxis(
 	// If yes :
 	//   get score for block this capture
 	//   add score for make line of player stone saved
-
-	return (score);
 }
