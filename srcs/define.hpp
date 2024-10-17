@@ -119,9 +119,9 @@ typedef enum e_AI_difficulty
 	RANDOM,
 	BETTER_RANDOM,
 	EASY,
+	BETTER_EASY,
 	MEDIUM,
-	HARD,
-	MTDF
+	HARD
 }	AI_difficulty;
 
 

@@ -234,7 +234,7 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 
 	if (this->playerLeft.getType() == AI_PLAYER)
 	{
-		std::string	difficulty[] = {"RANDOM", "BETTER_RANDOM", "EASY", "MEDIUM", "HARD", "MTDF"};
+		std::string	difficulty[] = {"RANDOM", "BETTER_RANDOM", "EASY", "BETTER_EASY", "MEDIUM", "HARD"};
 		AI *ai = this->playerLeft.getAI();
 		str = difficulty[ai->getDifficulty()];
 		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.15), 30, sf::Color::White, MID_CENTER);
@@ -277,7 +277,7 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 
 	if (this->playerRight.getType() == AI_PLAYER)
 	{
-		std::string	difficulty[] = {"RANDOM", "BETTER_RANDOM", "EASY", "MEDIUM", "HARD", "MTDF"};
+		std::string	difficulty[] = {"RANDOM", "BETTER_RANDOM", "EASY", "BETTER_EASY", "MEDIUM", "HARD"};
 		AI *ai = this->playerRight.getAI();
 		str = difficulty[ai->getDifficulty()];
 		drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.15), 30, sf::Color::White, MID_CENTER);
@@ -338,11 +338,11 @@ void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *
 	{
 		ai = this->playerLeft.getAI();
 		move = this->playerLeft.getSuggestedMove();
-		
+
 		str = alpha[move.x] + std::string(", ") + std::to_string(move.y + 1);
 		drawText(window, text, str, pos.x + (size.x / 4), pos.y + (size.y * 0.6),
 				20, sf::Color::White, MID_CENTER);
-		
+
 		str = format_time(std::to_string(ai->getTimer())) + " us";
 		drawText(window, text, str, pos.x + (size.x / 2), pos.y + (size.y * 0.6),
 				20, sf::Color::White, MID_CENTER);
@@ -356,11 +356,11 @@ void Game::drawBottom(sf::RenderWindow *window, sf::Text *text, TextureManager *
 	{
 		ai = this->playerRight.getAI();
 		move = this->playerRight.getSuggestedMove();
-		
+
 		str = alpha[move.x] + std::string(", ") + std::to_string(move.y + 1);
 		drawText(window, text, str, pos.x + (size.x / 4), pos.y + (size.y * 0.6),
 				20, sf::Color::White, MID_CENTER);
-		
+
 		str = format_time(std::to_string(ai->getTimer())) + " us";
 		drawText(window, text, str, pos.x + (size.x / 2), pos.y + (size.y * 0.6),
 				20, sf::Color::White, MID_CENTER);

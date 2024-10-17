@@ -35,12 +35,12 @@ SRCS				:=	srcs/main.cpp \
 						srcs/game/PlayerInfo.cpp \
 						srcs/game/BboxManager.cpp \
 						srcs/AI/AI.cpp \
-						srcs/AI/AI_mtdf.cpp \
 						srcs/AI/AI_easy.cpp \
 						srcs/AI/AI_hard.cpp \
 						srcs/AI/AI_medium.cpp \
 						srcs/AI/AI_random.cpp \
 						srcs/AI/Evaluation.cpp \
+						srcs/AI/AI_betterEasy.cpp \
 						srcs/AI/AI_betterRandom.cpp \
 
 OBJS 				:= ${SRCS:srcs/%.cpp=$(BUILD)/%.o}

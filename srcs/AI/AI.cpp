@@ -158,7 +158,6 @@ void	aiThreadCore(ThreadParams *threadParams)
 	AI_difficulty	aiDifficulty;
 	std::unordered_map<std::size_t, int>				memoryEval;
 	std::unordered_map<std::size_t, std::vector<Move>>	memoryMoves;
-	std::unordered_map<std::size_t, Bounds>				memoryBounds;
 
 	// Get params from struct
 	mutex = threadParams->mutex;
@@ -187,15 +186,14 @@ void	aiThreadCore(ThreadParams *threadParams)
 				move = getBetterRandom(&grid, &player, &opponent);
 			else if (aiDifficulty == EASY)
 				move = getEasyMove(&grid, &player, &opponent, &evaluator);
+			else if (aiDifficulty == BETTER_EASY)
+				move = getBetterEasyMove(&grid, &player, &opponent, &evaluator);
 			else if (aiDifficulty == MEDIUM)
 				move = getMediumMove(&memoryMoves, &memoryEval, &grid, &player,
 										&opponent, &evaluator);
 			else if (aiDifficulty == HARD)
 				move = getHardMove(&memoryMoves, &memoryEval, &grid, &player,
 										&opponent, &evaluator);
-			else if (aiDifficulty == MTDF)
-				move = getMTDFMove(&memoryMoves, &memoryEval, &memoryBounds,
-									&grid, &player, &opponent, &evaluator);
 
 			diff = ((double)(std::clock() - start) / CLOCKS_PER_SEC) * 1000000;
 
@@ -220,5 +218,4 @@ void	aiThreadCore(ThreadParams *threadParams)
 
 	memoryEval.clear();
 	memoryMoves.clear();
-	memoryBounds.clear();
 }

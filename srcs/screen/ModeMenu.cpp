@@ -55,9 +55,9 @@ ModeMenu::ModeMenu(void)
 	vec.push_back("RANDOM");
 	vec.push_back("BETTER_RANDOM");
 	vec.push_back("EASY");
+	vec.push_back("BETTER_EASY");
 	vec.push_back("MEDIUM");
 	vec.push_back("HARD");
-	vec.push_back("MTDF");
 
 	this->aiLeft = Select(vec, 40, MID_CENTER, sf::Color::White,
 								WIN_W * 0.3 - 150, WIN_H * 0.565, 300, 45,
@@ -78,13 +78,6 @@ ModeMenu::ModeMenu(void)
 								WIN_W / 2 - 150, WIN_H * 0.73, 300, 45,
 								SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_ON, SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_OFF,
 								SPRITE_COMPACT_SQUARE_ROUNDED_BUTTON_ON);
-
-	// TODO: REMOVE
-	this->playerLeft.setSelected(1);
-	this->playerRight.setSelected(1);
-	this->aiLeft.setSelected(2);
-	this->aiRight.setSelected(3);
-	this->starting.setSelected(2);
 }
 
 ModeMenu::~ModeMenu()

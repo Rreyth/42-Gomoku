@@ -32,32 +32,15 @@ typedef struct	s_threadParams
 }	ThreadParams;
 
 
-typedef struct s_bounds
-{
-	Move	value;
-	char	type; // v = exact value, l = lowerbound, u = upperbound
-	int		depth;
-
-	struct s_bounds	&operator=(const struct s_bounds &bounds)
-	{
-		if (this == &bounds)
-			return (*this);
-
-		this->value = bounds.value;
-		this->type = bounds.type;
-		this->depth = bounds.depth;
-
-		return (*this);
-	}
-}	Bounds;
-
-
 void			aiThreadCore(ThreadParams *threadParams);
 sf::Vector2i	getRandomMove(
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent);
 sf::Vector2i	getBetterRandom(
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent);
 sf::Vector2i	getEasyMove(
+					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
+					Evaluation *evaluator);
+sf::Vector2i	getBetterEasyMove(
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 					Evaluation *evaluator);
 sf::Vector2i	getMediumMove(
@@ -68,12 +51,6 @@ sf::Vector2i	getMediumMove(
 sf::Vector2i	getHardMove(
 					std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
 					std::unordered_map<std::size_t, int> *memoryEval,
-					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
-					Evaluation *evaluator);
-sf::Vector2i	getMTDFMove(
-					std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
-					std::unordered_map<std::size_t, int> *memoryEval,
-					std::unordered_map<std::size_t, Bounds> *memoryBounds,
 					Grid *grid, PlayerInfo *player, PlayerInfo *opponent,
 					Evaluation *evaluator);
 class AI
