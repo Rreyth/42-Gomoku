@@ -121,6 +121,8 @@ void	AI::startThread(
 	this->threadParams.aiDifficulty = this->difficulty;
 	this->threadParams.grid = grid;
 	this->threadParams.mutex = &this->mutex;
+	this->parallelRun.needCompute = false;
+	this->parallelRun.computeDone = false;
 	this->threadParams.parallelRun = &this->parallelRun;
 	this->threadParams.player = player;
 	this->threadParams.opponent = opponent;
