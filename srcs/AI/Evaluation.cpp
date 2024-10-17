@@ -486,7 +486,10 @@ static bool	isCapturable(
 				int plLine, int opLine, int bitX,
 				int nbStoneL, int nbStoneR, int nbStone);
 static int	computeBlockScore(int opLine);
-static int	computeCaptureScore();
+static int	computeCaptureScore(
+				BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
+				int *plCapture, int *opCapture, int x, int y,
+				int plLine, int opLine);
 
 
 
@@ -554,7 +557,10 @@ static int	evalPosAxis(
 	score += computeBlockScore(opLine);
 
 	// Get capture point
-	score += computeCaptureScore();
+	score += computeCaptureScore(
+				plBitBoard, opBitBoard, axis,
+				plCapture, opCapture, x, y,
+				plLine, opLine);
 
 	return (score);
 }
@@ -618,7 +624,9 @@ static int	computeAlignScore(
 	int		nbStoneL, nbStoneR, nbStone,
 			nbOpStoneL, nbOpStoneR, nbOpStone,
 			nbFreeL, nbFreeR,
-			checkNbStoneL[4], checkNbStoneR[4];
+			checkNbStoneL[4], checkNbStoneR[4],
+			alignScore[5],
+			score;
 
 	checkNbStoneL[0] = 0b000001000;
 	checkNbStoneL[1] = 0b000001100;
@@ -629,6 +637,12 @@ static int	computeAlignScore(
 	checkNbStoneR[1] = 0b001100000;
 	checkNbStoneR[2] = 0b011100000;
 	checkNbStoneR[3] = 0b111100000;
+
+	alignScore[0] = 10;
+	alignScore[1] = 100;
+	alignScore[2] = 1000;
+	alignScore[3] = 100000;
+	alignScore[4] = 10000000;
 
 	// Get the number of stone at the left (for H)
 	nbStoneL = 0;
@@ -690,10 +704,21 @@ static int	computeAlignScore(
 		return (CASE_WIN_POINT); // If yes, return the max score
 
 	// Get score of line
-	// Apply free space malus
-	// Add it to score
+	if (nbStone > 5)
+		nbStone = 5;
+	score = alignScore[nbStone - 1];
 
-	return (0);
+	// If threre is no enough space for a 5 stone ligne, greatly reduce score
+	if (nbFreeL + nbFreeR + 1 < 5)
+		score /= 100;
+	// If there is an opponent stone on the left on player line stone
+	if (nbFreeL == nbStoneL)
+		score /= 2;
+	// If there is an opponent stone on the right on player line stone
+	if (nbFreeR == nbStoneR)
+		score /= 2;
+
+	return (score);
 }
 
 
@@ -872,7 +897,9 @@ static bool	isCapturable(
 static int	computeBlockScore(int opLine)
 {
 	int	nbOpStoneL, nbOpStoneR, nbOpStone,
-		checkNbStoneL[4], checkNbStoneR[4];
+		checkNbStoneL[4], checkNbStoneR[4],
+		blockScore[5],
+		score;
 
 	checkNbStoneL[0] = 0b000001000;
 	checkNbStoneL[1] = 0b000001100;
@@ -883,6 +910,12 @@ static int	computeBlockScore(int opLine)
 	checkNbStoneR[1] = 0b001100000;
 	checkNbStoneR[2] = 0b011100000;
 	checkNbStoneR[3] = 0b111100000;
+
+	blockScore[0] = 0;
+	blockScore[1] = 10;
+	blockScore[2] = 100;
+	blockScore[3] = 10000;
+	blockScore[4] = 1000000;
 
 	nbOpStoneL = 0;
 	for (int i = 0; i < 4; i++)
@@ -904,16 +937,49 @@ static int	computeBlockScore(int opLine)
 	printf("Line block right : %i\n", nbOpStoneR);
 
 	// TODO: do this
-	nbOpStone = nbOpStoneL + nbOpStoneR + 1;
-	// Get score of block line
-	// Add it to score
+	nbOpStone = nbOpStoneL + nbOpStoneR;
 
-	return (0);
+	// Get score of block line
+	score = blockScore[nbOpStone];
+
+	return (score);
 }
 
 
-static int	computeCaptureScore()
+static int	computeCaptureScore(
+				BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
+				int *plCapture, int *opCapture, int x, int y,
+				int plLine, int opLine)
 {
+	// int		plCheckL, plCheckR,
+	// 		opCheckL, opCheckR;
+
+	// plCheckL = (plLine & 0b001101000) >> 3;
+	// plCheckR = (plLine & 0b000101100) >> 2;
+	// opCheckL = (opLine & 0b001101000) >> 3;
+	// opCheckR = (opLine & 0b000101100) >> 2;
+
+	// // Opponent capture left
+	// if (plCheckL == 0b0100 && (opCheckL == 0b1000 || opCheckR == 0b0001))
+	// {
+
+	// }
+	// // Opponent capture right
+	// else if (plCheckR == 0b0010 && (opCheckL == 0b1000 || opCheckR == 0b0001))
+	// {
+
+	// }
+	// // Player capture left
+	// else if (opCheckL == 0b0100 && (plCheckL == 0b1000 || plCheckR == 0b0001))
+	// {
+
+	// }
+	// // Player capture right
+	// else if (opCheckR == 0b0010 && (plCheckL == 0b1000 || plCheckR == 0b0001))
+	// {
+
+	// }
+
 	// TODO: do this
 	// Check if capture possible
 	// If yes :
@@ -925,4 +991,6 @@ static int	computeCaptureScore()
 	// If yes :
 	//   get score for block this capture
 	//   add score for make line of player stone saved
+
+	return (0);
 }
