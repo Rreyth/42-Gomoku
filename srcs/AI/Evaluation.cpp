@@ -59,6 +59,34 @@ Evaluation::Evaluation(void)
 	this->verifyAlignFullR[3] = 0b00111;
 	this->verifyAlignFullR[4] = 0b01111;
 	this->verifyAlignFullR[5] = 0b11111;
+
+
+	this->checkNbStoneL[0] = 0b000001000;
+	this->checkNbStoneL[1] = 0b000001100;
+	this->checkNbStoneL[2] = 0b000001110;
+	this->checkNbStoneL[3] = 0b000001111;
+
+	this->checkNbStoneR[0] = 0b000100000;
+	this->checkNbStoneR[1] = 0b001100000;
+	this->checkNbStoneR[2] = 0b011100000;
+	this->checkNbStoneR[3] = 0b111100000;
+
+	this->alignScore[0] = 10;
+	this->alignScore[1] = 100;
+	this->alignScore[2] = 1000;
+	this->alignScore[3] = 100000;
+	this->alignScore[4] = 10000000;
+
+	this->blockScore[0] = 0;
+	this->blockScore[1] = 10;
+	this->blockScore[2] = 100;
+	this->blockScore[3] = 10000;
+	this->blockScore[4] = 1000000;
+
+	this->addStepOnAxis[0] = sf::Vector2i(1, 0); // BBH
+	this->addStepOnAxis[1] = sf::Vector2i(0, 1); // BBV
+	this->addStepOnAxis[2] = sf::Vector2i(1, -1); // BBD
+	this->addStepOnAxis[3] = sf::Vector2i(1, 1); // BBA
 }
 
 
@@ -464,36 +492,6 @@ static void	printNbit(int line, int size, const char *txt)
 
 
 
-static int	evalPosAxis(
-				BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
-				int *plCapture, int *opCapture, int x, int y);
-static int	getLinePart(
-				BitBoard *plBitBoard, BitBoard *opBitBoard,
-				int x, int y, bitboardAxis axis,
-				int *plLinePart, int *opLinePart);
-static int	computeAlignScore(
-				BitBoard *plBitBoard, BitBoard *opBitBoard,
-				int x, int y, bitboardAxis axis,
-				int plLine, int opLine, int bitX);
-static bool	isLineWinnable(
-				BitBoard *plBitBoard, BitBoard *opBitBoard,
-				int x, int y, bitboardAxis axis,
-				int plLine, int opLine, int bitX,
-				int nbStoneL, int nbStoneR, int nbStone);
-static bool	isCapturable(
-				BitBoard *plBitBoard, BitBoard *opBitBoard,
-				int x, int y, bitboardAxis axis,
-				int plLine, int opLine, int bitX,
-				int nbStoneL, int nbStoneR, int nbStone);
-static int	computeBlockScore(int opLine);
-static int	computeCaptureScore(
-				BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
-				int *plCapture, int *opCapture, int x, int y,
-				int plLine, int opLine);
-
-
-
-
 int	Evaluation::evalPosition(
 					BitBoard *plBitBoard, BitBoard *opBitBoard,
 					int plCapture, int opCapture, int x, int y)
@@ -505,37 +503,38 @@ int	Evaluation::evalPosition(
 	// TODO: Return 0 if there already have a stone on this pos
 
 	// Evaluate on horizontal axis
-	score = evalPosAxis(
-				plBitBoard, opBitBoard, BBH,
-				&plCapture, &opCapture, x, y);
+	score = this->evalPosAxis(
+					plBitBoard, opBitBoard, BBH,
+					&plCapture, &opCapture, x, y);
 	if (score >= CASE_WIN_POINT)
 		return (score);
 
 	// Evaluate on vertical axis
-	score += evalPosAxis(
-				plBitBoard, opBitBoard, BBV,
-				&plCapture, &opCapture, x, y);
+	score += this->evalPosAxis(
+					plBitBoard, opBitBoard, BBV,
+					&plCapture, &opCapture, x, y);
 	if (score >= CASE_WIN_POINT)
 		return (score);
 
 	// Evaluate on diagonal axis
-	score += evalPosAxis(
-				plBitBoard, opBitBoard, BBD,
-				&plCapture, &opCapture, x, y);
+	score += this->evalPosAxis(
+					plBitBoard, opBitBoard, BBD,
+					&plCapture, &opCapture, x, y);
 	if (score >= CASE_WIN_POINT)
 		return (score);
 
 	// Evaluate on anti diagonal axis
-	score += evalPosAxis(
-				plBitBoard, opBitBoard, BBA,
-				&plCapture, &opCapture, x, y);
+	score += this->evalPosAxis(
+					plBitBoard, opBitBoard, BBA,
+					&plCapture, &opCapture, x, y);
 
 	return (score);
 }
 
-static int	evalPosAxis(
-				BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
-				int *plCapture, int *opCapture, int x, int y)
+
+int	Evaluation::evalPosAxis(
+					BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
+					int *plCapture, int *opCapture, int x, int y)
 {
 	int	score,
 		bitX, plLine, opLine;
@@ -546,28 +545,28 @@ static int	evalPosAxis(
 	score = 0;
 
 	// Get line part
-	bitX = getLinePart(plBitBoard, opBitBoard, x, y, axis, &plLine, &opLine);
+	bitX = this->getLinePart(plBitBoard, opBitBoard, x, y, axis, &plLine, &opLine);
 
 	// Get make line point
-	score += computeAlignScore(
-				plBitBoard, opBitBoard, x, y, axis,
-				plLine, opLine, bitX);
+	score += this->computeAlignScore(
+					plBitBoard, opBitBoard, x, y, axis,
+					plLine, opLine, bitX);
 
 	// Get block line point
-	score += computeBlockScore(opLine);
+	score += this->computeBlockScore(opLine);
 
 	// Get capture point
-	score += computeCaptureScore(
-				plBitBoard, opBitBoard, axis,
-				plCapture, opCapture, x, y,
-				plLine, opLine);
+	score += this->computeCaptureScore(
+					plBitBoard, opBitBoard, axis,
+					plCapture, opCapture, x, y,
+					plLine, opLine);
 
 	return (score);
 }
 
 
-static int	getLinePart(
-				BitBoard *plBitBoard, BitBoard *opBitBoard,
+int	Evaluation::getLinePart(
+					BitBoard *plBitBoard, BitBoard *opBitBoard,
 					int x, int y, bitboardAxis axis,
 					int *plLinePart, int *opLinePart)
 {
@@ -616,39 +615,21 @@ static int	getLinePart(
 }
 
 
-static int	computeAlignScore(
-				BitBoard *plBitBoard, BitBoard *opBitBoard,
+int	Evaluation::computeAlignScore(
+					BitBoard *plBitBoard, BitBoard *opBitBoard,
 					int x, int y, bitboardAxis axis,
 					int plLine, int opLine, int bitX)
 {
 	int		nbStoneL, nbStoneR, nbStone,
 			nbOpStoneL, nbOpStoneR, nbOpStone,
 			nbFreeL, nbFreeR,
-			checkNbStoneL[4], checkNbStoneR[4],
-			alignScore[5],
 			score;
-
-	checkNbStoneL[0] = 0b000001000;
-	checkNbStoneL[1] = 0b000001100;
-	checkNbStoneL[2] = 0b000001110;
-	checkNbStoneL[3] = 0b000001111;
-
-	checkNbStoneR[0] = 0b000100000;
-	checkNbStoneR[1] = 0b001100000;
-	checkNbStoneR[2] = 0b011100000;
-	checkNbStoneR[3] = 0b111100000;
-
-	alignScore[0] = 10;
-	alignScore[1] = 100;
-	alignScore[2] = 1000;
-	alignScore[3] = 100000;
-	alignScore[4] = 10000000;
 
 	// Get the number of stone at the left (for H)
 	nbStoneL = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		if ((plLine & checkNbStoneL[i]) == checkNbStoneL[i])
+		if ((plLine & this->checkNbStoneL[i]) == this->checkNbStoneL[i])
 			nbStoneL = i + 1;
 		else
 			break;
@@ -657,7 +638,7 @@ static int	computeAlignScore(
 	nbStoneR = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		if ((plLine & checkNbStoneR[i]) == checkNbStoneR[i])
+		if ((plLine & this->checkNbStoneR[i]) == this->checkNbStoneR[i])
 			nbStoneR = i + 1;
 		else
 			break;
@@ -669,7 +650,7 @@ static int	computeAlignScore(
 	nbFreeL = 4;
 	for (int i = 3; i >= 0; i--)
 	{
-		if (opLine & checkNbStoneL[i])
+		if (opLine & this->checkNbStoneL[i])
 			nbFreeL = i;
 		else
 			break;
@@ -682,7 +663,7 @@ static int	computeAlignScore(
 	nbFreeR = 4;
 	for (int i = 3; i >= 0; i--)
 	{
-		if (opLine & checkNbStoneR[i])
+		if (opLine & this->checkNbStoneR[i])
 			nbFreeR = i;
 		else
 			break;
@@ -697,16 +678,16 @@ static int	computeAlignScore(
 	nbStone = nbStoneL + nbStoneR + 1;
 
 	// If line have 5 or more stones, check if this is a victory
-	if (nbStone >= 5 && isLineWinnable(
-							plBitBoard, opBitBoard, x, y, axis,
-							plLine, opLine, bitX,
-							nbStoneL, nbStoneR, nbStone))
+	if (nbStone >= 5 && this->isLineWinnable(
+								plBitBoard, opBitBoard, x, y, axis,
+								plLine, opLine, bitX,
+								nbStoneL, nbStoneR, nbStone))
 		return (CASE_WIN_POINT); // If yes, return the max score
 
 	// Get score of line
 	if (nbStone > 5)
 		nbStone = 5;
-	score = alignScore[nbStone - 1];
+	score = this->alignScore[nbStone - 1];
 
 	// If threre is no enough space for a 5 stone ligne, greatly reduce score
 	if (nbFreeL + nbFreeR + 1 < 5)
@@ -722,14 +703,14 @@ static int	computeAlignScore(
 }
 
 
-static bool	isLineWinnable(
-				BitBoard *plBitBoard, BitBoard *opBitBoard,
-				int x, int y, bitboardAxis axis,
-				int plLine, int opLine, int bitX,
-				int nbStoneL, int nbStoneR, int nbStone)
+bool	Evaluation::isLineWinnable(
+						BitBoard *plBitBoard, BitBoard *opBitBoard,
+						int x, int y, bitboardAxis axis,
+						int plLine, int opLine, int bitX,
+						int nbStoneL, int nbStoneR, int nbStone)
 {
 	// Check killer move -------------------------------------------------
-	int 	checkX, checkY, addX, addY,
+	int 	checkX, checkY,
 			nbStoneOk, checkPlLine, checkOpLine;
 	bool	capturable;
 
@@ -738,29 +719,21 @@ static bool	isLineWinnable(
 	{
 		checkX = x - nbStoneL;
 		checkY = y;
-		addX = 1;
-		addY = 0;
 	}
 	else if (axis == BBV)
 	{
 		checkX = x;
 		checkY = y - nbStoneL;
-		addX = 0;
-		addY = 1;
 	}
 	else if (axis == BBD)
 	{
 		checkX = x - nbStoneL;
 		checkY = y + nbStoneL;
-		addX = 1;
-		addY = -1;
 	}
 	else // BBA
 	{
 		checkX = x - nbStoneL;
 		checkY = y - nbStoneL;
-		addX = 1;
-		addY = 1;
 	}
 
 	// For each stone
@@ -770,10 +743,10 @@ static bool	isLineWinnable(
 		capturable = false;
 
 		// If the stone is capturable, break the winning line
-		if (isCapturable(
-				plBitBoard, opBitBoard, checkX, checkY, axis,
-				plLine, opLine, bitX,
-				nbStoneL, nbStoneR, nbStone))
+		if (this->isCapturable(
+					plBitBoard, opBitBoard, checkX, checkY, axis,
+					plLine, opLine, bitX,
+					nbStoneL, nbStoneR, nbStone))
 		{
 			nbStoneOk = 0;
 			// If we know there is not enough stone left to win, stop here
@@ -788,8 +761,8 @@ static bool	isLineWinnable(
 			if (nbStoneOk == 5)
 				break;
 		}
-		checkX += addX;
-		checkY += addY;
+		checkX += this->addStepOnAxis[axis].x;
+		checkY += this->addStepOnAxis[axis].y;
 	}
 
 	// If there is 5 stones ok, it's a victory !
@@ -799,11 +772,11 @@ static bool	isLineWinnable(
 }
 
 
-static bool	isCapturable(
-				BitBoard *plBitBoard, BitBoard *opBitBoard,
-				int x, int y, bitboardAxis axis,
-				int plLine, int opLine, int bitX,
-				int nbStoneL, int nbStoneR, int nbStone)
+bool	Evaluation::isCapturable(
+						BitBoard *plBitBoard, BitBoard *opBitBoard,
+						int x, int y, bitboardAxis axis,
+						int plLine, int opLine, int bitX,
+						int nbStoneL, int nbStoneR, int nbStone)
 {
 	bool	skipCapture1, skipCapture2;
 	int		shift,
@@ -894,33 +867,15 @@ static bool	isCapturable(
 }
 
 
-static int	computeBlockScore(int opLine)
+int	Evaluation::computeBlockScore(int opLine)
 {
 	int	nbOpStoneL, nbOpStoneR, nbOpStone,
-		checkNbStoneL[4], checkNbStoneR[4],
-		blockScore[5],
 		score;
-
-	checkNbStoneL[0] = 0b000001000;
-	checkNbStoneL[1] = 0b000001100;
-	checkNbStoneL[2] = 0b000001110;
-	checkNbStoneL[3] = 0b000001111;
-
-	checkNbStoneR[0] = 0b000100000;
-	checkNbStoneR[1] = 0b001100000;
-	checkNbStoneR[2] = 0b011100000;
-	checkNbStoneR[3] = 0b111100000;
-
-	blockScore[0] = 0;
-	blockScore[1] = 10;
-	blockScore[2] = 100;
-	blockScore[3] = 10000;
-	blockScore[4] = 1000000;
 
 	nbOpStoneL = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		if ((opLine & checkNbStoneL[i]) == checkNbStoneL[i])
+		if ((opLine & this->checkNbStoneL[i]) == this->checkNbStoneL[i])
 			nbOpStoneL = i + 1;
 		else
 			break;
@@ -928,7 +883,7 @@ static int	computeBlockScore(int opLine)
 	nbOpStoneR = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		if ((opLine & checkNbStoneR[i]) == checkNbStoneR[i])
+		if ((opLine & this->checkNbStoneR[i]) == this->checkNbStoneR[i])
 			nbOpStoneR = i + 1;
 		else
 			break;
@@ -940,57 +895,184 @@ static int	computeBlockScore(int opLine)
 	nbOpStone = nbOpStoneL + nbOpStoneR;
 
 	// Get score of block line
-	score = blockScore[nbOpStone];
+	score = this->blockScore[nbOpStone];
 
 	return (score);
 }
 
 
-static int	computeCaptureScore(
-				BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
-				int *plCapture, int *opCapture, int x, int y,
-				int plLine, int opLine)
+int	Evaluation::computeCaptureScore(
+					BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
+					int *plCapture, int *opCapture, int x, int y,
+					int plLine, int opLine)
 {
-	// int		plCheckL, plCheckR,
-	// 		opCheckL, opCheckR;
+	int		plCheckL, plCheckR,
+			opCheckL, opCheckR,
+			check1X, check1Y,
+			check2X, check2Y,
+			nbStone1, nbStone2,
+			score;
 
-	// plCheckL = (plLine & 0b001101000) >> 3;
-	// plCheckR = (plLine & 0b000101100) >> 2;
-	// opCheckL = (opLine & 0b001101000) >> 3;
-	// opCheckR = (opLine & 0b000101100) >> 2;
+	char	*charAxis = "HVDA";
 
-	// // Opponent capture left
-	// if (plCheckL == 0b0100 && (opCheckL == 0b1000 || opCheckR == 0b0001))
-	// {
+	score = 0;
+	plCheckL = (plLine & 0b000001110) >> 1;
+	plCheckR = (plLine & 0b011100000) >> 4;
+	opCheckL = (opLine & 0b000001110) >> 1;
+	opCheckR = (opLine & 0b011100000) >> 4;
 
-	// }
-	// // Opponent capture right
-	// else if (plCheckR == 0b0010 && (opCheckL == 0b1000 || opCheckR == 0b0001))
-	// {
+	// Player capture left
+	if (opCheckL == 0b0110 && plCheckL == 0b0001)
+	{
+		printf("Player capture left\n");
+		check1X = x - this->addStepOnAxis[axis].x;
+		check1Y = y - this->addStepOnAxis[axis].y;
+		check2X = check1X - this->addStepOnAxis[axis].x;
+		check2Y = check1Y - this->addStepOnAxis[axis].y;
 
-	// }
-	// // Player capture left
-	// else if (opCheckL == 0b0100 && (plCheckL == 0b1000 || plCheckR == 0b0001))
-	// {
+		for (int checkAxis = 0; checkAxis < 4; checkAxis++)
+		{
+			if (checkAxis == axis)
+				continue;
 
-	// }
-	// // Player capture right
-	// else if (opCheckR == 0b0010 && (plCheckL == 0b1000 || plCheckR == 0b0001))
-	// {
+			nbStone1 = this->getLineOfPos(
+								opBitBoard, check1X, check1Y,
+								(bitboardAxis)checkAxis);
+			score += this->blockScore[nbStone1 - 1];
+			printf(" for %i %i, block line of %i in %c axis for %i score\n",
+					check1X, check1Y, nbStone1, charAxis[checkAxis], this->blockScore[nbStone1 - 1]);
 
-	// }
+			nbStone2 = this->getLineOfPos(
+								opBitBoard, check2X, check2Y,
+								(bitboardAxis)checkAxis);
+			score += this->blockScore[nbStone2 - 1];
+			printf(" for %i %i, block line of %i in %c axis for %i score\n",
+					check2X, check2Y, nbStone2, charAxis[checkAxis], this->blockScore[nbStone2 - 1]);
+		}
+		return (score);
+	}
 
-	// TODO: do this
-	// Check if capture possible
-	// If yes :
-	//   get score for this capture
-	//   update plCapture
-	//   add score for block line of ennemi stone captured
+	// Player capture right
+	if (opCheckR == 0b0110 && plCheckR == 0b1000)
+	{
+		printf("Player capture right\n");
+		check1X = x + this->addStepOnAxis[axis].x;
+		check1Y = y + this->addStepOnAxis[axis].y;
+		check2X = check1X + this->addStepOnAxis[axis].x;
+		check2Y = check1Y + this->addStepOnAxis[axis].y;
 
-	// Check if block capture possible
-	// If yes :
-	//   get score for block this capture
-	//   add score for make line of player stone saved
+		for (int checkAxis = 0; checkAxis < 4; checkAxis++)
+		{
+			if (checkAxis == axis)
+				continue;
 
-	return (0);
+			nbStone1 = this->getLineOfPos(
+								opBitBoard, check1X, check1Y,
+								(bitboardAxis)checkAxis);
+			score += this->blockScore[nbStone1 - 1];
+			printf(" for %i %i, block line of %i in %c axis for %i score\n",
+					check1X, check1Y, nbStone1, charAxis[checkAxis], this->blockScore[nbStone1 - 1]);
+
+			nbStone2 = this->getLineOfPos(
+								opBitBoard, check2X, check2Y,
+								(bitboardAxis)checkAxis);
+			score += this->blockScore[nbStone2 - 1];
+			printf(" for %i %i, block line of %i in %c axis for %i score\n",
+					check2X, check2Y, nbStone2, charAxis[checkAxis], this->blockScore[nbStone2 - 1]);
+		}
+		return (score);
+	}
+
+	// Player block capture left
+	if (plCheckL == 0b0110 && opCheckL == 0b0001)
+	{
+		printf("Player block capture left\n");
+		check1X = x - this->addStepOnAxis[axis].x;
+		check1Y = y - this->addStepOnAxis[axis].y;
+		check2X = check1X - this->addStepOnAxis[axis].x;
+		check2Y = check1Y - this->addStepOnAxis[axis].y;
+
+		for (int checkAxis = 0; checkAxis < 4; checkAxis++)
+		{
+			if (checkAxis == axis)
+				continue;
+
+			nbStone1 = this->getLineOfPos(
+								plBitBoard, check1X, check1Y,
+								(bitboardAxis)checkAxis);
+			score += this->alignScore[nbStone1 - 1];
+			printf(" for %i %i, save line of %i in %c axis for %i score\n",
+					check1X, check1Y, nbStone1, charAxis[checkAxis], this->alignScore[nbStone1 - 1]);
+
+			nbStone2 = this->getLineOfPos(
+								plBitBoard, check2X, check2Y,
+								(bitboardAxis)checkAxis);
+			score += this->alignScore[nbStone2 - 1];
+			printf(" for %i %i, save line of %i in %c axis for %i score\n",
+					check2X, check2Y, nbStone2, charAxis[checkAxis], this->alignScore[nbStone2 - 1]);
+		}
+		return (score);
+	}
+
+	// Player block capture right
+	if (plCheckR == 0b0110 && opCheckR == 0b1000)
+	{
+		printf("Player block capture right\n");
+		check1X = x + this->addStepOnAxis[axis].x;
+		check1Y = y + this->addStepOnAxis[axis].y;
+		check2X = check1X + this->addStepOnAxis[axis].x;
+		check2Y = check1Y + this->addStepOnAxis[axis].y;
+
+		for (int checkAxis = 0; checkAxis < 4; checkAxis++)
+		{
+			if (checkAxis == axis)
+				continue;
+
+			nbStone1 = this->getLineOfPos(
+								plBitBoard, check1X, check1Y,
+								(bitboardAxis)checkAxis);
+			score += this->alignScore[nbStone1 - 1];
+			printf(" for %i %i, save line of %i in %c axis for %i score\n",
+					check1X, check1Y, nbStone1, charAxis[checkAxis], this->alignScore[nbStone1 - 1]);
+
+			nbStone2 = this->getLineOfPos(
+								plBitBoard, check2X, check2Y,
+								(bitboardAxis)checkAxis);
+			score += this->alignScore[nbStone2 - 1];
+			printf(" for %i %i, save line of %i in %c axis for %i score\n",
+					check2X, check2Y, nbStone2, charAxis[checkAxis], this->alignScore[nbStone2 - 1]);
+		}
+	}
+
+	return (score);
+}
+
+
+int	Evaluation::getLineOfPos(
+					BitBoard *bitboard,
+					int x, int y, bitboardAxis axis)
+{
+	int	line, nbStoneL, nbStoneR, nbStone;
+
+	line = bitboard->getLine(axis, x, y);
+
+	// Get the number of stone at the left (for H)
+	nbStoneL = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		if ((line & this->checkNbStoneL[i]) == this->checkNbStoneL[i])
+			nbStoneL = i + 1;
+		else
+			break;
+	}
+	// Get the number of stone at the right (for H)
+	nbStoneR = 0;
+	for (int i = 0; i < 4; i++)
+	{
+		if ((line & this->checkNbStoneR[i]) == this->checkNbStoneR[i])
+			nbStoneR = i + 1;
+		else
+			break;
+	}
+	return (nbStoneL + nbStoneR + 1);
 }
