@@ -143,10 +143,9 @@ void	Grid::tick(display_state *displayState, Mouse *mouse,
 		evalL = evaluator->evalPosition(
 							&this->bitboardL, &this->bitboardR,
 							captureL, captureR, px, py);
-		// evalR = evaluator->evalPosition(
-		// 					&this->bitboardR, &this->bitboardL,
-		// 					captureR, captureL, px, py);
-		evalR = 0;
+		evalR = evaluator->evalPosition(
+							&this->bitboardR, &this->bitboardL,
+							captureR, captureL, px, py);
 
 		xaxis = "ABCDEFGHIJKLMNOPQRSTUVW";
 		printf("\nEvaluation of %c%i : %i | %i\n",
@@ -524,10 +523,10 @@ void	Grid::getInterestingMovesSorted(
 		Move	move;
 		move.pos = movesPosition[i];
 
-		move.eval = evaluator->evaluationPosition(
-											&plBitboard, &opBitboard,
-											plCapture, opCapture,
-											move.pos.x, move.pos.y);
+		move.eval = evaluator->evalPosition(
+								&plBitboard, &opBitboard,
+								plCapture, opCapture,
+								move.pos.x, move.pos.y);
 		if (!reverse)
 			move.eval = -move.eval;
 		moves->push_back(move);

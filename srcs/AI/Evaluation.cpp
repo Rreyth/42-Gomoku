@@ -469,32 +469,6 @@ int	Evaluation::evaluateGridOnAxis(
 }
 
 
-// TODO: REMOVE
-static void	printLineOnly(int line, int size)
-{
-	for (int i = size - 1; i >= 0; i--)
-	{
-		if (line & (1 << i))
-			printf("1");
-		else
-			printf(".");
-	}
-	printf("\n");
-}
-
-static void	printLine(int line, const char *txt)
-{
-	printf(txt);
-	printLineOnly(line, GRID_W_INTER);
-}
-
-static void	printNbit(int line, int size, const char *txt)
-{
-	printf(txt);
-	printLineOnly(line, size);
-}
-
-
 
 int	Evaluation::evalPosition(
 					BitBoard *plBitBoard, BitBoard *opBitBoard,
@@ -502,9 +476,7 @@ int	Evaluation::evalPosition(
 {
 	int	score = 0;
 
-	printf("\n\nNew evaluation of %i %i\n", x, y);
-
-	// TODO: Return 0 if there already have a stone on this pos
+	// Return 0 if there already have a stone on this pos
 	if (plBitBoard->get(x, y) || opBitBoard->get(x, y))
 		return (0);
 
@@ -545,9 +517,6 @@ int	Evaluation::evalPosAxis(
 	int	score,
 		bitX, plLine, opLine,
 		nbStoneBlock;
-
-	char	*charAxis = "HVDA";
-	printf("\nAXIS %c ==============================================\n", charAxis[axis]);
 
 	score = 0;
 
@@ -591,17 +560,12 @@ int	Evaluation::getLinePart(
 	plLine = plBitBoard->getLine(axis, x, y);
 	opLine = opBitBoard->getLine(axis, x, y);
 
-	printLine(plLine, "Player line :   ");
-	printLine(opLine, "Opponent line : ");
-
 	// Compute shift
 	shift = bitX - 4;
 	if (shift < 0)
 		lineMask = 0b111111111 >> -shift;
 	else
 		lineMask = 0b111111111 << shift;
-
-	printLine(lineMask, "Mask :          ");
 
 	// Compute line part by apply the mask and shift it
 	if (shift < 0)
@@ -614,9 +578,6 @@ int	Evaluation::getLinePart(
 		*plLinePart = (plLine & lineMask) >> shift;
 		*opLinePart = (opLine & lineMask) >> shift;
 	}
-
-	printNbit(*plLinePart, 9, "plLine : ");
-	printNbit(*opLinePart, 9, "opLine : ");
 
 	return (bitX);
 }
@@ -650,8 +611,6 @@ int	Evaluation::computeAlignScore(
 		else
 			break;
 	}
-	printf("Line left  : %i\n", nbStoneL);
-	printf("Line right : %i\n", nbStoneR);
 
 	// Get the number of space before the closest ennemy stone on the left
 	nbFreeL = 5;
@@ -678,9 +637,6 @@ int	Evaluation::computeAlignScore(
 	// Correct the free space in accordance with the border
 	if (bitX + nbFreeR >= GRID_W_INTER)
 		nbFreeR -= (bitX + nbFreeR) - GRID_W_INTER + 1;
-
-	printf("Free space left  : %i\n", nbFreeL);
-	printf("Free space right : %i\n", nbFreeR);
 
 	nbStone = nbStoneL + nbStoneR + 1;
 
@@ -716,7 +672,7 @@ bool	Evaluation::isLineWinnable(
 						int plLine, int opLine, int bitX,
 						int nbStoneL, int nbStoneR, int nbStone)
 {
-	// Check killer move -------------------------------------------------
+	// Check killer move
 	int 	checkX, checkY,
 			nbStoneOk, checkPlLine, checkOpLine;
 	bool	capturable;
@@ -895,10 +851,7 @@ int	Evaluation::computeBlockScore(int opLine)
 		else
 			break;
 	}
-	printf("Line block left  : %i\n", nbOpStoneL);
-	printf("Line block right : %i\n", nbOpStoneR);
 
-	// TODO: do this
 	nbOpStone = nbOpStoneL + nbOpStoneR;
 
 	// Get score of block line
@@ -920,8 +873,6 @@ int	Evaluation::computeCaptureScore(
 			nbStone1, nbStone2,
 			score;
 
-	char	*charAxis = "HVDA";
-
 	score = 0;
 	plCheckL = (plLine & 0b000001110) >> 1;
 	plCheckR = (plLine & 0b011100000) >> 4;
@@ -931,7 +882,6 @@ int	Evaluation::computeCaptureScore(
 	// Player capture left
 	if (opCheckL == 0b0110 && plCheckL == 0b0001)
 	{
-		printf("Player capture left\n");
 		// Get addition score for capture
 		if (*plCapture == 8)
 			return (CASE_WIN_POINT);
@@ -956,16 +906,18 @@ int	Evaluation::computeCaptureScore(
 			nbStone1 = this->getLineOfPos(
 								opBitBoard, check1X, check1Y,
 								(bitboardAxis)checkAxis);
-			score += this->blockScore[nbStone1 - 1];
-			printf(" for %i %i, block line of %i in %c axis for %i score\n",
-					check1X, check1Y, nbStone1, charAxis[checkAxis], this->blockScore[nbStone1 - 1]);
+			if (nbStone1 != 5)
+				score += this->blockScore[nbStone1 - 1];
+			else
+				score -= 1000000;
 
 			nbStone2 = this->getLineOfPos(
 								opBitBoard, check2X, check2Y,
 								(bitboardAxis)checkAxis);
-			score += this->blockScore[nbStone2 - 1];
-			printf(" for %i %i, block line of %i in %c axis for %i score\n",
-					check2X, check2Y, nbStone2, charAxis[checkAxis], this->blockScore[nbStone2 - 1]);
+			if (nbStone2 != 5)
+				score += this->blockScore[nbStone2 - 1];
+			else
+				score -= 1000000;
 		}
 		return (score);
 	}
@@ -973,7 +925,6 @@ int	Evaluation::computeCaptureScore(
 	// Player capture right
 	if (opCheckR == 0b0110 && plCheckR == 0b1000)
 	{
-		printf("Player capture right\n");
 		// Get addition score for capture
 		if (*plCapture == 8)
 			return (CASE_WIN_POINT);
@@ -998,16 +949,18 @@ int	Evaluation::computeCaptureScore(
 			nbStone1 = this->getLineOfPos(
 								opBitBoard, check1X, check1Y,
 								(bitboardAxis)checkAxis);
-			score += this->blockScore[nbStone1 - 1];
-			printf(" for %i %i, block line of %i in %c axis for %i score\n",
-					check1X, check1Y, nbStone1, charAxis[checkAxis], this->blockScore[nbStone1 - 1]);
+			if (nbStone1 != 5)
+				score += this->blockScore[nbStone1 - 1];
+			else
+				score -= 1000000;
 
 			nbStone2 = this->getLineOfPos(
 								opBitBoard, check2X, check2Y,
 								(bitboardAxis)checkAxis);
-			score += this->blockScore[nbStone2 - 1];
-			printf(" for %i %i, block line of %i in %c axis for %i score\n",
-					check2X, check2Y, nbStone2, charAxis[checkAxis], this->blockScore[nbStone2 - 1]);
+			if (nbStone2 != 5)
+				score += this->blockScore[nbStone2 - 1];
+			else
+				score -= 1000000;
 		}
 		return (score);
 	}
@@ -1015,7 +968,6 @@ int	Evaluation::computeCaptureScore(
 	// Player block capture left
 	if (plCheckL == 0b0110 && opCheckL == 0b0001)
 	{
-		printf("Player block capture left\n");
 		// Get addition score for block capture
 		if (opCapture == 8)
 			score += 50000000;
@@ -1037,16 +989,18 @@ int	Evaluation::computeCaptureScore(
 			nbStone1 = this->getLineOfPos(
 								plBitBoard, check1X, check1Y,
 								(bitboardAxis)checkAxis);
-			score += this->alignScore[nbStone1 - 1];
-			printf(" for %i %i, save line of %i in %c axis for %i score\n",
-					check1X, check1Y, nbStone1, charAxis[checkAxis], this->alignScore[nbStone1 - 1]);
+			if (nbStone1 == 5)
+				score += this->alignScore[nbStone1 - 1];
+			else if (nbStone1 > 0)
+				score += this->alignScore[nbStone1 - 2];
 
 			nbStone2 = this->getLineOfPos(
 								plBitBoard, check2X, check2Y,
 								(bitboardAxis)checkAxis);
-			score += this->alignScore[nbStone2 - 1];
-			printf(" for %i %i, save line of %i in %c axis for %i score\n",
-					check2X, check2Y, nbStone2, charAxis[checkAxis], this->alignScore[nbStone2 - 1]);
+			if (nbStone2 == 5)
+				score += this->alignScore[nbStone2 - 1];
+			else if (nbStone2 > 0)
+				score += this->alignScore[nbStone2 - 2];
 		}
 		return (score);
 	}
@@ -1054,7 +1008,6 @@ int	Evaluation::computeCaptureScore(
 	// Player block capture right
 	if (plCheckR == 0b0110 && opCheckR == 0b1000)
 	{
-		printf("Player block capture right\n");
 		// Get addition score for block capture
 		if (opCapture == 8)
 			score += 50000000;
@@ -1076,16 +1029,18 @@ int	Evaluation::computeCaptureScore(
 			nbStone1 = this->getLineOfPos(
 								plBitBoard, check1X, check1Y,
 								(bitboardAxis)checkAxis);
-			score += this->alignScore[nbStone1 - 1];
-			printf(" for %i %i, save line of %i in %c axis for %i score\n",
-					check1X, check1Y, nbStone1, charAxis[checkAxis], this->alignScore[nbStone1 - 1]);
+			if (nbStone1 == 5)
+				score += this->alignScore[nbStone1 - 1];
+			else if (nbStone1 > 0)
+				score += this->alignScore[nbStone1 - 2];
 
 			nbStone2 = this->getLineOfPos(
 								plBitBoard, check2X, check2Y,
 								(bitboardAxis)checkAxis);
-			score += this->alignScore[nbStone2 - 1];
-			printf(" for %i %i, save line of %i in %c axis for %i score\n",
-					check2X, check2Y, nbStone2, charAxis[checkAxis], this->alignScore[nbStone2 - 1]);
+			if (nbStone2 == 5)
+				score += this->alignScore[nbStone2 - 1];
+			else if (nbStone2 > 0)
+				score += this->alignScore[nbStone2 - 2];
 		}
 	}
 
@@ -1138,5 +1093,8 @@ int	Evaluation::getLineOfPos(
 		else
 			break;
 	}
-	return (nbStoneL + nbStoneR + 1);
+	nbStone = nbStoneL + nbStoneR + 1;
+	if (nbStone > 5)
+		nbStone = 5;
+	return (nbStone);
 }

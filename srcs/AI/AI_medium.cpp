@@ -22,9 +22,6 @@ static void	unmakeMove(
 				PlayerInfo *player, PlayerInfo *opponent, bool playerTurn,
 				BitBoard *saveBitboard, BboxManager *saveBboxManager,
 				int plSaveNbCapture, int opSaveNbCapture);
-static int	checkKillerMove(
-				Grid *grid, bool playerTurn, int moveEvaluation,
-				PlayerInfo *player, PlayerInfo *opponent);
 
 sf::Vector2i	getMediumMove(
 					std::unordered_map<std::size_t, std::vector<Move>> *memoryMoves,
@@ -148,13 +145,10 @@ static Move	negaMax(
 		makeMove(
 			grid, &moves[i].pos, nbMove, depth, player, opponent, playerTurn);
 
-		// Check if move is a killer move
-		tmpMove.eval = checkKillerMove(
-							grid, playerTurn, moves[i].eval, player, opponent);
-
-		// Check if this move isn't a killer one. In this case, the eval is 0
+		// Check if this move isn't a killer one.
+		// In this case, the eval is less than 1000000000
 		// A killer move is the end of the game, so don't contine recursion
-		if (tmpMove.eval == 0)
+		if (moves[i].eval < CASE_WIN_POINT)
 		{
 			// Call negaMax to next player reply score
 			tmpMove = negaMax(
@@ -165,6 +159,8 @@ static Move	negaMax(
 			// a bad move for player
 			tmpMove.eval = -tmpMove.eval;
 		}
+		else
+			tmpMove.eval = moves[i].eval;
 
 		// Reverse the move
 		unmakeMove(
@@ -253,58 +249,4 @@ static void	unmakeMove(
 			grid->setBboxManager(saveBboxManager);
 		opponent->nbMove--;
 	}
-}
-
-
-static int	checkKillerMove(
-				Grid *grid, bool playerTurn, int moveEvaluation,
-				PlayerInfo *player, PlayerInfo *opponent)
-{
-	int	score; // Remove it and return instant
-
-	// Use the evaluation of position to limit the number of check win
-	if (moveEvaluation < 10000000)
-		return (0);
-
-	score = 0;
-	if (playerTurn)
-	{
-		// Check if player move is a killer move
-		if (grid->checkWinCondition(player, opponent))
-		{
-			// Player win from player view point = good
-			if (player->winState != WIN_STATE_NONE)
-			{
-				player->winState = WIN_STATE_NONE;
-				score = CASE_WIN_POINT;
-			}
-			// Opponent win from player view point = bad
-			else
-			{
-				opponent->winState = WIN_STATE_NONE;
-				score = CASE_LOOSE_POINT;
-			}
-		}
-	}
-	else
-	{
-		// Check if opponent move is a killer move
-		if (grid->checkWinCondition(opponent, player))
-		{
-			// Player win from opponent view point = bad
-			if (player->winState != WIN_STATE_NONE)
-			{
-				player->winState = WIN_STATE_NONE;
-				score = CASE_LOOSE_POINT;
-			}
-			// Opponent win from opponent view point = good
-			else
-			{
-				opponent->winState = WIN_STATE_NONE;
-				score = CASE_WIN_POINT;
-			}
-		}
-	}
-
-	return (score);
 }
