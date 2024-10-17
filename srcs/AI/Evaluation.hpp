@@ -47,7 +47,7 @@ private:
 
 	int		evalPosAxis(
 				BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
-				int *plCapture, int *opCapture, int x, int y);
+				int *plCapture, int opCapture, int x, int y);
 	int		getLinePart(
 				BitBoard *plBitBoard, BitBoard *opBitBoard,
 				int x, int y, bitboardAxis axis,
@@ -69,7 +69,7 @@ private:
 	int		computeBlockScore(int opLine);
 	int		computeCaptureScore(
 				BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
-				int *plCapture, int *opCapture, int x, int y,
+				int *plCapture, int opCapture, int x, int y,
 				int plLine, int opLine);
 	int		getLineOfPos(
 				BitBoard *bitboard,

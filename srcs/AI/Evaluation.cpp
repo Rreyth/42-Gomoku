@@ -61,22 +61,26 @@ Evaluation::Evaluation(void)
 	this->verifyAlignFullR[5] = 0b11111;
 
 
+	// Mask for align stone left
 	this->checkNbStoneL[0] = 0b000001000;
 	this->checkNbStoneL[1] = 0b000001100;
 	this->checkNbStoneL[2] = 0b000001110;
 	this->checkNbStoneL[3] = 0b000001111;
 
+	// Mask for align stone right
 	this->checkNbStoneR[0] = 0b000100000;
 	this->checkNbStoneR[1] = 0b001100000;
 	this->checkNbStoneR[2] = 0b011100000;
 	this->checkNbStoneR[3] = 0b111100000;
 
+	// Score for align stone
 	this->alignScore[0] = 10;
 	this->alignScore[1] = 100;
 	this->alignScore[2] = 1000;
 	this->alignScore[3] = 100000;
 	this->alignScore[4] = 10000000;
 
+	// Score for block stone align
 	this->blockScore[0] = 0;
 	this->blockScore[1] = 10;
 	this->blockScore[2] = 100;
@@ -501,32 +505,34 @@ int	Evaluation::evalPosition(
 	printf("\n\nNew evaluation of %i %i\n", x, y);
 
 	// TODO: Return 0 if there already have a stone on this pos
+	if (plBitBoard->get(x, y) || opBitBoard->get(x, y))
+		return (0);
 
 	// Evaluate on horizontal axis
 	score = this->evalPosAxis(
 					plBitBoard, opBitBoard, BBH,
-					&plCapture, &opCapture, x, y);
+					&plCapture, opCapture, x, y);
 	if (score >= CASE_WIN_POINT)
 		return (score);
 
 	// Evaluate on vertical axis
 	score += this->evalPosAxis(
 					plBitBoard, opBitBoard, BBV,
-					&plCapture, &opCapture, x, y);
+					&plCapture, opCapture, x, y);
 	if (score >= CASE_WIN_POINT)
 		return (score);
 
 	// Evaluate on diagonal axis
 	score += this->evalPosAxis(
 					plBitBoard, opBitBoard, BBD,
-					&plCapture, &opCapture, x, y);
+					&plCapture, opCapture, x, y);
 	if (score >= CASE_WIN_POINT)
 		return (score);
 
 	// Evaluate on anti diagonal axis
 	score += this->evalPosAxis(
 					plBitBoard, opBitBoard, BBA,
-					&plCapture, &opCapture, x, y);
+					&plCapture, opCapture, x, y);
 
 	return (score);
 }
@@ -534,10 +540,11 @@ int	Evaluation::evalPosition(
 
 int	Evaluation::evalPosAxis(
 					BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
-					int *plCapture, int *opCapture, int x, int y)
+					int *plCapture, int opCapture, int x, int y)
 {
 	int	score,
-		bitX, plLine, opLine;
+		bitX, plLine, opLine,
+		nbStoneBlock;
 
 	char	*charAxis = "HVDA";
 	printf("\nAXIS %c ==============================================\n", charAxis[axis]);
@@ -647,7 +654,7 @@ int	Evaluation::computeAlignScore(
 	printf("Line right : %i\n", nbStoneR);
 
 	// Get the number of space before the closest ennemy stone on the left
-	nbFreeL = 4;
+	nbFreeL = 5;
 	for (int i = 3; i >= 0; i--)
 	{
 		if (opLine & this->checkNbStoneL[i])
@@ -660,7 +667,7 @@ int	Evaluation::computeAlignScore(
 		nbFreeL += bitX - nbFreeL;
 
 	// Get the number of space before the closest ennemy stone on the right
-	nbFreeR = 4;
+	nbFreeR = 5;
 	for (int i = 3; i >= 0; i--)
 	{
 		if (opLine & this->checkNbStoneR[i])
@@ -689,9 +696,9 @@ int	Evaluation::computeAlignScore(
 		nbStone = 5;
 	score = this->alignScore[nbStone - 1];
 
-	// If threre is no enough space for a 5 stone ligne, greatly reduce score
+	// If threre is no enough space for a 5 stone ligne, it's a 0 score
 	if (nbFreeL + nbFreeR + 1 < 5)
-		score /= 100;
+		return (0);
 	// If there is an opponent stone on the left on player line stone
 	if (nbFreeL == nbStoneL)
 		score /= 2;
@@ -903,7 +910,7 @@ int	Evaluation::computeBlockScore(int opLine)
 
 int	Evaluation::computeCaptureScore(
 					BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
-					int *plCapture, int *opCapture, int x, int y,
+					int *plCapture, int opCapture, int x, int y,
 					int plLine, int opLine)
 {
 	int		plCheckL, plCheckR,
@@ -925,6 +932,17 @@ int	Evaluation::computeCaptureScore(
 	if (opCheckL == 0b0110 && plCheckL == 0b0001)
 	{
 		printf("Player capture left\n");
+		// Get addition score for capture
+		if (*plCapture == 8)
+			return (CASE_WIN_POINT);
+		else if (*plCapture == 6)
+			score += 5000;
+		else
+			score += 500;
+
+		// Update number of capture for further check
+		*plCapture += 2;
+
 		check1X = x - this->addStepOnAxis[axis].x;
 		check1Y = y - this->addStepOnAxis[axis].y;
 		check2X = check1X - this->addStepOnAxis[axis].x;
@@ -956,6 +974,17 @@ int	Evaluation::computeCaptureScore(
 	if (opCheckR == 0b0110 && plCheckR == 0b1000)
 	{
 		printf("Player capture right\n");
+		// Get addition score for capture
+		if (*plCapture == 8)
+			return (CASE_WIN_POINT);
+		else if (*plCapture == 6)
+			score += 5000;
+		else
+			score += 500;
+
+		// Update number of capture for further check
+		*plCapture += 2;
+
 		check1X = x + this->addStepOnAxis[axis].x;
 		check1Y = y + this->addStepOnAxis[axis].y;
 		check2X = check1X + this->addStepOnAxis[axis].x;
@@ -987,6 +1016,14 @@ int	Evaluation::computeCaptureScore(
 	if (plCheckL == 0b0110 && opCheckL == 0b0001)
 	{
 		printf("Player block capture left\n");
+		// Get addition score for block capture
+		if (opCapture == 8)
+			score += 50000000;
+		else if (opCapture == 6)
+			score += 2500;
+		else
+			score += 250;
+
 		check1X = x - this->addStepOnAxis[axis].x;
 		check1Y = y - this->addStepOnAxis[axis].y;
 		check2X = check1X - this->addStepOnAxis[axis].x;
@@ -1018,6 +1055,14 @@ int	Evaluation::computeCaptureScore(
 	if (plCheckR == 0b0110 && opCheckR == 0b1000)
 	{
 		printf("Player block capture right\n");
+		// Get addition score for block capture
+		if (opCapture == 8)
+			score += 50000000;
+		else if (opCapture == 6)
+			score += 2500;
+		else
+			score += 250;
+
 		check1X = x + this->addStepOnAxis[axis].x;
 		check1Y = y + this->addStepOnAxis[axis].y;
 		check2X = check1X + this->addStepOnAxis[axis].x;
@@ -1052,15 +1097,34 @@ int	Evaluation::getLineOfPos(
 					BitBoard *bitboard,
 					int x, int y, bitboardAxis axis)
 {
-	int	line, nbStoneL, nbStoneR, nbStone;
+	int	line, linePart, shift, lineMask,
+		nbStoneL, nbStoneR, nbStone;
 
+	// Get line by axis
 	line = bitboard->getLine(axis, x, y);
+
+	// Compute shift
+	if (axis == BBV)
+		shift = y - 4;
+	else
+		shift = x - 4;
+
+	if (shift < 0)
+		lineMask = 0b111111111 >> -shift;
+	else
+		lineMask = 0b111111111 << shift;
+
+	// Compute line part by apply the mask and shift it
+	if (shift < 0)
+		linePart = (line & lineMask) << -shift;
+	else
+		linePart = (line & lineMask) >> shift;
 
 	// Get the number of stone at the left (for H)
 	nbStoneL = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		if ((line & this->checkNbStoneL[i]) == this->checkNbStoneL[i])
+		if ((linePart & this->checkNbStoneL[i]) == this->checkNbStoneL[i])
 			nbStoneL = i + 1;
 		else
 			break;
@@ -1069,7 +1133,7 @@ int	Evaluation::getLineOfPos(
 	nbStoneR = 0;
 	for (int i = 0; i < 4; i++)
 	{
-		if ((line & this->checkNbStoneR[i]) == this->checkNbStoneR[i])
+		if ((linePart & this->checkNbStoneR[i]) == this->checkNbStoneR[i])
 			nbStoneR = i + 1;
 		else
 			break;
