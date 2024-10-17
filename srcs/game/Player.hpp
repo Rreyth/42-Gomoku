@@ -29,7 +29,7 @@ public:
 	void			setWinState(win_state winState);
 	win_state		getWinState(void);
 
-	void			addMove(void);
+	void			addMove(sf::Vector2i *move);
 	int				getNbMove(void);
 
 	sprite_name		getStoneSprite(void);
@@ -38,6 +38,7 @@ public:
 	PlayerInfo		*getPlayerInfo(void);
 	bool			getSuggestDone(void);
 	sf::Vector2i	getSuggestedMove(void);
+	sf::Vector2i	getLastMove(void);
 
 	sf::Vector2i	getNextMove(
 						Grid *grid, Player *opponent, Mouse *mouse,
@@ -58,7 +59,7 @@ private:
 	sprite_name		stoneSprite;
 	AI				ai;
 	PlayerInfo		info;
-	sf::Vector2i	suggestedMove;
+	sf::Vector2i	suggestedMove, lastMove;
 
 	float			timer;
 	bool			playing, suggestion, suggestDone;

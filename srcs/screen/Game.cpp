@@ -103,7 +103,7 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 	if (this->grid.putStone(&move, nbMoves, player->getPlayerInfo(), opponent->getPlayerInfo()))
 	{
 		this->grid.addBoardToHistory();
-		player->addMove();
+		player->addMove(&move);
 		if (this->grid.checkWinCondition(player->getPlayerInfo(), opponent->getPlayerInfo()))
 		{
 			this->grid.goToHistoryEnd();
@@ -248,7 +248,17 @@ void	Game::drawLeftSide(sf::RenderWindow *window, sf::Text *text, TextureManager
 	if (this->playerLeft.isPlaying())
 		textureManager->drawTexture(window, SPRITE_ARROW, size.x / 2, WIN_H * 0.075, MID_CENTER);
 
-	textureManager->drawTexture(window, this->playerLeft.getStoneSprite(), size.x / 2, gridY + (size.y * 0.4), MID_CENTER);
+	textureManager->drawTexture(window, this->playerLeft.getStoneSprite(), size.x / 2, gridY + (size.y * 0.375), MID_CENTER);
+
+	drawText(window, text, "LAST MOVE", size.x / 2, gridY + (size.y * 0.45), 25, sf::Color::White, MID_CENTER);
+	if (this->playerLeft.getNbMove() != 0)
+	{
+		std::string alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		sf::Vector2i move = this->playerLeft.getLastMove();
+		
+		str = alpha[move.x] + std::string(", ") + std::to_string(move.y + 1);
+		drawText(window, text, str, size.x / 2, gridY + (size.y * 0.50), 25, sf::Color::White, MID_CENTER);
+	}
 
 	str = std::to_string(this->playerLeft.getNbMove());
 
@@ -291,7 +301,18 @@ void	Game::drawRightSide(sf::RenderWindow *window, sf::Text *text, TextureManage
 	if (this->playerRight.isPlaying())
 		textureManager->drawTexture(window, SPRITE_ARROW, WIN_W - (size.x / 2), WIN_H * 0.075, MID_CENTER);
 
-	textureManager->drawTexture(window, this->playerRight.getStoneSprite(), WIN_W - (size.x / 2), gridY + (size.y * 0.4), MID_CENTER);
+	textureManager->drawTexture(window, this->playerRight.getStoneSprite(), WIN_W - (size.x / 2), gridY + (size.y * 0.375), MID_CENTER);
+
+	drawText(window, text, "LAST MOVE", WIN_W - (size.x / 2), gridY + (size.y * 0.45), 25, sf::Color::White, MID_CENTER);
+	if (this->playerRight.getNbMove() != 0)
+	{
+		std::string alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		sf::Vector2i move = this->playerRight.getLastMove();
+		
+		str = alpha[move.x] + std::string(", ") + std::to_string(move.y + 1);
+		drawText(window, text, str, WIN_W - (size.x / 2), gridY + (size.y * 0.50), 25, sf::Color::White, MID_CENTER);
+	}
+
 
 	str = std::to_string(this->playerRight.getNbMove());
 	drawText(window, text, "MOVES", WIN_W - (size.x / 2), gridY + (size.y * 0.60), 25, sf::Color::White, MID_CENTER);

@@ -14,6 +14,7 @@ Player::Player(void)
 	this->timer = 0;
 	this->stoneSprite = SPRITE_STONE_BLUE;
 	this->suggestedMove = sf::Vector2i(-1, -1);
+	this->lastMove = sf::Vector2i(-1, -1);
 }
 
 
@@ -99,9 +100,10 @@ sprite_name	Player::getStoneSprite()
 }
 
 
-void		Player::addMove(void)
+void		Player::addMove(sf::Vector2i *move)
 {
 	this->info.nbMove++;
+	this->lastMove = *move;
 }
 
 
@@ -138,6 +140,11 @@ bool			Player::getSuggestDone(void)
 sf::Vector2i	Player::getSuggestedMove(void)
 {
 	return (this->suggestedMove);
+}
+
+sf::Vector2i	Player::getLastMove(void)
+{
+	return (this->lastMove);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
