@@ -79,6 +79,46 @@ void	End::draw(sf::RenderWindow *window, sf::Text *text, TextureManager *texture
 	// Display grid
 	grid->draw(window, text, textureManager);
 
+	// Display victory line if win by align
+	if (grid->isHistoryEnd()
+				&& (leftPlayer->getWinState() == WIN_STATE_ALIGN
+				|| rightPlayer->getWinState() == WIN_STATE_ALIGN))
+	{
+		WinLine		*winline = grid->getWinLine();
+		sprite_name line_sprite;
+		draw_pos	pos;
+		int			drawX, drawY;
+
+		drawX = grid->getX() + winline->x * GRID_SQUARE_SIZE + 23;
+		drawY = grid->getY() + winline->y * GRID_SQUARE_SIZE + 10;
+
+		if (winline->axis == BBH)
+		{
+			line_sprite = LINE_H;
+			pos = MID_RIGHT;
+		}
+		else if (winline->axis == BBV)
+		{
+			drawY = grid->getY() + winline->y * GRID_SQUARE_SIZE + 22;
+			line_sprite = LINE_V;
+			pos = BOT_RIGHT;
+		}
+		else if (winline->axis == BBD)
+		{
+			drawY = grid->getY() + winline->y * GRID_SQUARE_SIZE - 5;
+			line_sprite = LINE_D;
+			pos = TOP_RIGHT;
+		}
+		else
+		{
+			drawY = grid->getY() + winline->y * GRID_SQUARE_SIZE + 22;
+			line_sprite = LINE_A;
+			pos = BOT_RIGHT;
+		}
+
+		textureManager->drawTexture(window, line_sprite, drawX, drawY, pos);
+	}
+
 	// Darker screen
 	window->draw(this->rect);
 
@@ -152,6 +192,7 @@ static void	drawLeft(sf::RenderWindow *window, sf::Text *text, Player *leftPlaye
 	drawText(window, text, "CAPTURED", WIN_W * 0.10, WIN_H * 0.74, 50, sf::Color::White, MID_CENTER);
 	drawText(window, text, std::to_string(leftPlayer->getNbCapture()), WIN_W * 0.20, WIN_H * 0.74, 50, sf::Color::White, MID_CENTER);
 }
+
 
 static void drawRight(sf::RenderWindow *window, sf::Text *text, Player *rightPlayer, std::string rightWin)
 {

@@ -21,11 +21,15 @@ Grid::Grid(void)
 	this->clearGrid(SPRITE_STONE_BLUE, SPRITE_STONE_RED, STANDARD);
 
 	this->historyIdString = "";
+	this->winLine.x = 0;
+	this->winLine.y = 0;
+	this->winLine.axis = BBH;
 }
 
 
 Grid::~Grid()
 {
+	this->clearAnimations();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -73,6 +77,11 @@ BitBoard	*Grid::getBitBoard(inter_type type)
 BboxManager	*Grid::getBboxManager(void)
 {
 	return (&this->bboxManager);
+}
+
+WinLine		*Grid::getWinLine(void)
+{
+	return(&this->winLine);
 }
 
 
@@ -416,6 +425,20 @@ void	Grid::clearGrid(sprite_name leftStone, sprite_name rightStone,
 }
 
 
+void	Grid::clearAnimations(void)
+{
+	if (this->animations.size() != 0)
+	{
+		for (int i = 0; i < this->animations.size(); i++)
+		{
+			delete this->animations[i];
+			this->animations.erase(this->animations.begin() + i);
+			i--;
+		}
+	}
+}
+
+
 void	Grid::reset(void)
 {
 	this->bitboardL.clear();
@@ -423,7 +446,12 @@ void	Grid::reset(void)
 	this->boardHistoryId = 0;
 	this->boardHistory.clear();
 	this->bboxManager.clear();
+	this->winLine.x = 0;
+	this->winLine.y = 0;
+	this->winLine.axis = BBH;
+	this->clearAnimations();
 }
+
 
 void	Grid::addBoardToHistory(void)
 {
@@ -461,6 +489,12 @@ void	Grid::goToHistoryEnd(void)
 {
 	this->boardHistoryId = this->boardHistory.size() - 1;
 	this->applyHistoryToGrid();
+}
+
+
+bool	Grid::isHistoryEnd(void)
+{
+	return (this->boardHistoryId == this->boardHistory.size() - 1);
 }
 
 
@@ -781,6 +815,9 @@ bool	Grid::validateWin(
 			}
 		}
 
+		if (i == 4)
+			break;
+
 		if (bbAxis == BBH)
 		{
 			x = (x + 1) % GRID_W_INTER;
@@ -802,6 +839,11 @@ bool	Grid::validateWin(
 			y = (y + 1) % GRID_W_INTER;
 		}
 	}
+
+	// Save winning line for end screen
+	this->winLine.x = x;
+	this->winLine.y = y;
+	this->winLine.axis = bbAxis;
 
 	player->winState = WIN_STATE_ALIGN;
 	this->previewLegal = false;

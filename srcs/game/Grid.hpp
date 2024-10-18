@@ -14,6 +14,13 @@
 class Player;
 class Evaluation;
 
+typedef struct	s_winLine
+{
+	int				x;
+	int				y;
+	bitboardAxis	axis;
+}	WinLine;
+
 class Grid
 {
 public:
@@ -27,6 +34,7 @@ public:
 	std::string		getHistoryIdString(void);
 	BitBoard		*getBitBoard(inter_type type);
 	BboxManager		*getBboxManager(void);
+	WinLine			*getWinLine(void);
 
 	void			setBitBoard(BitBoard *bitBoard, inter_type type);
 	void			setBboxManager(BboxManager *bboxManager);
@@ -48,12 +56,14 @@ public:
 	bool			checkWinCondition(PlayerInfo *player, PlayerInfo *opponent);
 	void			updateBboxManager(sf::Vector2i *move);
 	void			clearGrid(sprite_name leftStone, sprite_name rightStone, game_rules rule);
+	void			clearAnimations(void);
 	void			reset(void);
 	void			addBoardToHistory(void);
 	void			goToHistoryStart(void);
 	void			goToHistoryPrevious(void);
 	void			goToHistoryNext(void);
 	void			goToHistoryEnd(void);
+	bool			isHistoryEnd(void);
 	void			disablePreview(void);
 
 	std::vector<sf::Vector2i>	getLegalMoves(PlayerInfo *player, PlayerInfo *opponent);
@@ -74,6 +84,7 @@ private:
 	BboxManager									bboxManager;
 	std::vector<std::pair<BitBoard, BitBoard>>	boardHistory;
 	std::vector<Animation*>						animations;
+	WinLine										winLine;
 
 	bool	checkWinByAlign(PlayerInfo *player, PlayerInfo *opponent, BitBoard *plBitboard, BitBoard *opBitboard);
 	bool	validateWin(PlayerInfo *player, PlayerInfo *opponent, BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis bbAxis, int x, int y);

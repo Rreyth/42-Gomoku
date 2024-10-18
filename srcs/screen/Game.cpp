@@ -107,6 +107,7 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 		if (this->grid.checkWinCondition(player->getPlayerInfo(), opponent->getPlayerInfo()))
 		{
 			this->grid.goToHistoryEnd();
+			this->grid.clearAnimations();
 			*displayState = DISPLAY_END;
 			return ;
 		}

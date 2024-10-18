@@ -42,6 +42,10 @@ void	TextureManager::loadTextures(void)
 	this->loadTexture(SPRITE_AMOGUS_BLUE, "amogus_blue.png");
 	this->loadTexture(SPRITE_STONE_PREVIEW, "stone_preview.png");
 	this->loadTexture(SPRITE_ARROW, "down_arrow.png");
+	this->loadTexture(LINE_H, "lineH.png");
+	this->loadTexture(LINE_V, "lineV.png");
+	this->loadTexture(LINE_D, "lineD.png");
+	this->loadTexture(LINE_A, "lineA.png");
 
 	// Scale sprites
 	// this->scaleSprite(SPRITE_SQUARE_ROUNDED_BUTTON_OFF, 2.0f, 2.0f);

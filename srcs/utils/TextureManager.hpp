@@ -6,7 +6,7 @@
 # include <SFML/Graphics.hpp>
 # include <string>
 
-# define NB_SPRITES 19
+# define NB_SPRITES 23
 
 typedef enum e_sprite_name
 {
@@ -29,6 +29,10 @@ typedef enum e_sprite_name
 	SPRITE_AMOGUS_BLUE,
 	SPRITE_STONE_PREVIEW,
 	SPRITE_ARROW,
+	LINE_H,
+	LINE_V,
+	LINE_D,
+	LINE_A
 }	sprite_name;
 
 class TextureManager
