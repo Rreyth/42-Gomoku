@@ -228,6 +228,7 @@ void		Player::setPlayer(
 	this->suggestion = suggestion;
 	this->suggestDone = false;
 	this->info.reset();
+	this->info.stoneSprite = stoneSprite;
 }
 
 
@@ -253,6 +254,7 @@ void		Player::reset(
 	if (type == AI_PLAYER || this->suggestion)
 		this->ai.reset(grid, &this->info, opponent);
 	this->info.reset();
+	this->info.stoneSprite = stoneSprite;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

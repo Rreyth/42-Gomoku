@@ -117,8 +117,22 @@ Grid	&Grid::operator=(const Grid &grid)
 
 void	Grid::tick(display_state *displayState, Mouse *mouse,
 					Player *leftPlayer, Player *rightPlayer,
-					Evaluation *evaluator)
+					Evaluation *evaluator, float delta)
 {
+	if (this->animations.size() != 0)
+	{
+		for (int i = 0; i < this->animations.size(); i++)
+		{
+			this->animations[i]->tick(delta);
+			if (!this->animations[i]->getRunning())
+			{
+				delete this->animations[i];
+				this->animations.erase(this->animations.begin() + i);
+				i--;
+			}
+		}
+	}
+
 	if (!mouse->inRectangle(this->x, this->y, this->w, this->h))
 	{
 		this->previewLegal = false;
@@ -235,6 +249,12 @@ void	Grid::draw(sf::RenderWindow *window, sf::Text *text,
 		textureManager->drawTexture(window, SPRITE_STONE_PREVIEW,
 									drawX, drawY, MID_CENTER);
 	}
+
+	if (this->animations.size() != 0)
+	{
+		for (int i = 0; i < this->animations.size(); i++)
+			this->animations[i]->draw(window);
+	}
 }
 
 
@@ -273,8 +293,28 @@ bool	Grid::checkLegalMove(
 bool	Grid::putStone(
 				sf::Vector2i *move, int nbMoves, PlayerInfo *player, PlayerInfo *opponent)
 {
-	if (!this->putStoneAI(move, nbMoves, player, opponent))
+	inter_type	plType, opType;
+
+	plType = player->interType;
+	opType = opponent->interType;
+
+	if (!this->checkLegalMove(move->x, move->y, nbMoves, plType, opType))
 		return (false);
+
+	if (plType == INTER_LEFT)
+	{
+		this->bitboardL.set(move->x, move->y, true);
+		player->nbCapture += this->makeCapture(
+									move, &this->bitboardL, &this->bitboardR,
+									true, opponent);
+	}
+	else
+	{
+		this->bitboardR.set(move->x, move->y, true);
+		player->nbCapture += this->makeCapture(
+									move, &this->bitboardR, &this->bitboardL,
+									true, opponent);
+	}
 
 	this->bboxManager.update(move->x, move->y);
 
@@ -296,13 +336,15 @@ bool	Grid::putStoneAI(sf::Vector2i *move, int nbMoves, PlayerInfo *player, Playe
 	{
 		this->bitboardL.set(move->x, move->y, true);
 		player->nbCapture += this->makeCapture(
-									move, &this->bitboardL, &this->bitboardR);
+									move, &this->bitboardL, &this->bitboardR,
+									false, opponent);
 	}
 	else
 	{
 		this->bitboardR.set(move->x, move->y, true);
 		player->nbCapture += this->makeCapture(
-									move, &this->bitboardR, &this->bitboardL);
+									move, &this->bitboardR, &this->bitboardL,
+									false, opponent);
 	}
 
 	return (true);
@@ -769,13 +811,16 @@ bool	Grid::validateWin(
 
 int	Grid::makeCapture(
 			sf::Vector2i *move,
-			BitBoard *plBitBoard, BitBoard *opBitBoard)
+			BitBoard *plBitBoard, BitBoard *opBitBoard,
+			bool animate, PlayerInfo *opponent)
 {
-	int	checkL, checkR, checkVL, checkVR,
-		shiftL, shiftR, shiftVL, shiftVR,
-		plVerify, opVerify,
-		plLine, opLine,
-		nbCapture;
+	int			checkL, checkR, checkVL, checkVR,
+				shiftL, shiftR, shiftVL, shiftVR,
+				plVerify, opVerify,
+				plLine, opLine,
+				nbCapture;
+
+	anim_sprite	anim_start;
 
 	int	dirx[4] = {1 , 0, 1, 1};
 	int diry[4] = {0, 1, -1, 1};
@@ -808,6 +853,13 @@ int	Grid::makeCapture(
 				opBitBoard->set(move->x, move->y - 1, false);
 				opBitBoard->set(move->x, move->y - 2, false);
 				nbCapture += 2;
+
+				//add animations
+				if (animate)
+				{
+					this->createAnimation(move->x, move->y - 1, opponent);
+					this->createAnimation(move->x, move->y - 2, opponent);
+				}
 			}
 			if ((plLine & checkVR) >> shiftVR == plVerify
 				&& (opLine & checkVR) >> shiftVR == opVerify)
@@ -815,6 +867,13 @@ int	Grid::makeCapture(
 				opBitBoard->set(move->x, move->y + 1, false);
 				opBitBoard->set(move->x, move->y + 2, false);
 				nbCapture += 2;
+
+				//add animations
+				if (animate)
+				{
+					this->createAnimation(move->x, move->y + 1, opponent);
+					this->createAnimation(move->x, move->y + 2, opponent);
+				}
 			}
 		}
 		else
@@ -825,6 +884,13 @@ int	Grid::makeCapture(
 				opBitBoard->set(move->x - dirx[axis], move->y - diry[axis], false);
 				opBitBoard->set(move->x - (2 * dirx[axis]), move->y - (2 * diry[axis]), false);
 				nbCapture += 2;
+
+				//add animations
+				if (animate)
+				{
+					this->createAnimation(move->x - dirx[axis], move->y - diry[axis], opponent);
+					this->createAnimation(move->x - (2 * dirx[axis]), move->y - (2 * diry[axis]), opponent);
+				}
 			}
 			if ((plLine & checkR) >> shiftR == plVerify
 				&& (opLine & checkR) >> shiftR == opVerify)
@@ -832,6 +898,13 @@ int	Grid::makeCapture(
 				opBitBoard->set(move->x + dirx[axis], move->y + diry[axis], false);
 				opBitBoard->set(move->x + (2 * dirx[axis]), move->y + (2 * diry[axis]), false);
 				nbCapture += 2;
+
+				//add animations
+				if (animate)
+				{
+					this->createAnimation(move->x + dirx[axis], move->y + diry[axis], opponent);
+					this->createAnimation(move->x + (2 * dirx[axis]), move->y + (2 * diry[axis]), opponent);
+				}
 			}
 		}
 	}
@@ -947,4 +1020,25 @@ void	Grid::applyHistoryToGrid(void)
 
 	this->historyIdString = std::to_string(this->boardHistoryId + 1) + " / "
 								+ std::to_string(this->boardHistory.size());
+}
+
+
+void	Grid::createAnimation(int x, int y, PlayerInfo *opponent)
+{
+	anim_sprite	start;
+
+	if (opponent->stoneSprite == SPRITE_STONE_RED)
+		start = ROCK_RED_CAPT_1;
+	else if (opponent->stoneSprite == SPRITE_STONE_BLUE)
+		start = ROCK_BLUE_CAPT_1;
+	else if (opponent->stoneSprite == SPRITE_COIN_RED)
+		start = COIN_RED_CAPT_1;
+	else if (opponent->stoneSprite == SPRITE_COIN_BLUE)
+		start = COIN_BLUE_CAPT_1;
+	else if (opponent->stoneSprite == SPRITE_AMOGUS_RED)
+		start = AMOGUS_RED_CAPT_1;
+	else
+		start = AMOGUS_BLUE_CAPT_1;
+
+	this->animations.push_back(new Animation(start, x, y, this->x, this->y));
 }

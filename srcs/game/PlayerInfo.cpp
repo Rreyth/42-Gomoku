@@ -10,6 +10,7 @@ PlayerInfo::PlayerInfo(void)
 	this->winState = WIN_STATE_NONE;
 	this->nbCapture = 0;
 	this->nbMove = 0;
+	this->stoneSprite = SPRITE_STONE_BLUE;
 }
 
 

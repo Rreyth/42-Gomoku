@@ -19,6 +19,7 @@ BUILD				:= build
 SRCS				:=	srcs/main.cpp \
 						srcs/utils/Mouse.cpp \
 						srcs/utils/Functions.cpp \
+						srcs/utils/Animation.cpp \
 						srcs/utils/TextureManager.cpp \
 						srcs/ui/Select.cpp \
 						srcs/ui/Button.cpp \

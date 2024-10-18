@@ -6,6 +6,7 @@
 # include <game/BitBoard.hpp>
 # include <game/BboxManager.hpp>
 # include <game/PlayerInfo.hpp>
+# include <utils/Animation.hpp>
 
 # include <vector>
 # include <unordered_map>
@@ -34,7 +35,7 @@ public:
 
 	void			tick(display_state *displayState, Mouse *mouse,
 							Player *leftPlayer, Player *rightPlayer,
-							Evaluation *evaluator);
+							Evaluation *evaluator, float delta);
 	void			draw(sf::RenderWindow *window, sf::Text *text,
 							TextureManager *textureManager);
 	bool			checkLegalMove(int x, int y, int nbMoves,
@@ -72,14 +73,15 @@ private:
 	BitBoard									bitboardL, bitboardR;
 	BboxManager									bboxManager;
 	std::vector<std::pair<BitBoard, BitBoard>>	boardHistory;
+	std::vector<Animation*>						animations;
 
 	bool	checkWinByAlign(PlayerInfo *player, PlayerInfo *opponent, BitBoard *plBitboard, BitBoard *opBitboard);
 	bool	validateWin(PlayerInfo *player, PlayerInfo *opponent, BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis bbAxis, int x, int y);
-	int		makeCapture(sf::Vector2i *move, BitBoard *plBitBoard, BitBoard *opBitBoard);
+	int		makeCapture(sf::Vector2i *move, BitBoard *plBitBoard, BitBoard *opBitBoard, bool animate, PlayerInfo *opponent);
 	bool	checkDoubleFreeThree(int x, int y, BitBoard *plBitBoard, BitBoard *opBitBoard);
 	bool	checkProRule(int x, int y, inter_type interPlayer, int nbMoves);
 	void	applyHistoryToGrid(void);
-
+	void	createAnimation(int x, int y, PlayerInfo *opponent);
 };
 
 #endif

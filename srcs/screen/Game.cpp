@@ -56,7 +56,7 @@ void	Game::tick(display_state *displayState, float delta, Mouse *mouse)
 
 	this->leave.tick(mouse);
 	this->grid.tick(displayState, mouse, &this->playerLeft, &this->playerRight,
-						&this->evaluator);
+						&this->evaluator, delta);
 
 	if (this->leave.getPressed())
 		*displayState = DISPLAY_MENU;
