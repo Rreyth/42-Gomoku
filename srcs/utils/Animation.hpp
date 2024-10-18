@@ -70,7 +70,6 @@ private:
 	int			x, y;
 
 	void loadTexture(anim_sprite name, std::string filename);
-	void tqt(anim_sprite name, std::string filename);
 };
 
 #endif
