@@ -129,7 +129,7 @@ static Move	pvs(
 		return (tmpMove);
 	}
 
-	bestMove.eval = -1000000001;
+	bestMove.eval = -2000000001;
 	bestMove.pos = sf::Vector2i(-1, -1);
 	for (int i = 0; i < moves.size() && i < AI_HARD_LIMIT; i++)
 	{

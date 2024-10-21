@@ -259,6 +259,46 @@ int	Evaluation::evaluateGrid(
 	return (evalutation);
 }
 
+
+int	Evaluation::evalPosition(
+					BitBoard *plBitBoard, BitBoard *opBitBoard,
+					int plCapture, int opCapture, int x, int y)
+{
+	int	score = 0;
+
+	// Return 0 if there already have a stone on this pos
+	if (plBitBoard->get(x, y) || opBitBoard->get(x, y))
+		return (0);
+
+	// Evaluate on horizontal axis
+	score = this->evalPosAxis(
+					plBitBoard, opBitBoard, BBH,
+					&plCapture, opCapture, x, y);
+	if (score >= CASE_WIN_POINT || score <= CASE_LOOSE_POINT)
+		return (score);
+
+	// Evaluate on vertical axis
+	score += this->evalPosAxis(
+					plBitBoard, opBitBoard, BBV,
+					&plCapture, opCapture, x, y);
+	if (score >= CASE_WIN_POINT || score <= CASE_LOOSE_POINT)
+		return (score);
+
+	// Evaluate on diagonal axis
+	score += this->evalPosAxis(
+					plBitBoard, opBitBoard, BBD,
+					&plCapture, opCapture, x, y);
+	if (score >= CASE_WIN_POINT || score <= CASE_LOOSE_POINT)
+		return (score);
+
+	// Evaluate on anti diagonal axis
+	score += this->evalPosAxis(
+					plBitBoard, opBitBoard, BBA,
+					&plCapture, opCapture, x, y);
+
+	return (score);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Private methods
 ////////////////////////////////////////////////////////////////////////////////
@@ -469,47 +509,6 @@ int	Evaluation::evaluateGridOnAxis(
 }
 
 
-
-int	Evaluation::evalPosition(
-					BitBoard *plBitBoard, BitBoard *opBitBoard,
-					int plCapture, int opCapture, int x, int y)
-{
-	int	score = 0;
-
-	// Return 0 if there already have a stone on this pos
-	if (plBitBoard->get(x, y) || opBitBoard->get(x, y))
-		return (0);
-
-	// Evaluate on horizontal axis
-	score = this->evalPosAxis(
-					plBitBoard, opBitBoard, BBH,
-					&plCapture, opCapture, x, y);
-	if (score >= CASE_WIN_POINT)
-		return (score);
-
-	// Evaluate on vertical axis
-	score += this->evalPosAxis(
-					plBitBoard, opBitBoard, BBV,
-					&plCapture, opCapture, x, y);
-	if (score >= CASE_WIN_POINT)
-		return (score);
-
-	// Evaluate on diagonal axis
-	score += this->evalPosAxis(
-					plBitBoard, opBitBoard, BBD,
-					&plCapture, opCapture, x, y);
-	if (score >= CASE_WIN_POINT)
-		return (score);
-
-	// Evaluate on anti diagonal axis
-	score += this->evalPosAxis(
-					plBitBoard, opBitBoard, BBA,
-					&plCapture, opCapture, x, y);
-
-	return (score);
-}
-
-
 int	Evaluation::evalPosAxis(
 					BitBoard *plBitBoard, BitBoard *opBitBoard, bitboardAxis axis,
 					int *plCapture, int opCapture, int x, int y)
@@ -526,7 +525,7 @@ int	Evaluation::evalPosAxis(
 	// Get make line point
 	score += this->computeAlignScore(
 					plBitBoard, opBitBoard, x, y, axis,
-					plLine, opLine, bitX);
+					plLine, opLine, bitX, opCapture);
 
 	// Get block line point
 	score += this->computeBlockScore(opLine);
@@ -586,7 +585,8 @@ int	Evaluation::getLinePart(
 int	Evaluation::computeAlignScore(
 					BitBoard *plBitBoard, BitBoard *opBitBoard,
 					int x, int y, bitboardAxis axis,
-					int plLine, int opLine, int bitX)
+					int plLine, int opLine, int bitX,
+					int opCapture)
 {
 	int		nbStoneL, nbStoneR, nbStone,
 			nbOpStoneL, nbOpStoneR, nbOpStone,
@@ -641,11 +641,17 @@ int	Evaluation::computeAlignScore(
 	nbStone = nbStoneL + nbStoneR + 1;
 
 	// If line have 5 or more stones, check if this is a victory
-	if (nbStone >= 5 && this->isLineWinnable(
-								plBitBoard, opBitBoard, x, y, axis,
-								plLine, opLine, bitX,
-								nbStoneL, nbStoneR, nbStone))
-		return (CASE_WIN_POINT); // If yes, return the max score
+	if (nbStone >= 5)
+	{
+		if (this->isLineWinnable(
+					plBitBoard, opBitBoard, x, y, axis,
+					plLine, opLine, bitX,
+					nbStoneL, nbStoneR, nbStone))
+			return (CASE_WIN_POINT); // If yes, return the max score
+
+		else if (opCapture == 8)
+			return (CASE_LOOSE_POINT); // Auto capture win for opponent
+	}
 
 	// Get score of line
 	if (nbStone > 5)

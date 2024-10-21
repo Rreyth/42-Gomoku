@@ -55,7 +55,8 @@ private:
 	int		computeAlignScore(
 				BitBoard *plBitBoard, BitBoard *opBitBoard,
 				int x, int y, bitboardAxis axis,
-				int plLine, int opLine, int bitX);
+				int plLine, int opLine, int bitX,
+				int opCapture);
 	bool	isLineWinnable(
 				BitBoard *plBitBoard, BitBoard *opBitBoard,
 				int x, int y, bitboardAxis axis,
