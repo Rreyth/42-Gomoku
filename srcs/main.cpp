@@ -16,7 +16,7 @@
 int	main(void)
 {
 	// Initialisation
-	sf::RenderWindow	window(sf::VideoMode(WIN_W, WIN_H), "42 :)", sf::Style::Titlebar | sf::Style::Close);
+	sf::RenderWindow	window(sf::VideoMode(WIN_W, WIN_H), "Gomocool", sf::Style::Titlebar | sf::Style::Close);
 	sf::View			view(sf::FloatRect(0, 0, WIN_W, WIN_H));
 	sf::Clock			clock;
 	TextureManager		textureManager;
