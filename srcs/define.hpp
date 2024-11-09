@@ -26,7 +26,6 @@
 # define AI_MEDIUM_LIMIT 10
 # define AI_HARD_DEPTH 10
 # define AI_HARD_LIMIT 6
-# define AI_MTDF_DEPTH 10
 
 typedef enum e_font {
 	FONT_SQUADA,
