@@ -21,8 +21,6 @@ Le projet combine trois défis techniques majeurs :
 
 ## 🖼️ Screenshots
 
-*(Tu peux ajouter ici des captures d'écran de ton projet, par exemple :)*
-
 ![Partie en cours](readme-data/in-game.png)
 *Partie Joueur vs IA en milieu de jeu*
 
